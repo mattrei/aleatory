@@ -17,3 +17,17 @@ sleep 1
     end
   end
 end
+
+live_loop :a do
+  use_synth :fm
+  tick
+  # G2 -> C2, Bb2
+  with_fx :reverb do
+    play (note (ring :F3, :D2, :A3, :Bb3).look, octave: rand_i(3) + 2), amp: 1.5, pan: -0.25  if (spread 3, 8).look
+    # C4 -> C5
+    # shuffle
+    play (shuffle (ring :C4, :E4, :D4, :F3)).look, amp: 0.6, pan: 0.25 if (spread 5, 12).look
+    sleep 0.25
+  end
+end
+
