@@ -1,3 +1,4 @@
+# G mixolydian
 use_synth :blade
 play_chord [:G2, :E3, :B3, :D]
 
