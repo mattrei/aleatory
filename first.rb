@@ -24,3 +24,35 @@ live_loop :upbeat do
   end 
   sleep 0.5
 end
+
+live_loop :a do
+  stop
+  r = rrand 0.3, 1
+  with_fx :nrhpf, res: 0.9 do
+    synth :noise, attack: 0.01, sustain: r, release: 0, cutoff: 120
+  end
+  sleep r + 0.01
+end
+
+
+
+live_loop :b do
+  stop
+  d = rand_i(4) + 2
+  r = rrand 0.3, 1
+  density d do
+    with_fx :slicer, res: 0.9 do
+      with_fx :nrhpf do
+        synth :pulse, note: scale(:C, :minor_pentatonic).choose, attack: 0.01, sustain: r, release: 0, cutoff: 100
+        end
+    end
+  sleep r + 0.01
+  end
+end
+
+live_loop :c do
+  r = rrand(0.25, 1)
+  tick
+  synth :mod_sine, note: scale(:C, :major).look, mod_range: 3, mod_phase: r, mod_invert_wave: 0, mod_wave: 0
+  sleep r
+end
