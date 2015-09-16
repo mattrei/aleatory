@@ -4,10 +4,6 @@ import ReactCanvas from 'react-canvas';
 
 import PageContainer from 'react-page-transitions';
 
-//import request from 'request';
-import request from 'superagent';
-import cheerio from 'cheerio';
-
 var Surface = ReactCanvas.Surface;
 var Group = ReactCanvas.Group;
 var Image = ReactCanvas.Image;
