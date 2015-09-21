@@ -5,31 +5,31 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t babelify | garnish",
+    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t babelify --noparse=three | garnish",
     "build": "browserify -t babelify src/index.js | uglifyjs -cm > dist/js/bundle.js"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/silviopaganini/rapid-prototype"
   },
-  "bugs": {
-    "url": "https://github.com/silviopaganini/rapid-prototype/issues"
-  },
   "author": "silvio paganini | @silviopaganini",
   "license": "ISC",
-  "devDependencies": {
+  "dependencies": {
     "babelify": "^6.3.0",
     "budo": "^4.1.0",
     "dat-gui": "^0.5.0",
     "garnish": "^2.1.3",
-    "stats-js": "^1.0.0-alpha1",
-    "three": "^0.71.0",
-    "three-orbit-controls": "^69.0.4",
-    "watchify": "^3.2.3",
-    "gsap": "^1.18.0"
-  },
-  "dependencies": {
+    "gsap": "^1.18.0",
+    "layout-bmfont-text": "^1.3.2",
     "leaflet": "^0.7.5",
-    "tweenr": "^2.1.3"
+    "load-bmfont": "^1.2.3",
+    "stats-js": "^1.0.0-alpha1",
+    "three": "^0.70.0",
+    "three-bmfont-text": "^1.2.0",
+    "three-orbit-controls": "^69.0.4",
+    "tween.js": "^15.0.0",
+    "tweenr": "^2.1.3",
+    "watchify": "^3.2.3",
+    "xtend": "^4.0.0"
   }
 }

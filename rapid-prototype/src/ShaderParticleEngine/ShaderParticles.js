@@ -2173,3 +2173,5 @@ Object.defineProperty( SPE.Emitter.prototype, 'angleEndSpread', {
 for ( var i in SPE.utils ) {
     SPE.Emitter.prototype[ i ] = SPE.utils[ i ];
 }
+
+module.exports = SPE
