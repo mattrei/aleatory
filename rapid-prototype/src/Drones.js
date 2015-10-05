@@ -11,6 +11,13 @@ import ExplodeModifier from './ExplodeModifier'
 
 var Shader = require('./sdf')
 
+global.jQuery = require('jquery');
+//var Textillate = require('textillate')
+//var Lettering = require('letteringjs')
+
+var Blast = require('blast-text')
+var Velocity = require('velocity-animate')
+
 
 import LoadBmFont from 'load-bmfont'
 //import CreateGeometry from 'three-bmfont-text'
@@ -506,17 +513,17 @@ var Globe = function(container, opts) {
   }
 
   function moveGlobe(lat=32, lng=69) {
+
+  //  jQuery('#counter').textillate('out')
     
     let p = calculate2dPosition(lat, lng)
     target = p
   }
 
-         // Create particle group and emitter
   function createFire(lat, lng) {
 
     let p = _getPosFromLatLng(lat, lng)
     particleGroup.triggerPoolEmitter( 1, p );
-
   } 
 
   function _getPosFromLatLng(lat, lng) {
@@ -531,6 +538,22 @@ var Globe = function(container, opts) {
   }
 
   function moveGlobeRnd() {
+
+    //jQuery('#counter').textillate('in')
+    jQuery('#counter')
+      .html("Mat Trei " + Math.random())
+      .blast({delimiter: 'character'})
+      .velocity("transition.fadeIn", { 
+                display: null,
+                duration: 1000,
+                stagger: 60,
+                delay: 400
+              }); 
+      //.css({ opacity: 0, display: "inline-block" })
+      //.velocity("slideUp", { duration: 1500 });
+      //.velocity({translateX: "200px",
+    //rotateZ: "45deg"})
+
     let zoomDamp = distance/1000;
 
     let moveX = (Math.random() * PI_TWO * 2) - PI_TWO,
@@ -540,13 +563,6 @@ var Globe = function(container, opts) {
     moveY *= Math.random() * 0.8;
 
     target = {x: moveX, y:moveY}
-/*
-    target.x = target.x + moveX * 0.05 * zoomDamp;
-    target.y = target.y + moveY * 0.05 * zoomDamp;
-
-    target.y = target.y > PI_HALF ? PI_HALF : target.y;
-    target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
-    */
   }
 
   function explode() {
@@ -644,11 +660,42 @@ class Drones {
 
 
 
+    let counter = document.createElement('div')
+    counter.id = "counter"
+    counter.style.cssText = "font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;"
+    counter.style.position = "absolute"
+    counter.innerHTML = "Hi there and greetings asdfsadf!"
+
+    //let counterText = document.createTextNode("Hi there and greetings!"); 
+    //counter.appendChild(counterText)
+    document.body.appendChild(counter); 
+    /*
+    jQuery('#counter').textillate({ 
+         in: { effect: 'rollIn' },
+         out: { effect: 'hinge' },
+         autoStart: false
+     });
+*/
+jQuery('#counter')
+      .html("Matthias")
+      .blast({delimiter: 'word'})
+      .css({ opacity: "0" })
+      .velocity("fadeIn", { stagger: 50 });
+
+/*
+    jQuery('#counter')
+      .blast({delimiter: 'word'})
+      .css("opacity", 0.0)
+      .velocity({ opacity: 1 });
+      */
+  
     this.globe.animate() 
 
     this.startGUI()
 
-        this.globe.moveGlobe(data.lat, data.lng)
+    this.globe.moveGlobe(data.lat, data.lng)
+
+
   }
 
   startGUI()
