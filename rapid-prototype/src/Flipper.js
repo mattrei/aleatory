@@ -1,7 +1,7 @@
 import THREE from 'three.js'; 
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
-import MathF from 'utils-perf'
+import MathF from  'utils-perf'
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -16,6 +16,9 @@ class Demo {
     this.scene    = null;
     this.counter  = 0;
     this.clock    = new THREE.Clock();
+
+    this.counter = 0
+    this.line = null
 
     this.createRender();
     this.createScene();
@@ -55,6 +58,22 @@ class Demo {
   {
     var gridHelper = new THREE.GridHelper( 100, 10 );        
     this.scene.add( gridHelper );
+
+    var geometry = new THREE.Geometry(),
+    material =  new THREE.LineBasicMaterial({color: 0x9f9f9f})
+    //geometry.vertices.push(new THREE.Vector3(0, 0, 0));
+    //geometry.vertices.push(new THREE.Vector3(50, 50, 0));
+            this.line = new THREE.Line(geometry,material);
+            this.scene.add( this.line );  
+
+/*
+            // using TweenLite to animate
+            var tl = new TimelineLite();          
+            var target = { x: 0, y: 0, z:0 };
+            line.geometry.verticesNeedUpdate = true;
+            tl.add(TweenLite.to(line.geometry.vertices[1] , 1, target));
+            tl.play(); 
+            */
   }
 
   startGUI()
@@ -64,10 +83,31 @@ class Demo {
     // gui.add(camera.position, 'y', 0, 400)
     // gui.add(camera.position, 'z', 0, 400)
   }
+  animate() 
+  {
+
+    this.counter += 1
+
+    var obj_resolution =100;
+    let center = new THREE.Vector2(0, 0)
+    for(let i=0; i<obj_resolution; i++) {
+      //let dist = new THREE.Vector2(geo.x, geo.y).sub(center)
+
+      let x = i / 80,
+        y = Math.sin(i + this.counter / 100) * 20,
+        z = 0
+
+      
+      this.line.geometry.vertices.push(new THREE.Vector3(x, y, z));
+    }
+    this.line.geometry.verticesNeedUpdate = true
+  }
 
   update()
   {
     this.stats.begin();
+
+    this.animate()
 
     this.renderer.render(this.scene, this.camera);
 

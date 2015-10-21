@@ -1,10 +1,12 @@
-import THREE from 'three'; 
+import THREE from 'three.js'; 
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TweenMax from 'gsap'
+var Tweenr = require('tweenr')()
+import MathF from 'utils-perf';
 
-const COLS = 26
+const COLS = 20
 const ROWS = 60
 
 
@@ -23,7 +25,7 @@ const CUBES_OFF = 40
 
 const SPEED = {
   slow: 1,
-  fast: 30
+  fast: 50
 }
 
 
@@ -49,11 +51,17 @@ var IS_SPEEDING = false
 class Demo {
   constructor(args) 
   {
-    this.startStats();
-    this.startGUI();
+    this.counter = 0
+    this.speed = 1
+    this.flareSize = 0
+    this.flareRotation = 1
 
     this.ANGLE = 1
     this.IS_SPEEDING = false
+
+
+    this.startStats();
+    this.startGUI();
 
     this.renderer = null;
     this.camera   = null;
@@ -63,13 +71,12 @@ class Demo {
     this.createRender();
     this.createScene();
     this.addObjects();
-    this.addLights()
 
     this.cubes = {bottom: [], top: []}
     this.addCubes()
+    this.addLight()
 
     this.onResize();
-    this.onMouse()
     this.update();
   }
 
@@ -84,8 +91,12 @@ class Demo {
   {
     this.renderer = new THREE.WebGLRenderer( {
         antialias : true,
-        clearColor: 0
+        clearColor: 0,
+        alpha: true
     } );
+
+    this.renderer.gammaInput = true;
+    this.renderer.gammaOutput = true;
     document.body.appendChild(this.renderer.domElement)
   }
 
@@ -93,17 +104,15 @@ class Demo {
   {
     const OrbitControls = OC(THREE);
 
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000 );
+    this.camera = new THREE.PerspectiveCamera(55, window.innerWidth / window.innerHeight, 0.01, 4000 );
     this.camera.position.set(0, 0, 50);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
-  }
-
-  addLights() {
-    let light = new THREE.AmbientLight()
-    this.scene.add(light)
+    this.scene.fog = new THREE.Fog( 0x000000, 0, 300 );
+    this.scene.fog.color.setHSL( 0.51, 0.4, 0.01 );
+    this.renderer.setClearColor( this.scene.fog.color );
   }
 
   addObjects()
@@ -114,17 +123,92 @@ class Demo {
     this.scene.add( axisHelper );
   }
 
+  addLight() {
+
+    let h = 0.55,
+      s = 0.9,
+      l = 0.5
+
+    let textureFlare0 = THREE.ImageUtils.loadTexture( "/assets/textures/lensflare/lensflare0.png" ),
+         textureFlare2 = THREE.ImageUtils.loadTexture( "/assets/textures/lensflare/lensflare2.png" ),
+         textureFlare3 = THREE.ImageUtils.loadTexture( "/assets/textures/lensflare/lensflare3.png" );
+
+    let light = new THREE.PointLight( 0xffffff, 1.5, 300);
+    light.color.setHSL( h, s, l );
+    light.position.set( 0, -10, -500 );
+    this.scene.add( light );
+
+/*
+    let cubeGeo = new THREE.BoxGeometry( 10, 10, 10, 10, 10 ),
+              cubeMaterial = new THREE.MeshPhongMaterial( { color: 0xffff00 } );
+    let cubeMesh = new THREE.Mesh( cubeGeo, cubeMaterial );
+    cubeMesh.position.set(0, -10, 0)
+    this.scene.add(cubeMesh)
+    */
+
+
+    let flareColor = new THREE.Color( 0xffffff );
+          flareColor.setHSL( h, s, l + 0.5 );
+
+
+    let lensFlare = new THREE.LensFlare( textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor );
+
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+
+          lensFlare.add( textureFlare3, 60, 0.6, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 70, 0.7, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 120, 0.9, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 70, 1.0, THREE.AdditiveBlending );
+
+          this.lensFlareUpdateCallback = this.lensFlareUpdateCallback.bind(this)
+          lensFlare.customUpdateCallback = this.lensFlareUpdateCallback;
+          lensFlare.position.copy( light.position );
+
+
+          this.scene.add( lensFlare );
+  }
+
+  lensFlareUpdateCallback( object ) {
+
+    this.counter++
+
+        var f, fl = object.lensFlares.length;
+        var flare;
+        var vecX = -object.positionScreen.x * 2;
+        var vecY = -object.positionScreen.y * 2;
+
+
+        for( f = 0; f < fl; f++ ) {
+
+             flare = object.lensFlares[ f ];
+
+
+             //flare.x *= Math.sin(this.counter)
+             //flare.distance = this.flareSize
+
+             flare.x = object.positionScreen.x + vecX * flare.distance;
+             flare.y = object.positionScreen.y + vecY * flare.distance;
+
+             flare.rotation = this.counter / (50/this.flareRotation) % (Math.PI*2);
+             flare.scale = Math.pow(this.flareSize, 3) * 10
+
+
+        }
+
+        object.lensFlares[ 2 ].y += 0.025;
+        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
+
+      }
+
   addCubes() {
 
     var vector = new THREE.Vector3()
     let r=0
-    for (var i=0; i < COLS*ROWS; i++) {
+    for (var i=0; i < ROWS; i++) {
+      for (var j=0; j < COLS; j++) {
 
-      // grid
-      let idx = i % COLS
-      if (idx == 0) {
-        r++
-      }
 
       let geometry = new THREE.BoxGeometry(SIZE.width, SIZE.height, SIZE.depth)
 
@@ -135,23 +219,24 @@ class Demo {
         distanceX: { type: "f", value: 1.0},
         distanceZ: { type: "f", value: 1.0},
         pulse: { type: "f", value: 0.0},
-        speed: { type: "f", value: speed.current},
+        speed: { type: "f", value: this.speed},
       };
       let material = new THREE.ShaderMaterial( {
         uniforms: uniforms,
         vertexShader: vertexShader,
-        fragmentShader: fragmentShader
+        fragmentShader: fragmentShader,
+        //fog: true
       });
 
       let mesh = new THREE.Mesh(geometry, material)
-      mesh.row = r
+      mesh._row = i
       
-      mesh.position.z = -1 * r * (SIZE.depth + GAP)
-      //mesh.position.x = (idx * (SIZE.width + GAP)) - ((SIZE.width + GAP) * COLS / 2)
+      mesh.position.z = -1 * i * (SIZE.depth + GAP)
+      mesh._col = j
 
 
-      if (Math.random() > 0.5) {
-        if (Math.random() > 0.5) {
+      //if (MathF.coin(0.5)) {
+        if (MathF.coin(0.5)) {
           
           this.cubes.bottom.push(mesh)
         } else {
@@ -159,27 +244,27 @@ class Demo {
           this.cubes.top.push(mesh)
         }
         this.scene.add(mesh)
-      }
+      //}
 
     }
-    
+    }
   }
 
   startGUI()
   {
-    // var gui = new dat.GUI()
-    // gui.add(camera.position, 'x', 0, 400)
-    // gui.add(camera.position, 'y', 0, 400)
-    // gui.add(camera.position, 'z', 0, 400)
+    var gui = new dat.GUI()
+    gui.add(this, 'speed', SPEED.slow, SPEED.fast)
+    gui.add(this, 'flareSize', 0, 1)
+    gui.add(this, 'flareRotation', 1, 10)
   }
 
   moveCubes(cubes, plane) {
-    var angle = speed.current / SPEED.fast * 90
+    var angle = this.speed / SPEED.fast * 90
     
     for (var i=0; i <cubes.length; i++) {
       let mesh = cubes[i]
       let idx = i % COLS
-      var phi = (idx / COLS) * Math.PI  //
+      var phi = (idx / COLS) * Math.PI 
 
       let y = (Math.sin(phi+0.1) * angle) //- ((phi+0.1) * angle/2),
           
@@ -195,9 +280,9 @@ class Demo {
       //mesh.rotation.z = (1 - Math.sin(phi+0.1)) * Math.PI/2 * angle
       //mesh.position.applyEuler(new THREE.Euler(0,0,Math.sin(phi+0.1) * 45))
 
-      mesh.position.x = (idx * (SIZE.width + GAP)) - ((SIZE.width + GAP) * COLS / 2)
+      mesh.position.x = (mesh._col * (SIZE.width + GAP)) - ((SIZE.width + GAP) * COLS / 2)
       mesh.position.y = y
-      mesh.position.z += speed.current
+      mesh.position.z += this.speed
 
       var vector = new THREE.Vector3()
       vector.x = mesh.position.x
@@ -212,13 +297,13 @@ class Demo {
       var distanceX = 1 - (Math.abs(mesh.position.x)) / (ALL_WIDTH / 2);
       //mesh.material.uniforms.distanceX.value = distanceX;
 
-      mesh.material.uniforms.speed.value = speed.current / SPEED.fast
+      mesh.material.uniforms.speed.value = this.speed / SPEED.fast
 
-      if (Math.random() > (0.99995 - speed.current * 0.0003)) {
+      if (Math.random() > (0.99995 - this.speed * 0.0003)) {
         mesh.material.uniforms.pulse.value = 1
       }
       mesh.material.uniforms.pulse.value -= 
-        mesh.material.uniforms.pulse.value * 0.1 / (speed.current + 1)
+        mesh.material.uniforms.pulse.value * 0.1 / (this.speed + 1)
 
       if (mesh.position.z > 0) {
         mesh.position.z = ALL_DEPTH * -1
@@ -247,18 +332,6 @@ class Demo {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
-  }
-  onMouse() {
-    window.addEventListener("mousedown", function(e) {
-      e.preventDefault()
-      IS_SPEEDING = true
-        TweenMax.to(speed, 5, {current: SPEED.fast})
-    });
-    window.addEventListener("mouseup", function(e) {
-      e.preventDefault()
-      IS_SPEEDING = false
-      TweenMax.to(speed, 1, {current: SPEED.slow})
-    });
   }
 }
 

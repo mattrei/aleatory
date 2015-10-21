@@ -6,6 +6,7 @@
  * @author Stemkoski / http://www.adelphi.edu/~stemkoski : An implementation of water shader based on the flat mirror
  * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
  */
+import THREE from 'three.js'
 
 THREE.ShaderLib['water'] = {
 
@@ -186,7 +187,6 @@ THREE.Water = function (renderer, camera, scene, options) {
   
   this.texture = new THREE.WebGLRenderTarget(width, height);
   this.tempTexture = new THREE.WebGLRenderTarget(width, height);
-  this.dummyTexture = new THREE.WebGLRenderTarget(1, 1);
   
   var mirrorShader = THREE.ShaderLib["water"];
   var mirrorUniforms = THREE.UniformsUtils.clone(mirrorShader.uniforms);
@@ -219,9 +219,6 @@ THREE.Water = function (renderer, camera, scene, options) {
     this.texture.generateMipmaps = false;
     this.tempTexture.generateMipmaps = false;
   }
-
-  this.updateTextureMatrix();
-  this.render();
 };
 
 THREE.Water.prototype = Object.create(THREE.Object3D.prototype);
@@ -348,12 +345,15 @@ THREE.Water.prototype.render = function (isTempTexture) {
   if ( this.scene !== undefined && this.scene instanceof THREE.Scene ) {
     // Remove the mirror texture from the scene the moment it is used as render texture
     // https://github.com/jbouny/ocean/issues/7 
-    this.material.uniforms.mirrorSampler.value = this.dummyTexture;
+    this.material.visible = false;
     
     var renderTexture = (isTempTexture !== undefined && isTempTexture)? this.tempTexture : this.texture;
     this.renderer.render(this.scene, this.mirrorCamera, renderTexture, true);
     
+    this.material.visible = true;
     this.material.uniforms.mirrorSampler.value = renderTexture;
   }
 
 };
+
+export default THREE.Water

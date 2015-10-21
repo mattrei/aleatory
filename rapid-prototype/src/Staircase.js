@@ -1,6 +1,7 @@
 import THREE from 'three'; 
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
+import MathF from 'utils-perf';
 var Tweenr = require('tweenr')()
 
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -10,7 +11,7 @@ const SIZE = {width: 10, height: 10, depth: 10}
 function num(min, max) { return Math.random() * (max - min) + min; }
 const COLOURS = {
     slow: {
-      r: num(0, 0.2),
+      r: MathF.random(0.2, 0),
       g: num(0.5, 0.9),
       b: num(0.3, 0.7)
     },

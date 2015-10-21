@@ -2,9 +2,19 @@ import THREE from 'three';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 
+import ConvolutionShader from './shaders/ConvolutionShader'
+import CopyShader from './shaders/CopyShader'
+import FXAAShader from './shaders/FXAAShader'
+
+import EffectComposer from './postprocessing/EffectComposer'
+import MaskPass from './postprocessing/MaskPass'
+import RenderPass from './postprocessing/RenderPass'
+import BloomPass from './postprocessing/BloomPass'
+import ShaderPass from './postprocessing/ShaderPass'
+
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-const SCALE_Z=10
+const SCALE_Z=1
 const SCALE = 4000
 
 const UP = new THREE.Vector3(0, 1, 0);
@@ -12,10 +22,36 @@ const UP = new THREE.Vector3(0, 1, 0);
 const UPDATE_SEC = 15
 const SPEED = 1
 
+// CENTER of Vienna
+const CENTER_LAT = 48.2
+const CENTER_LNG = 16.3667
+
 /*
 add map as surface
 https://github.com/geommills/esrileaflet3JS/blob/master/scripts/client/src/terrain.js
 */
+
+const Shaders = { 'line' : {
+      uniforms: {},
+      vertexShader: [
+        'varying vec3 vNormal;',
+        'void main() {',
+          'vNormal = normalize( normalMatrix * normal );',
+          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
+        '}'
+      ].join('\n'),
+      fragmentShader: [
+        'uniform float c;',
+        'uniform float p;',
+        'uniform vec3 color;',
+        'varying vec3 vNormal;',
+        'void main() {',
+          'float intensity = pow( c - dot( vNormal, vec3( 0, 0, 1.0 ) ), p );',
+          'gl_FragColor = vec4( color, 1.0 ) * intensity;',
+        '}'
+      ].join('\n')
+    }
+  }
 
 class Line {
   constructor(args) 
@@ -27,6 +63,13 @@ class Line {
     this.trains = []
     this.spline = null
 
+    this.uniforms = {
+
+        c: { type: "f", value: 0.5 },
+        p:   { type: "f", value: 1.0 },
+        color:     { type: "c", value: this.lineColor }
+
+      };
     
 
     this.draw()
@@ -36,8 +79,7 @@ class Line {
     var numPoints = this.topo.length * 2;
 
     let points = []
-    let minLat = 48.2
-    let minLng = 16.4
+
 
     let geomStation = new THREE.BoxGeometry(5, 5, 4);
     let matStation = new THREE.MeshBasicMaterial({
@@ -50,8 +92,8 @@ class Line {
       this.topo.forEach(t => {
         
         let e = t[1]
-        let y = (e.coord.lat - minLat) * SCALE,
-         x = (e.coord.lng - minLng) * SCALE,
+        let y = (e.coord.lat - CENTER_LAT) * SCALE,
+         x = (e.coord.lng - CENTER_LNG) * SCALE,
          z = Math.random() * SCALE_Z
         points.push(new THREE.Vector3(x, y, z))
 
@@ -65,9 +107,24 @@ class Line {
       console.log(points)
       this.spline = new THREE.SplineCurve3(points);
 
-      var material = new THREE.LineBasicMaterial({
-          color: this.lineColor,
+
+
+
+      var material = new THREE.ShaderMaterial({
+          uniforms: this.uniforms,
+          vertexShader: Shaders.line.vertexShader,
+          fragmentShader: Shaders.line.fragmentShader,
+          //blending:       THREE.AdditiveBlending,
+          depthTest:      false,
+          transparent:    true
       });
+
+
+      material = new THREE.LineBasicMaterial({
+          color: this.lineColor,
+          linewidth: 5
+      });
+
 
       var geometry = new THREE.Geometry();
       var splinePoints = this.spline.getPoints(numPoints);
@@ -89,11 +146,60 @@ class MetroLine extends Line {
   constructor(args) {
     super(args)
 
+
     this.tangent = new THREE.Vector3();
     this.axis = new THREE.Vector3();
+    this.sceneStation = args.sceneStation
+    this.camera = args.camera
+
+    this.textMeshes = []
+
+    this.drawText()
 
     this.update = this.update.bind(this)
     setInterval(this.update, 1000)  // every second
+  }
+  drawText() {
+    this.topo.forEach(t => {
+      let e = t[1]
+      let y = (e.coord.lat - CENTER_LAT) * SCALE,
+         x = (e.coord.lng - CENTER_LNG) * SCALE,
+         z = Math.random() * SCALE_Z
+         /*
+        let geomText = new THREE.TextGeometry( e.name, {
+
+              size: 8,
+              height: 5,
+              curveSegments: 3,
+
+              font: "helvetiker",
+              weight: "normal",
+              style: "normal",
+
+              bevelThickness: 2,
+              bevelSize: 1,
+              bevelEnabled: true
+
+            });
+*/
+
+        let shapes = THREE.FontUtils.generateShapes( e.name, {
+          font: "helvetiker",
+          weight: "normal",
+          size: 5
+        } );
+        let geomText = new THREE.ShapeGeometry( shapes );
+        let matText = new THREE.MeshBasicMaterial({color: 0xffffff});
+        let meshText = new THREE.Mesh( geomText, matText );
+
+        meshText.position.x = x
+        meshText.position.y = y
+        meshText.position.ẑ = 20
+        meshText.lookAt(this.camera.position)
+        this.textMeshes.push(meshText)
+        this.scene.add(meshText)
+    })
+
   }
   updateTrainData(trainsData) {
     // here we set the trains
@@ -128,6 +234,9 @@ class MetroLine extends Line {
 
       train.step = (Math.abs(arc - train.b) / this.spline.getLength()) / t.dur
       
+      train.tangent = new THREE.Vector3();
+      train.axis = new THREE.Vector3();
+
       this.scene.add(train)
       this.trains.push(train)
     })
@@ -138,25 +247,58 @@ class MetroLine extends Line {
 
       let arc = t.arc + t.step
       if (arc <= 1) {
+        /*
         t.position.copy( this.spline.getPointAt(arc) );
         this.tangent = this.spline.getTangentAt(arc).normalize();
         this.axis.crossVectors(UP, this.tangent).normalize();
         let radians = Math.acos(UP.dot(this.tangent));
         t.quaternion.setFromAxisAngle(this.axis, radians);
-
+        t.arc = arc
+        */
+        t.position.copy( this.spline.getPointAt(arc) );
+        t.tangent = this.spline.getTangentAt(arc).normalize();
+        t.axis.crossVectors(UP, t.tangent).normalize();
+        let radians = Math.acos(UP.dot(t.tangent));
+        t.quaternion.setFromAxisAngle(t.axis, radians);
         t.arc = arc
       }
+
+      
     })
+    this.textMeshes.forEach(m => {
+      m.lookAt(this.camera.position)
+    })
+  }
+  updateFollowTrain(splineCamera) {
+    //console.log(this.randomTrain.position)
+    //camera.position.copy(this.randomTrain.position)   
+
+      var time = Date.now();
+      var looptime = 20 * 1000;
+      var t = ( time % looptime ) / looptime;
+
+      let arc = t % 1
+     splineCamera.position.copy( this.spline.getPointAt(arc) );
+     console.log(splineCamera.position)
+      this.tangent = this.spline.getTangentAt(arc).normalize();
+      this.axis = this.axis.crossVectors(UP, this.tangent).normalize();
+      let radians = Math.acos(UP.dot(this.tangent));
+      
+      //splineCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI/2);
+
+      splineCamera.lookAt(splineCamera.position)
+      splineCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), radians);
+
   }
 }
 
 class WienerLinien {
   constructor(args) 
   {
-    this.allTopoMode = false
+    this.postProcessing = false
 
     this.lines = []
-
+    this.randomMetro = null
 
     this.startStats();
     this.startGUI();
@@ -164,16 +306,21 @@ class WienerLinien {
     this.renderer = null;
     this.camera   = null;
     this.scene    = null;
+    this.sceneStation = null;
+    this.composer = null
     this.counter  = 0;
     this.clock    = new THREE.Clock();
 
     this.createRender();
     this.createScene();
+    this.initPostProcessing()
 
     this.onResize();
     this.update();
 
     this.idx = 0
+
+    this.metroMode()
 
   }
 
@@ -190,13 +337,14 @@ class WienerLinien {
         antialias : true,
         clearColor: 0
     } );
+    this.renderer.autoClear = false
     document.body.appendChild(this.renderer.domElement)
   }
 
   createScene()
   {
-    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000 );
-    this.camera.position.set(0, 45, 540);
+    this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000 );
+    this.camera.position.set(0, 45, 640);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.maxDistance = 1000;
 
@@ -235,16 +383,41 @@ class WienerLinien {
   metroMode() {
     this.clearScene()
 
-    let topo = JSON.parse(U_TOPO)    
-      this.u1 = new MetroLine({scene: this.scene, topo: topo.u1, lineColor: 'red'})
-      this.u2 = new MetroLine({scene: this.scene, topo: topo.u2, lineColor: 'purple'})
-      this.u3 = new MetroLine({scene: this.scene, topo: topo.u3, lineColor: 'orange'})
-      this.u4 = new MetroLine({scene: this.scene, topo: topo.u4, lineColor: 'green'})
-      this.u6 = new MetroLine({scene: this.scene, topo: topo.u6, lineColor: 'brown'})    
+    let topo = JSON.parse(U_TOPO) 
+    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u1, lineColor: new THREE.Color(0xff0000)}))
+    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u2, lineColor: new THREE.Color(0x00f000)}))
+    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u3, lineColor: new THREE.Color(0x00ffff)}))
+      this.u4 = new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u4, lineColor: new THREE.Color(0x00ff00)})
+    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u6, lineColor: new THREE.Color(0x00fff0)}))
 
     this.u4.updateTrainData(JSON.parse(U4H[this.idx]))
     this.updateTrainData = this.updateTrainData.bind(this)
     setInterval(this.updateTrainData, 10000)
+  }
+  initPostProcessing() {
+
+    let renderModel = new THREE.RenderPass( this.scene, this.camera )
+    let effectBloom = new THREE.BloomPass( 1.3 + 1),
+      effectCopy = new THREE.ShaderPass( THREE.CopyShader )
+
+    this.effectFXAA = new THREE.ShaderPass( THREE.FXAAShader )
+
+      var width = window.innerWidth || 2;
+      var height = window.innerHeight || 2;
+
+      console.log("mat")
+      console.log(width + " " + height)
+
+      this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
+
+      effectCopy.renderToScreen = true;
+
+      this.composer = new THREE.EffectComposer( this.renderer );
+
+      this.composer.addPass( renderModel );
+      this.composer.addPass( this.effectFXAA );
+      this.composer.addPass( effectBloom );
+      this.composer.addPass( effectCopy );
   }
 
   startGUI()
@@ -253,21 +426,36 @@ class WienerLinien {
     gui.add(this, 'allMode')
     gui.add(this, 'metroMode')
     gui.add(this, 'clearScene')
+    gui.add(this, 'postProcessing')
+    gui.add(this, 'followRandomTrain')
+    gui.add(this, 'unfollowRandomTrain')
   }
+  followRandomTrain() {
 
-  animate() 
-  {
- 
-
+    //this.randomMetro = this.lines[Math.floor(Math.random() * this.lines.length)]
+    this.randomMetro = this.u4
+    this.randomMetro.followRandomTrain()
   }
-
+  unfollowRandomTrain() {
+    this.randomMetro = null
+    this.camera.position.set(0, 45, 640)
+    this.update()
+  }  
   update()
   {
     this.stats.begin();
 
-//    this.animate()
-
-    this.renderer.render(this.scene, this.camera);
+    if (this.randomMetro) {
+      this.randomMetro.updateFollowTrain(this.camera)
+    }
+    
+    if (this.postProcessing) {
+      this.composer.render()
+    }
+    else {
+      this.renderer.render(this.scene, this.camera);
+    }
+    //this.renderer.render(this.sceneStation, this.camera);
 
     this.stats.end()
     requestAnimationFrame(this.update.bind(this));
@@ -278,6 +466,9 @@ class WienerLinien {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
+
+    this.effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
+    this.composer.reset();
   }
 }
 

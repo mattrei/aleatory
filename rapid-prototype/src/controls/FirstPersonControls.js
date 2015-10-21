@@ -3,6 +3,7 @@
  * @author alteredq / http://alteredqualia.com/
  * @author paulirish / http://paulirish.com/
  */
+import THREE from 'three.js'
 
 THREE.FirstPersonControls = function ( object, domElement ) {
 

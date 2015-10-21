@@ -1,33 +1,25 @@
-
-global.THREE = require('three')
-var CreateText = require('three-bmfont-text')
-
+import THREE from 'three.js'
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/ShaderParticles'
-import ExplodeModifier from './ExplodeModifier'
-
-var Shader = require('./sdf')
+import ExplodeModifier from './modifiers/ExplodeModifier'
 
 global.jQuery = require('jquery');
-//var Textillate = require('textillate')
-//var Lettering = require('letteringjs')
+require('blast-text')
+require('velocity-animate')
+require('velocity-animate/velocity.ui')
 
-var Blast = require('blast-text')
-var Velocity = require('velocity-animate')
+//https://docs.google.com/spreadsheets/d/1NAfjFonM-Tn7fziqiv33HlGt09wgLZDSCP-BQaux51w/edit#gid=1000652376
 
+const TEXT_DIV = "counter"
 
-import LoadBmFont from 'load-bmfont'
-//import CreateGeometry from 'three-bmfont-text'
-
-const data = {lat:32.6137855, lng:69.508248}
 
 const NUM_RAND_FIRES = 100
 
-const FONT =  'DejaVu-sdf.fnt'
-const FONT_IMG = 'DejaVu-sdf.png'
+//const FONT =  'DejaVu-sdf.fnt'
+//const FONT_IMG = 'DejaVu-sdf.png'
 
 
 const PI_HALF = Math.PI / 2
@@ -125,10 +117,7 @@ var Globe = function(container, opts) {
     document.body.appendChild(stats.domElement);
   }
 
-  function loadFont(opt, cb) {
-
-  }
-
+/*
   function initFonts(renderer) {
     let opt = { 
       font: 'assets/fonts/' + FONT,
@@ -147,13 +136,6 @@ var Globe = function(container, opts) {
 
   function startFont(font, texture, renderer) {
 
-/*
-      var material = new THREE.MeshBasicMaterial({
-        map: texture,
-        transparent: false,
-        color: 0xffffff
-      })
-      */
 
         //setup our texture with some nice mipmapping etc
         var maxAni = renderer.getMaxAnisotropy()
@@ -190,7 +172,7 @@ var Globe = function(container, opts) {
       //textAnchor.scale.multiplyScalar(1/(window.devicePixelRatio||1))
       scene.add(textAnchor)
   }
-
+*/
   function initPass(){
         composer = new THREE.EffectComposer( renderer );
         composer.addPass( new THREE.RenderPass( scene, camera ) );
@@ -337,7 +319,7 @@ var Globe = function(container, opts) {
 
     startStats()
 
-    initFonts(renderer)
+    //initFonts(renderer)
 
     renderer.domElement.style.position = 'absolute';
 
@@ -463,11 +445,7 @@ var Globe = function(container, opts) {
       y: rotation.y,
       altitude: distance
     });
-/*
-    camera.position.x = distance * Math.sin(rotation.x) * Math.cos(rotation.y);
-    camera.position.y = distance * Math.sin(rotation.y);
-    camera.position.z = distance * Math.cos(rotation.x) * Math.cos(rotation.y);
-*/
+
     camera.lookAt(mesh.position);
 
 
@@ -541,14 +519,16 @@ var Globe = function(container, opts) {
 
     //jQuery('#counter').textillate('in')
     jQuery('#counter')
-      .html("Mat Trei " + Math.random())
-      .blast({delimiter: 'character'})
-      .velocity("transition.fadeIn", { 
-                display: null,
-                duration: 1000,
-                stagger: 60,
-                delay: 400
-              }); 
+      .html("<p>Mat Trei</p><p>" + Math.random() + '</p>')
+      .blast({delimiter: 'word'})
+      //.velocity("fadeOut", { duration: 300 })
+      //.velocity("fadeIn", { delay: 300, duration: 700 }) 
+      //.velocity("slideDown", { duration: 500 })
+      .velocity("scroll", { duration: 1500, easing: "spring" })
+    .velocity({ opacity: 1 });
+      //.velocity("slideUp", { delay: 500, duration: 1500 });
+
+
       //.css({ opacity: 0, display: "inline-block" })
       //.velocity("slideUp", { duration: 1500 });
       //.velocity({translateX: "200px",
@@ -653,49 +633,32 @@ class Drones {
     opts.imgDir = 'assets/'
     this.globe = new Globe(document.getElementById('container'), opts)
 
-    this.globe.init
+    this.createTextDiv()
 
-   // globe.addBox(data.lat, data.lng, 9)
-    this.globe.createFire(data.lat, data.lng)
-
-
-
-    let counter = document.createElement('div')
-    counter.id = "counter"
-    counter.style.cssText = "font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;"
-    counter.style.position = "absolute"
-    counter.innerHTML = "Hi there and greetings asdfsadf!"
-
-    //let counterText = document.createTextNode("Hi there and greetings!"); 
-    //counter.appendChild(counterText)
-    document.body.appendChild(counter); 
-    /*
-    jQuery('#counter').textillate({ 
-         in: { effect: 'rollIn' },
-         out: { effect: 'hinge' },
-         autoStart: false
-     });
-*/
-jQuery('#counter')
-      .html("Matthias")
-      .blast({delimiter: 'word'})
-      .css({ opacity: "0" })
-      .velocity("fadeIn", { stagger: 50 });
-
-/*
-    jQuery('#counter')
-      .blast({delimiter: 'word'})
-      .css("opacity", 0.0)
-      .velocity({ opacity: 1 });
-      */
-  
     this.globe.animate() 
 
     this.startGUI()
 
-    this.globe.moveGlobe(data.lat, data.lng)
+  }
 
+  createTextDiv() 
+  {
+    let counter = document.createElement('div')
+    counter.id = TEXT_DIV
+    counter.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;
+      `
+    counter.style.position = "absolute"
+    counter.style.left = "70%"
+    counter.style.top = "50%"
+    document.body.appendChild(counter); 
 
+    jQuery('#' + TEXT_DIV)
+      .html("Matthias Treitler")
+      //.blast({delimiter: 'word'})
+      //.css({ opacity: "0" })
+      .velocity("fadeIn", { duration: 5000 })
+      .velocity("callout.shake")
   }
 
   startGUI()

@@ -4,6 +4,7 @@
  *
  * @author alteredq / http://alteredqualia.com/
  */
+import THREE from 'three.js'
 
 THREE.TessellateModifier = function ( maxEdgeLength ) {
 

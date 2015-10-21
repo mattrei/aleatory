@@ -10,9 +10,9 @@ var typeface = require('three.regular.helvetiker');
 THREE.typeface_js.loadFace(typeface);
 
 import SPE from './ShaderParticleEngine/ShaderParticles'
-import ExplodeModifier from './ExplodeModifier'
-import TessellateModifier from './TessellateModifier'
-import SubdivisionModifier from './SubdivisionModifier'
+import ExplodeModifier from './modifiers/ExplodeModifier'
+import TessellateModifier from './modifiers/TessellateModifier'
+import SubdivisionModifier from './modifiers/SubdivisionModifier'
 
 class TextParticle {
   constructor(args) 

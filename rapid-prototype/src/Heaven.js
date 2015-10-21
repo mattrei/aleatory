@@ -2,10 +2,13 @@ import THREE from 'three';
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
-import FirstPersonControls from './FirstPersonControls' ;
+import FirstPersonControls from './controls/FirstPersonControls' ;
 
 const SKYBOX_PATH = "/assets/skybox/"
 const NUM_BIRDS = 400
+
+// http://www.themigrantsfiles.com/
+// https://docs.google.com/spreadsheets/d/1YNqIzyQfEn4i_be2GGWESnG2Q80E_fLASffsXdCOftI/edit#gid=1085726718
 
 class Demo {
   constructor(args) 

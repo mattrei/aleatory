@@ -14,6 +14,7 @@
  *      - currently doesn't handle "Sharp Edges"
  *
  */
+import THREE from 'three.js'
 
 THREE.SubdivisionModifier = function ( subdivisions ) {
 

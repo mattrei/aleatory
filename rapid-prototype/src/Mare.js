@@ -1,13 +1,11 @@
-//import THREE from 'three'; 
-global.THREE = require('three')
+import THREE from 'three.js'; 
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 
-import Ocean from './Ocean'
 import Water from './Water'
 
-import FirstPersonControls from './FirstPersonControls'
+import FirstPersonControls from './controls/FirstPersonControls'
 
 const MORPH_SPEED = 200
 const Y_POS = 200
@@ -72,11 +70,11 @@ class Mare {
     this.camera.position.set(0, 50, -300);
     this.camera.lookAt( new THREE.Vector3() );
     this.camera.up = new THREE.Vector3(0,0,1);
-    this.controls = new THREE.FirstPersonControls(this.camera) 
-    this.controls.movementSpeed = 300;
-    this.controls.lookSpeed = 0.3;
-    // new OrbitControls(this.camera, this.renderer.domElement);
-    //this.controls.maxDistance = 500;
+    //this.controls = new THREE.FirstPersonControls(this.camera) 
+    //this.controls.movementSpeed = 300;
+    //this.controls.lookSpeed = 0.3;
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
 
@@ -275,6 +273,7 @@ class Mare {
     this.directionalLight.position.set( -0.2, 0.5, 1 );
     this.scene.add( this.directionalLight );
 
+/*
       // Initialize Ocean
     var gsize = 512;
     var res = 512;
@@ -296,7 +295,8 @@ class Mare {
       RESOLUTION : res
     } );
 
-    this.ocean.materialOcean.uniforms.u_sunDirection.value.copy( this.directionalLight.position );
+    this.ocean.materialOcean.uniforms.u_sunDirection.value.copy( this.directionalLight.position )
+    */
   }
 
   startGUI()
