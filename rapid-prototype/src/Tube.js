@@ -2,7 +2,6 @@ import THREE from 'three.js';
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
-import TweenMax from 'gsap'
 var Tweenr = require('tweenr')()
 import MathF from 'utils-perf';
 

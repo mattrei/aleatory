@@ -64,7 +64,7 @@ class Demo {
 
     this.scene = new THREE.Scene();
 
-    this.controls = new THREE.FirstPersonControls( this.camera );
+    this.controls = new FirstPersonControls( this.camera );
     this.controls.movementSpeed = 300;
     this.controls.lookSpeed = 0.3;
   }

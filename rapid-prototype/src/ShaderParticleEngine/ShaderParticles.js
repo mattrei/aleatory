@@ -8,7 +8,7 @@
 //
 // ShaderParticleGroup may be freely distributed under the MIT license (See LICENSE.txt)
 
-var THREE = require('three')
+var THREE = require('three.js')
 var SPE = SPE || {};
 
 SPE.utils = {

@@ -33,6 +33,7 @@
     "three-bmfont-text": "^1.2.0",
     "three-orbit-controls": "^69.0.4",
     "three.js": "^0.72.0",
+    "three": "^0.72.0",
     "three.regular.helvetiker": "^1.0.0",
     "tween.js": "^15.0.0",
     "tweenr": "^2.1.3",

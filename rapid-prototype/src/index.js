@@ -1,4 +1,5 @@
 
+import Executed from './Executed';
 import Scheduled from './Scheduled';
 import Tube from './Tube';
 import Falling from './Falling';
@@ -11,5 +12,5 @@ import TextParticles from './TextParticles'
 import WienerLinien from './WienerLinien'
 import Staircase from './Staircase'
 
-const demo = new Scheduled();
+const demo = new Executed();
 window.onresize = demo.onResize.bind(demo);
