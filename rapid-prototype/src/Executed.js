@@ -7,6 +7,8 @@ import TWEEN from 'tween.js'
 
 import ExecutedData from './test_data/executed.json'
 
+import NoMousePersonControls from './controls/NoMousePersonControls'
+
 const Tweenr = tweenr()
 
 const OrbitControls = require('three-orbit-controls')(THREE);
@@ -17,11 +19,14 @@ class Demo {
   constructor(args) 
   {
 
-    this.targetView = 'random'
+    this.targetView = 'grid'
 
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
     this.executed = []
+
+    this.currentIdx = 0
+    this.lookAtDuration = 2000
 
     this.startStats();
     this.startGUI();
@@ -29,6 +34,7 @@ class Demo {
     this.renderer = null;
     this.camera   = null;
     this.scene    = null;
+    this.controls = null
     this.counter  = 0;
     this.clock    = new THREE.Clock();
 
@@ -60,7 +66,10 @@ class Demo {
   {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000 );
     this.camera.position.set(0, 45, 12240);
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls = new NoMousePersonControls(this.camera);
+    this.controls.movementSpeed = 300;
+    this.controls.lookSpeed = 0.3;
     //this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
@@ -75,12 +84,14 @@ class Demo {
 
     executed.forEach((e,i) => {
 
+          let texture = THREE.ImageUtils.loadTexture(e.img)
+          texture.minFilter = THREE.LinearFilter
           let img = new THREE.MeshBasicMaterial({ 
-              map:THREE.ImageUtils.loadTexture(e.img),
+              map: texture,
               color: 0xffffff,
               side: THREE.DoubleSide,
           });
-          img.minFilter = THREE.LinearFilter
+          //img.minFilter = THREE.LinearFilter
           //img.map.needsUpdate = true; //ADDED
 
           // plane
@@ -137,6 +148,8 @@ class Demo {
           this.targets.grid.push( object );
 
         }
+
+        this.camera.target = executed[0]
   }
 
   startGUI()
@@ -146,16 +159,16 @@ class Demo {
     gui.add(this, 'doSphere')
     gui.add(this, 'doRandom')
     gui.add(this, 'lookAtRnd')
+    gui.add(this, 'lookAtNext')
+    gui.add(this, 'lookAtDuration', 500, 5000)
     // gui.add(camera.position, 'y', 0, 400)
     // gui.add(camera.position, 'z', 0, 400)
   }
 
-  lookAtRnd() 
+  lookAt(e) 
   {
-    let e = this.objects[Math.floor(Math.random() * this.objects.length)]
 
-    
-    //this.camera.rotation.copy(e.rotation)
+        //this.camera.rotation.copy(e.rotation)
     let vector = new THREE.Vector3()
     if (this.targetView === 'sphere') {
       vector.copy( e.position ).multiplyScalar( 1.2 );
@@ -165,31 +178,49 @@ class Demo {
     }
 
     console.log(e.position)
+
     console.log(vector)
-    this.camera.target = e.position.clone()
-    //this.camera.position.copy(vector)
-    //this.camera.lookAt(e.position)
+    console.log("m")
+    //
 
 
+    // move to vector
          new TWEEN.Tween( this.camera.position )
-            .to( { x: vector.x, y: vector.y, z: vector.z }, 2000 )
+            .to( { x: vector.x, y: vector.y, z: vector.z }, this.lookAtDuration )
             .easing( TWEEN.Easing.Exponential.InOut )
             .onUpdate(() => {
-    this.camera.lookAt(this.camera.target);
-}).onComplete(() => {
-    this.camera.lookAt(e.position);
-})
-            .start();
+          this.camera.lookAt(this.camera.target);
+      }).onComplete(() => {
+          this.camera.lookAt(this.camera.target);
+      })
+                  .start();
 
 
- new TWEEN.Tween(this.camera.target).to({
-    x: e.position.x,
-    y: e.position.y,
-    z: 0
-}).easing(TWEEN.Easing.Linear.None).onUpdate(() => {
-}).onComplete(() => {
-    this.camera.lookAt(e.position);
-}).start();
+       new TWEEN.Tween(this.camera.target).to({
+          x: e.position.x,
+          y: e.position.y,
+          z: e.position.z
+      }, this.lookAtDuration).easing(TWEEN.Easing.Linear.None).onUpdate(() => {
+      }).onComplete(() => {
+          //this.camera.lookAt(e.position);
+      }).start();
+
+
+  }
+
+  lookAtNext() 
+  {
+    let e = this.objects[this.currentIdx++ % this.objects.length]
+    this.lookAt(e)
+
+  }
+
+  lookAtRnd() 
+  {
+    let e = this.objects[Math.floor(Math.random() * this.objects.length)]
+
+    this.lookAt(e)
+
 
 /*
     console.log(e.scale)
@@ -296,6 +327,7 @@ class Demo {
   {
     this.stats.begin();
 
+    //this.controls.update( this.clock.getDelta() );
     TWEEN.update();
     this.renderer.render(this.scene, this.camera);
 

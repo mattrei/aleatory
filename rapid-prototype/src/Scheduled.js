@@ -5,6 +5,9 @@ import MathF from 'utils-perf'
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
+
+import ScheduledData from './test_data/scheduled.json'
+
 class Demo {
   constructor(args) 
   {
@@ -64,12 +67,22 @@ class Demo {
     var gridHelper = new THREE.GridHelper( 100, 10 );        
     //this.scene.add( gridHelper );
 
+    this.scheduled = []
+
+    ScheduledData.forEach(s => {
+      console.log(s)
+      let texture = THREE.ImageUtils.loadTexture( s.img )
+      texture.minFilter = THREE.LinearFilter
+
+      this.scheduled.push({img: texture})
+    })
+
     this.uniforms = {
         resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
         time: { type: "f", value: 0.1 },
         showCurrent: { type: "f", value: this.showCurrent},
         numberCurrents: { type: "f", value: this.numberCurrents},
-        bgImg: { type: "t", value: THREE.ImageUtils.loadTexture( '/assets/img/texas/garciajuan2.jpg' )},
+        bgImg: { type: "t", value: this.scheduled[0].img },
     };
 
     this.uniforms.bgImg.value.wrapS = this.uniforms.bgImg.value.wrapT = THREE.ClampToEdgeWrapping
@@ -87,27 +100,15 @@ class Demo {
     this.scene.add(plane);
   }
 
-  initScheduled() 
-  {
-    this.scheduled = []
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/garciajuan2.jpg' ))
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/escamillalicho2.jpg' ))
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/holidayraphael2.jpg' ))
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/williamsperry2.jpg' ))
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/murphyjulius2.jpg' ))
-    this.scheduled.push(THREE.ImageUtils.loadTexture( '/assets/img/texas/wilkinschristopher2.jpg' ))
-  }
 
   nextScheduled() 
   {
-    this.scheduledIdx = (this.scheduledIdx + 1) % this.scheduled.length
-    this.uniforms.bgImg.value = this.scheduled[this.scheduledIdx]
+    this.uniforms.bgImg.value = this.scheduled[this.scheduledIdx++ % this.scheduled.length].img
   }
 
   startGUI()
   {
     var gui = new dat.GUI()
-    gui.add(this, 'initScheduled')
     gui.add(this, 'nextScheduled')
     gui.add(this, 'showCurrent', 0, 5)
     gui.add(this, 'numberCurrents', 1, 8)

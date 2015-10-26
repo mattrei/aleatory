@@ -3,7 +3,9 @@ import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
-import SPE from './ShaderParticleEngine/ShaderParticles'
+import SPE from './ShaderParticleEngine/SPE'
+//import SPE from 'shader-particle-engine/build/SPE'
+console.log(SPE)
 import ExplodeModifier from './modifiers/ExplodeModifier'
 
 global.jQuery = require('jquery');
@@ -253,7 +255,9 @@ var Globe = function(container, opts) {
     // Stars
     var starGeo = new THREE.SphereGeometry (3000, 10, 100),
         starMat = new THREE.MeshBasicMaterial();
-    starMat.map = THREE.ImageUtils.loadTexture(imgDir+'star-field.png');
+    let texture = THREE.ImageUtils.loadTexture(imgDir+'star-field.png');
+    texture.minFilter = THREE.NearestFilter
+    starMat.map = texture
     starMat.side = THREE.BackSide;
                 
     var starMesh = new THREE.Mesh(starGeo, starMat);
@@ -261,27 +265,36 @@ var Globe = function(container, opts) {
     
     // Particles
     let emitterSettings = {
-                type: 'sphere',
-                positionSpread: new THREE.Vector3(10, 10, 10),
-                radius: 1,
-                speed: 100,
-                sizeStart: 30,
-                sizeStartSpread: 30,
-                sizeEnd: 0,
-                opacityStart: 1,
-                opacityEnd: 0,
-                colorStart: new THREE.Color('yellow'),
-                colorStartSpread: new THREE.Vector3(0, 10, 0),
-                colorEnd: new THREE.Color('red'),
-                particleCount: 1000,
-                alive: 0,
-                duration: 0.5
+                type: SPE.distributions.SPHERE,
+                position: {
+                    spread: new THREE.Vector3(10),
+                    radius: 1,
+                },
+                velocity: {
+                    value: new THREE.Vector3( 100 )
+                },
+                size: {
+                    value: [ 30, 0 ]
+                },
+                opacity: {
+                    value: [1, 0]
+                },
+                color: {
+                    value: [new THREE.Color('yellow'),new THREE.Color('red')]
+                },
+                particleCount: 100,
+                alive: true,
+                duration: 0.05,
+                maxAge: {
+                    value: 0.5
+                }
             };
+
     particleGroup = new SPE.Group({
-            texture: THREE.ImageUtils.loadTexture('./assets/smokeparticle.png'),
-            maxAge: 2,  //
-            hasPerspective: true,
-            colorize: true
+            texture: {
+              value: THREE.ImageUtils.loadTexture('./assets/spe/smokeparticle.png')
+            },
+            blending: THREE.AdditiveBlending
     });
     particleGroup.addPool(NUM_RAND_FIRES, emitterSettings, false)
     scene.add( particleGroup.mesh );
