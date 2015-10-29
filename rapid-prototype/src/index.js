@@ -12,5 +12,5 @@ import TextParticles from './TextParticles'
 import WienerLinien from './WienerLinien'
 import Staircase from './Staircase'
 
-const demo = new Drones();
+const demo = new Scheduled();
 window.onresize = demo.onResize.bind(demo);

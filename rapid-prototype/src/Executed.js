@@ -13,20 +13,33 @@ const Tweenr = tweenr()
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
+//global.jQuery = require('jquery');
+//require('blast-text')
+const Velocity = require('velocity-animate')
+require('velocity-animate/velocity.ui')
+
 const SPHERE_SIZE = 1500
+
+
+
+const CAMERA_POS = {x: 0, y:0, z:7000}
 
 class Demo {
   constructor(args) 
   {
+
+    this.text = {name: null, date: null, intro: null}
+    this.introText = ''
 
     this.targetView = 'grid'
 
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
     this.executed = []
+    this.meshes = []
 
     this.currentIdx = 0
-    this.lookAtDuration = 2000
+    this.transition = 2000
 
     this.startStats();
     this.startGUI();
@@ -38,6 +51,8 @@ class Demo {
     this.counter  = 0;
     this.clock    = new THREE.Clock();
 
+    this.createTextDiv()
+
     this.createRender();
     this.createScene();
     this.addObjects();
@@ -46,6 +61,83 @@ class Demo {
     this.update();
   }
 
+    startGUI()
+  {
+    var gui = new dat.GUI()
+    gui.add(this, 'resetCamera')
+    gui.add(this, 'doVisible')
+    gui.add(this, 'doGrid')
+    gui.add(this, 'doSphere')
+    gui.add(this, 'doRandom')
+    gui.add(this, 'lookAtRnd')
+    gui.add(this, 'lookAtNext')
+    gui.add(this, 'transition', 500, 5000)
+
+    gui.add(this, 'introText')
+    gui.add(this, 'updateIntroText')
+    gui.add(this, 'clearTexts')
+  }
+
+
+  createTextDiv() 
+  {
+    let div = document.createElement('div')
+    div.id = "textName"
+    div.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;
+      `
+    div.style.position = "absolute"
+    //div.style.left = "50%"
+    div.style.width = "100%"
+    div.style['text-align'] = "center"
+    div.style.top = "20%"
+    document.body.appendChild(div)
+
+    this.text.name = div
+
+    let div2 = document.createElement('div')
+    div2.id = "textDate"
+    div2.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;
+      `
+    div2.style.position = "absolute"
+    div2.style.width = "100%"
+    div2.style['text-align'] = "center"
+    div2.style.top = "80%"
+    document.body.appendChild(div2)
+
+
+    this.text.date = div2
+
+    div2 = document.createElement('div')
+    div2.id = "textIntro"
+    div2.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:30px;font-weight:bold;line-height:15px;color:white;
+      `
+    div2.style.position = "absolute"
+    div2.style.width = "100%"
+    div2.style['text-align'] = "center"
+    div2.style.top = "50%"
+    document.body.appendChild(div2)
+    
+
+
+    this.text.intro = div2
+  }
+
+  clearTexts() {
+    this.text.name.innerHTML = ''
+    this.text.date.innerHTML = ''
+    this.text.intro.innerHTML = ''
+  }
+
+  updateIntroText() {
+    Velocity.animate(this.text.intro, "fadeOut", this.transition/4)
+      .then((e) => {
+        this.text.intro.innerHTML = this.introText
+        Velocity(this.text.intro, "fadeIn", this.transition )
+      })
+  }
   startStats()
   {
     this.stats = new Stats(); 
@@ -65,20 +157,14 @@ class Demo {
   createScene()
   {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000 );
-    this.camera.position.set(0, 45, 12240);
-    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls = new NoMousePersonControls(this.camera);
-    this.controls.movementSpeed = 300;
-    this.controls.lookSpeed = 0.3;
-    //this.controls.maxDistance = 500;
-
+    this.camera.position.set(CAMERA_POS.x, CAMERA_POS.y, CAMERA_POS.z);
     this.scene = new THREE.Scene();
   }
 
   addObjects()
   {
     var gridHelper = new THREE.GridHelper( 100, 10 );        
-    this.scene.add( gridHelper );
+    //this.scene.add( gridHelper );
 
     let executed = this.executed = ExecutedData
 
@@ -91,24 +177,18 @@ class Demo {
               color: 0xffffff,
               side: THREE.DoubleSide,
           });
-          //img.minFilter = THREE.LinearFilter
-          //img.map.needsUpdate = true; //ADDED
 
           // plane
           var plane = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),img);
           plane.overdraw = true;
 
-/*          
-          plane.position.x = ( ( i % 5 ) * 400 ) - 800;
-          plane.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
-          plane.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
-*/
-          plane.position.x = Math.random() * 4000 - 2000;
-          plane.position.y = Math.random() * 4000 - 2000;
-          plane.position.z = Math.random() * 4000 - 2000;
 
+          plane.visible = false
+          plane.userData = e
+          this.meshes.push(plane)
 
           this.scene.add(plane);
+
           this.objects.push(plane)
 
     })
@@ -152,18 +232,20 @@ class Demo {
         this.camera.target = executed[0]
   }
 
-  startGUI()
-  {
-    var gui = new dat.GUI()
-    gui.add(this, 'doGrid')
-    gui.add(this, 'doSphere')
-    gui.add(this, 'doRandom')
-    gui.add(this, 'lookAtRnd')
-    gui.add(this, 'lookAtNext')
-    gui.add(this, 'lookAtDuration', 500, 5000)
-    // gui.add(camera.position, 'y', 0, 400)
-    // gui.add(camera.position, 'z', 0, 400)
+
+  resetCamera() {
+    clearTexts()
+    new TWEEN.Tween(this.camera.position).to({
+          x: CAMERA_POS.x,
+          y: CAMERA_POS.y,
+          z: CAMERA_POS.z
+      }, this.transition).easing(TWEEN.Easing.Linear.None)
+    .onUpdate(() => {
+      this.camera.lookAt(new THREE.Vector3())
+      }).start();
+
   }
+
 
   lookAt(e) 
   {
@@ -177,16 +259,10 @@ class Demo {
       vector.z -= 400
     }
 
-    console.log(e.position)
-
-    console.log(vector)
-    console.log("m")
-    //
-
 
     // move to vector
          new TWEEN.Tween( this.camera.position )
-            .to( { x: vector.x, y: vector.y, z: vector.z }, this.lookAtDuration )
+            .to( { x: vector.x, y: vector.y, z: vector.z }, this.transition )
             .easing( TWEEN.Easing.Exponential.InOut )
             .onUpdate(() => {
           this.camera.lookAt(this.camera.target);
@@ -200,12 +276,19 @@ class Demo {
           x: e.position.x,
           y: e.position.y,
           z: e.position.z
-      }, this.lookAtDuration).easing(TWEEN.Easing.Linear.None).onUpdate(() => {
+      }, this.transition).easing(TWEEN.Easing.Linear.None).onUpdate(() => {
       }).onComplete(() => {
           //this.camera.lookAt(e.position);
       }).start();
 
 
+      console.log(e.userData)
+      let d = e.userData
+
+      this.text.name.innerHTML = d.name + " (" + d.age + ")"
+      this.text.date.innerHTML = d.date
+      Velocity(this.text.name, "fadeIn", this.transition/2 )
+      Velocity(this.text.date, "fadeIn", this.transition/2 )
   }
 
   lookAtNext() 
@@ -220,26 +303,6 @@ class Demo {
     let e = this.objects[Math.floor(Math.random() * this.objects.length)]
 
     this.lookAt(e)
-
-
-/*
-    console.log(e.scale)
-    console.log(e.rotation)
-    console.log(e.position)
-    console.log(e.matrix)
-
-    var matrix = new THREE.Matrix4();
-    matrix.extractRotation( e.matrix );
-
-    var direction = new THREE.Vector3( 0, 0, 1 );
-    direction = matrix.multiplyVector3( direction );
-    console.log(direction)
-
-    var normalMatrix = new THREE.Matrix3().getNormalMatrix( e.matrixWorld );
-
-    var worldNormal = direction.clone().applyMatrix3( normalMatrix ).normalize();
-    console.log(worldNormal)
-    */
   }
 
   doGrid() 
@@ -274,6 +337,14 @@ class Demo {
     this.transform( this.targets.random, 2000 );
   }
 
+  doVisible() {
+
+    this.meshes.forEach((m) => {
+      m.visible = !m.visible
+    })
+
+  }
+
   transform( targets, duration ) {
 
 
@@ -282,25 +353,6 @@ class Demo {
           var object = this.objects[ i ];
           var target = targets[ i ];
         
-        /*
-          Tweenr.to(object.position, {
-            x: target.position.x,
-            y: target.position.y,
-            z: target.position.z,
-            duration: Math.random() * duration + duration
-          })
-
-
-          Tweenr.to(object.rotation, {
-            x: target.rotation.x,
-            y: target.rotation.y,
-            z: target.rotation.z,
-            duration: Math.random() * duration + duration
-          })
-          */
-
-
-
           new TWEEN.Tween( object.position )
             .to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
             .easing( TWEEN.Easing.Exponential.InOut )
@@ -312,14 +364,7 @@ class Demo {
             .start();
             
 
-        }
-
-/*
-        new TWEEN.Tween( this )
-          .to( {}, duration * 2 )
-    //      .onUpdate( this.update )
-          .start();
-  */        
+        }    
 
       }
 
