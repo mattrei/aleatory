@@ -13,8 +13,7 @@ const Tweenr = tweenr()
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-//global.jQuery = require('jquery');
-//require('blast-text')
+
 const Velocity = require('velocity-animate')
 require('velocity-animate/velocity.ui')
 
