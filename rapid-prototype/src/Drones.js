@@ -5,13 +5,23 @@ import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'
 //import SPE from 'shader-particle-engine/build/SPE'
-console.log(SPE)
-import ExplodeModifier from './modifiers/ExplodeModifier'
 
-global.jQuery = require('jquery');
-require('blast-text')
-require('velocity-animate')
-require('velocity-animate/velocity.ui')
+const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
+
+const CopyShader = require('./shaders/CopyShader')(THREE)
+const EffectComposer = require('./postprocessing/EffectComposer')(THREE)
+const MaskPass = require('./postprocessing/MaskPass')(THREE)
+const RenderPass = require('./postprocessing/RenderPass')(THREE)
+const BloomPass = require('./postprocessing/BloomPass')(THREE)
+const ShaderPass = require('./postprocessing/ShaderPass')(THREE)
+
+const FilmShader = require('./shaders/FilmShader')(THREE)
+const FilmPass = require('./postprocessing/FilmPass')(THREE)
+const DigitalGlitch = require('./shaders/DigitalGlitch')(THREE)
+const GlitchPass = require('./postprocessing/GlitchPass')(THREE)
+
+import Velocity from 'velocity-animate'
+import VelocityUI from 'velocity-animate/velocity.ui'
 
 //https://docs.google.com/spreadsheets/d/1NAfjFonM-Tn7fziqiv33HlGt09wgLZDSCP-BQaux51w/edit#gid=1000652376
 
@@ -19,9 +29,6 @@ const TEXT_DIV = "counter"
 
 
 const NUM_RAND_FIRES = 100
-
-//const FONT =  'DejaVu-sdf.fnt'
-//const FONT_IMG = 'DejaVu-sdf.png'
 
 
 const PI_HALF = Math.PI / 2
@@ -41,7 +48,9 @@ var Globe = function(container, opts) {
   var Shaders = {
     'earth' : {
       uniforms: {
-        'texture': { type: 't', value: null }
+        'texture': { type: 't', value: null },
+        'glowIntensity': {type: 'f', value: 3.0},
+        'redIntensity': {type: 'f', value: 1.0}
       },
       vertexShader: [
         'varying vec3 vNormal;',
@@ -55,18 +64,24 @@ var Globe = function(container, opts) {
       /* lower intensity */
       fragmentShader: [
         'uniform sampler2D texture;',
+        'uniform float glowIntensity;',
+        'uniform float redIntensity;',
         'varying vec3 vNormal;',
         'varying vec2 vUv;',
         'void main() {',
           'vec3 diffuse = texture2D( texture, vUv ).xyz;',
           'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
-          'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, 3.0 );',
+          'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, glowIntensity );',
+          'atmosphere = mix(atmosphere, vec3(.5,0.0,0.0), redIntensity);',
           'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );',
         '}'
       ].join('\n')
     },
     'atmosphere' : {
-      uniforms: {},
+      uniforms: {
+        'glowIntensity': {type: 'f', value: 12.0},
+        'redIntensity': {type: 'f', value: 1.0}
+      },
       vertexShader: [
         'varying vec3 vNormal;',
         'void main() {',
@@ -76,10 +91,13 @@ var Globe = function(container, opts) {
       ].join('\n'),
       /*lower intensity pow*/
       fragmentShader: [
+        'uniform float glowIntensity;',
+        'uniform float redIntensity;',
         'varying vec3 vNormal;',
         'void main() {',
-          'float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), 12.0 );',
-          'gl_FragColor = vec4( 1.0, 1.0, 1.0, 1.0 ) * intensity;',
+          'float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), glowIntensity );',
+          'vec3 color = mix(vec3(1.,1.,1.), vec3(.5,0.,0.), redIntensity);',
+          'gl_FragColor = vec4( color, 1.0 ) * intensity;',
         '}'
       ].join('\n')
     }
@@ -98,10 +116,12 @@ var Globe = function(container, opts) {
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
 
+  var earth = {glowing : 3.0 }
+
   var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
 //  var rotation = { x: 0, y: 0 },
 //      target = { x: Math.PI*3/2, y: Math.PI / 6.0 },
-  var    targetOnDown = { x: 0, y: 0 };
+  var targetOnDown = { x: 0, y: 0 };
 
   // camera's position
   var rotation = { x: 0, y: 0 };
@@ -119,64 +139,8 @@ var Globe = function(container, opts) {
     document.body.appendChild(stats.domElement);
   }
 
-/*
-  function initFonts(renderer) {
-    let opt = { 
-      font: 'assets/fonts/' + FONT,
-      image: 'assets/fonts/' + FONT_IMG
-    }
-
-    LoadBmFont(opt.font, function(err, font) {
-      if (err)
-        throw err
-      THREE.ImageUtils.loadTexture(opt.image, undefined, function(tex) {
-        startFont(font, tex, renderer)
-      })  
-    })
-
-  }
-
-  function startFont(font, texture, renderer) {
-
-
-        //setup our texture with some nice mipmapping etc
-        var maxAni = renderer.getMaxAnisotropy()
-  texture.needsUpdate = true
-  texture.minFilter = THREE.LinearMipMapLinearFilter
-  texture.magFilter = THREE.LinearFilter
-  texture.generateMipmaps = true
-  texture.anisotropy = maxAni
-    var geometry = CreateText({
-      text: 'Lorem ipsumDolor sit amet.',
-      width: 1000,
-      font: font
-    })
-
-     var material = new THREE.ShaderMaterial(Shader({
-      map: texture,
-      smooth: 1/32, //the smooth value for SDF
-      side: THREE.DoubleSide,
-        depthWrite: false,
-        depthRead: false,
-        depthTest: false,
-      transparent: true,
-      color: 'rgb(230, 230, 230)'
-    }))
-
-
-            //now do something with our text mesh ! 
-      var text = new THREE.Mesh(geometry, material)
-
-
-
-       var textAnchor = new THREE.Object3D()
-      textAnchor.add(text)
-      //textAnchor.scale.multiplyScalar(1/(window.devicePixelRatio||1))
-      scene.add(textAnchor)
-  }
-*/
   function initPass(){
-        composer = new THREE.EffectComposer( renderer );
+        let composer = new THREE.EffectComposer( renderer );
         composer.addPass( new THREE.RenderPass( scene, camera ) );
         postprocessing.composer = composer;
 
@@ -186,7 +150,7 @@ var Globe = function(container, opts) {
         var passes = [
             // ['vignette', new THREE.ShaderPass( THREE.VignetteShader ), true],
             ["film", new THREE.FilmPass( 0.85, 0.5, 2048, false ), false],
-            ['staticPass', new THREE.ShaderPass( THREE.StaticShader ), false],
+            //['staticPass', new THREE.ShaderPass( THREE.StaticShader ), false],
             ["glitch", new THREE.GlitchPass(64, 50), true]
         ]
 
@@ -199,14 +163,14 @@ var Globe = function(container, opts) {
             composer.addPass(passes[i][1]);
         };
 
-        staticParams = {
+        let staticParams = {
             show: true,
             amount:20.10,
             size2:20.0
         }
 
-        postprocessing['staticPass'].uniforms[ "amount" ].value = staticParams.amount;
-        postprocessing['staticPass'].uniforms[ "size" ].value = staticParams.size2;
+        //postprocessing['staticPass'].uniforms[ "amount" ].value = staticParams.amount;
+        //postprocessing['staticPass'].uniforms[ "size" ].value = staticParams.size2;
     }
 
     function renderPass() {
@@ -235,7 +199,8 @@ var Globe = function(container, opts) {
     explodeModifier.modify( geometry );
 
     shader = Shaders['earth'];
-    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+    //uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+    uniforms = shader.uniforms
 
     uniforms['texture'].value = THREE.ImageUtils.loadTexture(imgDir+'world.jpg');
 
@@ -303,7 +268,8 @@ var Globe = function(container, opts) {
 
     // Atmosphere
     shader = Shaders['atmosphere'];
-    uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+    //uniforms = THREE.UniformsUtils.clone(shader.uniforms);
+    uniforms = shader.uniforms
 
     material = new THREE.ShaderMaterial({
 
@@ -331,9 +297,6 @@ var Globe = function(container, opts) {
     renderer.setSize(w, h);
 
     startStats()
-
-    //initFonts(renderer)
-
     renderer.domElement.style.position = 'absolute';
 
     container.appendChild(renderer.domElement);
@@ -341,8 +304,6 @@ var Globe = function(container, opts) {
     container.addEventListener('mousedown', onMouseDown, false);
 
     container.addEventListener('mousewheel', onMouseWheel, false);
-
-    document.addEventListener('keydown', onDocumentKeyDown, false);
 
     window.addEventListener('resize', onWindowResize, false);
 
@@ -353,6 +314,8 @@ var Globe = function(container, opts) {
     container.addEventListener('mouseout', function() {
       overRenderer = false;
     }, false);
+
+    initPass()
 
   }
 
@@ -407,19 +370,6 @@ var Globe = function(container, opts) {
     return false;
   }
 
-  function onDocumentKeyDown(event) {
-    switch (event.keyCode) {
-      case 38:
-        zoom(100);
-        event.preventDefault();
-        break;
-      case 40:
-        zoom(-100);
-        event.preventDefault();
-        break;
-    }
-  }
-
   function onWindowResize( event ) {
     camera.aspect = container.offsetWidth / container.offsetHeight;
     camera.updateProjectionMatrix();
@@ -446,6 +396,17 @@ var Globe = function(container, opts) {
       particleGroup.tick( dt );
     }
 
+
+
+    let earthUniforms = Shaders['earth'].uniforms;
+    earthUniforms.glowIntensity.value = earth.glowing;
+    earthUniforms.redIntensity.value = 1 -earth.glowing / 3;
+
+    let atmosphereUniforms = Shaders['atmosphere'].uniforms;
+    atmosphereUniforms.glowIntensity.value = earth.glowing * 4;
+    atmosphereUniforms.redIntensity.value = 1- earth.glowing / 3;
+
+
     zoom(curZoomSpeed);
 
     rotation.x += (target.x - rotation.x) * 0.1;
@@ -462,7 +423,8 @@ var Globe = function(container, opts) {
     camera.lookAt(mesh.position);
 
 
-    renderer.render(scene, camera);
+    //renderer.render(scene, camera);
+    renderPass()
     stats.end();
   }
 
@@ -530,23 +492,6 @@ var Globe = function(container, opts) {
 
   function moveGlobeRnd() {
 
-    //jQuery('#counter').textillate('in')
-    jQuery('#counter')
-      .html("<p>Mat Trei</p><p>" + Math.random() + '</p>')
-      .blast({delimiter: 'word'})
-      //.velocity("fadeOut", { duration: 300 })
-      //.velocity("fadeIn", { delay: 300, duration: 700 }) 
-      //.velocity("slideDown", { duration: 500 })
-      .velocity("scroll", { duration: 1500, easing: "spring" })
-    .velocity({ opacity: 1 });
-      //.velocity("slideUp", { delay: 500, duration: 1500 });
-
-
-      //.css({ opacity: 0, display: "inline-block" })
-      //.velocity("slideUp", { duration: 1500 });
-      //.velocity({translateX: "200px",
-    //rotateZ: "45deg"})
-
     let zoomDamp = distance/1000;
 
     let moveX = (Math.random() * PI_TWO * 2) - PI_TWO,
@@ -584,6 +529,10 @@ var Globe = function(container, opts) {
                     
                 }
 
+  }
+  function glitch() {
+    console.log("do glitch")
+    postprocessing['glitch'].generateTrigger();
   }
 
 
@@ -624,6 +573,7 @@ var Globe = function(container, opts) {
   this.createFire = createFire;
   this.moveGlobeRnd = moveGlobeRnd;
   this.moveGlobe = moveGlobe;
+  this.glitch = glitch
 
   this.distanceTarget = distanceTarget;
 
@@ -633,6 +583,8 @@ var Globe = function(container, opts) {
   this.renderer = renderer;
   this.scene = scene;
   this.camera = camera;
+
+  this.earth = earth
   this.target = target;
 
   return this;
@@ -665,13 +617,6 @@ class Drones {
     counter.style.left = "70%"
     counter.style.top = "50%"
     document.body.appendChild(counter); 
-
-    jQuery('#' + TEXT_DIV)
-      .html("Matthias Treitler")
-      //.blast({delimiter: 'word'})
-      //.css({ opacity: "0" })
-      .velocity("fadeIn", { duration: 5000 })
-      .velocity("callout.shake")
   }
 
   startGUI()
@@ -681,6 +626,10 @@ class Drones {
     gui.add(this.globe, 'createRndFire')
     gui.add(this.globe, 'moveGlobeRnd')
     gui.add(this.globe, 'moveGlobe')
+    gui.add(this.globe, 'glitch')
+
+    gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
+
     //gui.add(this.globe, 'distanceTarget', 300, 2000)
     gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
     gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)

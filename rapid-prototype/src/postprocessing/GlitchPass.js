@@ -1,7 +1,8 @@
 /**
  
  */
-
+module.exports = function(THREE)
+ {
 THREE.GlitchPass = function ( dt_size ) {
 
 	if ( THREE.DigitalGlitch === undefined ) console.error( "THREE.GlitchPass relies on THREE.DigitalGlitch" );
@@ -36,7 +37,8 @@ THREE.GlitchPass = function ( dt_size ) {
 	
 	this.goWild = false;
 	this.curF = 0;
-	this.generateTrigger();
+	//this.generateTrigger();
+	this.doGlitch = false
 	
 };
 
@@ -59,7 +61,7 @@ THREE.GlitchPass.prototype = {
 			this.curF = 0;
 			this.generateTrigger();
 
-		} else if ( this.curF % this.randX < this.randX / 5 ) {
+		} else if ( this.doGlitch) {
 
 			this.uniforms[ 'amount' ].value = Math.random() / 90;
 			this.uniforms[ 'angle' ].value = THREE.Math.randFloat( - Math.PI, Math.PI );
@@ -73,7 +75,8 @@ THREE.GlitchPass.prototype = {
 			this.uniforms[ 'byp' ].value = 1;
 
 		}
-		this.curF ++;
+		//this.curF ++;
+		this.curF = 1
 		
 		this.quad.material = this.material;
 		if ( this.renderToScreen ) {
@@ -90,6 +93,7 @@ THREE.GlitchPass.prototype = {
 	generateTrigger: function() {
 
 		this.randX = THREE.Math.randInt( 120, 240 );
+		this.doGlitch = !this.doGlitch
 
 	},
 	generateHeightmap: function( dt_size ) {
@@ -115,3 +119,4 @@ THREE.GlitchPass.prototype = {
 
 	}
 };
+}

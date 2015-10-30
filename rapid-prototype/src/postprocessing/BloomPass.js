@@ -1,7 +1,8 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
+module.exports = function(THREE)
+ {
 THREE.BloomPass = function ( strength, kernelSize, sigma, resolution ) {
 
 	strength = ( strength !== undefined ) ? strength : 1;
@@ -113,3 +114,4 @@ THREE.BloomPass.prototype = {
 
 THREE.BloomPass.blurX = new THREE.Vector2( 0.001953125, 0.0 );
 THREE.BloomPass.blurY = new THREE.Vector2( 0.0, 0.001953125 );
+}

@@ -1,6 +1,9 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
+ module.exports = function(THREE)
+ {
+
 
 THREE.EffectComposer = function ( renderer, renderTarget ) {
 
@@ -135,3 +138,4 @@ THREE.EffectComposer.prototype = {
 	}
 
 };
+}

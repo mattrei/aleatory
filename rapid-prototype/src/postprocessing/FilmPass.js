@@ -1,7 +1,8 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
+module.exports = function(THREE)
+ {
 THREE.FilmPass = function ( noiseIntensity, scanlinesIntensity, scanlinesCount, grayscale ) {
 
 	if ( THREE.FilmShader === undefined )
@@ -59,3 +60,4 @@ THREE.FilmPass.prototype = {
 	}
 
 };
+}

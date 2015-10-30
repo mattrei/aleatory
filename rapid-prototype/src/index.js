@@ -1,6 +1,6 @@
-const osc               = require('osc/dist/osc-browser.js');
-const oscPort = new osc.WebSocketPort({
-    url: "ws://localhost:8081" // URL to your Web Socket server. 
+import OSC from 'osc/dist/osc-browser.js'
+const oscPort = new OSC.WebSocketPort({
+    url: "ws://localhost:8081"
 });
 oscPort.open();
 
@@ -37,7 +37,6 @@ console.log(router)
 
 
 
-//const demo = new Scheduled();
 
 
 
@@ -50,4 +49,5 @@ oscPort.on("message", function (oscMsg) {
   }
 });
 
-//window.onresize = demo.onResize.bind(demo);
+const demo2 = new Drones();
+window.onresize = demo2.onResize.bind(demo2);

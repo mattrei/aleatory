@@ -19,7 +19,8 @@
  * This version is provided under a Creative Commons Attribution 3.0 License
  * http://creativecommons.org/licenses/by/3.0/
  */
-
+module.exports = function(THREE)
+ {
 THREE.FilmShader = {
 
 	uniforms: {
@@ -102,3 +103,5 @@ THREE.FilmShader = {
 	].join( "\n" )
 
 };
+
+}

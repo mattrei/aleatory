@@ -9,7 +9,8 @@
  * amount: shift distance (1 is width of input)
  * angle: shift angle in radians
  */
-
+module.exports = function(THREE)
+ {
 THREE.DigitalGlitch = {
 
 	uniforms: {
@@ -101,3 +102,4 @@ THREE.DigitalGlitch = {
 	].join( "\n" )
 
 };
+}

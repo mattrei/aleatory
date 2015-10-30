@@ -4,7 +4,9 @@
  *
  * @author alteredq / http://alteredqualia.com/
  */
-import THREE from 'three.js'
+
+module.exports = function(THREE)
+ {
 
 THREE.ExplodeModifier = function () {
 
@@ -42,4 +44,4 @@ THREE.ExplodeModifier.prototype.modify = function ( geometry ) {
     delete geometry.__tmpVertices;
 
 };
-export default THREE.ExplodeModifier
+}

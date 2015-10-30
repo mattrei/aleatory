@@ -1,7 +1,8 @@
 /**
  * @author alteredq / http://alteredqualia.com/
  */
-
+module.exports = function(THREE)
+ {
 THREE.ShaderPass = function ( shader, textureID ) {
 
 	this.textureID = ( textureID !== undefined ) ? textureID : "tDiffuse";
@@ -57,3 +58,4 @@ THREE.ShaderPass.prototype = {
 	}
 
 };
+}
