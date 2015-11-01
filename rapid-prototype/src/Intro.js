@@ -5,13 +5,22 @@ import MathF from 'utils-perf'
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
+const Velocity = require('velocity-animate')
+require('velocity-animate/velocity.ui')
+
 class Demo {
   constructor(args) 
   {
+    
+    this.introText = ''
+
+    this.text = {intro: null, title: null}
+    this.uniforms = {}
+    this.speed = 1.0;
+    this.height = 1.0;
+
     this.startStats();
     this.startGUI();
-
-    this.uniforms = {}
 
     this.renderer = null;
     this.camera   = null;
@@ -19,12 +28,52 @@ class Demo {
     this.counter  = 0;
     this.clock    = new THREE.Clock();
 
+    this.createTextDiv()
     this.createRender();
     this.createScene();
     this.addObjects();
 
     this.onResize();
     this.update();
+  }
+
+  createTextDiv() 
+  {
+    let div = document.createElement('div')
+    div.id = "textIntro"
+    div.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:40px;font-weight:normal;line-height:15px;color:white;
+      `
+    div.style.position = "absolute"
+    div.style.width = "100%"
+    div.style['text-align'] = "center"
+    div.style.top = "50%"
+    document.body.appendChild(div)
+
+    this.text.intro = div
+
+    div = document.createElement('div')
+    div.id = "textTitle"
+    div.style.cssText = `
+      font-family:Helvetica,Arial,sans-serif;font-size:60px;font-weight:bold;line-height:15px;color:white;
+      `
+    div.style.position = "absolute"
+    div.style.width = "100%"
+    div.style['text-align'] = "center"
+    div.style.top = "30%"
+    document.body.appendChild(div)
+
+    div.innerHTML = "aleatory"
+
+    this.text.title = div
+  }
+
+  updateIntroText() {
+    Velocity.animate(this.text.intro, "fadeOut", this.transition/4)
+      .then((e) => {
+        this.text.intro.innerHTML = this.introText
+        Velocity(this.text.intro, "fadeIn", this.transition )
+      })
   }
 
   startStats()
@@ -38,7 +87,8 @@ class Demo {
   {
     this.renderer = new THREE.WebGLRenderer( {
         antialias : true,
-        clearColor: 0
+        clearColor: 0,
+        clearAlpha: 1 
     } );
     document.body.appendChild(this.renderer.domElement)
   }
@@ -47,6 +97,8 @@ class Demo {
   {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000 );
     this.camera.position.set(0, 45, 240);
+    this.camera.rotation.x = Math.PI*2
+
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
     this.controls.maxDistance = 500;
 
@@ -56,35 +108,43 @@ class Demo {
   addObjects()
   {
     var gridHelper = new THREE.GridHelper( 100, 10 );        
-    this.scene.add( gridHelper );
+    //this.scene.add( gridHelper );
 
     this.uniforms = {
         resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
         time: { type: "f", value: 0.1 },
-        speed: { type: "f", value: 1.0 }
+        speed: { type: "f", value: this.speed},
+        height: { type: "f", value: this.height},
+        noise_elevation: { type: "f", value: 1.0},
     };
 
     var planeMaterial = new THREE.ShaderMaterial( { 
         uniforms: this.uniforms,
         vertexShader: vertexShader,
-        fragmentShader: fragmentShader
+        fragmentShader: fragmentShader,
+        transparent: true
+        //wireframe: true
     } );
 
     var geometry = //new THREE.PlaneGeometry( window.innerWidth / (window.innerWidth+window.innerHeight), window.innerHeight / (window.innerWidth+window.innerHeight), 0);
-new THREE.PlaneBufferGeometry(500, 500,20,20);
+new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
 
+    //geometry = new THREE.BoxGeometry(100, 10, 10, 20 ,20 ,20)
     //planeMaterial = new THREE.NormalMaterial()
     var plane = new THREE.Mesh(geometry, planeMaterial);
-    //plane.rotation.z = Math.PI
+    //plane.rotateOnAxis('X', Math.PI)
+    //plane.rotation.x = Math.PI
     this.scene.add(plane);
   }
 
   startGUI()
   {
-    // var gui = new dat.GUI()
-    // gui.add(camera.position, 'x', 0, 400)
-    // gui.add(camera.position, 'y', 0, 400)
-    // gui.add(camera.position, 'z', 0, 400)
+    var gui = new dat.GUI()
+    gui.add(this, 'speed', 0.1, 10)
+    gui.add(this, 'height', 1, 20)
+
+    gui.add(this, 'introText')
+    gui.add(this, 'updateIntroText')
   }
 
   update()
@@ -92,6 +152,8 @@ new THREE.PlaneBufferGeometry(500, 500,20,20);
     this.stats.begin();
 
     this.uniforms.time.value += this.clock.getDelta();
+    this.uniforms.speed.value = this.speed;
+    this.uniforms.height.value = this.height;
 
     this.renderer.render(this.scene, this.camera);
 
@@ -126,25 +188,29 @@ const vertexShader = `
 
             uniform float time;
             uniform float speed;
+            uniform float height;
             //uniform float valley_elevation;
-            //uniform float noise_elevation;
+            uniform float noise_elevation;
 
 
             void main()
             {
+                vUv = uv;
                 // First perlin passes
                 float displacement  = pnoise( .4 * position + vec3( 0, speed * time, 0 ), vec3( 100.0 ) ) * 1. * .7;
-                // displacement       += pnoise( 2. * position + vec3( 0, speed * time * 5., 0 ), vec3( 100. ) ) * .3 * noise_elevation;
-                // displacement       += pnoise( 8. * position + vec3( 0, speed * time * 20., 0 ), vec3( 100. ) ) * .1 * noise_elevation;
+                 displacement       += pnoise( 2. * position + vec3( 0, speed * time * 5., 0 ), vec3( 100. ) ) * .3 * height;
+                 displacement       += pnoise( 8. * position + vec3( 0, speed * time * 20., 0 ), vec3( 100. ) ) * .1 * 1.;
 
                 
                 // Sinus
-                displacement = displacement + (sin(position.x / 2. - M_PI / 2.)) * .8;
+                displacement = displacement + (sin(position.x / 2. - M_PI / 2.)) + 0.8;
 
-                vec3 newPosition = vec3(position.x,position.y,displacement);
+                vec3 newPosition = vec3(position.x,position.y, displacement*height);
 
                 vNoise = displacement;
-                gl_Position      = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+                //vNoise = sin(position.x / 2. - M_PI / 2.);
+                //vec3 newPosition = position + normal * vec3(sin(time * 0.2) * 3.0);
+                gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
             }
 
 `
@@ -152,15 +218,17 @@ const fragmentShader = `
 varying vec2 vUv;
 varying float vNoise;
 uniform float time;
+uniform float speed;
 
         #define M_PI 3.1415926535897932384626433832795
 
         void main()
         {
-            float alpha = sin(vUv.y * M_PI) / 2.;
-            // alpha = 1.;
+            vec2 p = -1.0 + 2.0 *vUv;
+            float alpha = sin(p.y * M_PI) / 2.;
+            //alpha = 1.;
 
-            float time2 = time / 1.;
+            float time2 = time / (1. / speed);
 
             float r = .5 + sin(time2);
             float g = .5 + cos(time2);
