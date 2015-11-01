@@ -8,7 +8,7 @@ oscPort.open();
 
 var demo
 
-
+import Intro from './Intro';
 import Executed from './Executed';
 import Scheduled from './Scheduled';
 import Tube from './Tube';
@@ -49,5 +49,5 @@ oscPort.on("message", function (oscMsg) {
   }
 });
 
-const demo2 = new Drones();
+const demo2 = new Intro();
 window.onresize = demo2.onResize.bind(demo2);
