@@ -12,9 +12,11 @@ class Demo {
   constructor(args) 
   {
     
+    this.gui = null
     this.introText = ''
 
     this.text = {intro: null, title: null}
+
     this.uniforms = {}
     this.speed = 1.0;
     this.height = 1.0;
@@ -139,17 +141,22 @@ new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
 
   startGUI()
   {
-    var gui = new dat.GUI()
-    gui.add(this, 'speed', 0.1, 10)
-    gui.add(this, 'height', 1, 20)
+    this.gui = new dat.GUI()
+    this.gui.add(this, 'speed', 0.1, 10)
+    this.gui.add(this, 'height', 1, 20)
 
-    gui.add(this, 'introText')
-    gui.add(this, 'updateIntroText')
+    this.gui.add(this, 'introText')
+    this.gui.add(this, 'updateIntroText')
   }
 
   update()
   {
     this.stats.begin();
+
+      // Iterate over all controllers
+      for (var i in this.gui.__controllers) {
+        this.gui.__controllers[i].updateDisplay();
+      }
 
     this.uniforms.time.value += this.clock.getDelta();
     this.uniforms.speed.value = this.speed;
@@ -166,6 +173,17 @@ new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
+  }
+
+  onVariable(name, val) 
+  {
+    this[name] = val;
+  }
+  onFunc(name) 
+  {
+    let f = this[name]
+    f = f.bind(this)
+    f()
   }
 }
 
