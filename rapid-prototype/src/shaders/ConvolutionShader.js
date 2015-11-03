@@ -5,7 +5,7 @@
  * ported from o3d sample to WebGL / GLSL
  * http://o3d.googlecode.com/svn/trunk/samples/convolution.html
  */
-
+ module.exports = function(THREE){
 THREE.ConvolutionShader = {
 
 	defines: {
@@ -99,3 +99,4 @@ THREE.ConvolutionShader = {
 	}
 
 };
+}

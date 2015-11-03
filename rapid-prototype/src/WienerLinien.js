@@ -2,7 +2,7 @@ import THREE from 'three.js';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 
-import ConvolutionShader from './shaders/ConvolutionShader'
+const ConvolutionShader = require('./shaders/ConvolutionShader')(THREE)
 import CopyShader from './shaders/CopyShader'
 import FXAAShader from './shaders/FXAAShader'
 

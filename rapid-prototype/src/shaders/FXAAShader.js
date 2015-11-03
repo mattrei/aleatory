@@ -8,6 +8,7 @@
  * http://www.glge.org/demos/fxaa/
  */
 
+module.exports = function(THREE){
 THREE.FXAAShader = {
 
 	uniforms: {
@@ -86,3 +87,4 @@ THREE.FXAAShader = {
 	].join( "\n" )
 
 };
+}

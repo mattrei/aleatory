@@ -49,5 +49,5 @@ oscPort.on("message", function (oscMsg) {
   }
 });
 
-const demo2 = new Intro();
+const demo2 = new TextParticles();
 window.onresize = demo2.onResize.bind(demo2);

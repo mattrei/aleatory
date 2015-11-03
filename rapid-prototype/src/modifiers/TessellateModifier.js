@@ -4,7 +4,8 @@
  *
  * @author alteredq / http://alteredqualia.com/
  */
-import THREE from 'three.js'
+ module.exports = function(THREE)
+ {
 
 THREE.TessellateModifier = function ( maxEdgeLength ) {
 
@@ -235,3 +236,4 @@ THREE.TessellateModifier.prototype.modify = function ( geometry ) {
     geometry.faceVertexUvs = faceVertexUvs;
 
 };
+}
