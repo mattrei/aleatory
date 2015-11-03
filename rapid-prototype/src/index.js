@@ -36,18 +36,26 @@ router.addRoute('#/Scheduled', function(req, next){
 console.log(router)
 
 
-
-
-
-
+const viz = new Intro();
 
 oscPort.on("message", function (oscMsg) {
-  if (oscMsg.address === '/page') {
-        var pageName = oscMsg.args[0]
-        console.log("Page change. "+ pageName)
-        router.redirect('#/' + pageName)
+  if (oscMsg.address === '/p') {
+        let n = oscMsg.args[0]
+        console.log("Page change. "+ n)
+        router.redirect('#/' + n)
+  }
+
+  if (oscMsg.address === '/v') {
+        let n = oscMsg.args[0]
+        let v = oscMsg.args[1]
+        viz.onVariable(n, v)
+  }
+  if (oscMsg.address === '/f') {
+        let n = oscMsg.args[0]
+        viz.onFunc(n)
   }
 });
 
-const demo2 = new TextParticles();
-window.onresize = demo2.onResize.bind(demo2);
+
+window.onresize = viz.onResize.bind(viz);
+
