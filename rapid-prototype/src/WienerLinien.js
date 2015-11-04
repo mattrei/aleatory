@@ -3,16 +3,18 @@ import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 
 const ConvolutionShader = require('./shaders/ConvolutionShader')(THREE)
-import CopyShader from './shaders/CopyShader'
-import FXAAShader from './shaders/FXAAShader'
+const CopyShader = require('./shaders/CopyShader')(THREE)
+const FXAAShader = require('./shaders/FXAAShader')(THREE)
 
-import EffectComposer from './postprocessing/EffectComposer'
-import MaskPass from './postprocessing/MaskPass'
-import RenderPass from './postprocessing/RenderPass'
-import BloomPass from './postprocessing/BloomPass'
-import ShaderPass from './postprocessing/ShaderPass'
+const EffectComposer = require('./postprocessing/EffectComposer')(THREE)
+const MaskPass = require('./postprocessing/MaskPass')(THREE)
+const RenderPass = require('./postprocessing/RenderPass')(THREE)
+const BloomPass = require('./postprocessing/BloomPass')(THREE)
+const ShaderPass = require('./postprocessing/ShaderPass')(THREE)
 
 const OrbitControls = require('three-orbit-controls')(THREE);
+
+const WAGNER = require('./Wagner/Wagner')(THREE)
 
 const SCALE_Z=1
 const SCALE = 4000
@@ -105,7 +107,7 @@ class Line {
       })
 
       console.log(points)
-      this.spline = new THREE.SplineCurve3(points);
+      this.spline = new THREE.CatmullRomCurve3(points);
 
 
 

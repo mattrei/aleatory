@@ -33,10 +33,9 @@ router.addRoute('#/Scheduled', function(req, next){
     console.log("sched")
     window.onresize = demo.onResize.bind(demo);
 });
-console.log(router)
 
 
-const viz = new Intro();
+const viz = new WienerLinien();
 
 oscPort.on("message", function (oscMsg) {
   if (oscMsg.address === '/p') {
