@@ -1,4 +1,4 @@
-import THREE from 'three.js'; 
+import THREE from 'three'; 
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
@@ -8,14 +8,22 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 const Velocity = require('velocity-animate')
 require('velocity-animate/velocity.ui')
 
+
+var WAGNER = require('@superguigui/wagner');
+var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass');
+
 class Demo {
   constructor(args) 
   {
     
+    this.counter = 0
     this.gui = null
     this.introText = ''
+    this.plane = null
 
     this.text = {intro: null, title: null}
+
+    this.rotX = 0
 
     this.uniforms = {}
     this.speed = 1.0;
@@ -24,6 +32,8 @@ class Demo {
     this.startStats();
     this.startGUI();
 
+    this.multiPassBloomPass = null
+    this.composer = null
     this.renderer = null;
     this.camera   = null;
     this.scene    = null;
@@ -33,6 +43,7 @@ class Demo {
     this.createTextDiv()
     this.createRender();
     this.createScene();
+    this.createPp()
     this.addObjects();
 
     this.onResize();
@@ -93,18 +104,32 @@ class Demo {
         clearAlpha: 1 
     } );
     document.body.appendChild(this.renderer.domElement)
+
+
+
   }
 
   createScene()
   {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000 );
     this.camera.position.set(0, 45, 240);
-    this.camera.rotation.x = Math.PI*2
+    //this.camera.lookAt(new THREE.Vector3(0, 145, 0).normalize())
 
-    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.maxDistance = 500;
+    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    //this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
+  }
+
+  createPp ()
+  {
+    this.composer = new WAGNER.Composer( this.renderer, { useRGBA: false } );
+    this.composer.setSize( window.innerWidth, window.innerHeight );
+
+    this.bloomPass = new BloomPass({
+      blurAmount: 2,
+      applyZoomBlur: true
+    });
   }
 
   addObjects()
@@ -129,14 +154,17 @@ class Demo {
     } );
 
     var geometry = //new THREE.PlaneGeometry( window.innerWidth / (window.innerWidth+window.innerHeight), window.innerHeight / (window.innerWidth+window.innerHeight), 0);
-new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
+new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
 
     //geometry = new THREE.BoxGeometry(100, 10, 10, 20 ,20 ,20)
     //planeMaterial = new THREE.NormalMaterial()
-    var plane = new THREE.Mesh(geometry, planeMaterial);
+    this.plane = new THREE.Mesh(geometry, planeMaterial);
+
+    this.plane.rotation.set(-Math.PI * 0.5,0,0)
+    this.plane.position.y = -window.innerHeight*0.15
     //plane.rotateOnAxis('X', Math.PI)
-    //plane.rotation.x = Math.PI
-    this.scene.add(plane);
+    this.scene.add(this.plane);
+
   }
 
   startGUI()
@@ -147,7 +175,19 @@ new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
 
     this.gui.add(this, 'introText')
     this.gui.add(this, 'updateIntroText')
+
+    this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)    
   }
+
+  renderPass() {
+      this.renderer.autoClearColor = true;
+      this.composer.reset();
+      this.composer.render( this.scene, this.camera );
+        
+      this.composer.pass( this.bloomPass );
+
+      this.composer.toScreen();
+    }
 
   update()
   {
@@ -158,10 +198,17 @@ new THREE.PlaneBufferGeometry(window.innerHeight, window.innerWidth,10,10);
         this.gui.__controllers[i].updateDisplay();
       }
 
+
+
+          //this.camera.rotation.set(this.rotX,0,0)
+      //    this.plane.rotation.y = this.rotX
+        //  this.plane.rotation.z = this.rotX
+
     this.uniforms.time.value += this.clock.getDelta();
     this.uniforms.speed.value = this.speed;
     this.uniforms.height.value = this.height;
 
+    //this.renderPass()
     this.renderer.render(this.scene, this.camera);
 
     this.stats.end()

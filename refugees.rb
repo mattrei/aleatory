@@ -2,7 +2,7 @@
 require 'mechanize'
 require 'bing-search'
 
-API_KEY = 'Utu7oE4xxDzx44gHnZY4QMjDJwAXS3x56D7fS9m2q59' #change ;)
+API_KEY = 'Utu7oE4xxDzx44gHnZY4QMjDJwAXS3x56D7fS9m2q58' #change ;)
 SEARCH = 'Flüchtlinge Zäune'
 
 BingSearch.account_key = API_KEY

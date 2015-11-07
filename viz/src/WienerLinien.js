@@ -14,7 +14,12 @@ const ShaderPass = require('./postprocessing/ShaderPass')(THREE)
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-const WAGNER = require('./Wagner/Wagner')(THREE)
+const WAGNER = require('./Wagner/Wagner')
+
+const TextGeometry = require('./geometries/TextGeometry')(THREE)
+const FontUtils = require('./utils/FontUtils')(THREE)
+
+const Helvetiker = require('./fonts/helvetiker_regular.typeface.js')
 
 const SCALE_Z=1
 const SCALE = 4000

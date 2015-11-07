@@ -9,6 +9,7 @@ oscPort.open();
 var demo
 
 import Intro from './Intro';
+import Headlines from './Headlines';
 import Executed from './Executed';
 import Scheduled from './Scheduled';
 import Tube from './Tube';
