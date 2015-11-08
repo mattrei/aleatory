@@ -2,6 +2,8 @@ import THREE from 'three';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
+var Line = require('three-line-2d')(THREE)
+import Bezier from 'adaptive-bezier-curve'
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -12,6 +14,11 @@ require('velocity-animate/velocity.ui')
 var WAGNER = require('@superguigui/wagner');
 var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass');
 
+const FLY_CURVE = 20
+const MAX_POINTS = 500
+const TRIANGLE_GAP = 500
+const NUM_TRIANGLES = 15
+
 class Demo {
   constructor(args) 
   {
@@ -20,6 +27,13 @@ class Demo {
     this.gui = null
     this.introText = ''
     this.plane = null
+    this.shakeX = 0
+    this.shakeY = 0
+
+
+    this.flyingSpeed = 1
+    this.triangles = []
+    this.flyingLine = null
 
     this.text = {intro: null, title: null}
 
@@ -37,7 +51,6 @@ class Demo {
     this.renderer = null;
     this.camera   = null;
     this.scene    = null;
-    this.counter  = 0;
     this.clock    = new THREE.Clock();
 
     this.createTextDiv()
@@ -45,6 +58,9 @@ class Demo {
     this.createScene();
     this.createPp()
     this.addObjects();
+
+    this.createTriangles()
+    this.createFlyingLine()
 
     this.onResize();
     this.update();
@@ -104,10 +120,135 @@ class Demo {
         clearAlpha: 1 
     } );
     document.body.appendChild(this.renderer.domElement)
-
-
-
   }
+
+  createTriangles()
+  {
+
+
+    let geometry = new THREE.Geometry();
+    geometry.vertices.push(new THREE.Vector3(-1, 0, 0));
+    geometry.vertices.push(new THREE.Vector3(0, 1, 0));
+    geometry.vertices.push(new THREE.Vector3(1, 0, 0));
+    geometry.vertices.push(new THREE.Vector3(-1, 0, 0));
+
+
+    let material = new THREE.ShaderMaterial( { 
+        uniforms: this.uniforms,
+        vertexShader: triangleVertexShader,
+        fragmentShader: fragmentShader
+    } );
+
+
+    for (let i=0; i<NUM_TRIANGLES; i++) {
+      let line = new THREE.Line(geometry, material);
+      this.scene.add(line)
+
+      //line.position.y = Math.sin(i * 0.5) * 40
+      line.position.z = -i * TRIANGLE_GAP
+      line.position.y = Math.sin(line.position.z * 0.0025) * FLY_CURVE
+      line.position.X = Math.sin(line.position.z * 0.0025) * FLY_CURVE
+
+      line.scale.x = line.scale.y = 40
+      line.updateMatrix()
+
+      this.triangles.push(line)
+
+
+      if (i !== 0) {
+        // create connecting lines in between
+        var quality = 5
+        
+        
+        let f = this.triangles[i-1]
+        let l = this.triangles[i]
+
+        let curve1 = Bezier([f.position.x, f.position.y], [10, 20], [20, 30], [l.position.x, l.position.y], quality)
+        
+
+        //create our geometry 
+        let geom1 = Line(curve1)
+        //let geom2 = Line(curve2)
+
+        let mesh1 = new THREE.Mesh(geom1, material)
+        this.scene.add(mesh1)
+
+        //let mesh2 = new THREE.Mesh(geom1, material)
+        //this.scene.add(mesh2)
+      }
+    }
+  }
+
+  createFlyingLine() {
+
+    var geometry = new THREE.BufferGeometry();
+
+    var positions = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
+    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+
+    // drawcalls
+    //drawCount = 2; // draw the first 2 points, only
+    geometry.setDrawRange( 0, 2 );
+
+    var material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
+
+    this.flyingLine = new THREE.Line( geometry,  material );
+    this.scene.add( this.flyingLine );
+
+    this.flyingLine.geometry.attributes.position.needsUpdate = true; // required after the first render
+  }
+
+  fly() 
+  {
+    this.camera.position.z -= this.flyingSpeed
+    this.plane.position.z -= this.flyingSpeed
+
+    this.triangles.forEach(t => {
+      //t.position.z += this.flyingSpeed * 10
+
+      if (t.position.z > this.camera.position.z) {
+        t.position.z =  (this.camera.position.z - TRIANGLE_GAP * NUM_TRIANGLES)
+      }
+    })
+
+    this.camera.position.y = Math.sin(this.camera.position.z * 0.0025) * FLY_CURVE
+    this.camera.position.x = Math.sin(this.camera.position.z * 0.0025) * FLY_CURVE
+
+
+    this.plane.position.y = this.camera.position.y - 150
+    
+    let drawCount = ( this.counter + 1 ) % MAX_POINTS;
+    this.flyingLine.geometry.setDrawRange( 0, drawCount );
+
+    //this.updatePositions()
+
+    //this.camera.position.y = Math.sin(i * 0.25) * 40
+  }
+
+
+  // update positions
+  updatePositions() {
+
+    var positions = this.flyingLine.geometry.attributes.position.array;
+
+    let x = 0,
+       y = 0,
+      z = 0,
+      index = 0
+
+    for ( var i = 0, l = MAX_POINTS; i < l; i ++ ) {
+
+      positions[ index ++ ] = x;
+      positions[ index ++ ] = y;
+      positions[ index ++ ] = z;
+
+      x += ( Math.random() - 0.5 ) * 30;
+      y += ( Math.random() - 0.5 ) * 30;
+      z += ( Math.random() - 0.5 ) * 30;
+
+    }
+
+}
 
   createScene()
   {
@@ -176,7 +317,10 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
     this.gui.add(this, 'introText')
     this.gui.add(this, 'updateIntroText')
 
-    this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)    
+    this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)
+    this.gui.add(this, 'flyingSpeed', 1, 20)    
+    this.gui.add(this, 'shakeX', -20, 20)    
+    this.gui.add(this, 'shakeY', -20, 20)    
   }
 
   renderPass() {
@@ -198,7 +342,11 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
         this.gui.__controllers[i].updateDisplay();
       }
 
+      this.counter++
 
+
+    this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
+    this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
 
           //this.camera.rotation.set(this.rotX,0,0)
       //    this.plane.rotation.y = this.rotX
@@ -207,6 +355,8 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
     this.uniforms.time.value += this.clock.getDelta();
     this.uniforms.speed.value = this.speed;
     this.uniforms.height.value = this.height;
+
+    this.fly()
 
     //this.renderPass()
     this.renderer.render(this.scene, this.camera);
@@ -235,6 +385,16 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
 }
 
 export default Demo;
+
+const triangleVertexShader = `
+varying vec2 vUv;
+void main()
+{
+  vUv = uv;
+  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  gl_Position = projectionMatrix * mvPosition;
+}
+`
 
 const vertexShader = `
   varying vec2 vUv;
@@ -281,7 +441,7 @@ const vertexShader = `
 `
 const fragmentShader = `
 varying vec2 vUv;
-varying float vNoise;
+//varying float vNoise;
 uniform float time;
 uniform float speed;
 
@@ -291,7 +451,6 @@ uniform float speed;
         {
             vec2 p = -1.0 + 2.0 *vUv;
             float alpha = sin(p.y * M_PI) / 2.;
-            //alpha = 1.;
 
             float time2 = time / (1. / speed);
 
