@@ -31,7 +31,7 @@ class Demo {
     this.shakeY = 0
 
 
-    this.flyingSpeed = 1
+    this.flyingSpeed = 0
     this.triangles = []
     this.flyingLine = null
 
@@ -147,35 +147,12 @@ class Demo {
       //line.position.y = Math.sin(i * 0.5) * 40
       line.position.z = -i * TRIANGLE_GAP
       line.position.y = Math.sin(line.position.z * 0.0025) * FLY_CURVE
-      line.position.X = Math.sin(line.position.z * 0.0025) * FLY_CURVE
+      line.position.X = Math.cos(line.position.z * 0.0025) * FLY_CURVE
 
       line.scale.x = line.scale.y = 40
       line.updateMatrix()
 
       this.triangles.push(line)
-
-
-      if (i !== 0) {
-        // create connecting lines in between
-        var quality = 5
-        
-        
-        let f = this.triangles[i-1]
-        let l = this.triangles[i]
-
-        let curve1 = Bezier([f.position.x, f.position.y], [10, 20], [20, 30], [l.position.x, l.position.y], quality)
-        
-
-        //create our geometry 
-        let geom1 = Line(curve1)
-        //let geom2 = Line(curve2)
-
-        let mesh1 = new THREE.Mesh(geom1, material)
-        this.scene.add(mesh1)
-
-        //let mesh2 = new THREE.Mesh(geom1, material)
-        //this.scene.add(mesh2)
-      }
     }
   }
 
@@ -196,6 +173,13 @@ class Demo {
     this.scene.add( this.flyingLine );
 
     this.flyingLine.geometry.attributes.position.needsUpdate = true; // required after the first render
+
+
+
+    let line = new THREE.Line( new THREE.Geometry(), material);
+
+    this.scene.add(line)
+    this.flyingLine = line
   }
 
   fly() 
@@ -217,12 +201,51 @@ class Demo {
 
     this.plane.position.y = this.camera.position.y - 150
     
-    let drawCount = ( this.counter + 1 ) % MAX_POINTS;
-    this.flyingLine.geometry.setDrawRange( 0, drawCount );
-
+    
     //this.updatePositions()
 
+
+    
+    this.update_points()
+
+    this.flyingLine.position.z -= this.flyingSpeed
+    this.flyingLine.position.y = this.camera.position.y
+    this.flyingLine.position.x = this.camera.position.x-100
     //this.camera.position.y = Math.sin(i * 0.25) * 40
+
+
+
+
+  }
+
+  update_points(){
+    var sine_pct=1; 
+     var waves_amount=12;
+     var radius = 50
+           var smooth_pct=1;
+    var wave_height=0.1*radius;
+
+    let obj_resolution = 200
+    var new_positions=[];
+    for (var i = 0; i <=  obj_resolution; i++) {
+      var angle=(Math.PI/180*i);
+      var radius_addon=0;
+      var speed_incrementer=this.counter/100;
+
+      if(i<sine_pct*obj_resolution||i==obj_resolution){
+        radius_addon=wave_height*smooth_pct*Math.sin((angle+speed_incrementer)*waves_amount);
+      }
+
+
+      var z = i //(radius) * Math.cos(angle);
+      var y = (radius) * Math.sin(angle + this.counter * 0.005 * this.flyingSpeed);
+      var x=0;
+
+      new_positions.push(new THREE.Vector3(x, y, z));
+
+    }
+    this.flyingLine.geometry.vertices =new_positions;
+    this.flyingLine.geometry.verticesNeedUpdate = true; // do not forget to mark this flag each time you want to update geometry
   }
 
 
@@ -254,10 +277,6 @@ class Demo {
   {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000 );
     this.camera.position.set(0, 45, 240);
-    //this.camera.lookAt(new THREE.Vector3(0, 145, 0).normalize())
-
-    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    //this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
   }
@@ -294,16 +313,12 @@ class Demo {
         //wireframe: true
     } );
 
-    var geometry = //new THREE.PlaneGeometry( window.innerWidth / (window.innerWidth+window.innerHeight), window.innerHeight / (window.innerWidth+window.innerHeight), 0);
-new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
+    var geometry = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
 
-    //geometry = new THREE.BoxGeometry(100, 10, 10, 20 ,20 ,20)
-    //planeMaterial = new THREE.NormalMaterial()
     this.plane = new THREE.Mesh(geometry, planeMaterial);
 
     this.plane.rotation.set(-Math.PI * 0.5,0,0)
     this.plane.position.y = -window.innerHeight*0.15
-    //plane.rotateOnAxis('X', Math.PI)
     this.scene.add(this.plane);
 
   }
@@ -318,7 +333,7 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
     this.gui.add(this, 'updateIntroText')
 
     this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)
-    this.gui.add(this, 'flyingSpeed', 1, 20)    
+    this.gui.add(this, 'flyingSpeed', 0, 20)    
     this.gui.add(this, 'shakeX', -20, 20)    
     this.gui.add(this, 'shakeY', -20, 20)    
   }
@@ -344,13 +359,9 @@ new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight,10,10);
 
       this.counter++
 
-
     this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
     this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
 
-          //this.camera.rotation.set(this.rotX,0,0)
-      //    this.plane.rotation.y = this.rotX
-        //  this.plane.rotation.z = this.rotX
 
     this.uniforms.time.value += this.clock.getDelta();
     this.uniforms.speed.value = this.speed;
