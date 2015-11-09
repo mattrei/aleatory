@@ -11,7 +11,6 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 const typeface = require('three.regular.helvetiker');
 //THREE.typeface_js.loadFace(typeface);
 
-import Particulate from 'particulate'
 
 import Boid from 'boid'
 

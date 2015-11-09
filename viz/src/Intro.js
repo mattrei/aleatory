@@ -3,7 +3,6 @@ import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
 var Line = require('three-line-2d')(THREE)
-import Bezier from 'adaptive-bezier-curve'
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -33,7 +32,7 @@ class Demo {
 
     this.flyingSpeed = 0
     this.triangles = []
-    this.flyingLine = null
+    this.flyingLines = []
 
     this.text = {intro: null, title: null}
 
@@ -144,10 +143,9 @@ class Demo {
       let line = new THREE.Line(geometry, material);
       this.scene.add(line)
 
-      //line.position.y = Math.sin(i * 0.5) * 40
       line.position.z = -i * TRIANGLE_GAP
       line.position.y = Math.sin(line.position.z * 0.0025) * FLY_CURVE
-      line.position.X = Math.cos(line.position.z * 0.0025) * FLY_CURVE
+      line.position.x = Math.cos(line.position.z * 0.0025) * FLY_CURVE
 
       line.scale.x = line.scale.y = 40
       line.updateMatrix()
@@ -157,29 +155,14 @@ class Demo {
   }
 
   createFlyingLine() {
+    let geometry = new THREE.Geometry()
+    let material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 5 } );
 
-    var geometry = new THREE.BufferGeometry();
-
-    var positions = new Float32Array( MAX_POINTS * 3 ); // 3 vertices per point
-    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-
-    // drawcalls
-    //drawCount = 2; // draw the first 2 points, only
-    geometry.setDrawRange( 0, 2 );
-
-    var material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
-
-    this.flyingLine = new THREE.Line( geometry,  material );
-    this.scene.add( this.flyingLine );
-
-    this.flyingLine.geometry.attributes.position.needsUpdate = true; // required after the first render
-
-
-
-    let line = new THREE.Line( new THREE.Geometry(), material);
-
-    this.scene.add(line)
-    this.flyingLine = line
+    for (var i=0; i<3; i++) {
+      let line = new THREE.Line( new THREE.Geometry(), material);
+      this.scene.add(line)
+      this.flyingLines.push(line)
+    }
   }
 
   fly() 
@@ -206,46 +189,32 @@ class Demo {
 
 
     
-    this.update_points()
+    this.flyingLines.forEach((l, i) => {
 
-    this.flyingLine.position.z -= this.flyingSpeed
-    this.flyingLine.position.y = this.camera.position.y
-    this.flyingLine.position.x = this.camera.position.x-100
-    //this.camera.position.y = Math.sin(i * 0.25) * 40
-
-
-
-
+      this.update_points(l)
+      l.position.z -= this.flyingSpeed
+      //this.flyingLine.position.y = this.camera.position.y
+      l.position.x = this.camera.position.x - Math.sin(i) * 50
+      //this.camera.position.y = Math.sin(i * 0.25) * 40
+    })
+    this.flyingLines[0].position.x = this.camera.position.x - 40
+    this.flyingLines[1].position.y = this.camera.position.y + 40
+    this.flyingLines[1].position.x = this.camera.position.x
+    this.flyingLines[2].position.x = this.camera.position.x + 40
   }
 
-  update_points(){
-    var sine_pct=1; 
-     var waves_amount=12;
-     var radius = 50
-           var smooth_pct=1;
-    var wave_height=0.1*radius;
+  update_points(line){
+    let obj_resolution = 50
+    let new_positions=[];
+    for (var i = 0; i <= obj_resolution; i++) {
 
-    let obj_resolution = 200
-    var new_positions=[];
-    for (var i = 0; i <=  obj_resolution; i++) {
-      var angle=(Math.PI/180*i);
-      var radius_addon=0;
-      var speed_incrementer=this.counter/100;
-
-      if(i<sine_pct*obj_resolution||i==obj_resolution){
-        radius_addon=wave_height*smooth_pct*Math.sin((angle+speed_incrementer)*waves_amount);
-      }
-
-
-      var z = i //(radius) * Math.cos(angle);
-      var y = (radius) * Math.sin(angle + this.counter * 0.005 * this.flyingSpeed);
-      var x=0;
-
+      var z = i * 5
+      var y = Math.sin((this.camera.position.z + i * 5) * 0.0025) * FLY_CURVE;
+      var x= Math.sin((this.camera.position.z + i * 5) * 0.0025) * FLY_CURVE;
       new_positions.push(new THREE.Vector3(x, y, z));
-
     }
-    this.flyingLine.geometry.vertices =new_positions;
-    this.flyingLine.geometry.verticesNeedUpdate = true; // do not forget to mark this flag each time you want to update geometry
+    line.geometry.vertices = new_positions;
+    line.geometry.verticesNeedUpdate = true; 
   }
 
 

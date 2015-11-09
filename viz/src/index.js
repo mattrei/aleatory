@@ -26,7 +26,7 @@ import Staircase from './Staircase'
 
 
 
-const demo, viz = new Intro();
+//const viz = new Intro();
 
 oscPort.on("message", function (oscMsg) {
   console.log(oscMsg)
@@ -48,7 +48,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new Intro()
+ demo = new WienerLinien()
     window.onresize = demo.onResize.bind(demo);
 
 /*

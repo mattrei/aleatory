@@ -33,6 +33,7 @@
     "dat-gui": "^0.5.0",
     "osc": "2.0.0",
     "page": "^1.6.4",
+    "quick-noise-js": "^1.0.1",
     "routerjs": "^1.0.3",
     "shader-particle-engine": "^1.0.1",
     "stats-js": "^1.0.0-alpha1",

@@ -1,6 +1,7 @@
 import THREE from 'three.js'; 
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
+import TWEEN from 'tween.js'
 
 const ConvolutionShader = require('./shaders/ConvolutionShader')(THREE)
 const CopyShader = require('./shaders/CopyShader')(THREE)
@@ -32,6 +33,10 @@ const SPEED = 1
 // CENTER of Vienna
 const CENTER_LAT = 48.2
 const CENTER_LNG = 16.3667
+
+const TWEEN_DUR = 15 * 1000
+
+import Boid from 'boid'
 
 /*
 add map as surface
@@ -66,7 +71,11 @@ class Line {
     this.scene = args.scene
     this.topo = args.topo
     this.lineColor = args.lineColor
+    this.linewidth = args.linewidth
 
+    this.boxes = []
+    this.normalGeometry = []
+    this.line = null
     this.trains = []
     this.spline = null
 
@@ -82,11 +91,124 @@ class Line {
     this.draw()
   }
 
+  colorize(h) {
+
+    new TWEEN.Tween(this.line.material.color)
+    .to({r: Math.random(), g: Math.random(), b: Math.random()}, 500)
+    .easing(TWEEN.Easing.Quartic.In)
+    .start();
+    
+    //this.line.material.color.setHSL(h, Math.random(), Math.random())
+    //this.line.material.needsUpdate = true
+  }
+
+  chaos() {
+
+    for (let i = 0; i < this.line.geometry.vertices.length/10; i++) {
+
+        var vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 1000 - 500;
+        vertex.y = Math.random() * 1000 - 500;
+        vertex.z = Math.random() * 1000 - 500;
+
+        let origVertex = this.line.geometry.vertices[i]
+        origVertex.origPos = new THREE.Vector3()
+        origVertex.origPos.copy(origVertex)
+
+        new TWEEN
+          .Tween(origVertex)
+          .to({x: vertex.x,
+              y: vertex.y,
+              z: vertex.z}, (TWEEN_DUR*Math.random()*0.5) + TWEEN_DUR*0.5)
+          .onUpdate(() => {
+            this.line.geometry.verticesNeedUpdate = true; 
+          })
+          .start();
+    }
+
+    this.boxes.forEach(b => {
+
+      b.origPos = new THREE.Vector3()
+      b.origPos.copy(b.position)
+
+        var vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 800 - 400;
+        vertex.y = Math.random() * 800 - 400;
+        vertex.z = Math.random() * 800 - 400;
+
+
+      new TWEEN
+          .Tween(b.position)
+          .to({x: vertex.x,
+              y: vertex.y,
+              z: vertex.z}, (TWEEN_DUR*Math.random()*0.5) + TWEEN_DUR*0.5)
+          .start();
+    })
+    
+  }
+
+  scale(s) {
+
+        new TWEEN
+          .Tween(this.line.scale)
+          .to({x: s,
+              y: s,
+              z: s}, (2*1000*Math.random()) + 2000)
+          .onUpdate(() => {
+            this.line.geometry.verticesNeedUpdate = true; 
+          })
+          .start();
+  }
+
+  ordered() {
+
+    for (let i = 0; i < this.line.geometry.vertices.length/10; i++) {
+
+        let vertex = this.line.geometry.vertices[i]
+
+        new TWEEN
+          .Tween(vertex)
+          .to({x: vertex.origPos.x,
+              y: vertex.origPos.y,
+              z: vertex.origPos.z}, (4*1000*Math.random()) + 4000)
+          .onUpdate(() => {
+            this.line.geometry.verticesNeedUpdate = true; 
+          })
+          .start();
+    }
+    
+          new TWEEN
+          .Tween(this.line.scale)
+          .to({x: 1,
+              y: 1,
+              z: 1}, (4*1000*Math.random()) + 4000)
+          .onUpdate(() => {
+            this.line.geometry.verticesNeedUpdate = true; 
+          })
+          .start();
+
+    this.boxes.forEach(b => {
+
+
+        var vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 1000 - 500;
+        vertex.y = Math.random() * 1000 - 500;
+        vertex.z = Math.random() * 1000 - 500;
+
+
+      new TWEEN
+          .Tween(b.position)
+          .to({x: b.origPos.x,
+              y: b.origPos.y,
+              z: b.origPos.z}, (4*1000*Math.random()) + 4000)
+          .start();
+    })
+  }
+
   draw() {
     var numPoints = this.topo.length * 2;
 
     let points = []
-
 
     let geomStation = new THREE.BoxGeometry(5, 5, 4);
     let matStation = new THREE.MeshBasicMaterial({
@@ -109,14 +231,14 @@ class Line {
         mesh.position.y = y
         mesh.position.z = z
         this.scene.add(mesh)
+        this.boxes.push(mesh)
       })
 
       console.log(points)
       this.spline = new THREE.CatmullRomCurve3(points);
 
 
-
-
+/*
       var material = new THREE.ShaderMaterial({
           uniforms: this.uniforms,
           vertexShader: Shaders.line.vertexShader,
@@ -125,13 +247,13 @@ class Line {
           depthTest:      false,
           transparent:    true
       });
+*/
 
 
-      material = new THREE.LineBasicMaterial({
+      let material = new THREE.LineBasicMaterial({
           color: this.lineColor,
-          linewidth: 5
+          linewidth: this.linewidth
       });
-
 
       var geometry = new THREE.Geometry();
       var splinePoints = this.spline.getPoints(numPoints);
@@ -140,17 +262,18 @@ class Line {
           geometry.vertices.push(splinePoints[i]);
       }
 
-      var line = new THREE.Line(geometry, material);
-      console.log("adding")
-
-
+      let line = new THREE.Line(geometry, material);
       this.scene.add(line);
-    }
+
+      this.line = line
+    } // endif
+
   }
 }
 
 class MetroLine extends Line {
   constructor(args) {
+    args.linewidth = 5
     super(args)
 
 
@@ -304,6 +427,9 @@ class WienerLinien {
   {
     this.postProcessing = false
 
+    this.line = null
+    this.particles = null
+
     this.lines = []
     this.randomMetro = null
 
@@ -326,8 +452,6 @@ class WienerLinien {
     this.update();
 
     this.idx = 0
-
-    this.metroMode()
 
   }
 
@@ -353,7 +477,7 @@ class WienerLinien {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000 );
     this.camera.position.set(0, 45, 640);
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    this.controls.maxDistance = 1000;
+    this.controls.maxDistance = 3000;
 
     this.scene = new THREE.Scene();
   }
@@ -375,17 +499,111 @@ class WienerLinien {
 
     this.update()
   }
+/*
+  chaosMode() {
+
+    let csv_topo = JSON.parse(CSV_TOPO)
+    console.log(csv_topo.length)
+
+    let geometry = new THREE.Geometry();
+    for (let i = 0; i < csv_topo.length; i++) {
+
+        var vertex = new THREE.Vector3();
+        vertex.x = Math.random() * 500 - 250;
+        vertex.y = Math.random() * 500 - 250;
+        vertex.z = Math.random() * 500 - 250;
+
+        geometry.vertices.push(vertex);
+    }
+
+    let mat = new THREE.PointsMaterial({
+        size: 10,
+        color: 0xffffff
+    });
+    let particles = new THREE.Points(geometry, mat);
+    
+    this.scene.add(particles);
+    this.particles = particles
+
+    let lineMaterial = new THREE.LineBasicMaterial({
+        color: 0xffffff,
+        opacity: 1,
+        linewidth: 1
+    });
+    let line = new THREE.Line(geometry.clone(), lineMaterial);
+    this.scene.add(line);
+    this.line = line
+  }
+
+  chaosToAll() {
+
+    console.log(this.line.geometry.vertices)
+    let new_pos = []
+     let csv_topo = JSON.parse(CSV_TOPO)
+      //console.log(csv_topo)
+      this.csv_lines = []
+      for (let k of csv_topo.keys()) {
+        let topo = csv_topo[k][1]
+
+        if (topo instanceof Array) {
+          topo.forEach(t => {
+            let e = t[1]
+            let y = (e.coord.lat - CENTER_LAT) * SCALE,
+             x = (e.coord.lng - CENTER_LNG) * SCALE,
+             z = Math.random() * SCALE_Z
+            new_pos.push(new THREE.Vector3(x,y,z))
+          })
+        } else {
+          console.log(topo)
+        }
+        
+      }
+
+    this.line.geometry.vertices = new_pos
+    this.line.geometry.verticesNeedUpdate = true; 
+    this.particles.geometry.vertices = new_pos
+    this.particles.geometry.verticesNeedUpdate = true; 
+
+  }
+  */
+
+  colorize() {
+    this.lines.forEach(l => {
+      l.colorize(Math.random())
+    })
+  }
+
+  morphScale() {
+    this.lines.forEach(l => {
+      l.scale(Math.random() * 2)
+    })
+  }
 
   allMode() {
+    this.lines = []
     this.clearScene()
 
      let csv_topo = JSON.parse(CSV_TOPO)
-      console.log(csv_topo)
+      //console.log(csv_topo)
       this.csv_lines = []
       for (let k of csv_topo.keys()) {
-        let line = new Line({scene: this.scene, topo:csv_topo[k][1], lineColor: 'white'})
+        let line = new Line({scene: this.scene, 
+          topo:csv_topo[k][1], 
+          lineColor: 'white',
+          linewidth: 1})
+        this.lines.push(line)
         //this.csv_lines.push(line)
       }
+  }
+  morphChaos() {
+    this.lines.forEach(l => {
+      l.chaos()
+    })
+  }
+  morphOrdered() {
+    this.lines.forEach(l => {
+      l.ordered()
+    })
   }
   metroMode() {
     this.clearScene()
@@ -430,6 +648,10 @@ class WienerLinien {
   startGUI()
   {
     var gui = new dat.GUI()
+    gui.add(this, 'colorize')
+    gui.add(this, 'morphScale')
+    gui.add(this, 'morphChaos')
+    gui.add(this, 'morphOrdered')
     gui.add(this, 'allMode')
     gui.add(this, 'metroMode')
     gui.add(this, 'clearScene')
@@ -451,6 +673,7 @@ class WienerLinien {
   update()
   {
     this.stats.begin();
+    TWEEN.update()
 
     if (this.randomMetro) {
       this.randomMetro.updateFollowTrain(this.camera)
