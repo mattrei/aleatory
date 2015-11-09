@@ -1,6 +1,6 @@
 {
-  "name": "aleatory-visuals",
-  "version": "1.0.3",
+  "name": "viz",
+  "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
@@ -10,10 +10,9 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/silviopaganini/rapid-prototype"
+    "url": "https://github.com/mattrei/aleatory"
   },
   "author": "matthias treitler",
-  "license": "ISC",
   "dependencies": {
     "babelify": "^6.3.0",
     "blast-text": "^2.0.0",
@@ -26,6 +25,7 @@
     "garnish": "^2.1.3",
     "jquery": "^2.1.4",
     "osc": "2.0.0",
+    "page": "^1.6.4",
     "routerjs": "^1.0.3",
     "shader-particle-engine": "^1.0.1",
     "stats-js": "^1.0.0-alpha1",

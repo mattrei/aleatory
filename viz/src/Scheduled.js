@@ -109,6 +109,7 @@ class Demo {
   startGUI()
   {
     var gui = new dat.GUI()
+    document.body.appendChild(gui.domElement.parentNode)
     gui.add(this, 'nextScheduled')
     gui.add(this, 'showCurrent', 0, 5)
     gui.add(this, 'numberCurrents', 1, 8)

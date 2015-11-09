@@ -2,11 +2,12 @@ import OSC from 'osc/dist/osc-browser.js'
 const oscPort = new OSC.WebSocketPort({
     url: "ws://localhost:8081"
 });
-oscPort.open();
+
 
 
 
 var demo
+
 
 import Intro from './Intro';
 import Executed from './Executed';
@@ -22,22 +23,10 @@ import TextParticles from './TextParticles'
 import WienerLinien from './WienerLinien'
 import Staircase from './Staircase'
 
-var Router = require('routerjs')
-var router = new Router();
-router.addRoute('#/Executed', function(req, next){
-    demo = new Executed()
-    window.onresize = demo.onResize.bind(demo);
-});
-router.addRoute('#/Scheduled', function(req, next){
-    demo = new Scheduled()
-    console.log("sched")
-    window.onresize = demo.onResize.bind(demo);
-});
 
-
-const viz = new WienerLinien();
 
 oscPort.on("message", function (oscMsg) {
+  console.log(oscMsg)
   if (oscMsg.address === '/p') {
         let n = oscMsg.args[0]
         console.log("Page change. "+ n)
@@ -54,7 +43,40 @@ oscPort.on("message", function (oscMsg) {
         viz.onFunc(n)
   }
 });
+oscPort.open();
+
+ demo = new Intro()
+    window.onresize = demo.onResize.bind(demo);
+
+/*
+var Router = require('routerjs')
+var router = new Router();
+router.addRoute('#/Intro', function(req, next){
+  console.log("#/Intro")
+  document.body.innerHTML = '';
+    demo = new Intro()
+    window.onresize = demo.onResize.bind(demo);
+});
+router.addRoute('#/Executed', function(req, next){
+    
+    document.body.innerHTML = '';
+    demo = new Executed()
+    window.onresize = demo.onResize.bind(demo);
+});
+router.addRoute('#/Scheduled', function(req, next){
+  document.body.innerHTML = '';
+    demo = new Scheduled()
+    console.log("sched")
+    window.onresize = demo.onResize.bind(demo);
+});
+*/
+//router.redirect('#/Intro')
 
 
-window.onresize = viz.onResize.bind(viz);
+
+
+
+
+
+
 
