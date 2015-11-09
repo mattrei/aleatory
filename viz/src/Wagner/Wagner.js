@@ -1,5 +1,5 @@
-module.exports = function(THREE)
- {
+import THREE from 'three.js'
+
 (function() {
 
 'use strict';
@@ -641,4 +641,3 @@ WAGNER.ShadersPool.prototype.extendParams = function(target, source) {
 
 window.WAGNER = WAGNER;
 })();
-}

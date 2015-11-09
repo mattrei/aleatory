@@ -8,7 +8,7 @@ import TWEENR from 'tweenr'
 const tweenr = TWEENR()
 
 import typeface from 'three.regular.helvetiker'
-THREE.typeface_js.loadFace(typeface);
+//THREE.typeface_js.loadFace(typeface);
 
 import SPE from './ShaderParticleEngine/SPE'
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)

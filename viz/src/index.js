@@ -10,6 +10,7 @@ var demo
 
 
 import Intro from './Intro';
+import Headlines from './Headlines';
 import Executed from './Executed';
 import Scheduled from './Scheduled';
 import Tube from './Tube';
@@ -24,6 +25,8 @@ import WienerLinien from './WienerLinien'
 import Staircase from './Staircase'
 
 
+
+const demo, viz = new Intro();
 
 oscPort.on("message", function (oscMsg) {
   console.log(oscMsg)

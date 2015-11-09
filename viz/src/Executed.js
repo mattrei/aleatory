@@ -195,6 +195,7 @@ class Demo {
 
         var vector = new THREE.Vector3();
 
+        // sphere
         for ( var i = 0, l = executed.length; i < l; i ++ ) {
 
           var phi = Math.acos( -1 + ( 2 * i ) / l );
@@ -233,7 +234,7 @@ class Demo {
 
 
   resetCamera() {
-    clearTexts()
+    this.clearTexts()
     new TWEEN.Tween(this.camera.position).to({
           x: CAMERA_POS.x,
           y: CAMERA_POS.y,

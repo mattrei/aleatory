@@ -379,12 +379,15 @@ var Globe = function(container, opts) {
 
   function zoom(delta) {
     distanceTarget -= delta;
-    distanceTarget = distanceTarget > 3000 ? 3000 : distanceTarget;
+    distanceTarget = distanceTarget > 5000 ? 5000 : distanceTarget;
     distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
   }
 
   function animate() {
     TWEEN.update();
+
+    opts.update()
+
     requestAnimationFrame(animate);
     render(clock.getDelta() );
   }
@@ -467,8 +470,6 @@ var Globe = function(container, opts) {
 
   function moveGlobe(lat=32, lng=69) {
 
-  //  jQuery('#counter').textillate('out')
-    
     let p = calculate2dPosition(lat, lng)
     target = p
   }
@@ -531,7 +532,6 @@ var Globe = function(container, opts) {
 
   }
   function glitch() {
-    console.log("do glitch")
     postprocessing['glitch'].generateTrigger();
   }
 
@@ -594,9 +594,17 @@ var Globe = function(container, opts) {
 class Drones {
   constructor(args) 
   {
+
+    this.stars = []
+    this.flySpeed = 0
+
     let opts = {}
     opts.imgDir = 'assets/'
+    this.update = this.update.bind(this)
+    opts.update = this.update
     this.globe = new Globe(document.getElementById('container'), opts)
+    this.scene = this.globe.scene
+    this.camera = this.globe.camera
 
     this.createTextDiv()
 
@@ -604,6 +612,119 @@ class Drones {
 
     this.startGUI()
 
+    
+    this.makeStars()
+
+    
+
+  }
+
+  update() 
+  {
+
+    if (this.stars) {
+      
+      let stars = this.stars.slice(0)
+      
+      stars.forEach(s => {
+        s.position.z += this.flySpeed * 10 //* s.speed
+
+        if (s.position.z > 500) {
+          s.position.z = -5000
+        }
+      })
+
+    }
+
+  }
+
+  makeStars() {
+    for(let i = 0; i < 2000; i++ ) {
+      this.stars.push(this.addStar())
+    }
+
+  }
+
+  addStar() 
+  {
+    let geometry = this.createStarGeometry()
+    let star = this.makeStar(geometry)
+
+    this.scene.add( star );
+
+    return star
+  }
+
+  makeStar(geometry) 
+  {
+      let material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: Math.random() * 4 } );
+
+        let s = Math.random() * 10
+          let line = new THREE.LineSegments( geometry, material );
+          line.scale.x = line.scale.y = line.scale.z = s;
+          line.originalScale = s
+          line.speed = Math.random()
+          line.rotation.y = Math.random() * Math.PI;
+          line.updateMatrix();
+          line.position.z = Math.random() * -5000
+
+      return line
+  }
+
+  createStarGeometry() 
+  {
+    let r = 450
+    let geometry = new THREE.Geometry();
+    let vertex1 = new THREE.Vector3();
+          vertex1.x = Math.random() * 2 - 1;
+          vertex1.y = Math.random() * 2 - 1;
+          vertex1.z = Math.random() * 2 - 1;
+          vertex1.normalize();
+          vertex1.multiplyScalar( r );
+
+          let vertex2 = vertex1.clone();
+          vertex2.multiplyScalar( Math.random() * 0.09 + 1 );
+
+          geometry.vertices.push( vertex1 );
+          geometry.vertices.push( vertex2 );
+
+    return geometry
+  }
+
+  createGeometry() {
+
+    let r = 450
+        var geometry = new THREE.Geometry();
+
+      for (let j=1; j < 4; j++) {
+        let z = j * 40
+        for (let i = 0; i < 500; i ++ ) {
+
+          let vertex1 = new THREE.Vector3();
+          vertex1.x = Math.random() * 2 - 1;
+          vertex1.y = Math.random() * 2 - 1;
+          vertex1.z = Math.random() * 40 - j;
+          vertex1.normalize();
+          vertex1.multiplyScalar( r );
+
+          let vertex2 = vertex1.clone();
+          vertex2.multiplyScalar( Math.random() * 0.09 + 1 );
+
+          geometry.vertices.push( vertex1 );
+          geometry.vertices.push( vertex2 );
+
+        }
+      }
+
+        return geometry;
+
+      }
+
+  showStars() {
+    this.stars.forEach(s => {
+      s.visible = !s.visible  
+    })
+    
   }
 
   createTextDiv() 
@@ -628,9 +749,12 @@ class Drones {
     gui.add(this.globe, 'moveGlobe')
     gui.add(this.globe, 'glitch')
 
+    gui.add(this, 'flySpeed', -20, 20)
+    gui.add(this, 'showStars')
+
     gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
 
-    //gui.add(this.globe, 'distanceTarget', 300, 2000)
+//    gui.add(this.globe.target, 'distance', 300, 2000)
     gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
     gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
   }
