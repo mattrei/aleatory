@@ -2,6 +2,7 @@ import THREE from 'three.js';
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
+import TWEEN from 'tween.js'
 
 import Water from './Water'
 
@@ -9,7 +10,7 @@ import FirstPersonControls from './controls/FirstPersonControls'
 
 const MORPH_SPEED = 200
 const Y_POS = 200
-const SKYBOX = "violent_days"//"miramar"
+const SKYBOX = "sky"//"miramar"
 
 var prevTime = Date.now();
 class Mare {
@@ -35,8 +36,9 @@ class Mare {
 
     this.addObjects();
     this.startGUI();
-    this.addMorphs()
 
+
+    this.addBoat()
     this._loadSkyBox()
 
     this.onResize();
@@ -110,76 +112,6 @@ class Mare {
   }
 
 
-        _addMorph( geometry, speed, duration, x, y, z ) {
-
-          var material = new THREE.MeshLambertMaterial( { color: 0xffaa55, morphTargets: true, vertexColors: THREE.FaceColors } );
-
-          var meshAnim = new THREE.MorphAnimMesh( geometry, material );
-
-          meshAnim.speed = speed;
-          meshAnim.duration = duration;
-          meshAnim.time = 600 * Math.random();
-
-          meshAnim.position.set( x, y, z );
-          //meshAnim.rotation.y = Math.PI/2;
-
-          meshAnim.castShadow = true;
-          meshAnim.receiveShadow = false;
-
-          this.scene.add( meshAnim );
-
-          this.morphs.push( meshAnim );
-
-          return meshAnim
-
-        }
-
-        _morphColorsToFaceColors( geometry ) {
-
-          if ( geometry.morphColors && geometry.morphColors.length ) {
-            var colorMap = geometry.morphColors[ 0 ];
-            for ( var i = 0; i < colorMap.colors.length; i ++ ) {
-              geometry.faces[ i ].color = colorMap.colors[ i ];
-            }
-          }
-
-        }
-
-
-  addMorphs() 
-  {
-
-        var loader = new THREE.JSONLoader();
-
-        var y = (300 * Math.random())
-
-        loader.load( "/assets/models/Parrot.js", ( geometry ) => {
-
-          this._morphColorsToFaceColors( geometry );
-          this._addMorph( geometry, 250, 500, 250 - Math.random() * 1000, 300 * Math.random(), 700 );
-          this._addMorph( geometry, 250, 500, 250 - Math.random() * 1000, 300 * Math.random(), -200 );
-          this._addMorph( geometry, 250, 500, 250 - Math.random() * 1000, 300 * Math.random(), 200 );
-          this._addMorph( geometry, 250, 500, 250 - Math.random() * 1000, 300 * Math.random(), 1000 );
-
-        } );
-
-        loader.load( "/assets/models/Flamingo.js", ( geometry ) => {
-
-          this._morphColorsToFaceColors( geometry );
-          this._addMorph( geometry, 500, 1000, 250 - Math.random() * 1000, 300 * Math.random(), 40 );
-          this._addMorph( geometry, 500, 1000, 250 - Math.random() * 1000, 300 * Math.random(), 40 );
-        } );
-
-        loader.load( "/assets/models/Stork.js", ( geometry ) => {
-
-          this._morphColorsToFaceColors( geometry );
-          this._addMorph( geometry, 350, 1000, 250 - Math.random() * 1000, 300 * Math.random(), 340 );
-          this._addMorph( geometry, 350, 1000, 250 - Math.random() * 1000, 300 * Math.random(), 340 );
-          this._addMorph( geometry, 350, 1000, 250 - Math.random() * 1000, 300 * Math.random(), 340 );
-
-        } );
-
-  }
 
   _loadSkyBox () {
     
@@ -190,14 +122,7 @@ class Mare {
       '/assets/skybox/' + SKYBOX + '_down.jpg',
       '/assets/skybox/' + SKYBOX + '_south.jpg',
       '/assets/skybox/' + SKYBOX + '_north.jpg'
-      /*
-      '/assets/skybox/px.jpg',
-      '/assets/skybox/nx.jpg',
-      '/assets/skybox/py.jpg',
-      '/assets/skybox/ny.jpg',
-      '/assets/skybox/pz.jpg',
-      '/assets/skybox/nz.jpg'
-      */
+
     ]);
     aCubeMap.format = THREE.RGBFormat;
     var aShader = THREE.ShaderLib['cube'];
@@ -220,6 +145,53 @@ class Mare {
     this.scene.add(aSkybox);
   }
 
+  addBoat() {
+
+    let textureLoader = new THREE.TextureLoader()
+
+    let loader = new THREE.JSONLoader();
+
+    loader.load("/assets/models/OldBoat.js", (geometry) => {
+
+
+      textureLoader.load('/assets/models/boattex.jpg', t => {
+            
+        let material = new THREE.MeshLambertMaterial( { 
+          map: t,
+        } );
+         let mesh = new THREE.Mesh( geometry, material );
+         mesh.scale.set( 5, 5, 5 );
+         mesh.position.y = 0;
+         mesh.position.x = 0;
+
+
+         mesh.wave = {x: Math.random(), z: Math.random() }
+
+         this.scene.add(mesh)
+
+         let dur = (Math.random() * 2000) + 2000
+         let rad = Math.PI / ((Math.random() * 3) + 6) * 0.5
+
+        let t1 = new TWEEN.Tween( mesh.rotation )
+            .to( { x: rad }, dur )
+            .easing( TWEEN.Easing.Bounce.InOut )
+
+
+        let t2 =  new TWEEN.Tween( mesh.rotation )
+            .to( { x: -rad }, dur * 2 )
+            .easing( TWEEN.Easing.Bounce.InOut )
+            
+        t1.chain(t2)
+        t2.chain(t1)
+
+        t1.start()
+
+          })
+
+
+    }) 
+  }
+
   addObjects()
   {
 
@@ -232,39 +204,6 @@ class Mare {
     this.scene.add( gridHelper );
     var axisHelper = new THREE.AxisHelper( 100 );
     this.scene.add( axisHelper );
-
-    var loader = new THREE.JSONLoader();
-    loader.load( "/assets/models/Parrot.js", ( geometry ) =>  {
-
-        this.mainMorph = this._addMorph(geometry, MORPH_SPEED, 2000, 0, 0, 0)
-
-        //mainMorph.add(this.camera)
-        //this.mainMorph.rotation.z = Math.PI/4
-        //
-        //this.gui.add(this.camera.rotation, 'z', -Math.PI, Math.PI)
-
-/*
-          geometry.computeVertexNormals();
-          geometry.computeMorphNormals();
-
-          var birdMesh = new THREE.Mesh( geometry, 
-            new THREE.MeshPhongMaterial( { color: 0x606060, morphTargets: true,
-              vertexColors: THREE.FaceColors, wrapAround: true, specular: 0xffffff  } ) );
-          birdMesh.scale.set( 1, 1, 1 );
-
-          // add color 
-          var colorMap = geometry.morphColors[ 0 ];
-          for ( var i = 0; i < colorMap.colors.length; i ++ )
-            geometry.faces[i].color = colorMap.colors[i];
-
-          this.bird.add(birdMesh)
-          this.animation = new THREE.MorphAnimation( birdMesh );
-          this.animation.castShadow = true;
-          this.animation.receiveShadow = true;
-          this.animation.play();
-          */
-
-        } );
 
 
 
@@ -338,6 +277,8 @@ class Mare {
   {
     this.stats.begin();
     let delta = this.clock.getDelta()
+
+    TWEEN.update()
 
     //this.controls.update( delta);
 

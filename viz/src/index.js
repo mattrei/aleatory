@@ -48,7 +48,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new WienerLinien()
+ demo = new Mare()
     window.onresize = demo.onResize.bind(demo);
 
 /*
