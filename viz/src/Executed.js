@@ -4,28 +4,35 @@ import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
 import tweenr from 'tweenr'
 import TWEEN from 'tween.js'
+const glslify = require('glslify')
 
+const TextGeometry = require('./geometries/TextGeometry')(THREE)
 import ExecutedData from './test_data/executed.json'
+import ScheduledData from './test_data/scheduled.json'
 
 import NoMousePersonControls from './controls/NoMousePersonControls'
 
 const Tweenr = tweenr()
 
+const ParticleShader = require('./shaders/ParticleShader')(THREE)
+
 const OrbitControls = require('three-orbit-controls')(THREE);
 
+const NUM_PARTICLES = 400000
+const MAX_PARTICLE_DIST = 6000
 
 const Velocity = require('velocity-animate')
 require('velocity-animate/velocity.ui')
 
+const POLY_SIZE = 8000
 const SPHERE_SIZE = 1500
 
-
-
-const CAMERA_POS = {x: 0, y:0, z:7000}
+const CAMERA_POS = {x: 0, y:0, z:5000}
 
 class Demo {
   constructor(args) 
   {
+    this.current = {show: 0.0, number: 1}
 
     this.text = {name: null, date: null, intro: null}
     this.introText = ''
@@ -35,7 +42,11 @@ class Demo {
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
     this.executed = []
-    this.meshes = []
+
+    //scheduled
+    this.shaderTime = 0
+    this.scheduled = []
+    this.particleSystem = null;
 
     this.currentIdx = 0
     this.transition = 2000
@@ -54,7 +65,6 @@ class Demo {
 
     this.createRender();
     this.createScene();
-    this.addObjects();
 
     this.onResize();
     this.update();
@@ -72,9 +82,18 @@ class Demo {
     gui.add(this, 'lookAtNext')
     gui.add(this, 'transition', 500, 5000)
 
+    gui.add(this.current, 'show', 0, 5)
+    gui.add(this.current, 'number', 1, 8)
+
     gui.add(this, 'introText')
     gui.add(this, 'updateIntroText')
     gui.add(this, 'clearTexts')
+
+
+    gui.add(this, 'addExecuted')
+    gui.add(this, 'addScheduled')
+    gui.add(this, 'nextScheduled')
+    gui.add(this, 'clearScene')
   }
 
 
@@ -158,10 +177,39 @@ class Demo {
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000 );
     this.camera.position.set(CAMERA_POS.x, CAMERA_POS.y, CAMERA_POS.z);
     this.scene = new THREE.Scene();
+
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.maxDistance = 300000;
+
   }
 
-  addObjects()
+  addExecuted()
   {
+
+    let geom = new THREE.IcosahedronGeometry( POLY_SIZE, 0 );
+    let mat = new THREE.MeshLambertMaterial( {
+      color: 0xb9dff2,
+      side: THREE.DoubleSide,
+      wireframe: false});
+  
+
+    let bgmesh = new THREE.Mesh(geom, mat)
+    this.scene.add(bgmesh)
+
+
+    let plight = new THREE.PointLight( 0xffffff, 1, 10000 );
+    plight.position.set( -3000, -3000, 50 );
+    this.scene.add( plight );
+
+    let plight2 = new THREE.PointLight( 0xffffff, 1, 10000 );
+    plight2.position.set( 2000, 2000, 1000 );
+    this.scene.add( plight2 );
+
+    let plight3 = new THREE.PointLight( 0xffffff, 1, 7000 );
+    plight3.position.set( 0, -2000, -3000 );
+    this.scene.add( plight3 );
+
+
     var gridHelper = new THREE.GridHelper( 100, 10 );        
     //this.scene.add( gridHelper );
 
@@ -171,20 +219,35 @@ class Demo {
 
           let texture = THREE.ImageUtils.loadTexture(e.img)
           texture.minFilter = THREE.LinearFilter
-          let img = new THREE.MeshBasicMaterial({ 
+          /*let img = new THREE.MeshBasicMaterial({ 
               map: texture,
               color: 0xffffff,
               side: THREE.DoubleSide,
-          });
+          });*/
+          let mat = new THREE.ShaderMaterial( { 
+              uniforms: {
+                resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
+                time: { type: "f", value: 0.1 },
+                showCurrent: { type: "f", value: this.showCurrent},
+                numberCurrents: { type: "f", value: this.numberCurrents},
+                bgImg: { type: "t", value: texture }
+              },
+              side: THREE.DoubleSide,
+              transparent: true,
+              fragmentShader: glslify(__dirname + '/glsl/Executed.frag'),
+              vertexShader: glslify(__dirname + '/glsl/Executed.vert')
+          } );
+
+
+          let geom = new THREE.PlaneBufferGeometry(200, 200)
 
           // plane
-          var plane = new THREE.Mesh(new THREE.PlaneGeometry(200, 200),img);
+          var plane = new THREE.Mesh(geom, mat);
           plane.overdraw = true;
 
 
           plane.visible = false
           plane.userData = e
-          this.meshes.push(plane)
 
           this.scene.add(plane);
 
@@ -282,7 +345,6 @@ class Demo {
       }).start();
 
 
-      console.log(e.userData)
       let d = e.userData
 
       this.text.name.innerHTML = d.name + " (" + d.age + ")"
@@ -293,14 +355,16 @@ class Demo {
 
   lookAtNext() 
   {
-    let e = this.objects[this.currentIdx++ % this.objects.length]
+    this.currentIdx++
+    let e = this.objects[this.currentIdx % this.objects.length]
     this.lookAt(e)
 
   }
 
   lookAtRnd() 
   {
-    let e = this.objects[Math.floor(Math.random() * this.objects.length)]
+    this.currentIdx = Math.floor(Math.random() * this.objects.length)
+    let e = this.objects[this.currentIdx]
 
     this.lookAt(e)
   }
@@ -339,7 +403,7 @@ class Demo {
 
   doVisible() {
 
-    this.meshes.forEach((m) => {
+    this.objects.forEach((m) => {
       m.visible = !m.visible
     })
 
@@ -368,6 +432,17 @@ class Demo {
 
       }
 
+        clearScene() {
+    // from behind because of index change
+    for( let i = this.scene.children.length - 1; i >= 0; i--) {
+      this.scene.remove(this.scene.children[i])
+     }
+    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    this.scene.add( gridHelper );
+
+    //this.update()
+  }
+
   update()
   {
     this.stats.begin();
@@ -375,6 +450,32 @@ class Demo {
     //this.controls.update( this.clock.getDelta() );
     TWEEN.update();
     this.renderer.render(this.scene, this.camera);
+
+    //this.executed
+    /*
+    this.objects.forEach((e, i) => {
+      if (i !== this.currentIdx) {
+        e.material.uniforms.time.value += this.clock.getDelta();
+       // e.material.uniforms.showCurrent.value = 0
+       // e.material.uniforms.numberCurrents.value = 0
+      }
+    })    */
+    let e = this.objects[this.currentIdx % this.objects.length]
+    if (e) {
+      e.material.uniforms.time.value += this.clock.getDelta();
+      e.material.uniforms.showCurrent.value = this.current.show 
+      e.material.uniforms.numberCurrents.value = this.current.number
+    }
+
+    // Rotate particles
+    this.shaderTime += 0.1
+    if (this.particleSystem) {
+      let shaderTime = this.clock.getDelta()
+      this.particleSystem.rotation.x = -this.shaderTime * 0.002;
+      this.particleSystem.rotation.y = -this.shaderTime * 0.002;
+      this.particleSystem.rotation.z = Math.PI - this.shaderTime * 0.004;
+    }
+
 
     this.stats.end()
     requestAnimationFrame(this.update.bind(this));
@@ -385,6 +486,174 @@ class Demo {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
+  }
+
+  addScheduled() {
+    this.currentIdx = 0
+    this.scheduled = []
+
+    ScheduledData.forEach(s => {
+      console.log(s)
+      let texture = THREE.ImageUtils.loadTexture( s.img )
+      texture.minFilter = THREE.LinearFilter
+
+      this._getImgData(s.img).then((imgData => {
+        this.scheduled.push({img: texture, imgData: imgData})  
+      }))
+      
+    })
+  }
+
+  nextScheduled() {
+    
+
+  this.currentIdx++
+
+    var tgeom = new THREE.TextGeometry("asdf");
+    var tmat = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
+    var dot = new THREE.Points( tgeom, tmat );
+    //this.scene.add( dot );
+
+    let rt = new TWEEN.Tween(this.camera.rotation).to({
+          x: 0,
+          y: this.camera.rotation.y + Math.PI,
+          z: 0
+      }, 5 * 1000 ).easing(TWEEN.Easing.Linear.None).
+    onComplete(() => {
+      this.clearScene()
+      this.drawScheduled()
+    })
+
+    let ft = new TWEEN.Tween(this.camera.position).to({
+          x: 0,
+          y: 0,
+          z: this.camera.position.z * -1
+      }, 10 * 1000 ).easing(TWEEN.Easing.Linear.None)
+
+    rt.chain(ft)
+    rt.start()
+  }
+
+  drawScheduled() {
+    
+    
+    let particleImg = THREE.ImageUtils.loadTexture( 'assets/Executed/particle.png' )
+
+    var particleShader = THREE.ParticleShader;
+    var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
+    particleUniforms.texture.value = particleImg;
+    particleUniforms.fog.value = 1;
+
+
+    var particleMaterial = new THREE.ShaderMaterial({
+
+      uniforms: particleUniforms,
+      vertexShader: particleShader.vertexShader,
+      fragmentShader: particleShader.fragmentShader,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      transparent: true
+    });
+
+    let geometry = new THREE.BufferGeometry();
+
+    var positions = new Float32Array(NUM_PARTICLES * 3);
+    var colors = new Float32Array(NUM_PARTICLES * 3);
+    var sizes = new Float32Array(NUM_PARTICLES);
+
+    var color = new THREE.Color();
+    // Get particle positions based on non-black image pixels
+
+
+    let imgData = this.scheduled[this.currentIdx % this.scheduled.length ].imgData
+
+    let imageScale = 25,
+      zSpread = 200
+
+
+    for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++ , i3 += 3) {
+
+      var position = new THREE.Vector3(
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
+      );
+
+      var gotIt = false;
+
+        // Randomly select a pixel
+        var x = Math.round(imgData.width * Math.random());
+        var y = Math.round(imgData.height * Math.random());
+        var bw = this._getPixel(imgData, x, y);
+        
+        // Read color from pixel
+        if (bw == 1) {
+          // If black, get position
+          
+          position = new THREE.Vector3(
+            (imgData.width / 2 - x) * imageScale, 
+            (y - imgData.height / 2) * imageScale, 
+            Math.random() * zSpread * 2 - Math.random() * zSpread
+          );
+        }
+      // Position
+      positions[i3 + 0] = position.x;
+      positions[i3 + 1] = position.y;
+      positions[i3 + 2] = position.z;
+
+      // Color
+      color.setRGB(1, 1, 1);
+      colors[i3 + 0] = color.r;
+      colors[i3 + 1] = color.g;
+      colors[i3 + 2] = color.b;
+      
+      // Size
+      sizes[i] = 20;
+
+    }
+
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+    geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+    geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+    this.particleSystem = new THREE.Points(geometry, particleMaterial);
+
+    this.scene.add(this.particleSystem);
+  }
+
+  _getPixel(imgData, x, y) {
+    var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+    r = imgData.data[offset];
+    g = imgData.data[offset + 1];
+    b = imgData.data[offset + 2];
+    a = imgData.data[offset + 3];
+
+    let avg = (r + g + b) / 3
+
+    return Math.floor(avg / (256 / 3))
+
+  }
+
+  _getImgData(pic) {
+    
+
+    return new Promise(function (fulfill, reject){
+
+      var canvas = document.createElement("canvas");
+      var context = canvas.getContext("2d");
+      var image = new Image();
+      image.src = pic;
+      image.onload = function() {
+
+        canvas.width = image.width;
+        canvas.height = image.height;
+        context.drawImage(image, 0, 0);
+        var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+        fulfill(imgData)
+      }
+
+    })
+    
   }
 }
 
