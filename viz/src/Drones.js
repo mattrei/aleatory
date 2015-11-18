@@ -1,9 +1,10 @@
-import THREE from 'three.js'
+global.THREE = require('three.js')
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'
+const OrbitControls = require('three-orbit-controls')(THREE);
 //import SPE from 'shader-particle-engine/build/SPE'
 
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
@@ -23,6 +24,8 @@ const GlitchPass = require('./postprocessing/GlitchPass')(THREE)
 import Velocity from 'velocity-animate'
 import VelocityUI from 'velocity-animate/velocity.ui'
 
+const glslify = require('glslify')
+
 //https://docs.google.com/spreadsheets/d/1NAfjFonM-Tn7fziqiv33HlGt09wgLZDSCP-BQaux51w/edit#gid=1000652376
 
 const TEXT_DIV = "counter"
@@ -35,8 +38,10 @@ const PI_HALF = Math.PI / 2
 const PI_TWO = Math.PI * 2
 const PI = Math.PI
 
-var Globe = function(container, opts) {
+var Globe = function(opts) {
   opts = opts || {};
+
+  var container
   
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
@@ -46,37 +51,6 @@ var Globe = function(container, opts) {
   var imgDir = opts.imgDir || '/globe/';
 
   var Shaders = {
-    'earth' : {
-      uniforms: {
-        'texture': { type: 't', value: null },
-        'glowIntensity': {type: 'f', value: 3.0},
-        'redIntensity': {type: 'f', value: 1.0}
-      },
-      vertexShader: [
-        'varying vec3 vNormal;',
-        'varying vec2 vUv;',
-        'void main() {',
-          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-          'vNormal = normalize( normalMatrix * normal );',
-          'vUv = uv;',
-        '}'
-      ].join('\n'),
-      /* lower intensity */
-      fragmentShader: [
-        'uniform sampler2D texture;',
-        'uniform float glowIntensity;',
-        'uniform float redIntensity;',
-        'varying vec3 vNormal;',
-        'varying vec2 vUv;',
-        'void main() {',
-          'vec3 diffuse = texture2D( texture, vUv ).xyz;',
-          'float intensity = 1.05 - dot( vNormal, vec3( 0.0, 0.0, 1.0 ) );',
-          'vec3 atmosphere = vec3( 1.0, 1.0, 1.0 ) * pow( intensity, glowIntensity );',
-          'atmosphere = mix(atmosphere, vec3(.5,0.0,0.0), redIntensity);',
-          'gl_FragColor = vec4( diffuse + atmosphere, 1.0 );',
-        '}'
-      ].join('\n')
-    },
     'atmosphere' : {
       uniforms: {
         'glowIntensity': {type: 'f', value: 12.0},
@@ -112,11 +86,14 @@ var Globe = function(container, opts) {
   var particleGroup;
 
   var overRenderer;
+  var shaderTime = 0
 
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
 
-  var earth = {glowing : 3.0 }
+  var earth = {glowing : 3.0, wobble: 0.0 }
+
+  var earthMesh = null
 
   var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
 //  var rotation = { x: 0, y: 0 },
@@ -179,12 +156,9 @@ var Globe = function(container, opts) {
 
   function init() {
 
-    container.style.color = '#fff';
-    container.style.font = '13px/20px Arial, sans-serif';
-
     var shader, uniforms, material;
-    w = container.offsetWidth || window.innerWidth;
-    h = container.offsetHeight || window.innerHeight;
+    w = window.innerWidth;
+    h = window.innerHeight;
 
     camera = new THREE.PerspectiveCamera(30, w / h, 1, 10000);
     camera.position.z = distance;
@@ -198,24 +172,31 @@ var Globe = function(container, opts) {
     var explodeModifier = new THREE.ExplodeModifier();
     explodeModifier.modify( geometry );
 
-    shader = Shaders['earth'];
-    //uniforms = THREE.UniformsUtils.clone(shader.uniforms);
-    uniforms = shader.uniforms
-
-    uniforms['texture'].value = THREE.ImageUtils.loadTexture(imgDir+'world.jpg');
+    let worldTexture = THREE.ImageUtils.loadTexture(imgDir+'world.jpg')
 
     material = new THREE.ShaderMaterial({
 
-          uniforms: uniforms,
-          vertexShader: shader.vertexShader,
-          fragmentShader: shader.fragmentShader
+          //uniforms: uniforms,
+          uniforms: {
+            texture: { type: 't', value: worldTexture },
+            glowIntensity: {type: 'f', value: 3.0},
+            redIntensity: {type: 'f', value: 0.0},
+            wobble: {type: 'f', value: earth.wobble},
+            time: {type: 'f', value: 0}
+          },
+          //vertexShader: shader.vertexShader,
+          //fragmentShader: shader.fragmentShader,
+          transparent: true,
+          fragmentShader: glslify(__dirname + '/glsl/Drones_Earth.frag'),
+          vertexShader: glslify(__dirname + '/glsl/Drones_Earth.vert')
 
         });
     material.side = THREE.DoubleSide;
 
-    mesh = new THREE.Mesh(geometry, material);
-    mesh.rotation.y = Math.PI;
-    scene.add(mesh);
+    earthMesh = new THREE.Mesh(geometry, material);
+    earthMesh.rotation.y = Math.PI;
+
+    scene.add(earthMesh);
 
     // Stars
     var starGeo = new THREE.SphereGeometry (3000, 10, 100),
@@ -294,13 +275,17 @@ var Globe = function(container, opts) {
     point = new THREE.Mesh(geometry);
 
     renderer = new THREE.WebGLRenderer({antialias: true});
+    document.body.appendChild(renderer.domElement)
+    container = renderer.domElement
     renderer.setSize(w, h);
 
     startStats()
     renderer.domElement.style.position = 'absolute';
 
-    container.appendChild(renderer.domElement);
-
+    let controls = new OrbitControls(camera, renderer.domElement);
+    controls.maxDistance = 300000;
+    
+/*
     container.addEventListener('mousedown', onMouseDown, false);
 
     container.addEventListener('mousewheel', onMouseWheel, false);
@@ -314,6 +299,7 @@ var Globe = function(container, opts) {
     container.addEventListener('mouseout', function() {
       overRenderer = false;
     }, false);
+*/
 
     initPass()
 
@@ -399,11 +385,13 @@ var Globe = function(container, opts) {
       particleGroup.tick( dt );
     }
 
+    shaderTime += 0.1
 
 
-    let earthUniforms = Shaders['earth'].uniforms;
-    earthUniforms.glowIntensity.value = earth.glowing;
-    earthUniforms.redIntensity.value = 1 -earth.glowing / 3;
+    earthMesh.material.uniforms.time.value = shaderTime * 0.0002;
+    earthMesh.material.uniforms.wobble.value = earth.wobble;
+    earthMesh.material.uniforms.glowIntensity.value = earth.glowing;
+    earthMesh.material.uniforms.redIntensity.value = 1 -earth.glowing / 3;
 
     let atmosphereUniforms = Shaders['atmosphere'].uniforms;
     atmosphereUniforms.glowIntensity.value = earth.glowing * 4;
@@ -602,7 +590,7 @@ class Drones {
     opts.imgDir = 'assets/'
     this.update = this.update.bind(this)
     opts.update = this.update
-    this.globe = new Globe(document.getElementById('container'), opts)
+    this.globe = new Globe(opts)
     this.scene = this.globe.scene
     this.camera = this.globe.camera
 
@@ -753,6 +741,7 @@ class Drones {
     gui.add(this, 'showStars')
 
     gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
+    gui.add(this.globe.earth, 'wobble', 0.0, 1.0)
 
 //    gui.add(this.globe.target, 'distance', 300, 2000)
     gui.add(this.globe.target, 'x', -Math.PI, Math.PI)

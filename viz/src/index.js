@@ -12,7 +12,6 @@ var demo
 import Intro from './Intro';
 import Headlines from './Headlines';
 import Executed from './Executed';
-import Scheduled from './Scheduled';
 import Tube from './Tube';
 import Falling from './Falling';
 import Dices from './Dices';
@@ -48,7 +47,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new Executed()
+ demo = new Drones()
     window.onresize = demo.onResize.bind(demo);
 
 /*

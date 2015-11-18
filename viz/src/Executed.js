@@ -1,4 +1,6 @@
-import THREE from 'three.js'; 
+//import THREE from 'three.js';
+global.THREE = require('three.js')
+
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
@@ -7,6 +9,8 @@ import TWEEN from 'tween.js'
 const glslify = require('glslify')
 
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
+const GeometryUtils = require('./utils/GeometryUtils')
+
 import ExecutedData from './test_data/executed.json'
 import ScheduledData from './test_data/scheduled.json'
 
@@ -509,10 +513,6 @@ class Demo {
 
   this.currentIdx++
 
-    var tgeom = new THREE.TextGeometry("asdf");
-    var tmat = new THREE.PointsMaterial( { size: 1, sizeAttenuation: false } );
-    var dot = new THREE.Points( tgeom, tmat );
-    //this.scene.add( dot );
 
     let rt = new TWEEN.Tween(this.camera.rotation).to({
           x: 0,
@@ -531,7 +531,9 @@ class Demo {
       }, 10 * 1000 ).easing(TWEEN.Easing.Linear.None)
 
     rt.chain(ft)
-    rt.start()
+    //rt.start()
+
+    this.drawScheduledText()
   }
 
   drawScheduled() {
@@ -619,6 +621,75 @@ class Demo {
     this.particleSystem = new THREE.Points(geometry, particleMaterial);
 
     this.scene.add(this.particleSystem);
+  }
+
+  drawScheduledText() {
+
+    let particleImg = THREE.ImageUtils.loadTexture( 'assets/Executed/particle.png' )
+
+    var particleShader = THREE.ParticleShader;
+    var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
+    particleUniforms.texture.value = particleImg;
+    particleUniforms.fog.value = 1;
+
+
+    var particleMaterial = new THREE.ShaderMaterial({
+
+      uniforms: particleUniforms,
+      vertexShader: particleShader.vertexShader,
+      fragmentShader: particleShader.fragmentShader,
+      blending: THREE.AdditiveBlending,
+      depthTest: false,
+      transparent: true
+    });
+
+    var textGeo = new THREE.TextGeometry("asdf");
+    const particleCount = 50000
+
+    let points = THREE.GeometryUtils.randomPointsInGeometry( textGeo, particleCount );
+    console.log(points)
+
+        let data = new Float32Array( particleCount * 3 );
+
+        var colors = new Float32Array(NUM_PARTICLES * 3);
+        
+          for ( var i = 0, j = 0, l = data.length; i < l; i += 3, j += 1 ) {
+            data[ i ] = points[ j ].x;
+            data[ i + 1 ] = points[ j ].y;
+            data[ i + 2 ] = points[ j ].z;
+            //data[ i + 3 ] = 0.0;
+
+            colors[i + 0] = 0.5;
+            colors[i + 1] = 1.0;
+            colors[i + 2] = 0.2;
+          }
+
+          var velData = new Float32Array( particleCount * 4 );
+          for ( var i = 0, l = velData.length; i < l; i += 4 ) {
+            velData[ i ] = (Math.random() - 0.5) * 0.004;
+            velData[ i + 1 ] = (Math.random() - 0.5) * 0.004;
+            velData[ i + 2 ] = (Math.random() - 0.5) * 0.004;
+            velData[ i + 3 ] = 0.0;
+          }
+          var randomSeedData = new Uint32Array( particleCount );
+          for ( var i = 0; i < randomSeedData.length; ++i ) {
+            randomSeedData[ i ] = Math.random() * 2147483647;
+          }
+
+          let sizes = new Float32Array( particleCount );
+          for ( var i = 0; i < randomSeedData.length; ++i ) {
+            sizes[i] = 20
+          }
+
+          let geometry = new THREE.BufferGeometry();
+          geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 3 ) );
+          //geometry.addAttribute( 'velocity', new THREE.BufferAttribute( velData, 4 ) );
+          //geometry.addAttribute( 'randomSeed', new THREE.BufferAttribute( randomSeedData, 1, false, true ) );
+          geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+          geometry.addAttribute( 'size', new THREE.BufferAttribute( colors, 3) );
+
+    var dot = new THREE.Points( geometry, particleMaterial );
+    this.scene.add( dot );
   }
 
   _getPixel(imgData, x, y) {
