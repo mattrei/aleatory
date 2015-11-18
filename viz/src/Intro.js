@@ -2,7 +2,10 @@ import THREE from 'three';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import MathF from 'utils-perf'
+import SimplexNoise from 'simplex-noise'
 var Line = require('three-line-2d')(THREE)
+
+const Simplex = new SimplexNoise()
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -191,7 +194,7 @@ class Demo {
     
     this.flyingLines.forEach((l, i) => {
 
-      this.update_points(l)
+      this.update_points(l, i)
       l.position.z -= this.flyingSpeed
       //this.flyingLine.position.y = this.camera.position.y
       l.position.x = this.camera.position.x - Math.sin(i) * 50
@@ -201,16 +204,32 @@ class Demo {
     this.flyingLines[1].position.y = this.camera.position.y + 40
     this.flyingLines[1].position.x = this.camera.position.x
     this.flyingLines[2].position.x = this.camera.position.x + 40
+
+    let time = this.counter / 1000
+    let x = this.flyingLines[0].position.x,
+      y= this.flyingLines[0].position.y
+
+    //this.flyingLines[0].position.x += 10 * Simplex.noise3D(x , y, time)
   }
 
-  update_points(line){
+  update_points(line, idx){
+
+    let time = this.counter / 10000
+
     let obj_resolution = 50
     let new_positions=[];
     for (var i = 0; i <= obj_resolution; i++) {
 
       var z = i * 5
       var y = Math.sin((this.camera.position.z + i * 5) * 0.0025) * FLY_CURVE;
-      var x= Math.sin((this.camera.position.z + i * 5) * 0.0025) * FLY_CURVE;
+      var x = Math.sin((this.camera.position.z + i * 5) * 0.0025) * FLY_CURVE;
+
+
+      if (i % 5 == 0) {
+        x += 10 * Simplex.noise2D(x * idx, y * idx, time)
+        y += 10 * Simplex.noise2D(x * idx, y * idx, time)
+       // z +=  20 *  Simplex.noise2D(x * idx, y * idx, time)
+      }
       new_positions.push(new THREE.Vector3(x, y, z));
     }
     line.geometry.vertices = new_positions;

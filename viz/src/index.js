@@ -48,7 +48,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new Mare()
+ demo = new Intro()
     window.onresize = demo.onResize.bind(demo);
 
 /*

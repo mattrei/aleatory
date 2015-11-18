@@ -3,6 +3,7 @@ import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
+import RndFloat from 'random-float'
 
 import Water from './Water'
 
@@ -70,8 +71,6 @@ class Mare {
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000000 );
     this.camera.position.set(0, 50, -300);
-    this.camera.lookAt( new THREE.Vector3() );
-    this.camera.up = new THREE.Vector3(0,0,1);
     //this.controls = new THREE.FirstPersonControls(this.camera) 
     //this.controls.movementSpeed = 300;
     //this.controls.lookSpeed = 0.3;
@@ -106,7 +105,7 @@ class Mare {
     );
     aMeshMirror.add(this.water);
     aMeshMirror.rotation.x = - Math.PI * 0.5;
-    aMeshMirror.position.y -= 100
+    aMeshMirror.position.y = 0
     
     this.scene.add(aMeshMirror)
   }
@@ -169,24 +168,35 @@ class Mare {
 
          this.scene.add(mesh)
 
-         let dur = (Math.random() * 2000) + 2000
-         let rad = Math.PI / ((Math.random() * 3) + 6) * 0.5
+         let dur = RndFloat(4, 8) * 1000
+         let rad = Math.PI * 0.125 * RndFloat(0.2, 0.4)
 
         let t1 = new TWEEN.Tween( mesh.rotation )
-            .to( { x: rad }, dur )
-            .easing( TWEEN.Easing.Bounce.InOut )
-
+            .to( { x: rad },  dur)
+            .easing( TWEEN.Easing.Sinusoidal.In )
 
         let t2 =  new TWEEN.Tween( mesh.rotation )
-            .to( { x: -rad }, dur * 2 )
-            .easing( TWEEN.Easing.Bounce.InOut )
+            .to( { x: -rad }, dur )
+            .easing( TWEEN.Easing.Sinusoidal.Out )
             
         t1.chain(t2)
         t2.chain(t1)
-
         t1.start()
 
-          })
+        dur = RndFloat(4, 8) * 1000
+        rad = Math.PI * 0.125 * RndFloat(0.1, 0.3)
+
+        let tLeft = new TWEEN.Tween( mesh.rotation )
+            .to( { y: rad }, dur )
+            .easing( TWEEN.Easing.Sinusoidal.In )
+        let tRight =  new TWEEN.Tween( mesh.rotation )
+            .to( { y: -rad }, dur )
+            .easing( TWEEN.Easing.Sinusoidal.Out )
+        tLeft.chain(tRight)
+        tRight.chain(tLeft)
+        tLeft.start()
+
+      })
 
 
     }) 
@@ -279,36 +289,6 @@ class Mare {
     let delta = this.clock.getDelta()
 
     TWEEN.update()
-
-    //this.controls.update( delta);
-
-    for ( var i = 0; i < this.morphs.length; i ++ ) {
-
-            let morph = this.morphs[ i ];
-            morph.updateAnimation( 1000 * delta );
-            morph.position.z += morph.speed * delta;
-
-            if ( morph.position.z  > 4000 )  {
-              morph.position.z = Math.random() * 500;
-            }
-    }
-    
-    if (this.mainMorph) {
-      
-      let rot = (Math.PI/4) * (Math.sin(this.mainMorph.position.z / 100) )
-      this.mainMorph.rotation.z = rot
-      let pos = -Math.pow(rot, 3)
-      this.mainMorph.position.x += pos
-
-      this.mainMorph.position.y = Math.abs(pos * 20)
-
-      this.camera.position.z = this.mainMorph.position.z - 300
-      this.camera.position.y = this.mainMorph.position.y + 50
-      this.camera.position.x = this.mainMorph.position.x
-
-      //this.camera.lookAt(this.mainMorph.position)
-      //this.camera.rotation.z = this.mainMorph.rotation.z
-    }
 
     this.water.material.uniforms.time.value += 1.0 / 60.0;
 
