@@ -19,8 +19,8 @@ import Flipper from './Flipper';
 import Drones from './Drones';
 import Mare from './Mare';
 import Heaven from './Heaven';
-import TextParticles from './TextParticles'
-import WienerLinien from './WienerLinien'
+//import TextParticles from './TextParticles'
+//import WienerLinien from './WienerLinien'
 import Staircase from './Staircase'
 
 
@@ -47,7 +47,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new Drones()
+ demo = new Intro()
     window.onresize = demo.onResize.bind(demo);
 
 /*

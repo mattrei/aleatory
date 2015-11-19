@@ -7,6 +7,8 @@ import SimplexNoise from 'simplex-noise'
 var Line = require('three-line-2d')(THREE)
 
 const glslify = require('glslify')
+const createAnalyser = require('web-audio-analyser')
+const AudioContext = window.AudioContext || window.webkitAudioContext
 
 const Simplex = new SimplexNoise()
 
@@ -33,6 +35,9 @@ class Demo {
         this.plane = null
         this.shakeX = 0
         this.shakeY = 0
+
+        this.analyser = null
+        this.createAudio()
 
 
         this.flyingSpeed = 0
@@ -72,6 +77,12 @@ class Demo {
 
         this.onResize();
         this.update();
+    }
+
+    createAudio() {
+        let audio = new Audio("//127.0.0.1:8000/sonicpi")
+
+        this.analyser = createAnalyser(audio, {stereo: true})
     }
 
     createPost() {
@@ -406,6 +417,8 @@ class Demo {
         })
 
         this.fly()
+
+        console.log(this.analyser.frequencies())
 
         //this.renderPass()
         this.renderer.render(this.scene, this.camera);
