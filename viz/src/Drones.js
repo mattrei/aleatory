@@ -388,7 +388,7 @@ var Globe = function(opts) {
     shaderTime += 0.1
 
 
-    earthMesh.material.uniforms.time.value = shaderTime * 0.0002;
+    earthMesh.material.uniforms.time.value = shaderTime * 0.05;
     earthMesh.material.uniforms.wobble.value = earth.wobble;
     earthMesh.material.uniforms.glowIntensity.value = earth.glowing;
     earthMesh.material.uniforms.redIntensity.value = 1 -earth.glowing / 3;
