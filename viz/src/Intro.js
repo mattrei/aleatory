@@ -81,8 +81,10 @@ class Demo {
 
     createAudio() {
         let audio = new Audio("//127.0.0.1:8000/sonicpi")
-
-        this.analyser = createAnalyser(audio, {stereo: true})
+        audio.crossOrigin = 'Anonymous'
+        audio.play()
+        audio.volume = 1
+        this.analyser = createAnalyser(audio, {stereo: false})
     }
 
     createPost() {

@@ -16,7 +16,7 @@ import Tube from './Tube';
 import Falling from './Falling';
 import Dices from './Dices';
 import Flipper from './Flipper';
-import Drones from './Drones';
+//import Drones from './Drones';
 import Mare from './Mare';
 import Heaven from './Heaven';
 //import TextParticles from './TextParticles'
