@@ -4,7 +4,11 @@ import dat from 'dat-gui';
 import Stats from 'stats-js';
 import MathF from 'utils-perf'
 import SimplexNoise from 'simplex-noise'
+import TWEEN from 'tween.js'
 var Line = require('three-line-2d')(THREE)
+
+var tweenr = require('tweenr')()
+var Tween = require('tween-chain')
 
 const glslify = require('glslify')
 const createAnalyser = require('web-audio-analyser')
@@ -25,9 +29,11 @@ const FLY_CURVE = 20
 const MAX_POINTS = 500
 const TRIANGLE_GAP = 500
 const NUM_TRIANGLES = 8
-
+const CAMERA_Z_START = 250
 class Demo {
     constructor(args) {
+
+        this.shaderTime = 0
 
         this.counter = 0
         this.gui = null
@@ -52,7 +58,7 @@ class Demo {
         this.rotX = 0
 
         this.uniforms = {}
-        this.speed = 1.0;
+        this.speed = 0;
         this.height = 1.0;
 
         this.startStats();
@@ -194,22 +200,26 @@ class Demo {
     }
 
     createFlyingLine() {
-        let geometry = new THREE.Geometry()
-/*
-        var geometry = new THREE.TubeGeometry(
-    path,  //path
-    20,    //segments
-    2,     //radius
-    8,     //radiusSegments
-    false  //closed
-);
-*/
-        let material = new THREE.LineBasicMaterial({
-            color: 0xff0000,
-            linewidth: 5
-        });
 
         for (var i = 0; i < 3; i++) {
+
+            let material = new THREE.ShaderMaterial({
+                uniforms: {
+                        time: {
+                            type: "f",
+                            value: 0.1
+                        },
+                        speed: {
+                            type: "f",
+                            value: this.speed
+                        }
+                },
+                transparent: true,
+                fragmentShader: glslify(__dirname + '/glsl/Intro_Line.frag'),
+                vertexShader: glslify(__dirname + '/glsl/Intro_Line.vert')
+
+            })
+
             let line = new THREE.Line(new THREE.Geometry(), material);
             this.scene.add(line)
             this.flyingLines.push(line)
@@ -223,7 +233,7 @@ class Demo {
         this.triangles.forEach(t => {
             //t.position.z += this.flyingSpeed * 10
 
-            if (t.position.z > this.camera.position.z) {
+            if (t.position.z > this.camera.position.z + CAMERA_Z_START) {
                 t.position.z = (this.camera.position.z - TRIANGLE_GAP * NUM_TRIANGLES)
             }
         })
@@ -241,7 +251,7 @@ class Demo {
 
         this.flyingLines.forEach((l, i) => {
 
-            this.update_points(l, i)
+            this.update_points(l.geometry, i)
             l.position.z -= this.flyingSpeed
             //this.flyingLine.position.y = this.camera.position.y
             l.position.x = this.camera.position.x - Math.sin(i) * 50
@@ -259,7 +269,7 @@ class Demo {
         //this.flyingLines[0].position.x += 10 * Simplex.noise3D(x , y, time)
     }
 
-    update_points(line, idx) {
+    update_points(geometry, idx) {
 
         let time = this.counter / 10000
 
@@ -280,8 +290,8 @@ class Demo {
       */
             new_positions.push(new THREE.Vector3(x, y, z));
         }
-        line.geometry.vertices = new_positions;
-        line.geometry.verticesNeedUpdate = true;
+        geometry.vertices = new_positions;
+        geometry.verticesNeedUpdate = true;
     }
 
 
@@ -311,7 +321,7 @@ class Demo {
 
     createScene() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000);
-        this.camera.position.set(0, 45, 240);
+        this.camera.position.set(0, 45, CAMERA_Z_START);
 
         this.scene = new THREE.Scene();
     }
@@ -358,8 +368,8 @@ class Demo {
                 },
             },
             transparent: true,
-            fragmentShader: glslify(__dirname + '/glsl/Intro.frag'),
-            vertexShader: glslify(__dirname + '/glsl/Intro.vert')
+            fragmentShader: glslify(__dirname + '/glsl/Intro_Terrain.frag'),
+            vertexShader: glslify(__dirname + '/glsl/Intro_Terrain.vert')
             //wireframe: true
         });
 
@@ -375,7 +385,7 @@ class Demo {
 
     startGUI() {
         this.gui = new dat.GUI()
-        this.gui.add(this, 'speed', 0.1, 10)
+        this.gui.add(this, 'speed', 0, 1)
         this.gui.add(this, 'height', 1, 20)
 
         this.gui.add(this, 'introText')
@@ -385,6 +395,56 @@ class Demo {
         this.gui.add(this, 'flyingSpeed', 0, 20)
         this.gui.add(this, 'shakeX', -20, 20)
         this.gui.add(this, 'shakeY', -20, 20)
+
+        this.gui.add(this, 'leave')
+    }
+
+    leave() {
+
+        let tchain = Tween()
+        
+
+        this.triangles.forEach(t => {
+
+
+            tchain.chain(
+
+            t.position, {
+              x: MathF.random(-50, 50),
+              y: MathF.random(-50, 50),
+              z: MathF.random(CAMERA_Z_START + 10 , CAMERA_Z_START + 100),
+              duration: 2
+            }
+            )
+            tchain.chain(
+            t.rotation, {
+              x: MathF.random(-Math.PI * 2, Math.PI * 2),
+              y: MathF.random(-Math.PI, Math.PI),
+              z: MathF.random(-Math.PI, Math.PI),
+              duration: 2
+            }
+            )
+        })
+
+        let lchain = Tween()
+        this.flyingLines.forEach(f => {
+            lchain.chain(
+            f.position, {
+              x: MathF.random(-200, 200),
+              y: MathF.random(-200, 200),
+              z: MathF.random(CAMERA_Z_START + 10 , CAMERA_Z_START + 100),
+              duration: 4
+            }
+            )
+        })
+        lchain.then(this.plane.position, {
+              z: MathF.random(200, 500),
+              duration: 2
+            })
+
+        tchain.then(lchain)
+
+        tweenr.to(tchain)
     }
 
     renderPass() {
@@ -404,11 +464,12 @@ class Demo {
         }
 
         this.counter++
+        this.shaderTime += 0.1
 
         this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
         this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
 
-        this.plane.material.uniforms.time.value += this.clock.getDelta();
+        this.plane.material.uniforms.time.value += this.shaderTime * 0.001
         this.plane.material.uniforms.speed.value = this.speed;
         this.plane.material.uniforms.height.value = this.height;
 
@@ -418,9 +479,14 @@ class Demo {
             t.material.uniforms.dist.value = 1 - (t.position.z / (this.camera.position.z - TRIANGLE_GAP * NUM_TRIANGLES))
         })
 
+        this.flyingLines.forEach((t, i) => {
+            t.material.uniforms.time.value += (this.shaderTime + i * 5) * 0.001
+            t.material.uniforms.speed.value = this.plane.material.uniforms.speed.value
+        })
+
         this.fly()
 
-        console.log(this.analyser.frequencies())
+//        console.log(this.analyser.frequencies())
 
         //this.renderPass()
         this.renderer.render(this.scene, this.camera);

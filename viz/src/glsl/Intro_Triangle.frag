@@ -22,5 +22,5 @@ uniform float dist;
 
             vec3 color = vec3(r,g,b);
 
-            gl_FragColor = vec4(color, d * dist);
+            gl_FragColor = vec4(color, 1.0);
         }

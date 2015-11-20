@@ -1,14 +1,14 @@
+#pragma glslify: PI = require('glsl-pi')
+
 varying vec2 vUv;
 //varying float vNoise;
 uniform float time;
 uniform float speed;
 
-        #define M_PI 3.1415926535897932384626433832795
-
         void main()
         {
             vec2 p = -1.0 + 2.0 *vUv;
-            float alpha = sin(p.y * M_PI) / 2.;
+            float alpha = sin(p.y * PI) / 2.;
 
             float time2 = time / (1. / speed);
 
