@@ -4,8 +4,13 @@ import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'
+import MathF from 'utils-perf'
+const simplex = new (require('simplex-noise'))
 const OrbitControls = require('three-orbit-controls')(THREE);
 //import SPE from 'shader-particle-engine/build/SPE'
+
+var tweenr = require('tweenr')()
+var Tween = require('tween-chain')
 
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
 
@@ -38,17 +43,16 @@ const PI_HALF = Math.PI / 2
 const PI_TWO = Math.PI * 2
 const PI = Math.PI
 
+const DISTANCE_EARTH = 1000
+
 var Globe = function(opts) {
   opts = opts || {};
 
-  var container
-  
   var colorFn = opts.colorFn || function(x) {
     var c = new THREE.Color();
     c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
     return c;
   };
-  var imgDir = opts.imgDir || '/globe/';
 
   var Shaders = {
     'atmosphere' : {
@@ -87,24 +91,23 @@ var Globe = function(opts) {
 
   var overRenderer;
   var shaderTime = 0
+  var vis = {amplitude: 0, speed: 1}
 
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
+
+  var boxes = []
 
   var earth = {glowing : 3.0, wobble: 0.0 }
 
   var earthMesh = null
 
-  var mouse = { x: 0, y: 0 }, mouseOnDown = { x: 0, y: 0 };
-//  var rotation = { x: 0, y: 0 },
-//      target = { x: Math.PI*3/2, y: Math.PI / 6.0 },
-  var targetOnDown = { x: 0, y: 0 };
-
   // camera's position
   var rotation = { x: 0, y: 0 };
   var target = { x: 0, y: 0 };
 
-  var distance = 100000, distanceTarget = 1000;
+  var distance = DISTANCE_EARTH
+  var dist = {earth: DISTANCE_EARTH}
   var padding = 40;
   
   var postprocessing = {};
@@ -164,7 +167,6 @@ var Globe = function(opts) {
     camera.position.z = distance;
 
     scene = new THREE.Scene();
-
     clock = new THREE.Clock();
 
     var geometry = new THREE.SphereGeometry(200, 40, 30);
@@ -172,7 +174,7 @@ var Globe = function(opts) {
     var explodeModifier = new THREE.ExplodeModifier();
     explodeModifier.modify( geometry );
 
-    let worldTexture = THREE.ImageUtils.loadTexture(imgDir+'world.jpg')
+    let worldTexture = THREE.ImageUtils.loadTexture('/assets/Drones/world.jpg')
 
     material = new THREE.ShaderMaterial({
 
@@ -201,7 +203,7 @@ var Globe = function(opts) {
     // Stars
     var starGeo = new THREE.SphereGeometry (3000, 10, 100),
         starMat = new THREE.MeshBasicMaterial();
-    let texture = THREE.ImageUtils.loadTexture(imgDir+'star-field.png');
+    let texture = THREE.ImageUtils.loadTexture('/assets/Drones/star-field.png');
     texture.minFilter = THREE.NearestFilter
     starMat.map = texture
     starMat.side = THREE.BackSide;
@@ -271,102 +273,27 @@ var Globe = function(opts) {
 
     geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
     geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
-
     point = new THREE.Mesh(geometry);
 
     renderer = new THREE.WebGLRenderer({antialias: true});
+    renderer.domElement.style.position = 'absolute';
     document.body.appendChild(renderer.domElement)
-    container = renderer.domElement
     renderer.setSize(w, h);
 
     startStats()
-    renderer.domElement.style.position = 'absolute';
 
     let controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 300000;
+    renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
     
-/*
-    container.addEventListener('mousedown', onMouseDown, false);
-
-    container.addEventListener('mousewheel', onMouseWheel, false);
-
-    window.addEventListener('resize', onWindowResize, false);
-
-    container.addEventListener('mouseover', function() {
-      overRenderer = true;
-    }, false);
-
-    container.addEventListener('mouseout', function() {
-      overRenderer = false;
-    }, false);
-*/
-
     initPass()
 
   }
 
-
-  function onMouseDown(event) {
-    event.preventDefault();
-
-    container.addEventListener('mousemove', onMouseMove, false);
-    container.addEventListener('mouseup', onMouseUp, false);
-    container.addEventListener('mouseout', onMouseOut, false);
-
-    mouseOnDown.x = - event.clientX;
-    mouseOnDown.y = event.clientY;
-
-    targetOnDown.x = target.x;
-    targetOnDown.y = target.y;
-
-    container.style.cursor = 'move';
-  }
-
-  function onMouseMove(event) {
-    mouse.x = - event.clientX;
-    mouse.y = event.clientY;
-
-    var zoomDamp = distance/1000;
-
-    target.x = targetOnDown.x + (mouse.x - mouseOnDown.x) * 0.005 * zoomDamp;
-    target.y = targetOnDown.y + (mouse.y - mouseOnDown.y) * 0.005 * zoomDamp;
-
-    target.y = target.y > PI_HALF ? PI_HALF : target.y;
-    target.y = target.y < - PI_HALF ? - PI_HALF : target.y;
-  }
-
-  function onMouseUp(event) {
-    container.removeEventListener('mousemove', onMouseMove, false);
-    container.removeEventListener('mouseup', onMouseUp, false);
-    container.removeEventListener('mouseout', onMouseOut, false);
-    container.style.cursor = 'auto';
-  }
-
-  function onMouseOut(event) {
-    container.removeEventListener('mousemove', onMouseMove, false);
-    container.removeEventListener('mouseup', onMouseUp, false);
-    container.removeEventListener('mouseout', onMouseOut, false);
-  }
-
   function onMouseWheel(event) {
     event.preventDefault();
-    if (overRenderer) {
-      zoom(event.wheelDeltaY * 0.3);
-    }
+    dist.earth -= event.wheelDeltaY * 0.3
     return false;
-  }
-
-  function onWindowResize( event ) {
-    camera.aspect = container.offsetWidth / container.offsetHeight;
-    camera.updateProjectionMatrix();
-    renderer.setSize( container.offsetWidth, container.offsetHeight );
-  }
-
-
-  function zoom(delta) {
-    distanceTarget -= delta;
-    distanceTarget = distanceTarget > 5000 ? 5000 : distanceTarget;
-    distanceTarget = distanceTarget < 350 ? 350 : distanceTarget;
   }
 
   function animate() {
@@ -376,6 +303,88 @@ var Globe = function(opts) {
 
     requestAnimationFrame(animate);
     render(clock.getDelta() );
+  }
+
+  function createBoxes() {
+
+    //for (let i=-90; i < 90; i += MathF.random(3, 8)) {
+    //  for (let j=-180; j < 180; j += 4) {
+
+
+    for (let i=0; i<500; i++) {
+      let lat = MathF.random(-90,90),
+        lng = MathF.random(-180, 180)
+
+      let color = 
+
+        addBox(lat, lng, MathF.random(1, 5), 0xff00f0)
+    }
+  }
+
+  function visBoxes() {
+
+    boxes.forEach((b,i) => {
+      funkUp(b)
+    })
+  }
+
+  function funkUp (box) {
+    var verts = box.geometry.vertices
+    /*
+    for (var i = 0; i < verts.length; i++) {
+      var v = verts[i]
+      var scale = 1
+      var strength = 5
+      v.x += scale * simplex.noise3D(0, v.y * strength, v.z * strength)
+      v.y += scale * simplex.noise3D(v.x * strength, 0, v.z * strength)
+      v.z += scale * simplex.noise3D(v.x * strength, v.y * strength, 0)
+    }
+    */
+    let p = box.position
+
+    let height = simplex.noise4D(p.x, p.y,0, shaderTime * vis.speed)
+    let size = 300 * vis.amplitude * height
+    let c = simplex.noise4D(p.x, p.y, 0, shaderTime * 0.1)
+
+    box.material.color.setHSL(c, MathF.random(0.6, 0.9), height)
+
+
+    
+
+    box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
+    box.updateMatrix();
+    //box.geometry.verticesNeedUpdate = true
+  }
+
+  function removeBoxes() {
+
+    boxes.forEach(b => {
+      scene.remove(b)
+    })
+
+    boxes = []
+  }
+
+
+  function addBox(lat, lng, size, color) {
+
+    let geom  = new THREE.CubeGeometry(4, 4, 1);
+    geom.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
+
+    let mat = new THREE.MeshBasicMaterial({color: color})
+
+
+    let box = new THREE.Mesh(geom, mat)
+
+    let p = _getPosFromLatLng(lat, lng)
+    box.position.copy(p)
+    box.lookAt(mesh.position);
+
+    box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
+    box.updateMatrix();
+
+    scene.add(box)
+    boxes.push(box)
   }
 
   function render(dt) {
@@ -398,11 +407,14 @@ var Globe = function(opts) {
     atmosphereUniforms.redIntensity.value = 1- earth.glowing / 3;
 
 
-    zoom(curZoomSpeed);
+    visBoxes()
 
+// TODO
+
+/*
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
-    distance += (distanceTarget - distance) * 0.3;
+    distance += (dist.earth - distance) * 0.3;
 
      // determine camera position
     set3dPosition(camera, {
@@ -410,8 +422,8 @@ var Globe = function(opts) {
       y: rotation.y,
       altitude: distance
     });
-
     camera.lookAt(mesh.position);
+    */
 
 
     //renderer.render(scene, camera);
@@ -419,25 +431,85 @@ var Globe = function(opts) {
     stats.end();
   }
 
-  var set3dPosition = function(mesh, coords) {
+  var set3dPosition = function(cam, coords) {
     if(!coords)
-      coords = mesh.userData;
+      coords = cam.userData;
 
     var x = coords.x;
     var y = coords.y;
     var altitude = coords.altitude;
 
-    mesh.position.set(
+    cam.position.set(
       altitude * Math.sin(x) * Math.cos(y),
       altitude * Math.sin(y),
       altitude * Math.cos(x) * Math.cos(y)
     );
   }
 
+  function showPakistan() {
+
+    const LAT = 33.6,
+      LNG = 73.1
+
+
+    let pos = calculate2dPosition(LAT, LNG)
+    let tween = Tween()
+    console.log(pos)
+
+    tween.chain(target, {
+      x: pos.x,
+      y: pos.y-0.2,
+      duration: 2
+    })
+    tween.chain(dist, {
+      earth: 400,
+      duration: 2
+    })
+
+
+    tweenr.to(tween)
+    tween.on('update', () => {
+      _moveEarth()
+    })
+
+    tween.on('complete', () => {
+      camera.lookAt(new THREE.Vector3(pos.x, pos.y, 0))
+    })
+    
+
+  }
+
+  function _moveEarth() {
+    rotation.x += (target.x - rotation.x) * 0.1;
+    rotation.y += (target.y - rotation.y) * 0.1;
+    distance += (dist.earth - distance) * 0.3;
+
+     // determine camera position
+    set3dPosition(camera, {
+      x: rotation.x,
+      y: rotation.y,
+      altitude: distance
+    });
+    camera.lookAt(mesh.position);
+  }
+
+  function showEarth() {
+    
+    let tween = tweenr.to(dist, {
+      earth: DISTANCE_EARTH,
+      duration: 2
+    })
+
+    tween.on('update', () => {
+      _moveEarth()
+    })
+
+  }
+
   function createRndFire() {
     //for (let i=0; i < 5; i++) {
-    let lat = Math.random() * 180 - 90, //  -90 .. 90
-        lng = Math.random() * 360 - 180         // 180 .. -180
+    let lat = MathF.random(-90, 90), //  -90 .. 90
+        lng = MathF.random(-180, 180)         // 180 .. -180
 
     let p = _getPosFromLatLng(lat, lng)
 
@@ -460,6 +532,16 @@ var Globe = function(opts) {
 
     let p = calculate2dPosition(lat, lng)
     target = p
+
+    let tween = tweenr.to(target, {
+      x: p.x,
+      y: p.y,
+      duration: 0.5
+    })
+
+    tween.on('update',() => {
+      _moveEarth()  
+    })
   }
 
   function createFire(lat, lng) {
@@ -489,7 +571,18 @@ var Globe = function(opts) {
     moveX *= Math.random() * 0.8;
     moveY *= Math.random() * 0.8;
 
-    target = {x: moveX, y:moveY}
+    //target = {x: moveX, y:moveY}
+
+    let tween = tweenr.to(target, {
+      x: moveX,
+      y: moveY,
+      duration: 0.5
+    })
+
+    tween.on('update',() => {
+      _moveEarth()  
+    })
+    
   }
 
   function explode() {
@@ -527,35 +620,6 @@ var Globe = function(opts) {
   init();
   this.animate = animate;
 
-
-  this.__defineGetter__('time', function() {
-    return this._time || 0;
-  });
-
-  this.__defineSetter__('time', function(t) {
-    var validMorphs = [];
-    var morphDict = this.points.morphTargetDictionary;
-    for(var k in morphDict) {
-      if(k.indexOf('morphPadding') < 0) {
-        validMorphs.push(morphDict[k]);
-      }
-    }
-    validMorphs.sort();
-    var l = validMorphs.length-1;
-    var scaledt = t*l+1;
-    var index = Math.floor(scaledt);
-    for (i=0;i<validMorphs.length;i++) {
-      this.points.morphTargetInfluences[validMorphs[i]] = 0;
-    }
-    var lastIndex = index - 1;
-    var leftover = scaledt - index;
-    if (lastIndex >= 0) {
-      this.points.morphTargetInfluences[lastIndex] = 1 - leftover;
-    }
-    this.points.morphTargetInfluences[index] = leftover;
-    this._time = t;
-  });
-
   this.explode = explode;
   this.createRndFire = createRndFire;
   this.createFire = createFire;
@@ -563,10 +627,13 @@ var Globe = function(opts) {
   this.moveGlobe = moveGlobe;
   this.glitch = glitch
 
-  this.distanceTarget = distanceTarget;
+  this.createBoxes = createBoxes
+  this.removeBoxes = removeBoxes
+  this.visBoxes = visBoxes
+  this.vis = vis
 
-
-  this.onWindowResize = onWindowResize;
+  this.showPakistan = showPakistan
+  this.showEarth = showEarth
 
   this.renderer = renderer;
   this.scene = scene;
@@ -587,7 +654,6 @@ class Drones {
     this.flySpeed = 0
 
     let opts = {}
-    opts.imgDir = 'assets/'
     this.update = this.update.bind(this)
     opts.update = this.update
     this.globe = new Globe(opts)
@@ -637,7 +703,7 @@ class Drones {
   {
     let geometry = this.createStarGeometry()
     let star = this.makeStar(geometry)
-
+    star.visible = false
     this.scene.add( star );
 
     return star
@@ -736,20 +802,28 @@ class Drones {
     gui.add(this.globe, 'moveGlobeRnd')
     gui.add(this.globe, 'moveGlobe')
     gui.add(this.globe, 'glitch')
+    gui.add(this.globe, 'createBoxes')
+    gui.add(this.globe, 'removeBoxes')
+    gui.add(this.globe.vis, 'amplitude', 0.0, 1.0)
+    gui.add(this.globe.vis, 'speed', 0.0, 1.0)
 
     gui.add(this, 'flySpeed', -20, 20)
     gui.add(this, 'showStars')
 
+    gui.add(this.globe, 'showPakistan')
+    gui.add(this.globe, 'showEarth')
+
     gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
     gui.add(this.globe.earth, 'wobble', 0.0, 1.0)
 
-//    gui.add(this.globe.target, 'distance', 300, 2000)
     gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
     gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
   }
   onResize(e)
   {  
-    this.globe.onWindowResize(e)
+    this.globe.renderer.setSize( window.innerWidth, window.innerHeight)
+    this.globe.camera.aspect = window.innerWidth / window.innerHeight
+    this.globe.camera.updateProjectionMatrix();
   }
 }
 

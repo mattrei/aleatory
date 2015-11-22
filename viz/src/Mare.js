@@ -4,6 +4,7 @@ import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 import RndFloat from 'random-float'
+import MathF from 'utils-perf'
 
 import Water from './Water'
 
@@ -12,6 +13,8 @@ import FirstPersonControls from './controls/FirstPersonControls'
 const MORPH_SPEED = 200
 const Y_POS = 200
 const SKYBOX = "sky"//"miramar"
+
+const NUM_BOATS = 20
 
 var prevTime = Date.now();
 class Mare {
@@ -39,11 +42,22 @@ class Mare {
     this.startGUI();
 
 
-    this.addBoat()
+    this.addBoats()
     this._loadSkyBox()
 
     this.onResize();
     this.update();
+  }
+
+  addBoats() {
+
+    for (let i=0; i < NUM_BOATS; i++) {
+      let v = new THREE.Vector3(
+        MathF.random(-1000, 1000),
+          0,
+          i * 400)
+      this.addBoat(v, {drown: MathF.rrandom(0, 3)})
+    }
   }
 
   startStats()
@@ -144,7 +158,7 @@ class Mare {
     this.scene.add(aSkybox);
   }
 
-  addBoat() {
+  addBoat(position, properties) {
 
     let textureLoader = new THREE.TextureLoader()
 
@@ -160,13 +174,15 @@ class Mare {
         } );
          let mesh = new THREE.Mesh( geometry, material );
          mesh.scale.set( 5, 5, 5 );
-         mesh.position.y = 0;
-         mesh.position.x = 0;
+
+         mesh.position.copy(position)
+
+        mesh.wave = {x: Math.random(), z: Math.random() }
+
+         
 
 
-         mesh.wave = {x: Math.random(), z: Math.random() }
-
-         this.scene.add(mesh)
+         
 
          let dur = RndFloat(4, 8) * 1000
          let rad = Math.PI * 0.125 * RndFloat(0.2, 0.4)
@@ -181,7 +197,24 @@ class Mare {
             
         t1.chain(t2)
         t2.chain(t1)
-        t1.start()
+       
+
+        if (properties.drown === 1) {
+          mesh.rotation.z = Math.PI
+          mesh.position.y += 10
+        }
+
+
+        if (properties.drown === 2) {
+          mesh.rotation.x = -Math.PI * MathF.random(0.3, 0.8)
+          mesh.position.y += MathF.random(-10, 10)
+        } else {
+           t1.start()
+        }
+
+
+
+
 
         dur = RndFloat(4, 8) * 1000
         rad = Math.PI * 0.125 * RndFloat(0.1, 0.3)
@@ -196,6 +229,8 @@ class Mare {
         tRight.chain(tLeft)
         tLeft.start()
 
+
+        this.scene.add(mesh)
       })
 
 

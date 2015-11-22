@@ -15,8 +15,6 @@
  *
  */
 
- module.exports = function(THREE)
- {
 
 THREE.FontUtils = {
 
@@ -278,4 +276,3 @@ THREE.FontUtils.generateShapes = function ( text, parameters ) {
 THREE.typeface_js = { faces: THREE.FontUtils.faces, loadFace: THREE.FontUtils.loadFace };
 if ( typeof self !== 'undefined' ) self._typeface_js = THREE.typeface_js;
 
-}

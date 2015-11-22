@@ -1,10 +1,20 @@
-import THREE from 'three'; 
+global.THREE = require('three.js')
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import FirstPersonControls from './controls/FirstPersonControls' ;
+import MathF from 'utils-perf'
+
+const FontUtils = require('./utils/FontUtils')
+const GeometryUtils = require('./utils/GeometryUtils')
+
+var typeface = require('three.regular.helvetiker')
+THREE.typeface_js.loadFace(typeface);
+
+var tweenr = require('tweenr')()
 
 const SKYBOX_PATH = "/assets/skybox/"
+const SKYBOX = "sky"//"miramar"
 const NUM_BIRDS = 400
 
 // http://www.themigrantsfiles.com/
@@ -13,8 +23,14 @@ const NUM_BIRDS = 400
 class Demo {
   constructor(args) 
   {
+
+    this.birdText = ''
+
     this.startStats();
     this.startGUI();
+
+    
+    this.textMesh = null
 
     this.renderer = null;
     this.camera   = null;
@@ -26,6 +42,8 @@ class Demo {
     this.createRender();
     this.createScene();
     this.addObjects();
+
+    this.addText()
 
 
     this.birds = []
@@ -59,23 +77,24 @@ class Demo {
 
     this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000 );
     this.camera.position.set(0, 45, 240);
-    //this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-    //this.controls.maxDistance = 500;
+    this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+    this.controls.maxDistance = 500;
 
     this.scene = new THREE.Scene();
 
-    this.controls = new FirstPersonControls( this.camera );
-    this.controls.movementSpeed = 300;
-    this.controls.lookSpeed = 0.3;
+    //this.controls = new FirstPersonControls( this.camera );
+    //this.controls.movementSpeed = 300;
+    //this.controls.lookSpeed = 0.3;
   }
 
   addObjects()
   {
     var gridHelper = new THREE.GridHelper( 100, 10 );        
-    this.scene.add( gridHelper );
+    //this.scene.add( gridHelper );
 
 
     let materials = [
+
 
           new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( SKYBOX_PATH + 'px.jpg' ) } ), // right
           new THREE.MeshBasicMaterial( { map: THREE.ImageUtils.loadTexture( SKYBOX_PATH + 'nx.jpg' ) } ), // left
@@ -113,14 +132,113 @@ class Demo {
           bird.phase = Math.floor( Math.random() * 62.83 );
           this.scene.add( bird );
 
+          bird.boid = boid
 
+
+        }
+
+
+  }
+
+  addText() {
+
+    if (this.textMesh) {
+      this.scene.remove(this.textMesh)
+    }
+
+      let shapes = THREE.FontUtils.generateShapes( this.birdText, {
+        font: "helvetiker",
+        weight: "normal",
+        curveSegments: 0,
+        size: 40
+      } );
+      let geom = new THREE.ShapeGeometry( shapes );
+      let mat = new THREE.MeshNormalMaterial({wireframe:true});
+      let mesh = new THREE.Mesh( geom, mat );
+      geom.center()
+      mesh.visible = false
+      this.scene.add(mesh)
+
+      this.textMesh = mesh
+  }
+
+  textBirds() {
+
+    this.addText()
+
+        let points = THREE.GeometryUtils.randomPointsInGeometry( this.textMesh.geometry, NUM_BIRDS );
+        
+        for ( var i = 0; i < NUM_BIRDS; i ++ ) {
+          let b = this.birds[i]
+          b.inText = true
+
+
+
+          tweenr.to(b.position, {
+            x: points[i].x,
+            y: points[i].y,
+            z: points[i].z + MathF.random(-20, 20),
+            duration: MathF.random(2, 8),
+            ease: 'expoOut'
+          })
+
+          let c = ( 500 - points[i].z ) / 1000;
+
+          tweenr.to(b.material.color, {
+            r: c,
+            g: c,
+            b: c,
+            duration: MathF.random(2, 4),
+            ease: 'expoOut'
+          })
+
+          tweenr.to(b.rotation, {
+            y: MathF.random(0, Math.PI),
+            z: MathF.random(0, Math.PI),
+            duration: MathF.random(2, 4),
+          }).on('update', () => b.updateMatrix())
+
+          //bird.rotation.y = Math.atan2( - boid.velocity.z, boid.velocity.x );
+          //bird.rotation.z = Math.asin( boid.velocity.y / boid.velocity.length() );
+
+          b.boid.position.copy(points[i])
+        }
+
+  }
+
+  freeBirds() {
+
+
+
+        for ( var i = 0; i < NUM_BIRDS; i ++ ) {
+          let b = this.birds[i]
+
+/*
+          tweenr.to(b.position, {
+            x: MathF.random(-50,50),
+            y: MathF.random(-50,50),
+            z: MathF.random(-50,50),
+            duration: MathF.random(0.5, 1),
+            ease: 'expoOut'
+          }).on('complete', () => {
+            b.boid.position.copy(b.position)
+            b.inText = false
+          })
+*/
+
+          b.inText = false
+
+          //this.boids[i].position.copy(points[i])
+          //b.position.copy(points[i])
         }
   }
 
   startGUI()
   {
-    // var gui = new dat.GUI()
-    // gui.add(camera.position, 'x', 0, 400)
+    var gui = new dat.GUI()
+    gui.add(this, 'textBirds')
+    gui.add(this, 'freeBirds')
+    gui.add(this, 'birdText')
     // gui.add(camera.position, 'y', 0, 400)
     // gui.add(camera.position, 'z', 0, 400)
   }
@@ -140,24 +258,30 @@ class Demo {
 
   render() 
   {
+    
       for ( var i = 0, il = this.birds.length; i < il; i++ ) {
 
-          let boid = this.boids[ i ];
-          boid.run( this.boids );
-
           let bird = this.birds[ i ];
-          bird.position.copy( this.boids[ i ].position );
 
-          let color = bird.material.color;
-          color.r = color.g = color.b = ( 500 - bird.position.z ) / 1000;
+          if (!bird.inText) {
 
-          bird.rotation.y = Math.atan2( - boid.velocity.z, boid.velocity.x );
-          bird.rotation.z = Math.asin( boid.velocity.y / boid.velocity.length() );
+            let boid = this.boids[ i ];
+            boid.run( this.boids );
 
-          bird.phase = ( bird.phase + ( Math.max( 0, bird.rotation.z ) + 0.1 )  ) % 62.83;
-          bird.geometry.vertices[ 5 ].y = bird.geometry.vertices[ 4 ].y = Math.sin( bird.phase ) * 5;
 
+            bird.position.copy( this.boids[ i ].position );
+
+            let color = bird.material.color;
+            color.r = color.g = color.b = ( 500 - bird.position.z ) / 1000;
+
+            bird.rotation.y = Math.atan2( - boid.velocity.z, boid.velocity.x );
+            bird.rotation.z = Math.asin( boid.velocity.y / boid.velocity.length() );
+
+            bird.phase = ( bird.phase + ( Math.max( 0, bird.rotation.z ) + 0.1 )  ) % 62.83;
+            bird.geometry.vertices[ 5 ].y = bird.geometry.vertices[ 4 ].y = Math.sin( bird.phase ) * 5;
+          }
         }
+        
 
   }
 
