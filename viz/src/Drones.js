@@ -12,6 +12,12 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 var tweenr = require('tweenr')()
 var Tween = require('tween-chain')
 
+const FontUtils = require('./utils/FontUtils')
+const GeometryUtils = require('./utils/GeometryUtils')
+var typeface = require('three.regular.helvetiker')
+THREE.typeface_js.loadFace(typeface);
+
+
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
 
 const CopyShader = require('./shaders/CopyShader')(THREE)
@@ -47,12 +53,6 @@ const DISTANCE_EARTH = 1000
 
 var Globe = function(opts) {
   opts = opts || {};
-
-  var colorFn = opts.colorFn || function(x) {
-    var c = new THREE.Color();
-    c.setHSL( ( 0.6 - ( x * 0.5 ) ), 1.0, 0.5 );
-    return c;
-  };
 
   var Shaders = {
     'atmosphere' : {
@@ -91,7 +91,7 @@ var Globe = function(opts) {
 
   var overRenderer;
   var shaderTime = 0
-  var vis = {amplitude: 0, speed: 1}
+  var vis = {amplitude: 0, speed: 1, text: 'asdf'}
 
   var curZoomSpeed = 0;
   var zoomSpeed = 50;
@@ -109,6 +109,8 @@ var Globe = function(opts) {
   var distance = DISTANCE_EARTH
   var dist = {earth: DISTANCE_EARTH}
   var padding = 40;
+
+  var canvas = document.createElement('canvas');
   
   var postprocessing = {};
 
@@ -315,9 +317,10 @@ var Globe = function(opts) {
       let lat = MathF.random(-90,90),
         lng = MathF.random(-180, 180)
 
-      let color = 
+       
 
-        addBox(lat, lng, MathF.random(1, 5), 0xff00f0)
+      let p = _getPosFromLatLng(lat, lng)
+      addBox(p, MathF.random(1, 5), 0xff00f0)
     }
   }
 
@@ -328,18 +331,62 @@ var Globe = function(opts) {
     })
   }
 
+  function visText() {
+
+      
+
+        var str = vis.text
+        const FONT_SIZE = 120,
+            FONT_NAME = "px Arial"
+
+        let ctx = canvas.getContext('2d');
+
+        ctx.font = FONT_SIZE + FONT_NAME;
+        var metrics = ctx.measureText(str);
+        console.log(metrics)
+        let width = canvas.width = Math.ceil(metrics.width) || 1,
+            height = canvas.height = Math.ceil(1.1 * FONT_SIZE);
+        ctx.fillStyle = '#fff';
+        ctx.fillText(str, 0, FONT_SIZE);
+
+        let vertices = []
+
+        var index;
+        var data = ctx.getImageData(0, 0, width, height).data;
+        var count = 0;
+        console.log(data.length)
+        for(var i = 0, len = data.length; i < len; i+=4) {
+            if(data[i] > 0) {
+                // is white
+                index = i / 4;
+                let x = index % width,
+                  y = index / width | 0;
+                
+                vertices.push(new THREE.Vector2(x,y))
+                count++;
+            }
+        }
+
+        console.log(vertices)
+
+        vertices.forEach(v => {
+
+          var axis = new THREE.Vector3( 0, 0, 1 );
+          var angle = Math.PI / 2;
+          var a = new THREE.Euler( 0, 0, angle, 'XYZ' );
+          //pos.applyAxisAngle( axis, angle );
+          //pos.translate()
+          //v.applyEuler(a)
+
+          let pos = _getPosFromLatLng(v.x * 3, v.y * 3)
+
+          addBox(pos, MathF.random(1, 5), 0xff00f0)
+        })
+
+  }
+
   function funkUp (box) {
     var verts = box.geometry.vertices
-    /*
-    for (var i = 0; i < verts.length; i++) {
-      var v = verts[i]
-      var scale = 1
-      var strength = 5
-      v.x += scale * simplex.noise3D(0, v.y * strength, v.z * strength)
-      v.y += scale * simplex.noise3D(v.x * strength, 0, v.z * strength)
-      v.z += scale * simplex.noise3D(v.x * strength, v.y * strength, 0)
-    }
-    */
     let p = box.position
 
     let height = simplex.noise4D(p.x, p.y,0, shaderTime * vis.speed)
@@ -348,25 +395,57 @@ var Globe = function(opts) {
 
     box.material.color.setHSL(c, MathF.random(0.6, 0.9), height)
 
-
-    
-
     box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
     box.updateMatrix();
-    //box.geometry.verticesNeedUpdate = true
   }
 
   function removeBoxes() {
 
+    let tween = Tween()
+
     boxes.forEach(b => {
-      scene.remove(b)
+
+
+      tween.chain(b.position, {
+        x: MathF.random(b.position.x, 500),
+        y: MathF.random(b.position.y, 500),
+        z: MathF.random(b.position.z, 500),
+        duration: MathF.random(4, 5)
+      })
+
+      //scene.remove(b)
     })
+
+    let tween2 = Tween()
+
+    boxes.forEach(b => {
+
+      tween2.chain(b.position, {
+        x: this.camera.position.x,
+        y: this.camera.position.y,
+        z: this.camera.position.z + 500,
+        duration: MathF.random(2, 3)
+      })
+      //scene.remove(b)
+    })
+
+    tween.then(tween2)
+
+    tween2.on('complete', () => {
+      boxes.forEach(b => {
+
+        scene.remove(b)
+      })
+    })
+
+    tweenr.to(tween)
+
 
     boxes = []
   }
 
 
-  function addBox(lat, lng, size, color) {
+  function addBox(pos, size, color) {
 
     let geom  = new THREE.CubeGeometry(4, 4, 1);
     geom.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
@@ -376,8 +455,8 @@ var Globe = function(opts) {
 
     let box = new THREE.Mesh(geom, mat)
 
-    let p = _getPosFromLatLng(lat, lng)
-    box.position.copy(p)
+
+    box.position.copy(pos)
     box.lookAt(mesh.position);
 
     box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
@@ -431,19 +510,20 @@ var Globe = function(opts) {
     stats.end();
   }
 
-  var set3dPosition = function(cam, coords) {
-    if(!coords)
-      coords = cam.userData;
+  var set3dPosition = function(obj, coords) {
+    console.log(coords)
 
     var x = coords.x;
     var y = coords.y;
     var altitude = coords.altitude;
 
-    cam.position.set(
+    obj.position.set(
       altitude * Math.sin(x) * Math.cos(y),
       altitude * Math.sin(y),
       altitude * Math.cos(x) * Math.cos(y)
     );
+
+    console.log(obj.position)
   }
 
   function showPakistan() {
@@ -629,7 +709,7 @@ var Globe = function(opts) {
 
   this.createBoxes = createBoxes
   this.removeBoxes = removeBoxes
-  this.visBoxes = visBoxes
+  this.visText = visText
   this.vis = vis
 
   this.showPakistan = showPakistan
@@ -804,8 +884,10 @@ class Drones {
     gui.add(this.globe, 'glitch')
     gui.add(this.globe, 'createBoxes')
     gui.add(this.globe, 'removeBoxes')
+    gui.add(this.globe, 'visText')
     gui.add(this.globe.vis, 'amplitude', 0.0, 1.0)
     gui.add(this.globe.vis, 'speed', 0.0, 1.0)
+    gui.add(this.globe.vis, 'text', 'asdf')
 
     gui.add(this, 'flySpeed', -20, 20)
     gui.add(this, 'showStars')

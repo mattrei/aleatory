@@ -25,6 +25,8 @@ const EffectComposer = require('three-effectcomposer')(THREE)
 var WAGNER = require('@superguigui/wagner');
 var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass');
 
+const PARTICLES_AMOUNT = 300000
+
 const FLY_CURVE = 20
 const MAX_POINTS = 500
 const TRIANGLE_GAP = 500
@@ -35,6 +37,11 @@ class Demo {
 
         this.shaderTime = 0
 
+        this.canvas = null
+        this.ctx = null
+
+        this.textMesh = null;
+
         this.counter = 0
         this.gui = null
         this.introText = ''
@@ -43,7 +50,7 @@ class Demo {
         this.shakeY = 0
 
         this.analyser = null
-        this.createAudio()
+        //this.createAudio()
 
 
         this.flyingSpeed = 0
@@ -62,7 +69,7 @@ class Demo {
         this.height = 1.0;
 
         this.startStats();
-        this.startGUI();
+        
 
         this.multiPassBloomPass = null
         this.composer = null
@@ -71,18 +78,91 @@ class Demo {
         this.scene = null;
         this.clock = new THREE.Clock();
 
-        this.createTextDiv()
+        
+        //this.createTextDiv()
         this.createRender();
         this.createScene();
         this.createPp()
         this.createPost()
         this.addObjects();
 
+        this.createText()
+
         this.createTriangles()
         this.createFlyingLine()
 
+        this.startGUI();
         this.onResize();
         this.update();
+    }
+
+    createText() {
+
+        this.canvas = document.createElement('canvas');
+        this.ctx = this.canvas.getContext('2d');
+
+        let geometry = new THREE.BufferGeometry();
+        geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array(PARTICLES_AMOUNT * 3), 3 ));
+        geometry.addAttribute( 'extras', new THREE.BufferAttribute( new Float32Array(PARTICLES_AMOUNT * 2), 2 ) );
+
+        let material = new THREE.ShaderMaterial( {
+
+            uniforms: {
+                uTime: { type: 'f', value: 0 },
+                uAnimation: { type: 'f', value: 0 },
+                uOffset: { type: 'v2', value: new THREE.Vector2() }
+            },
+            //attributes: geometry.attributes,
+            vertexShader: glslify(__dirname + '/glsl/Intro_Text.vert'),
+            fragmentShader: glslify(__dirname + '/glsl/Intro_Text.frag'),
+            blending: THREE.AdditiveBlending,
+            transparent: true,
+            depthWrite: true,
+            depthTest: false
+        } );
+
+        this.textMesh = new THREE.Points( geometry, material );
+        this.scene.add( this.textMesh );
+
+
+    }
+
+    updateText () {
+        var str = this.introText
+        const FONT_SIZE = 120,
+            FONT_NAME = "px Arial"
+
+        let ctx = this.canvas.getContext('2d');
+
+        ctx.font = FONT_SIZE + FONT_NAME;
+        var metrics = ctx.measureText(str);
+        let width = this.canvas.width = Math.ceil(metrics.width) || 1,
+            height = this.canvas.height = Math.ceil(1.1 * FONT_SIZE);
+        this.ctx.fillStyle = '#fff';
+        this.ctx.fillText(str, 0, 1.1* FONT_SIZE * 0.9);
+
+        let geometry = this.textMesh.geometry
+
+        let vertices = geometry.attributes.position.array,
+            extras = geometry.attributes.extras.array;
+
+        var index;
+        var data = this.ctx.getImageData(0, 0, width, height).data;
+        var count = 0;
+        for(var i = 0, len = data.length; i < len; i+=4) {
+            if(data[i + 3] > 0) {
+                index = i / 4;
+                vertices[count * 3] = index % width;
+                vertices[count * 3 + 1] = index / width | 0;
+                extras[count * 2] = data[i + 3] / 255;
+                extras[count * 2 + 1] = Math.random();
+                count++;
+            }
+        }
+
+        geometry.attributes.position.needsUpdate = true;
+        geometry.attributes.extras.needsUpdate = true;
+        //geometry.drawcalls = /*geometry.offsets =*/ [{start: 0, count: count, index: 0}];
     }
 
     createAudio() {
@@ -388,7 +468,10 @@ class Demo {
         this.gui.add(this, 'speed', 0, 1)
         this.gui.add(this, 'height', 1, 20)
 
-        this.gui.add(this, 'introText')
+        this.gui.add(this, 'introText').onChange(this.updateText.bind(this));
+        this.gui.add(this.textMesh.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
+        this.gui.add(this, 'updateText')
+
         this.gui.add(this, 'updateIntroText')
 
         this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)
@@ -466,8 +549,22 @@ class Demo {
         this.counter++
         this.shaderTime += 0.1
 
+        
+        //this.textMesh.position.z -= 300
+
+        this.textMesh.material.uniforms.uTime.value += 0.003;
+        this.textMesh.material.uniforms.uOffset.value.set(-window.innerWidth / 2, -window.innerHeight / 2);
+
         this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
         this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
+
+        let fixedScale = 2 * Math.tan(this.camera.fov / 360 * Math.PI) / window.innerHeight;
+
+        this.textMesh.position.copy(this.camera.position);
+        this.textMesh.rotation.copy(this.camera.rotation);
+        this.textMesh.position.z -= 780
+        this.textMesh.position.x += window.innerWidth / 2
+        this.textMesh.position.y -= window.innerHeight / 4
 
         this.plane.material.uniforms.time.value += this.shaderTime * 0.001
         this.plane.material.uniforms.speed.value = this.speed;

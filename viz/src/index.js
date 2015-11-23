@@ -47,7 +47,7 @@ oscPort.on("message", function (oscMsg) {
 });
 oscPort.open();
 
- demo = new Drones()
+ demo = new Executed()
     window.onresize = demo.onResize.bind(demo);
 
 /*
