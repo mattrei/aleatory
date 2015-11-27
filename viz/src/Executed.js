@@ -8,6 +8,7 @@ import tweenr from 'tweenr'
 import TWEEN from 'tween.js'
 const glslify = require('glslify')
 
+const ExplodeModifier = require('./modifiers/ExplodeModifier')
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const GeometryUtils = require('./utils/GeometryUtils')
 
@@ -15,6 +16,8 @@ import ExecutedData from './test_data/executed.json'
 import ScheduledData from './test_data/scheduled.json'
 
 import NoMousePersonControls from './controls/NoMousePersonControls'
+
+var triangulate = require("delaunay-triangulate")
 
 const Tweenr = tweenr()
 
@@ -33,6 +36,9 @@ const SPHERE_SIZE = 1500
 
 const CAMERA_POS = {x: 0, y:0, z:5000}
 
+const E_SPHERE_RADIUS = 3500
+const E_SM_SPHERE_RADIUS = 3000
+
 class Demo {
   constructor(args) 
   {
@@ -43,9 +49,16 @@ class Demo {
 
     this.targetView = 'grid'
 
+    //executed
+    this.minDistance = 100
+    this.particleCount = 500
+    this.particlesData = []
+    this.particlesMesh = null
+    this.linesMesh = null
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
     this.executed = []
+    this.bgMesh = null
 
     //scheduled
     this.shaderTime = 0
@@ -84,6 +97,7 @@ class Demo {
     gui.add(this, 'doRandom')
     gui.add(this, 'lookAtRnd')
     gui.add(this, 'lookAtNext')
+    gui.add(this, 'smash')
     gui.add(this, 'transition', 500, 5000)
 
     gui.add(this.current, 'show', 0, 5)
@@ -95,6 +109,9 @@ class Demo {
 
 
     gui.add(this, 'addExecuted')
+    gui.add(this, 'particleCount', 500, 2000)
+    gui.add(this, 'minDistance', 100, 1000)
+
     gui.add(this, 'addScheduled')
     gui.add(this, 'nextScheduled')
     gui.add(this, 'clearScene')
@@ -190,15 +207,138 @@ class Demo {
   addExecuted()
   {
 
-    let geom = new THREE.IcosahedronGeometry( POLY_SIZE, 0 );
+    let group = new THREE.Group();
+    this.scene.add( group );
+
+    const maxParticleCount = 2000;
+    
+
+
+    let segments = maxParticleCount * maxParticleCount;
+
+    let positions = new Float32Array( segments * 3 );
+    let colors = new Float32Array( segments * 3 );
+
+    let pMaterial = new THREE.PointsMaterial( {
+          color: 0xFFFFFF,
+          size: 3,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          sizeAttenuation: false
+        } );
+
+    let r = E_SPHERE_RADIUS
+
+    let pGeometry = new THREE.BufferGeometry();
+    let particlePositions = new Float32Array( maxParticleCount * 3 );
+
+        for ( var i = 0; i < maxParticleCount; i++ ) {
+
+          let theta = MathF.random(0, Math.PI * 2),  //polar
+             phi = MathF.random(0, Math.PI * 2),    //azimuth
+             //dist = MathF.random(E_SM_SPHERE_RADIUS, E_SPHERE_RADIUS)
+             dist  = Math.sqrt(Math.random()) * (E_SPHERE_RADIUS-E_SM_SPHERE_RADIUS) + E_SM_SPHERE_RADIUS
+
+          let x = Math.cos(theta) * Math.cos(phi) * dist,
+            y = Math.sin(theta) * Math.cos(phi) *  dist,
+            z = Math.sin(phi) * dist
+
+          particlePositions[ i * 3     ] = x;
+          particlePositions[ i * 3 + 1 ] = y;
+          particlePositions[ i * 3 + 2 ] = z;
+
+          // add it to the geometry
+          this.particlesData.push( {
+            velocity: new THREE.Vector3( MathF.random(-3, 3), MathF.random(-3, 3), MathF.random(-3, 3) ),
+            numConnections: 0
+          } );
+
+        }
+
+        pGeometry.setDrawRange( 0, this.particleCount );
+        pGeometry.addAttribute( 'position', new THREE.BufferAttribute( particlePositions, 3 ).setDynamic( true ) );
+
+        // create the particle system
+      let particlesMesh = new THREE.Points( pGeometry, pMaterial );
+      this.particlesMesh = particlesMesh
+      group.add( particlesMesh );
+
+      let lGeometry = new THREE.BufferGeometry();
+
+        lGeometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ).setDynamic( true ) );
+        lGeometry.addAttribute( 'color', new THREE.BufferAttribute( colors, 3 ).setDynamic( true ) );
+
+        lGeometry.computeBoundingSphere();
+
+        lGeometry.setDrawRange( 0, 0 );
+
+        let lMaterial = new THREE.LineBasicMaterial( {
+          vertexColors: THREE.VertexColors,
+          blending: THREE.AdditiveBlending,
+          transparent: true
+        } );
+
+        let linesMesh = new THREE.LineSegments( lGeometry, lMaterial );
+        this.linesMesh = linesMesh
+        group.add( linesMesh );
+
+        //end
+
+
+
+    //let geom = new THREE.IcosahedronGeometry( POLY_SIZE, 0 );
+    let geom = new THREE.BoxGeometry( POLY_SIZE,POLY_SIZE,POLY_SIZE);
+
+    let bggeom = new THREE.BufferGeometry().fromGeometry(geom)
+    bggeom.computeBoundingSphere();
+
+    let bgmat = new THREE.ShaderMaterial( {
+
+        uniforms: {
+          amplitude: { type: "f", value: 1.0 },
+          color:     { type: "c", value: new THREE.Color( 0xffffff ) },
+          time: { type: "f", value: this.shaderTime}
+        },
+        side: THREE.BackSide,
+        vertexShader:   glslify(__dirname + '/glsl/Executed_Cube.vert'),
+        fragmentShader: glslify(__dirname + '/glsl/Executed_Cube.frag'),
+        transparent:    true,
+        depthWrite: true,
+        depthTest: false
+        //lights:         true
+
+      });
+
+/*
+    const BG_P_AMOUNT = 50000
+    let points = THREE.GeometryUtils.randomPointsInGeometry(geom, BG_P_AMOUNT)
+    let geometry = new THREE.BufferGeometry();
+    let data = new Float32Array(BG_P_AMOUNT * 4)
+    for ( var i = 0, j = 0, l = points.length; i < l; i += 4, j += 1 ) {
+            data[ i ] = points[ j ].x;
+            data[ i + 1 ] = points[ j ].y;
+            data[ i + 2 ] = points[ j ].z;
+            data[ i + 3 ] = 0.0;
+          }
+    geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4))
+*/
+    let bgmesh = new THREE.Mesh(bggeom, bgmat)
+    //let bgmesh = new THREE.Points(geometry, bgmat)
+    this.bgMesh = bgmesh
+   // this.scene.add(bgmesh)
+
+
+
     let mat = new THREE.MeshLambertMaterial( {
       color: 0xb9dff2,
       side: THREE.DoubleSide,
       wireframe: false});
   
 
-    let bgmesh = new THREE.Mesh(geom, mat)
-    this.scene.add(bgmesh)
+
+
+    //let bgmesh = new THREE.Mesh(geom, mat)
+    //this.scene.add(bgmesh)
 
 
     let plight = new THREE.PointLight( 0xffffff, 1, 10000 );
@@ -299,6 +439,92 @@ class Demo {
         this.camera.target = executed[0]
   }
 
+  animateESphere() {
+
+    if (!this.particlesMesh) {
+      return 
+    }
+
+    let particlePositions = this.particlesMesh.geometry.attributes.position.array
+
+    let positions = this.linesMesh.geometry.attributes.position.array,
+      colors = this.linesMesh.geometry.attributes.color.array
+
+      var vertexpos = 0;
+        var colorpos = 0;
+        var numConnected = 0;
+
+        for ( var i = 0; i < this.particleCount; i++ )
+          this.particlesData[ i ].numConnections = 0;
+
+        for ( var i = 0; i < this.particleCount; i++ ) {
+
+          // get the particle
+          let particleData = this.particlesData[i];
+
+          particlePositions[ i * 3     ] += particleData.velocity.x;
+          particlePositions[ i * 3 + 1 ] += particleData.velocity.y;
+          particlePositions[ i * 3 + 2 ] += particleData.velocity.z;
+
+          let x = particlePositions[ i * 3 ],
+            y = particlePositions[ i * 3 + 1 ],
+            z = particlePositions[ i * 3 + 2 ]
+
+          if (Math.sqrt(x*x + y*y + z*z) > E_SPHERE_RADIUS ||
+            Math.sqrt(x*x + y*y + z*z) < E_SM_SPHERE_RADIUS) {
+            particleData.velocity.x = -particleData.velocity.x;
+            particleData.velocity.y = -particleData.velocity.y;
+            particleData.velocity.z = -particleData.velocity.z;
+          }
+
+
+          // Check collision
+          for ( var j = i + 1; j < this.particleCount; j++ ) {
+
+            let particleDataB = this.particlesData[ j ];
+
+            var dx = particlePositions[ i * 3     ] - particlePositions[ j * 3     ];
+            var dy = particlePositions[ i * 3 + 1 ] - particlePositions[ j * 3 + 1 ];
+            var dz = particlePositions[ i * 3 + 2 ] - particlePositions[ j * 3 + 2 ];
+            var dist = Math.sqrt( dx * dx + dy * dy + dz * dz );
+
+            if ( dist < this.minDistance ) {
+
+              particleData.numConnections++;
+              particleDataB.numConnections++;
+
+              var alpha = 1.0 - dist / this.minDistance;
+
+              positions[ vertexpos++ ] = particlePositions[ i * 3     ];
+              positions[ vertexpos++ ] = particlePositions[ i * 3 + 1 ];
+              positions[ vertexpos++ ] = particlePositions[ i * 3 + 2 ];
+
+              positions[ vertexpos++ ] = particlePositions[ j * 3     ];
+              positions[ vertexpos++ ] = particlePositions[ j * 3 + 1 ];
+              positions[ vertexpos++ ] = particlePositions[ j * 3 + 2 ];
+
+              colors[ colorpos++ ] = alpha;
+              colors[ colorpos++ ] = alpha;
+              colors[ colorpos++ ] = alpha;
+
+              colors[ colorpos++ ] = alpha;
+              colors[ colorpos++ ] = alpha;
+              colors[ colorpos++ ] = alpha;
+
+              numConnected++;
+            }
+          }
+        }
+
+
+        this.linesMesh.geometry.setDrawRange( 0, numConnected * 2 );
+        this.linesMesh.geometry.attributes.position.needsUpdate = true;
+        this.linesMesh.geometry.attributes.color.needsUpdate = true;
+
+        this.particlesMesh.geometry.attributes.position.needsUpdate = true;
+
+  }
+
 
   resetCamera() {
     this.clearTexts()
@@ -362,7 +588,55 @@ class Demo {
     this.currentIdx++
     let e = this.objects[this.currentIdx % this.objects.length]
     this.lookAt(e)
+  }
 
+  smash() {
+
+    let e = this.objects[this.currentIdx % this.objects.length]
+    console.log(e.geometry)
+
+    let origPoints = e.geometry.attributes.position.array
+
+    let points = new THREE.GeometryUtils.randomPointsInBufferGeometry(e.geometry, 20)
+
+    let p = []
+    for (let i=0; i<points.length;i++){
+      p.push([points[i].x, points[i].y])
+    }
+
+    console.log(p)
+
+    let triangles = triangulate(p)
+
+    console.log(triangles)
+
+     for(var i = 0; i < (origPoints.length); i+=3)
+                {
+
+          var pos = new THREE.Vector3();
+          let x = origPoints[i],
+            y = origPoints[i+1],
+            z = origPoints[i+2]
+
+
+          origPoints[i] = x * (Math.random() * 100 + 50);
+          origPoints[i+1] = y * (Math.random() * 100 + 50);
+          origPoints[i+2] = z * (Math.random() * 100 + 50);
+
+
+/*
+                    new TWEEN.Tween(geometry.vertices[i])
+                    .to( { x: pos.x, y: pos.y, z: pos.z }, 3000 )
+                    .easing( TWEEN.Easing.Exponential.InOut )
+                    .onUpdate( function() {
+                    e.geometry.attributes.position.needsUpdate = true;})
+                    .start();
+                    */
+
+                    
+                }
+    
+    e.geometry.attributes.position.needsUpdate = true;
   }
 
   lookAtRnd() 
@@ -452,8 +726,10 @@ class Demo {
     this.stats.begin();
 
     //this.controls.update( this.clock.getDelta() );
-    TWEEN.update();
-    this.renderer.render(this.scene, this.camera);
+    TWEEN.update()
+    this.renderer.render(this.scene, this.camera)
+
+    this.animateESphere()
 
     //this.executed
     /*
@@ -480,6 +756,9 @@ class Demo {
       this.particleSystem.rotation.z = Math.PI - this.shaderTime * 0.004;
     }
 
+    if (this.bgMesh) {
+      this.bgMesh.material.uniforms.time.value = this.shaderTime
+    }
 
     this.stats.end()
     requestAnimationFrame(this.update.bind(this));

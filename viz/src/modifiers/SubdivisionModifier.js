@@ -14,8 +14,6 @@
  *      - currently doesn't handle "Sharp Edges"
  *
  */
-module.exports = function(THREE)
- {
 
 THREE.SubdivisionModifier = function ( subdivisions ) {
 
@@ -350,4 +348,3 @@ THREE.SubdivisionModifier.prototype.modify = function ( geometry ) {
 
 
 } )();
-}

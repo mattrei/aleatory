@@ -18,7 +18,7 @@ var typeface = require('three.regular.helvetiker')
 THREE.typeface_js.loadFace(typeface);
 
 
-const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
+const ExplodeModifier = require('./modifiers/ExplodeModifier')
 
 const CopyShader = require('./shaders/CopyShader')(THREE)
 const EffectComposer = require('./postprocessing/EffectComposer')(THREE)

@@ -4,8 +4,6 @@ varying vec3 vPos;
 void main()
 {
   vUv = uv;
-  float thickness = 5.0;
-
   vPos = position.xyz;
  
   vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
