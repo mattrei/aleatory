@@ -3,18 +3,21 @@ global.THREE = require('three')
 import dat from 'dat-gui';
 import Stats from 'stats-js';
 import MathF from 'utils-perf'
-import SimplexNoise from 'simplex-noise'
+const simplex = new (require('simplex-noise'))
 import TWEEN from 'tween.js'
 var Line = require('three-line-2d')(THREE)
 
-var tweenr = require('tweenr')()
+const tweenr = require('tweenr')()
 var Tween = require('tween-chain')
 
 const glslify = require('glslify')
 const createAnalyser = require('web-audio-analyser')
 const AudioContext = window.AudioContext || window.webkitAudioContext
+const smoothstep = require('smoothstep')
+const lerp = require('lerp')
 
-const Simplex = new SimplexNoise()
+require('./modifiers/ExplodeModifier')
+require('./modifiers/TessellateModifier')
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
@@ -30,8 +33,16 @@ const PARTICLES_AMOUNT = 300000
 const FLY_CURVE = 20
 const MAX_POINTS = 500
 const TRIANGLE_GAP = 500
+const NUM_RIBBONS = 15
+const RIBBON_LENGTH = 25
+const RIBBON_GAP = 50
+const RIBBON_START = NUM_RIBBONS * RIBBON_GAP * -1
+const RIBBON_Z_TOTAL = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
+
 const NUM_TRIANGLES = 8
 const CAMERA_Z_START = 250
+
+
 class Demo {
     constructor(args) {
 
@@ -48,6 +59,12 @@ class Demo {
         this.plane = null
         this.shakeX = 0
         this.shakeY = 0
+
+        this.street = {
+            speed: 0.5,
+            middle: [], left: null, right: null, 
+            lights: [],
+            buildings: []}
 
         this.analyser = null
         //this.createAudio()
@@ -88,13 +105,195 @@ class Demo {
 
         this.createText()
 
-        this.createTriangles()
+        this.createStreet()
+        this.createBuildings()
+        this.createCarLights()
+        //this.createTriangles()
         this.createFlyingLine()
 
         this.startGUI();
         this.onResize();
         this.update();
     }
+
+    createBuildings() {
+
+
+        for( var i = 0; i < NUM_RIBBONS * 6; i ++ ){
+
+            var geometry = new THREE.CubeGeometry( 1, 1, 1 );
+            geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
+            var material = new THREE.MeshNormalMaterial()
+            var buildingMesh = new THREE.Mesh( geometry, material );
+
+
+              // put a random position
+              let coin = MathF.coin() ? -1 : 1
+              buildingMesh.position.x   = MathF.random(70 * coin, 130 * coin)
+              buildingMesh.position.z   = MathF.random(0, -RIBBON_Z_TOTAL)
+              // put a random rotation
+              buildingMesh.rotation.y   = Math.random()*Math.PI*2;
+              // put a random scale
+              buildingMesh.scale.x  = Math.random() * Math.random() * Math.random() * Math.random() * 60 + 10;
+              buildingMesh.scale.y  = (Math.random() * Math.random() * Math.random() * buildingMesh.scale.x) * 10 + 20;
+              buildingMesh.scale.z  = buildingMesh.scale.x
+
+            this.scene.add(buildingMesh)
+            this.street.buildings.push(buildingMesh)
+
+        }
+    }
+
+    _createCarLightMaterial(color, size) {
+
+        let material = new THREE.ShaderMaterial( { 
+            vertexShader: glslify(__dirname + '/glsl/Intro_CarLight.vert'), 
+            fragmentShader: glslify(__dirname + '/glsl/Intro_CarLight.frag'), 
+            uniforms: {
+                "time" : { type: "f", value: this.shaderTime },
+                "size" : { type: "f", value: size },
+                "opacity" : { type: "f", value: 1 },
+                "psColor" : { type: "c", value: new THREE.Color(color) }
+            },
+            fog: true, 
+            transparent: true, 
+            blending: THREE.AdditiveBlending, 
+            depthWrite: false } );
+
+        return material
+    }
+
+    createCarLights() {
+
+        let carsFrontMaterial = this._createCarLightMaterial( 0xffffff,  50 ),
+                carsBackMaterial  = this._createCarLightMaterial( 0xff0000,  25 ),
+                carsFrontMaterial2 = this._createCarLightMaterial( 0xffffff,  50 ),
+                carsBackMaterial2  = this._createCarLightMaterial( 0xff0000, 25 )
+
+
+/*
+                var particles = new THREE.Points( new THREE.Geometry(), carsFrontMaterial );
+                particles.frustumCulled = true;
+                this.scene.add( particles );
+
+*/
+        var circleGeometry = new THREE.CircleGeometry( 10, 6 )
+        var circle = new THREE.Mesh( circleGeometry, carsFrontMaterial );
+        this.scene.add(circle)
+/*
+                var particles = new THREE.Points( new THREE.Geometry(), carsBackMaterial );
+                particles.frustumCulled = true;
+                this.scene.add( particles );
+
+
+                var particles = new THREE.Points( new THREE.Geometry(), carsFrontMaterial2 );
+                particles.frustumCulled = true;
+                this.scene.add( particles );
+
+                var particles = new THREE.Points( new THREE.Geometry(), carsBackMaterial2 );
+                particles.frustumCulled = true;
+                this.scene.add( particles );
+*/
+
+
+    }
+
+    createStreet() {
+
+        let geom = new THREE.PlaneBufferGeometry(3, (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS, 2, 2)
+        let mat = new THREE.LineBasicMaterial( {color: 0xffffff, linewidth: 3} )
+        let mesh = new THREE.Mesh(geom, mat)
+        mesh.rotation.x = Math.PI * 0.5
+
+        let left = new THREE.Line(new THREE.Geometry(), mat);
+        this.scene.add(left)
+        this.street.left = left
+
+        let right = new THREE.Line(new THREE.Geometry(), mat);
+        this.scene.add(right)
+        this.street.right = right
+
+
+        for (let i=1; i < NUM_RIBBONS+1; i++) {
+            let geom = new THREE.PlaneGeometry(5, RIBBON_LENGTH, 2, 2)
+            let mat = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} )
+
+            let mesh = new THREE.Mesh(geom, mat)
+            mesh.rotation.x = Math.PI * 0.5
+
+            mesh.position.z = (RIBBON_GAP + RIBBON_LENGTH) * i * -1
+        
+            this.scene.add(mesh)
+            this.street.middle.push(mesh)
+        }
+
+        this.scene.add(new THREE.AmbientLight(0xffffff))
+    }
+
+    animateStreet() {
+
+        let pos_left = [],
+            pos_right = []
+        
+        this.street.middle.forEach((m, i) => {
+            
+            m.position.z += this.street.speed * 4
+
+            let r = Math.sin((this.shaderTime + m.position.z * 0.2) * 0.02) 
+            m.position.x = r * 15
+            m.position.y = r * 8
+            m.rotation.z = r * 0.05
+
+
+            if (m.position.z > 0) {//this.camera.position.z) {
+                m.position.z = (NUM_RIBBONS * (RIBBON_GAP + RIBBON_LENGTH) * -1)
+            }
+            pos_left.push(new THREE.Vector3((r*15) - 50, r*8, m.position.z))
+            pos_right.push(new THREE.Vector3((r*15) + 50, r*8, m.position.z))
+        })
+
+        pos_left.sort((a,b) => {
+            return a.z - b.z
+        })
+        pos_right.sort((a,b) => {
+            return a.z - b.z
+        })
+
+        let g = this.street.left.geometry
+        g.vertices = pos_left
+        g.verticesNeedUpdate = true
+
+        g = this.street.right.geometry
+        g.vertices = pos_right
+        g.verticesNeedUpdate = true
+
+        this.street.buildings.forEach((b, i) => {
+
+            let r = Math.sin((this.shaderTime + b.position.z * 0.2) * 0.02) 
+
+
+            
+
+            b.position.x = (r * 15) + b._xoffset
+            b.position.y = r * 8
+
+            b.position.z += this.street.speed * 4
+
+            let delta = Math.abs(100 * simplex.noise2D(i, this.shaderTime * 0.09 * this.street.speed))
+            b.scale.y = Math.max(60, delta)
+            //b.translateY( delta / 2 );
+
+            if (b.position.z > 0) {//this.camera.position.z) {
+                b.position.z = (NUM_RIBBONS * (RIBBON_GAP + RIBBON_LENGTH) * -1)
+
+                let coin = MathF.coin() ? -1 : 1
+                b._xoffset = MathF.random(70 * coin, 130 * coin)
+            }
+        })
+
+    }
+
+
 
     createText() {
 
@@ -162,7 +361,7 @@ class Demo {
 
         geometry.attributes.position.needsUpdate = true;
         geometry.attributes.extras.needsUpdate = true;
-        //geometry.drawcalls = /*geometry.offsets =*/ [{start: 0, count: count, index: 0}];
+        geometry.addGroup(0, count, 0)
     }
 
     createAudio() {
@@ -374,35 +573,13 @@ class Demo {
         geometry.verticesNeedUpdate = true;
     }
 
-
-    // update positions
-    updatePositions() {
-
-        var positions = this.flyingLine.geometry.attributes.position.array;
-
-        let x = 0,
-            y = 0,
-            z = 0,
-            index = 0
-
-        for (var i = 0, l = MAX_POINTS; i < l; i++) {
-
-            positions[index++] = x;
-            positions[index++] = y;
-            positions[index++] = z;
-
-            x += (Math.random() - 0.5) * 30;
-            y += (Math.random() - 0.5) * 30;
-            z += (Math.random() - 0.5) * 30;
-
-        }
-
-    }
-
     createScene() {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000);
         this.camera.position.set(0, 45, CAMERA_Z_START);
 
+
+        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
+        this.controls.maxDistance = 300000;
         this.scene = new THREE.Scene();
     }
 
@@ -453,7 +630,14 @@ class Demo {
             //wireframe: true
         });
 
-        var geometry = new THREE.PlaneBufferGeometry(window.innerWidth, window.innerHeight, 10, 10);
+        var geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight, 10, 10);
+
+/*
+        console.log(THREE.ExplodeModifier)
+        var explodeModifier = new THREE.ExplodeModifier();
+        explodeModifier.modify( geometry );
+*/
+
 
         this.plane = new THREE.Mesh(geometry, planeMaterial);
 
@@ -466,6 +650,7 @@ class Demo {
     startGUI() {
         this.gui = new dat.GUI()
         this.gui.add(this, 'speed', 0, 1)
+        this.gui.add(this.street, 'speed', 0, 1)
         this.gui.add(this, 'height', 1, 20)
 
         this.gui.add(this, 'introText').onChange(this.updateText.bind(this));
@@ -549,15 +734,18 @@ class Demo {
         this.counter++
         this.shaderTime += 0.1
 
+        this.animateStreet()
+
         
         //this.textMesh.position.z -= 300
 
         this.textMesh.material.uniforms.uTime.value += 0.003;
         this.textMesh.material.uniforms.uOffset.value.set(-window.innerWidth / 2, -window.innerHeight / 2);
 
+/*
         this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
         this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
-
+*/
         let fixedScale = 2 * Math.tan(this.camera.fov / 360 * Math.PI) / window.innerHeight;
 
         this.textMesh.position.copy(this.camera.position);
@@ -581,7 +769,7 @@ class Demo {
             t.material.uniforms.speed.value = this.plane.material.uniforms.speed.value
         })
 
-        this.fly()
+        //this.fly()
 
 //        console.log(this.analyser.frequencies())
 
