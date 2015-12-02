@@ -123,14 +123,16 @@ class Demo {
 
             var geometry = new THREE.CubeGeometry( 1, 1, 1 );
             geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
-            var material = new THREE.MeshNormalMaterial()
+            var material = new THREE.MeshNormalMaterial({wireframe: false})
             var buildingMesh = new THREE.Mesh( geometry, material );
 
 
               // put a random position
               let coin = MathF.coin() ? -1 : 1
               buildingMesh.position.x   = MathF.random(70 * coin, 130 * coin)
-              buildingMesh.position.z   = MathF.random(0, -RIBBON_Z_TOTAL)
+              buildingMesh.position.z   = -1 * MathF.random(0, RIBBON_Z_TOTAL)
+              //buildingMesh.position.z   = 200
+
               // put a random rotation
               buildingMesh.rotation.y   = Math.random()*Math.PI*2;
               // put a random scale
@@ -139,6 +141,11 @@ class Demo {
               buildingMesh.scale.z  = buildingMesh.scale.x
 
             this.scene.add(buildingMesh)
+            buildingMesh.visible = false
+
+            let cube = new THREE.EdgesHelper( buildingMesh );
+            this.scene.add( cube );
+
             this.street.buildings.push(buildingMesh)
 
         }
@@ -179,7 +186,7 @@ class Demo {
 */
         var circleGeometry = new THREE.CircleGeometry( 10, 6 )
         var circle = new THREE.Mesh( circleGeometry, carsFrontMaterial );
-        this.scene.add(circle)
+        //this.scene.add(circle)
 /*
                 var particles = new THREE.Points( new THREE.Geometry(), carsBackMaterial );
                 particles.frustumCulled = true;
@@ -237,7 +244,7 @@ class Demo {
         
         this.street.middle.forEach((m, i) => {
             
-            m.position.z += this.street.speed * 4
+            m.position.z += this.street.speed * 8
 
             let r = Math.sin((this.shaderTime + m.position.z * 0.2) * 0.02) 
             m.position.x = r * 15
@@ -271,16 +278,13 @@ class Demo {
 
             let r = Math.sin((this.shaderTime + b.position.z * 0.2) * 0.02) 
 
-
-            
-
             b.position.x = (r * 15) + b._xoffset
-            b.position.y = r * 8
+            b.position.y = r * 8 + b._yoffset
 
-            b.position.z += this.street.speed * 4
+            b.position.z += this.street.speed * 8
 
             let delta = Math.abs(100 * simplex.noise2D(i, this.shaderTime * 0.09 * this.street.speed))
-            b.scale.y = Math.max(60, delta)
+            b.scale.y = Math.max(30, delta)
             //b.translateY( delta / 2 );
 
             if (b.position.z > 0) {//this.camera.position.z) {
@@ -288,6 +292,8 @@ class Demo {
 
                 let coin = MathF.coin() ? -1 : 1
                 b._xoffset = MathF.random(70 * coin, 130 * coin)
+
+                b._yoffset = 30 * Math.sin((70 - Math.abs(b._xoffset)) * 1/(130 - 70))
             }
         })
 

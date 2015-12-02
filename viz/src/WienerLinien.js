@@ -3,6 +3,16 @@ import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
 import TWEEN from 'tween.js'
 
+const Tweenr = new(require('tweenr'))
+
+const newArray = require('new-array')
+const random = require('random-float')
+const randomInt = require('random-int')
+const randomRadian = () => random(-Math.PI, Math.PI)
+const randomRotation = () => newArray(3).map(randomRadian)
+const randomSphere = require('gl-vec3/random')
+const simplex = new (require('simplex-noise'))()
+
 const ConvolutionShader = require('./shaders/ConvolutionShader')(THREE)
 const CopyShader = require('./shaders/CopyShader')(THREE)
 const FXAAShader = require('./shaders/FXAAShader')(THREE)
@@ -18,7 +28,7 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 const WAGNER = require('./Wagner/Wagner')
 
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
-const FontUtils = require('./utils/FontUtils')(THREE)
+const FontUtils = require('./utils/FontUtils')
 
 const Helvetiker = require('./fonts/helvetiker_regular.typeface.js')
 
@@ -36,34 +46,14 @@ const CENTER_LNG = 16.3667
 
 const TWEEN_DUR = 15 * 1000
 
-import Boid from 'boid'
+
+const MAIN_COLOR = new THREE.Color('#fff')
+const ALT_COLOR = new THREE.Color('#000')
 
 /*
 add map as surface
 https://github.com/geommills/esrileaflet3JS/blob/master/scripts/client/src/terrain.js
 */
-
-const Shaders = { 'line' : {
-      uniforms: {},
-      vertexShader: [
-        'varying vec3 vNormal;',
-        'void main() {',
-          'vNormal = normalize( normalMatrix * normal );',
-          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-        '}'
-      ].join('\n'),
-      fragmentShader: [
-        'uniform float c;',
-        'uniform float p;',
-        'uniform vec3 color;',
-        'varying vec3 vNormal;',
-        'void main() {',
-          'float intensity = pow( c - dot( vNormal, vec3( 0, 0, 1.0 ) ), p );',
-          'gl_FragColor = vec4( color, 1.0 ) * intensity;',
-        '}'
-      ].join('\n')
-    }
-  }
 
 class Line {
   constructor(args) 
@@ -73,7 +63,7 @@ class Line {
     this.lineColor = args.lineColor
     this.linewidth = args.linewidth
 
-    this.boxes = []
+    this.particles = null
     this.normalGeometry = []
     this.line = null
     this.trains = []
@@ -126,6 +116,7 @@ class Line {
           .start();
     }
 
+/*
     this.boxes.forEach(b => {
 
       b.origPos = new THREE.Vector3()
@@ -144,6 +135,7 @@ class Line {
               z: vertex.z}, (TWEEN_DUR*Math.random()*0.5) + TWEEN_DUR*0.5)
           .start();
     })
+*/
     
   }
 
@@ -187,6 +179,7 @@ class Line {
           })
           .start();
 
+/*
     this.boxes.forEach(b => {
 
 
@@ -203,22 +196,28 @@ class Line {
               z: b.origPos.z}, (4*1000*Math.random()) + 4000)
           .start();
     })
+*/
   }
 
   draw() {
-    var numPoints = this.topo.length * 2;
+    let numPoints = this.topo.length * 2;
 
-    let points = []
+    let particlePositions = new Float32Array( numPoints * 3 );
 
-    let geomStation = new THREE.BoxGeometry(5, 5, 4);
-    let matStation = new THREE.MeshBasicMaterial({
-        color: 0xffffff
-    });
+    let pMaterial = new THREE.PointsMaterial( {
+          color: 0xFFFFFF,
+          size: 8,
+          blending: THREE.AdditiveBlending,
+          transparent: true,
+          sizeAttenuation: false
+        } );
+    let pGeometry = new THREE.BufferGeometry();
 
     
+    let points = []
     if (this.topo instanceof Array) {
       //sometimes the data may be curropt
-      this.topo.forEach(t => {
+      this.topo.forEach((t, i) => {
         
         let e = t[1]
         let y = (e.coord.lat - CENTER_LAT) * SCALE,
@@ -226,15 +225,18 @@ class Line {
          z = Math.random() * SCALE_Z
         points.push(new THREE.Vector3(x, y, z))
 
-        let mesh = new THREE.Mesh(geomStation, matStation);
-        mesh.position.x = x
-        mesh.position.y = y
-        mesh.position.z = z
-        this.scene.add(mesh)
-        this.boxes.push(mesh)
+        particlePositions[ i * 3     ] = x;
+        particlePositions[ i * 3 + 1 ] = y;
+        particlePositions[ i * 3 + 2 ] = z;
       })
 
-      console.log(points)
+      pGeometry.addAttribute( 'position', new THREE.BufferAttribute( particlePositions, 3 ));
+      let particlesMesh = new THREE.Points( pGeometry, pMaterial );
+      this.particles = particlesMesh
+      this.scene.add(particlesMesh)
+
+
+      //console.log(points)
       this.spline = new THREE.CatmullRomCurve3(points);
 
 
@@ -448,12 +450,79 @@ class WienerLinien {
     this.createScene();
     this.initPostProcessing()
 
+    this.createStars(120).forEach(m => this.scene.add(m))
+    this.createAsteroids(100).forEach(m => this.scene.add(m))
+
     this.onResize();
     this.update();
 
     this.idx = 0
 
   }
+
+  createAsteroids (count, app) {
+    const geometries = newArray(6).map(asteroidGeom)
+    const material = new THREE.MeshBasicMaterial({
+      color: MAIN_COLOR,
+      transparent: true,
+      wireframe: true
+    })
+    const meshes = newArray(count).map(() => {
+      const geometry = geometries[randomInt(geometries.length)]
+      const mesh = new THREE.Mesh(geometry, material.clone())
+      mesh.material.opacity = random(0.05, 0.1)
+      mesh.scale.multiplyScalar(random(0.1, 1.5))
+      mesh.rotation.fromArray(randomRotation())
+      mesh.direction = new THREE.Vector3().fromArray(randomSphere([]))
+      mesh.position.fromArray(randomSphere([], random(200, 400)))
+      return mesh
+    })
+    return meshes
+
+    function tick (dt) {
+      dt = dt / 1000
+      meshes.forEach(mesh => {
+        mesh.rotation.x += dt * 0.1 * mesh.direction.x
+        mesh.rotation.y += dt * 0.5 * mesh.direction.y
+      })
+    }
+
+    function asteroidGeom () {
+      const geometry = new THREE.TetrahedronGeometry(1, randomInt(1, 2))
+      geometry.vertices.forEach(v => {
+        let steps = 3
+        let s = Math.pow(2, steps)
+        let a = 0.75
+        for (let i = 0; i < steps; i++) {
+          v.x += a * simplex.noise3D(v.x * s * 0, v.y * s, v.z * s)
+          v.y += a * simplex.noise3D(v.x * s, v.y * s * 0, v.z * s)
+          v.z += a * simplex.noise3D(v.x * s, v.y * s, v.z * s * 0)
+          s *= 0.25
+          a *= 1 / steps * i
+        }
+      })
+      geometry.computeFaceNormals()
+      geometry.verticesNeedsUpdate = true
+      return geometry
+    }
+  }
+
+  createStars (count) {
+    const geometry = new THREE.TetrahedronGeometry(1, 0)
+    const material = new THREE.MeshBasicMaterial({
+      color: MAIN_COLOR
+    })
+    const meshes = newArray(count).map(() => {
+      const mesh = new THREE.Mesh(geometry, material.clone())
+      mesh.material.opacity = random(0.01, 0.5)
+      mesh.scale.multiplyScalar(random(0.1, 1.5))
+      mesh.rotation.fromArray(randomRotation())
+      mesh.position.fromArray(randomSphere([], random(200, 400)))
+      return mesh
+    })
+    return meshes
+  }
+
 
   startStats()
   {
@@ -606,7 +675,7 @@ class WienerLinien {
     })
   }
   metroMode() {
-    this.clearScene()
+    //this.clearScene()
 
     let topo = JSON.parse(U_TOPO) 
     this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u1, lineColor: new THREE.Color(0xff0000)}))
