@@ -1,8 +1,9 @@
+/*
 import OSC from 'osc/dist/osc-browser.js'
 const oscPort = new OSC.WebSocketPort({
     url: "ws://localhost:8081"
 });
-
+*/
 
 
 
@@ -26,7 +27,7 @@ import Staircase from './Staircase'
 
 
 //const viz = new Intro();
-
+/*
 oscPort.on("message", function (oscMsg) {
   console.log(oscMsg)
   if (oscMsg.address === '/p') {
@@ -46,8 +47,9 @@ oscPort.on("message", function (oscMsg) {
   }
 });
 oscPort.open();
+*/
 
- demo = new WienerLinien()
+ demo = new Intro()
     window.onresize = demo.onResize.bind(demo);
 
 /*
@@ -60,7 +62,7 @@ router.addRoute('#/Intro', function(req, next){
     window.onresize = demo.onResize.bind(demo);
 });
 router.addRoute('#/Executed', function(req, next){
-    
+
     document.body.innerHTML = '';
     demo = new Executed()
     window.onresize = demo.onResize.bind(demo);
@@ -73,12 +75,3 @@ router.addRoute('#/Scheduled', function(req, next){
 });
 */
 //router.redirect('#/Intro')
-
-
-
-
-
-
-
-
-

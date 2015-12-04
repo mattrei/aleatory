@@ -62,8 +62,8 @@ class Demo {
 
         this.street = {
             speed: 0.5,
-            middle: [], left: null, right: null, 
-            lights: [],
+            middle: [], left: null, right: null,
+            lights: {back: [], front: []},
             buildings: []}
 
         this.analyser = null
@@ -86,7 +86,7 @@ class Demo {
         this.height = 1.0;
 
         this.startStats();
-        
+
 
         this.multiPassBloomPass = null
         this.composer = null
@@ -95,7 +95,7 @@ class Demo {
         this.scene = null;
         this.clock = new THREE.Clock();
 
-        
+
         //this.createTextDiv()
         this.createRender();
         this.createScene();
@@ -151,56 +151,33 @@ class Demo {
         }
     }
 
-    _createCarLightMaterial(color, size) {
-
-        let material = new THREE.ShaderMaterial( { 
-            vertexShader: glslify(__dirname + '/glsl/Intro_CarLight.vert'), 
-            fragmentShader: glslify(__dirname + '/glsl/Intro_CarLight.frag'), 
-            uniforms: {
-                "time" : { type: "f", value: this.shaderTime },
-                "size" : { type: "f", value: size },
-                "opacity" : { type: "f", value: 1 },
-                "psColor" : { type: "c", value: new THREE.Color(color) }
-            },
-            fog: true, 
-            transparent: true, 
-            blending: THREE.AdditiveBlending, 
-            depthWrite: false } );
-
-        return material
-    }
-
     createCarLights() {
 
-        let carsFrontMaterial = this._createCarLightMaterial( 0xffffff,  50 ),
-                carsBackMaterial  = this._createCarLightMaterial( 0xff0000,  25 ),
-                carsFrontMaterial2 = this._createCarLightMaterial( 0xffffff,  50 ),
-                carsBackMaterial2  = this._createCarLightMaterial( 0xff0000, 25 )
+      let particleTexture = THREE.ImageUtils.loadTexture('/assets/Intro/particle.png'),
+        spriteMaterial = new THREE.SpriteMaterial({
+              map: particleTexture,
+              color: 0xded95f
+            });
 
+            for (var i = 0; i < 2 * 8; i++) {
+              let pair = []
+              for (let j = 0; j < 2; j++) {
+                  var sprite = new THREE.Sprite(spriteMaterial);
+                      sprite.scale.set(16, 16, 1.0);
+                      //sprite.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.75);
+                      //sprite.position.setLength(200 * Math.random());
+                      sprite.material.blending = THREE.AdditiveBlending;
+                      sprite.rotation.x = Math.PI * Math.random()
 
-/*
-                var particles = new THREE.Points( new THREE.Geometry(), carsFrontMaterial );
-                particles.frustumCulled = true;
-                this.scene.add( particles );
+                      console.log(sprite)
 
-*/
-        var circleGeometry = new THREE.CircleGeometry( 10, 6 )
-        var circle = new THREE.Mesh( circleGeometry, carsFrontMaterial );
-        //this.scene.add(circle)
-/*
-                var particles = new THREE.Points( new THREE.Geometry(), carsBackMaterial );
-                particles.frustumCulled = true;
-                this.scene.add( particles );
+                      pair.push(sprite)
 
+                      this.scene.add(sprite)
+              }
+              this.street.lights.back.push(pair);
 
-                var particles = new THREE.Points( new THREE.Geometry(), carsFrontMaterial2 );
-                particles.frustumCulled = true;
-                this.scene.add( particles );
-
-                var particles = new THREE.Points( new THREE.Geometry(), carsBackMaterial2 );
-                particles.frustumCulled = true;
-                this.scene.add( particles );
-*/
+            }
 
 
     }
@@ -229,7 +206,7 @@ class Demo {
             mesh.rotation.x = Math.PI * 0.5
 
             mesh.position.z = (RIBBON_GAP + RIBBON_LENGTH) * i * -1
-        
+
             this.scene.add(mesh)
             this.street.middle.push(mesh)
         }
@@ -241,12 +218,12 @@ class Demo {
 
         let pos_left = [],
             pos_right = []
-        
+
         this.street.middle.forEach((m, i) => {
-            
+
             m.position.z += this.street.speed * 8
 
-            let r = Math.sin((this.shaderTime + m.position.z * 0.2) * 0.02) 
+            let r = Math.sin((this.shaderTime + m.position.z * 0.2) * 0.02)
             m.position.x = r * 15
             m.position.y = r * 8
             m.rotation.z = r * 0.05
@@ -276,7 +253,7 @@ class Demo {
 
         this.street.buildings.forEach((b, i) => {
 
-            let r = Math.sin((this.shaderTime + b.position.z * 0.2) * 0.02) 
+            let r = Math.sin((this.shaderTime + b.position.z * 0.2) * 0.02)
 
             b.position.x = (r * 15) + b._xoffset
             b.position.y = r * 8 + b._yoffset
@@ -676,7 +653,7 @@ class Demo {
     leave() {
 
         let tchain = Tween()
-        
+
 
         this.triangles.forEach(t => {
 
@@ -722,7 +699,7 @@ class Demo {
     }
 
     renderPass() {
-        
+
         this.composer.reset();
         this.composer.render(this.scene, this.camera);
         this.composer.pass(this.bloomPass);
@@ -742,7 +719,7 @@ class Demo {
 
         this.animateStreet()
 
-        
+
         //this.textMesh.position.z -= 300
 
         this.textMesh.material.uniforms.uTime.value += 0.003;
