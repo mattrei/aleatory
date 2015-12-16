@@ -49,7 +49,7 @@ oscPort.on("message", function (oscMsg) {
 oscPort.open();
 */
 
- demo = new Intro()
+ demo = new Executed()
     window.onresize = demo.onResize.bind(demo);
 
 /*

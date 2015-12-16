@@ -40,7 +40,7 @@ const E_SPHERE_RADIUS = 3500
 const E_SM_SPHERE_RADIUS = 3000
 
 class Demo {
-  constructor(args) 
+  constructor(args)
   {
     this.current = {show: 0.0, number: 1}
 
@@ -57,6 +57,7 @@ class Demo {
     this.linesMesh = null
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
+    this.loader = new THREE.TextureLoader()
     this.executed = []
     this.bgMesh = null
 
@@ -82,6 +83,7 @@ class Demo {
 
     this.createRender();
     this.createScene();
+    this.createBackground()
 
     this.onResize();
     this.update();
@@ -117,8 +119,52 @@ class Demo {
     gui.add(this, 'clearScene')
   }
 
+  createBackground() {
 
-  createTextDiv() 
+    const skyVertex = `
+    varying vec2 vUV;
+
+    void main() {
+      vUV = uv;
+      vec4 pos = vec4(position, 1.0);
+      gl_Position = projectionMatrix * modelViewMatrix * pos;
+    }
+    `
+
+    const skyFragment = `
+    uniform sampler2D texture;
+    varying vec2 vUV;
+
+    void main() {
+      vec4 sample = texture2D(texture, vUV);
+      gl_FragColor = vec4(sample.xyz, sample.w);
+    }
+    `
+
+    this.loader.load(
+        '/assets/Executed/galaxy_starfield.png', (texture) => {
+          var geometry = new THREE.SphereGeometry(7000, 60, 40);
+          var material = new THREE.ShaderMaterial( {
+            uniforms:       {
+              texture: { type: 't', value: texture }
+            },
+            vertexShader:   skyVertex,
+            fragmentShader: skyFragment
+          });
+
+          let skyBox = new THREE.Mesh(geometry, material);
+          skyBox.scale.set(-1, 1, 1);
+          skyBox.rotation.order = 'XZY';
+          skyBox.renderOrder = 1000.0;
+          skyBox.rotation.y = Math.PI*-0.5
+          this.scene.add(skyBox);
+        })
+
+
+  }
+
+
+  createTextDiv()
   {
     let div = document.createElement('div')
     div.id = "textName"
@@ -158,7 +204,7 @@ class Demo {
     div2.style['text-align'] = "center"
     div2.style.top = "50%"
     document.body.appendChild(div2)
-    
+
 
 
     this.text.intro = div2
@@ -179,7 +225,7 @@ class Demo {
   }
   startStats()
   {
-    this.stats = new Stats(); 
+    this.stats = new Stats();
     this.stats.domElement.style.position = 'absolute';
     document.body.appendChild(this.stats.domElement);
   }
@@ -211,7 +257,7 @@ class Demo {
     this.scene.add( group );
 
     const maxParticleCount = 2000;
-    
+
 
 
     let segments = maxParticleCount * maxParticleCount;
@@ -333,7 +379,7 @@ class Demo {
       color: 0xb9dff2,
       side: THREE.DoubleSide,
       wireframe: false});
-  
+
 
 
 
@@ -354,7 +400,7 @@ class Demo {
     this.scene.add( plight3 );
 
 
-    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    var gridHelper = new THREE.GridHelper( 100, 10 );
     //this.scene.add( gridHelper );
 
     let executed = this.executed = ExecutedData
@@ -363,12 +409,12 @@ class Demo {
 
           let texture = THREE.ImageUtils.loadTexture(e.img)
           texture.minFilter = THREE.LinearFilter
-          /*let img = new THREE.MeshBasicMaterial({ 
+          /*let img = new THREE.MeshBasicMaterial({
               map: texture,
               color: 0xffffff,
               side: THREE.DoubleSide,
           });*/
-          let mat = new THREE.ShaderMaterial( { 
+          let mat = new THREE.ShaderMaterial( {
               uniforms: {
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
                 time: { type: "f", value: 0.1 },
@@ -442,7 +488,7 @@ class Demo {
   animateESphere() {
 
     if (!this.particlesMesh) {
-      return 
+      return
     }
 
     let particlePositions = this.particlesMesh.geometry.attributes.position.array
@@ -540,7 +586,7 @@ class Demo {
   }
 
 
-  lookAt(e) 
+  lookAt(e)
   {
 
         //this.camera.rotation.copy(e.rotation)
@@ -583,7 +629,7 @@ class Demo {
       Velocity(this.text.date, "fadeIn", this.transition/2 )
   }
 
-  lookAtNext() 
+  lookAtNext()
   {
     this.currentIdx++
     let e = this.objects[this.currentIdx % this.objects.length]
@@ -633,13 +679,13 @@ class Demo {
                     .start();
                     */
 
-                    
+
                 }
-    
+
     e.geometry.attributes.position.needsUpdate = true;
   }
 
-  lookAtRnd() 
+  lookAtRnd()
   {
     this.currentIdx = Math.floor(Math.random() * this.objects.length)
     let e = this.objects[this.currentIdx]
@@ -647,7 +693,7 @@ class Demo {
     this.lookAt(e)
   }
 
-  doGrid() 
+  doGrid()
   {
     this.targetView = 'grid'
     this.transform( this.targets.grid, 2000 );
@@ -694,7 +740,7 @@ class Demo {
 
           var object = this.objects[ i ];
           var target = targets[ i ];
-        
+
           new TWEEN.Tween( object.position )
             .to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
             .easing( TWEEN.Easing.Exponential.InOut )
@@ -704,9 +750,9 @@ class Demo {
             .to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
             .easing( TWEEN.Easing.Exponential.InOut )
             .start();
-            
 
-        }    
+
+        }
 
       }
 
@@ -715,7 +761,7 @@ class Demo {
     for( let i = this.scene.children.length - 1; i >= 0; i--) {
       this.scene.remove(this.scene.children[i])
      }
-    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    var gridHelper = new THREE.GridHelper( 100, 10 );
     this.scene.add( gridHelper );
 
     //this.update()
@@ -743,7 +789,7 @@ class Demo {
     let e = this.objects[this.currentIdx % this.objects.length]
     if (e) {
       e.material.uniforms.time.value += this.clock.getDelta();
-      e.material.uniforms.showCurrent.value = this.current.show 
+      e.material.uniforms.showCurrent.value = this.current.show
       e.material.uniforms.numberCurrents.value = this.current.number
     }
 
@@ -781,14 +827,14 @@ class Demo {
       texture.minFilter = THREE.LinearFilter
 
       this._getImgData(s.img).then((imgData => {
-        this.scheduled.push({img: texture, imgData: imgData})  
+        this.scheduled.push({img: texture, imgData: imgData})
       }))
-      
+
     })
   }
 
   nextScheduled() {
-    
+
 
   this.currentIdx++
 
@@ -816,8 +862,8 @@ class Demo {
   }
 
   drawScheduled() {
-    
-    
+
+
     let particleImg = THREE.ImageUtils.loadTexture( 'assets/Executed/particle.png' )
 
     var particleShader = THREE.ParticleShader;
@@ -855,8 +901,8 @@ class Demo {
     for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++ , i3 += 3) {
 
       var position = new THREE.Vector3(
-        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
-        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
         MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
       );
 
@@ -866,14 +912,14 @@ class Demo {
         var x = Math.round(imgData.width * Math.random());
         var y = Math.round(imgData.height * Math.random());
         var bw = this._getPixel(imgData, x, y);
-        
+
         // Read color from pixel
         if (bw == 1) {
           // If black, get position
-          
+
           position = new THREE.Vector3(
-            (imgData.width / 2 - x) * imageScale, 
-            (y - imgData.height / 2) * imageScale, 
+            (imgData.width / 2 - x) * imageScale,
+            (y - imgData.height / 2) * imageScale,
             Math.random() * zSpread * 2 - Math.random() * zSpread
           );
         }
@@ -887,7 +933,7 @@ class Demo {
       colors[i3 + 0] = color.r;
       colors[i3 + 1] = color.g;
       colors[i3 + 2] = color.b;
-      
+
       // Size
       sizes[i] = 20;
 
@@ -931,7 +977,7 @@ class Demo {
         let data = new Float32Array( particleCount * 3 );
 
         var colors = new Float32Array(NUM_PARTICLES * 3);
-        
+
           for ( var i = 0, j = 0, l = data.length; i < l; i += 3, j += 1 ) {
             data[ i ] = points[ j ].x;
             data[ i + 1 ] = points[ j ].y;
@@ -985,7 +1031,7 @@ class Demo {
   }
 
   _getImgData(pic) {
-    
+
 
     return new Promise(function (fulfill, reject){
 
@@ -1003,7 +1049,7 @@ class Demo {
       }
 
     })
-    
+
   }
 }
 

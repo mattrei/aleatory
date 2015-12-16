@@ -10,7 +10,7 @@ uniform float speed;
             vec2 p = -1.0 + 2.0 *vUv;
             float alpha = sin(p.y * PI) / 2.;
 
-            float time2 = time / (1. / speed);
+            float time2 = time / (1. / speed) * 0.3;
 
             float r = .5 + sin(time2);
             float g = .5 + cos(time2);
