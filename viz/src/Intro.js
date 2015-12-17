@@ -6,6 +6,7 @@ import MathF from 'utils-perf'
 const simplex = new (require('simplex-noise'))
 import TWEEN from 'tween.js'
 var Line = require('three-line-2d')(THREE)
+import randf from 'random-float'
 
 const tweenr = require('tweenr')()
 var Tween = require('tween-chain')
@@ -37,7 +38,10 @@ const NUM_RIBBONS = 15
 const RIBBON_LENGTH = 50
 const RIBBON_GAP = 100
 const RIBBON_START = NUM_RIBBONS * RIBBON_GAP * -1
-const RIBBON_Z_TOTAL = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
+const STREET_LENGTH = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
+const STREET_WIDTH = 50
+const PLANE_SIZE = {X: 1000, Z: STREET_LENGTH}
+
 
 const NUM_TRIANGLES = 8
 const CAMERA_Z_START = 250
@@ -53,18 +57,21 @@ class Demo {
 
         this.textMesh = null;
 
-        this.counter = 0
         this.gui = null
         this.introText = ''
-        this.plane = null
-        this.shakeX = 0
-        this.shakeY = 0
+        this.floor = {
+          height: 0,
+          plane: null,
+          particles: null
+        }
 
         this.street = {
             speed: 0.5,
             middle: [], left: null, right: null,
             lights: {back: [], front: []},
-            buildings: []}
+            buildings: []
+          }
+
 
         this.analyser = null
         //this.createAudio()
@@ -81,12 +88,9 @@ class Demo {
 
         this.rotX = 0
 
-        this.uniforms = {}
-        this.speed = 0;
-        this.height = 1.0;
+        this.loader = new THREE.TextureLoader()
 
         this.startStats();
-
 
         this.multiPassBloomPass = null
         this.composer = null
@@ -103,17 +107,64 @@ class Demo {
         this.createPost()
         this.addObjects();
 
+
         this.createText()
 
+        this.createBackground()
         this.createStreet()
         this.createBuildings()
         this.createCarLights()
+        this.createParticles()
         //this.createTriangles()
         this.createFlyingLine()
 
         this.startGUI();
         this.onResize();
         this.update();
+    }
+
+    createBackground() {
+
+      const skyVertex = `
+      varying vec2 vUV;
+
+      void main() {
+        vUV = uv;
+        vec4 pos = vec4(position, 1.0);
+        gl_Position = projectionMatrix * modelViewMatrix * pos;
+      }
+      `
+
+      const skyFragment = `
+      uniform sampler2D texture;
+      varying vec2 vUV;
+
+      void main() {
+        vec4 sample = texture2D(texture, vUV);
+        gl_FragColor = vec4(sample.xyz, sample.w);
+      }
+      `
+
+      this.loader.load(
+		      '/assets/Intro/eso_dark.jpg', (texture) => {
+            var geometry = new THREE.SphereGeometry(3000, 60, 40);
+            var material = new THREE.ShaderMaterial( {
+              uniforms:       {
+                texture: { type: 't', value: texture }
+              },
+              vertexShader:   skyVertex,
+              fragmentShader: skyFragment
+            });
+
+            let skyBox = new THREE.Mesh(geometry, material);
+            skyBox.scale.set(-1, 1, 1);
+            skyBox.rotation.order = 'XZY';
+            skyBox.renderOrder = 1000.0;
+            skyBox.rotation.y = Math.PI*-0.5
+            this.scene.add(skyBox);
+          })
+
+
     }
 
     createBuildings() {
@@ -130,7 +181,7 @@ class Demo {
               // put a random position
               let coin = MathF.coin() ? -1 : 1
               buildingMesh.position.x   = MathF.random(70 * coin, 130 * coin)
-              buildingMesh.position.z   = -1 * MathF.random(0, RIBBON_Z_TOTAL)
+              buildingMesh.position.z   = -1 * MathF.random(0, STREET_LENGTH)
               //buildingMesh.position.z   = 200
 
               // put a random rotation
@@ -151,34 +202,122 @@ class Demo {
         }
     }
 
-    createCarLights() {
+    createParticles() {
 
-      let particleTexture = THREE.ImageUtils.loadTexture('/assets/Intro/particle.png'),
-        spriteMaterial = new THREE.SpriteMaterial({
-              map: particleTexture,
-              color: 0xded95f
-            });
+      const NUM = 500
 
-            for (var i = 0; i < 2 * 8; i++) {
-              let pair = []
-              for (let j = 0; j < 2; j++) {
-                  var sprite = new THREE.Sprite(spriteMaterial);
-                      sprite.scale.set(16, 16, 1.0);
-                      //sprite.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.75);
-                      //sprite.position.setLength(200 * Math.random());
-                      sprite.material.blending = THREE.AdditiveBlending;
-                      sprite.rotation.x = Math.PI * Math.random()
+      let geometry = new THREE.Geometry();
 
-                      console.log(sprite)
+      for (let i = 0; i < NUM; i ++ ) {
 
-                      pair.push(sprite)
+					var vertex = new THREE.Vector3();
 
-                      this.scene.add(sprite)
-              }
-              this.street.lights.back.push(pair);
+          vertex.x = randf(0, PLANE_SIZE.X) - PLANE_SIZE.X*0.5
+          vertex.z = randf(0, -PLANE_SIZE.Z)
 
+          vertex._height = randf(1, 5)
+          vertex._speed = randf(1, 10)
+
+					geometry.vertices.push( vertex );
+			}
+
+
+
+      this.loader.load(
+          '/assets/Intro/particle.png', (sprite) => {
+
+
+					let material = new THREE.PointsMaterial( {
+            size: 40,
+            map: sprite,
+            blending: THREE.AdditiveBlending,
+            depthTest: false,
+            transparent : true
+          } );
+
+
+          let particles = new THREE.Points( geometry, material );
+          this.scene.add(particles)
+          console.log(particles)
+          this.floor.particles = particles
+        })
+
+    }
+
+    animateFloor() {
+
+      if (this.floor.particles) {
+
+        let geo = this.floor.particles.geometry
+
+          for (let i = 0; i < geo.vertices.length; i ++ ) {
+
+            let v = geo.vertices[i]
+
+            v.y = Math.abs( Math.sin((i + this.shaderTime * 0.4 * this.street.speed)) * 40 * v._height )
+            v.z += this.street.speed * v._speed
+            if (v.z > 0) {
+              v.z = -STREET_LENGTH
+              v._speed = randf(1, 10)
+              v._height = randf(1, 5)
             }
 
+          }
+          geo.verticesNeedUpdate = true
+
+    }
+
+        this.floor.plane.material.uniforms.time.value += this.shaderTime * 0.001
+        this.floor.plane.material.uniforms.speed.value = this.street.speed;
+        this.floor.plane.material.uniforms.height.value = this.floor.height;
+    }
+
+    createCarLights() {
+
+      this.loader.load(
+		      '/assets/Intro/cloud.png', (texture) => {
+
+            let matFront = new THREE.SpriteMaterial({
+                  map: texture,
+                  color: 0xded95f
+                }),
+                matBack = new THREE.SpriteMaterial({
+                      map: texture,
+                      color: 0xff0000
+                    })
+
+
+
+              function add(mat, dict, scene) {
+                for (var i = 0; i < 5; i++) {
+                  let pair = []
+
+                  for (let j = 0; j < 2; j++) {
+
+                          let sprite = new THREE.Sprite(mat)
+                          sprite.scale.set(90, 40, 1.0);
+                          //sprite.position.set(Math.random() - 0.5, Math.random() - 0.5, Math.random() - 0.75);
+                          //sprite.position.setLength(200 * Math.random());
+                          sprite.material.blending = THREE.AdditiveBlending;
+                          sprite.rotation.x = Math.PI * Math.random()
+
+                          sprite.position.set(j*10, 0, 0)
+
+                          scene.add(sprite)
+                          pair.push(sprite)
+
+                  }
+                  let z = -1 * randf(50, STREET_LENGTH)
+                  pair[0].position.z = pair[1].position.z = z
+
+                  dict.push(pair);
+
+                }
+              }
+
+              add(matBack, this.street.lights.back, this.scene)
+              add(matFront, this.street.lights.front, this.scene)
+          })
 
     }
 
@@ -214,6 +353,53 @@ class Demo {
         this.scene.add(new THREE.AmbientLight(0xffffff))
     }
 
+    animateLights() {
+
+      let zoffset = randf(60, 100)
+
+      this.street.lights.front.forEach((l, i) => {
+
+        let back = this.street.lights.back[i]
+
+        l.forEach((s,j) => {
+
+          let pos = s.position
+
+          let z = pos.z + this.street.speed * 8
+          let r = Math.sin((this.shaderTime + z * 0.2) * 0.02)
+          let x = r * 15 + (j*15) - STREET_WIDTH / 2,
+            y = r * 8
+
+
+          if (z > 0) {
+              z = STREET_LENGTH * -1
+              z -= zoffset
+          }
+          s.position.set(x,y,z)
+        })
+      })
+
+      this.street.lights.back.forEach((l, i) => {
+
+        l.forEach((s,j) => {
+
+          let pos = s.position
+
+          let z = pos.z - this.street.speed * 8
+          let r = Math.sin((this.shaderTime + z * 0.2) * 0.02)
+          let x = r * 15 + (j*15) + STREET_WIDTH / 2,
+            y = r * 8
+
+
+          if (z < -STREET_LENGTH) {
+              z = 0
+              z += zoffset
+          }
+          s.position.set(x,y,z)
+        })
+      })
+    }
+
     animateStreet() {
 
         let pos_left = [],
@@ -222,7 +408,6 @@ class Demo {
         this.street.middle.forEach((m, i) => {
 
             m.position.z += this.street.speed * 8
-
             let r = Math.sin((this.shaderTime + m.position.z * 0.2) * 0.02)
             m.position.x = r * 15
             m.position.y = r * 8
@@ -232,8 +417,8 @@ class Demo {
             if (m.position.z > 0) {//this.camera.position.z) {
                 m.position.z = (NUM_RIBBONS * (RIBBON_GAP + RIBBON_LENGTH) * -1)
             }
-            pos_left.push(new THREE.Vector3((r*15) - 50, r*8, m.position.z))
-            pos_right.push(new THREE.Vector3((r*15) + 50, r*8, m.position.z))
+            pos_left.push(new THREE.Vector3((r*15) - STREET_WIDTH, r*8, m.position.z))
+            pos_right.push(new THREE.Vector3((r*15) + STREET_WIDTH, r*8, m.position.z))
         })
 
         pos_left.sort((a,b) => {
@@ -262,11 +447,10 @@ class Demo {
 
             let delta = Math.abs(100 * simplex.noise2D(i, this.shaderTime * 0.09 * this.street.speed))
             b.scale.y = Math.max(30, delta)
-            //b.translateY( delta / 2 );
+            b.translateY( delta / 4 );
 
-            if (b.position.z > 0) {//this.camera.position.z) {
-                b.position.z = (NUM_RIBBONS * (RIBBON_GAP + RIBBON_LENGTH) * -1)
-
+            if (b.position.z > 0) {
+                b.position.z = STREET_LENGTH * -1
                 let coin = MathF.coin() ? -1 : 1
                 b._xoffset = MathF.random(70 * coin, 130 * coin)
 
@@ -275,8 +459,6 @@ class Demo {
         })
 
     }
-
-
 
     createText() {
 
@@ -490,7 +672,7 @@ class Demo {
 
     fly() {
         this.camera.position.z -= this.flyingSpeed
-        this.plane.position.z -= this.flyingSpeed
+        this.floor.plane.position.z -= this.flyingSpeed
 
         this.triangles.forEach(t => {
             //t.position.z += this.flyingSpeed * 10
@@ -504,7 +686,7 @@ class Demo {
         this.camera.position.x = Math.sin(this.camera.position.z * 0.0025) * FLY_CURVE
 
 
-        this.plane.position.y = this.camera.position.y - 150
+        this.floor.plane.position.y = this.camera.position.y - 150
 
 
         //this.updatePositions()
@@ -613,28 +795,19 @@ class Demo {
             //wireframe: true
         });
 
-        var geometry = new THREE.PlaneGeometry(window.innerWidth, window.innerHeight, 10, 10);
+        var geometry = new THREE.PlaneGeometry(PLANE_SIZE.X, PLANE_SIZE.Z, 20, 20);
+        this.floor.plane = new THREE.Mesh(geometry, planeMaterial);
 
-/*
-        console.log(THREE.ExplodeModifier)
-        var explodeModifier = new THREE.ExplodeModifier();
-        explodeModifier.modify( geometry );
-*/
-
-
-        this.plane = new THREE.Mesh(geometry, planeMaterial);
-
-        this.plane.rotation.set(-Math.PI * 0.5, 0, 0)
-        this.plane.position.y = -window.innerHeight * 0.15
-        this.scene.add(this.plane);
+        this.floor.plane.rotation.set(-Math.PI * 0.5, 0, 0)
+        this.floor.plane.position.y = 0//-window.innerHeight * 0.15
+        this.scene.add(this.floor.plane);
 
     }
 
     startGUI() {
         this.gui = new dat.GUI()
-        this.gui.add(this, 'speed', 0, 1)
         this.gui.add(this.street, 'speed', 0, 1)
-        this.gui.add(this, 'height', 1, 20)
+        this.gui.add(this.floor, 'height', 0, 1)
 
         this.gui.add(this, 'introText').onChange(this.updateText.bind(this));
         this.gui.add(this.textMesh.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
@@ -643,9 +816,7 @@ class Demo {
         this.gui.add(this, 'updateIntroText')
 
         this.gui.add(this, 'rotX', -Math.PI * 2, Math.PI * 2)
-        this.gui.add(this, 'flyingSpeed', 0, 20)
-        this.gui.add(this, 'shakeX', -20, 20)
-        this.gui.add(this, 'shakeY', -20, 20)
+//        this.gui.add(this, 'flyingSpeed', 0, 20)
 
         this.gui.add(this, 'leave')
     }
@@ -688,7 +859,7 @@ class Demo {
             }
             )
         })
-        lchain.then(this.plane.position, {
+        lchain.then(this.floor.plane.position, {
               z: MathF.random(200, 500),
               duration: 2
             })
@@ -703,7 +874,7 @@ class Demo {
         this.composer.reset();
         this.composer.render(this.scene, this.camera);
         this.composer.pass(this.bloomPass);
-        othis.composer.toScreen();
+        this.composer.toScreen();
     }
 
     update() {
@@ -714,10 +885,11 @@ class Demo {
             this.gui.__controllers[i].updateDisplay();
         }
 
-        this.counter++
         this.shaderTime += 0.1
 
         this.animateStreet()
+        this.animateLights()
+        this.animateFloor()
 
 
         //this.textMesh.position.z -= 300
@@ -725,10 +897,7 @@ class Demo {
         this.textMesh.material.uniforms.uTime.value += 0.003;
         this.textMesh.material.uniforms.uOffset.value.set(-window.innerWidth / 2, -window.innerHeight / 2);
 
-/*
-        this.camera.position.x *= Math.sin(this.counter * 0.25) * this.shakeX
-        this.camera.position.y *= Math.sin(this.counter * 0.25) * this.shakeY
-*/
+
         let fixedScale = 2 * Math.tan(this.camera.fov / 360 * Math.PI) / window.innerHeight;
 
         this.textMesh.position.copy(this.camera.position);
@@ -737,20 +906,19 @@ class Demo {
         this.textMesh.position.x += window.innerWidth / 2
         this.textMesh.position.y -= window.innerHeight / 4
 
-        this.plane.material.uniforms.time.value += this.shaderTime * 0.001
-        this.plane.material.uniforms.speed.value = this.speed;
-        this.plane.material.uniforms.height.value = this.height;
 
+/*
         this.triangles.forEach((t, i) => {
-            t.material.uniforms.time.value = this.plane.material.uniforms.time.value
-            t.material.uniforms.speed.value = this.plane.material.uniforms.speed.value
+            t.material.uniforms.time.value = this.floor.plane.material.uniforms.time.value
+            t.material.uniforms.speed.value = this.floor.plane.material.uniforms.speed.value
             t.material.uniforms.dist.value = 1 - (t.position.z / (this.camera.position.z - TRIANGLE_GAP * NUM_TRIANGLES))
         })
 
         this.flyingLines.forEach((t, i) => {
             t.material.uniforms.time.value += (this.shaderTime + i * 5) * 0.001
-            t.material.uniforms.speed.value = this.plane.material.uniforms.speed.value
+            t.material.uniforms.speed.value = this.floor.plane.material.uniforms.speed.value
         })
+        */
 
         //this.fly()
 

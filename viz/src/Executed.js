@@ -60,6 +60,7 @@ class Demo {
     this.linesMesh = null
     this.objects = []
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
+    this.loader = new THREE.TextureLoader()
     this.executed = []
     this.bgMesh = null
 
@@ -85,6 +86,7 @@ class Demo {
 
     this.createRender();
     this.createScene();
+    this.createBackground()
 
     this.onResize();
     this.update();
@@ -118,6 +120,50 @@ class Demo {
     gui.add(this, 'addScheduled')
     gui.add(this, 'nextScheduled')
     gui.add(this, 'clearScene')
+  }
+
+  createBackground() {
+
+    const skyVertex = `
+    varying vec2 vUV;
+
+    void main() {
+      vUV = uv;
+      vec4 pos = vec4(position, 1.0);
+      gl_Position = projectionMatrix * modelViewMatrix * pos;
+    }
+    `
+
+    const skyFragment = `
+    uniform sampler2D texture;
+    varying vec2 vUV;
+
+    void main() {
+      vec4 sample = texture2D(texture, vUV);
+      gl_FragColor = vec4(sample.xyz, sample.w);
+    }
+    `
+
+    this.loader.load(
+        '/assets/Executed/galaxy_starfield.png', (texture) => {
+          var geometry = new THREE.SphereGeometry(7000, 60, 40);
+          var material = new THREE.ShaderMaterial( {
+            uniforms:       {
+              texture: { type: 't', value: texture }
+            },
+            vertexShader:   skyVertex,
+            fragmentShader: skyFragment
+          });
+
+          let skyBox = new THREE.Mesh(geometry, material);
+          skyBox.scale.set(-1, 1, 1);
+          skyBox.rotation.order = 'XZY';
+          skyBox.renderOrder = 1000.0;
+          skyBox.rotation.y = Math.PI*-0.5
+          this.scene.add(skyBox);
+        })
+
+
   }
 
 
