@@ -8,6 +8,9 @@ import tweenr from 'tweenr'
 import TWEEN from 'tween.js'
 const glslify = require('glslify')
 
+var randomSpherical = require('random-spherical/object')( null, THREE.Vector3 )
+//const randomSpherical = require('random-spherical/array')()
+
 const ExplodeModifier = require('./modifiers/ExplodeModifier')
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const GeometryUtils = require('./utils/GeometryUtils')
@@ -40,7 +43,7 @@ const E_SPHERE_RADIUS = 3500
 const E_SM_SPHERE_RADIUS = 3000
 
 class Demo {
-  constructor(args) 
+  constructor(args)
   {
     this.current = {show: 0.0, number: 1}
 
@@ -118,7 +121,7 @@ class Demo {
   }
 
 
-  createTextDiv() 
+  createTextDiv()
   {
     let div = document.createElement('div')
     div.id = "textName"
@@ -158,7 +161,7 @@ class Demo {
     div2.style['text-align'] = "center"
     div2.style.top = "50%"
     document.body.appendChild(div2)
-    
+
 
 
     this.text.intro = div2
@@ -179,7 +182,7 @@ class Demo {
   }
   startStats()
   {
-    this.stats = new Stats(); 
+    this.stats = new Stats();
     this.stats.domElement.style.position = 'absolute';
     document.body.appendChild(this.stats.domElement);
   }
@@ -211,7 +214,7 @@ class Demo {
     this.scene.add( group );
 
     const maxParticleCount = 2000;
-    
+
 
 
     let segments = maxParticleCount * maxParticleCount;
@@ -234,18 +237,20 @@ class Demo {
 
         for ( var i = 0; i < maxParticleCount; i++ ) {
 
+/*
           let theta = MathF.random(0, Math.PI * 2),  //polar
              phi = MathF.random(0, Math.PI * 2),    //azimuth
-             //dist = MathF.random(E_SM_SPHERE_RADIUS, E_SPHERE_RADIUS)
-             dist  = Math.sqrt(Math.random()) * (E_SPHERE_RADIUS-E_SM_SPHERE_RADIUS) + E_SM_SPHERE_RADIUS
+             dist  =  Math.sqrt(Math.random()) * (E_SPHERE_RADIUS-E_SM_SPHERE_RADIUS) + E_SM_SPHERE_RADIUS
 
           let x = Math.cos(theta) * Math.cos(phi) * dist,
             y = Math.sin(theta) * Math.cos(phi) *  dist,
             z = Math.sin(phi) * dist
+*/
+          var pointOnSurface = randomSpherical( E_SPHERE_RADIUS, new THREE.Vector3(0,0,0) )
 
-          particlePositions[ i * 3     ] = x;
-          particlePositions[ i * 3 + 1 ] = y;
-          particlePositions[ i * 3 + 2 ] = z;
+          particlePositions[ i * 3     ] = pointOnSurface.x
+          particlePositions[ i * 3 + 1 ] = pointOnSurface.y
+          particlePositions[ i * 3 + 2 ] = pointOnSurface.z
 
           // add it to the geometry
           this.particlesData.push( {
@@ -333,7 +338,7 @@ class Demo {
       color: 0xb9dff2,
       side: THREE.DoubleSide,
       wireframe: false});
-  
+
 
 
 
@@ -354,7 +359,7 @@ class Demo {
     this.scene.add( plight3 );
 
 
-    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    var gridHelper = new THREE.GridHelper( 100, 10 );
     //this.scene.add( gridHelper );
 
     let executed = this.executed = ExecutedData
@@ -363,12 +368,12 @@ class Demo {
 
           let texture = THREE.ImageUtils.loadTexture(e.img)
           texture.minFilter = THREE.LinearFilter
-          /*let img = new THREE.MeshBasicMaterial({ 
+          /*let img = new THREE.MeshBasicMaterial({
               map: texture,
               color: 0xffffff,
               side: THREE.DoubleSide,
           });*/
-          let mat = new THREE.ShaderMaterial( { 
+          let mat = new THREE.ShaderMaterial( {
               uniforms: {
                 resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
                 time: { type: "f", value: 0.1 },
@@ -442,7 +447,7 @@ class Demo {
   animateESphere() {
 
     if (!this.particlesMesh) {
-      return 
+      return
     }
 
     let particlePositions = this.particlesMesh.geometry.attributes.position.array
@@ -540,7 +545,7 @@ class Demo {
   }
 
 
-  lookAt(e) 
+  lookAt(e)
   {
 
         //this.camera.rotation.copy(e.rotation)
@@ -583,7 +588,7 @@ class Demo {
       Velocity(this.text.date, "fadeIn", this.transition/2 )
   }
 
-  lookAtNext() 
+  lookAtNext()
   {
     this.currentIdx++
     let e = this.objects[this.currentIdx % this.objects.length]
@@ -633,13 +638,13 @@ class Demo {
                     .start();
                     */
 
-                    
+
                 }
-    
+
     e.geometry.attributes.position.needsUpdate = true;
   }
 
-  lookAtRnd() 
+  lookAtRnd()
   {
     this.currentIdx = Math.floor(Math.random() * this.objects.length)
     let e = this.objects[this.currentIdx]
@@ -647,7 +652,7 @@ class Demo {
     this.lookAt(e)
   }
 
-  doGrid() 
+  doGrid()
   {
     this.targetView = 'grid'
     this.transform( this.targets.grid, 2000 );
@@ -694,7 +699,7 @@ class Demo {
 
           var object = this.objects[ i ];
           var target = targets[ i ];
-        
+
           new TWEEN.Tween( object.position )
             .to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
             .easing( TWEEN.Easing.Exponential.InOut )
@@ -704,9 +709,9 @@ class Demo {
             .to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, Math.random() * duration + duration )
             .easing( TWEEN.Easing.Exponential.InOut )
             .start();
-            
 
-        }    
+
+        }
 
       }
 
@@ -715,7 +720,7 @@ class Demo {
     for( let i = this.scene.children.length - 1; i >= 0; i--) {
       this.scene.remove(this.scene.children[i])
      }
-    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    var gridHelper = new THREE.GridHelper( 100, 10 );
     this.scene.add( gridHelper );
 
     //this.update()
@@ -743,7 +748,7 @@ class Demo {
     let e = this.objects[this.currentIdx % this.objects.length]
     if (e) {
       e.material.uniforms.time.value += this.clock.getDelta();
-      e.material.uniforms.showCurrent.value = this.current.show 
+      e.material.uniforms.showCurrent.value = this.current.show
       e.material.uniforms.numberCurrents.value = this.current.number
     }
 
@@ -781,14 +786,14 @@ class Demo {
       texture.minFilter = THREE.LinearFilter
 
       this._getImgData(s.img).then((imgData => {
-        this.scheduled.push({img: texture, imgData: imgData})  
+        this.scheduled.push({img: texture, imgData: imgData})
       }))
-      
+
     })
   }
 
   nextScheduled() {
-    
+
 
   this.currentIdx++
 
@@ -816,8 +821,8 @@ class Demo {
   }
 
   drawScheduled() {
-    
-    
+
+
     let particleImg = THREE.ImageUtils.loadTexture( 'assets/Executed/particle.png' )
 
     var particleShader = THREE.ParticleShader;
@@ -855,8 +860,8 @@ class Demo {
     for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++ , i3 += 3) {
 
       var position = new THREE.Vector3(
-        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
-        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST), 
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+        MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
         MathF.random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
       );
 
@@ -866,14 +871,14 @@ class Demo {
         var x = Math.round(imgData.width * Math.random());
         var y = Math.round(imgData.height * Math.random());
         var bw = this._getPixel(imgData, x, y);
-        
+
         // Read color from pixel
         if (bw == 1) {
           // If black, get position
-          
+
           position = new THREE.Vector3(
-            (imgData.width / 2 - x) * imageScale, 
-            (y - imgData.height / 2) * imageScale, 
+            (imgData.width / 2 - x) * imageScale,
+            (y - imgData.height / 2) * imageScale,
             Math.random() * zSpread * 2 - Math.random() * zSpread
           );
         }
@@ -887,7 +892,7 @@ class Demo {
       colors[i3 + 0] = color.r;
       colors[i3 + 1] = color.g;
       colors[i3 + 2] = color.b;
-      
+
       // Size
       sizes[i] = 20;
 
@@ -931,7 +936,7 @@ class Demo {
         let data = new Float32Array( particleCount * 3 );
 
         var colors = new Float32Array(NUM_PARTICLES * 3);
-        
+
           for ( var i = 0, j = 0, l = data.length; i < l; i += 3, j += 1 ) {
             data[ i ] = points[ j ].x;
             data[ i + 1 ] = points[ j ].y;
@@ -985,7 +990,7 @@ class Demo {
   }
 
   _getImgData(pic) {
-    
+
 
     return new Promise(function (fulfill, reject){
 
@@ -1003,7 +1008,7 @@ class Demo {
       }
 
     })
-    
+
   }
 }
 

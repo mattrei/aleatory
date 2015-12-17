@@ -42,6 +42,7 @@
     "quick-noise-js": "^1.0.1",
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
+    "random-spherical": "^1.1.1",
     "routerjs": "^1.0.3",
     "shader-particle-engine": "^1.0.1",
     "simplex-noise": "^2.2.0",
