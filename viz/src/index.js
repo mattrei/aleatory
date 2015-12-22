@@ -1,4 +1,4 @@
-global.THREE = require('three.js')
+global.THREE = require('three')
 const WAGNER = require('@superguigui/wagner')
 
 import TWEEN from 'tween.js'
@@ -21,7 +21,7 @@ class Main {
 
   constructor(args) {
     this.stats = null
-    this.gui = null
+    this.gui = new dat.GUI()
     this.startStats()
 
     this.events = new Events()
@@ -31,16 +31,19 @@ class Main {
     this.time = 0
     this.clock = new THREE.Clock()
     this.manager = new THREE.LoadingManager()
+    this.loader = new THREE.TextureLoader(this.manager)
+
     this.oscPort = new OSC.WebSocketPort({
         url: "ws://localhost:8081"
     });
     this.renderer = new THREE.WebGLRenderer({
+            //alpha: true,
             antialias: true,
             clearColor: 0,
-            clearAlpha: 1
+            clearAlpha: 1,
+            sortObject: false,
+            autoClear: true
         });
-    this.renderer.sortObjects = false;
-		this.renderer.autoClear = true;
         document.body.appendChild(this.renderer.domElement)
 
     this.composer = new WAGNER.Composer(this.renderer)
@@ -58,8 +61,6 @@ class Main {
   }
 
   setScene(scene) {
-    this.clearGUI()
-
     if (this.scenes.current)
       this.scenes.current.stop()
 
@@ -70,7 +71,7 @@ class Main {
 
   listenOSC() {
 
-    this.oscPort.on("message", function (oscMsg) {
+    this.oscPort.on("message", (oscMsg) => {
       console.log(oscMsg)
       if (oscMsg.address === '/scene') {
             let n = oscMsg.args[0]
@@ -87,7 +88,7 @@ class Main {
             let n = oscMsg.args[0]
             viz.onFunc(n)
       }
-    });
+    })
     this.oscPort.open()
   }
 
@@ -97,23 +98,15 @@ class Main {
       document.body.appendChild(this.stats.domElement);
   }
 
-  startGUI() {
-      this.gui = new dat.GUI()
-  }
-
-  clearGUI() {
-     for (var i in this.gui.__controllers) {
-      this.gui.__controllers[i].remove()
-    }
-  }
-
   init() {
     const args = {renderer: this.renderer,
                   events: this.events,
-                  gui: this.gui}
+                  gui: this.gui,
+                  clock: this.clock,
+                  loader: this.loader}
 
     this.scenes.s1 = new WienerLinienScene(args)
-    this.scenes.s2 = new DronesScene(args)
+    //this.scenes.s2 = new DronesScene(args)
 
     this.update()
   }
@@ -139,8 +132,6 @@ class Director {
 
 document.addEventListener("DOMContentLoaded", function(event) {
   const main = new Main()
-  //main.startStats()
-  main.startGUI()
   main.listenOSC()
   main.init()
 

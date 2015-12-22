@@ -1,4 +1,4 @@
-import THREE from 'three.js';
+import THREE from 'three'
 import TWEEN from 'tween.js'
 
 const Tweenr = new(require('tweenr'))
@@ -18,12 +18,13 @@ const FXAAShader = require('./shaders/FXAAShader')(THREE)
 const EffectComposer = require('./postprocessing/EffectComposer')(THREE)
 const MaskPass = require('./postprocessing/MaskPass')(THREE)
 const RenderPass = require('./postprocessing/RenderPass')(THREE)
-const BloomPass = require('./postprocessing/BloomPass')(THREE)
+//const BloomPass = require('./postprocessing/BloomPass')(THREE)
 const ShaderPass = require('./postprocessing/ShaderPass')(THREE)
 
 const OrbitControls = require('three-orbit-controls')(THREE);
 
-const WAGNER = require('./Wagner/Wagner')
+const WAGNER = require('@superguigui/wagner')
+const MultiPassBloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass')
 
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
@@ -439,12 +440,10 @@ class WienerLinien {
     this.scene    = null;
     this.sceneStation = null;
     this.composer = null
-    this.counter  = 0;
+    this.bloomPass = null
 
     this.gui = args.gui
     this.renderer = args.renderer
-    console.log("init")
-    console.log(this.renderer)
     this.createScene();
     this.initPostProcessing()
 
@@ -670,6 +669,20 @@ class WienerLinien {
     setInterval(this.updateTrainData, 10000)
   }
   initPostProcessing() {
+    this.renderer.autoClearColor = true
+    this.composer = new WAGNER.Composer(this.renderer)
+
+
+    this.bloomPass = new MultiPassBloomPass({
+      blurAmount: 2,
+      applyZoomBlur: true
+    })
+
+
+
+  }
+  /*
+  initPostProcessing() {
 
     let renderModel = new THREE.RenderPass( this.scene, this.camera )
     let effectBloom = new THREE.BloomPass( 1.3 + 1),
@@ -679,9 +692,6 @@ class WienerLinien {
 
       var width = window.innerWidth || 2;
       var height = window.innerHeight || 2;
-
-      console.log("mat")
-      console.log(width + " " + height)
 
       this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
 
@@ -694,6 +704,7 @@ class WienerLinien {
       this.composer.addPass( effectBloom );
       this.composer.addPass( effectCopy );
   }
+  */
 
   startGUI()
   {
@@ -732,7 +743,11 @@ class WienerLinien {
     }
 
     if (this.postProcessing) {
-      this.composer.render()
+      //this.composer.render()
+      this.composer.reset();
+      this.composer.render(this.scene, this.camera);
+      this.composer.pass(this.bloomPass)
+      this.composer.toScreen();
     }
     else {
       this.renderer.render(this.scene, this.camera);
@@ -747,6 +762,10 @@ class WienerLinien {
   stop() {
     this.renderer.autoClear = false
     this.run = false
+
+    for (var i in this.gui.__controllers) {
+      this.gui.__controllers[i].remove()
+    }
   }
 
   onResize()

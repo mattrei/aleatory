@@ -10,13 +10,15 @@ const OrbitControls = require('three-orbit-controls')(THREE);
 var tweenr = require('tweenr')()
 var Tween = require('tween-chain')
 
+
+
 const FontUtils = require('./utils/FontUtils')
 const GeometryUtils = require('./utils/GeometryUtils')
 var typeface = require('three.regular.helvetiker')
 THREE.typeface_js.loadFace(typeface);
 
 
-const ExplodeModifier = require('./modifiers/ExplodeModifier')
+const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
 
 const CopyShader = require('./shaders/CopyShader')(THREE)
 const EffectComposer = require('./postprocessing/EffectComposer')(THREE)
@@ -79,11 +81,10 @@ var Globe = function(opts) {
     }
   };
 
-  var stats
-
-  var camera, scene, renderer, w, h;
+  var renderer =  opts.renderer
+  var camera, scene, w, h;
   var mesh, atmosphere, point;
-  var clock;
+  var clock = opts.clock
   // initParticles()
   var particleGroup;
 
@@ -107,16 +108,7 @@ var Globe = function(opts) {
   var dist = {earth: DISTANCE_EARTH}
   var padding = 40;
 
-  var canvas = document.createElement('canvas');
-
   var postprocessing = {};
-
-  function startStats()
-  {
-    stats = new Stats();
-    stats.domElement.style.position = 'absolute';
-    document.body.appendChild(stats.domElement);
-  }
 
   function initPass(){
         let composer = new THREE.EffectComposer( renderer );
@@ -166,7 +158,6 @@ var Globe = function(opts) {
     camera.position.z = distance;
 
     scene = new THREE.Scene();
-    clock = new THREE.Clock();
 
     var geometry = new THREE.SphereGeometry(200, 40, 30);
 
@@ -202,6 +193,7 @@ var Globe = function(opts) {
     // Stars
     var starGeo = new THREE.SphereGeometry (3000, 10, 100),
         starMat = new THREE.MeshBasicMaterial();
+    // TODO
     let texture = THREE.ImageUtils.loadTexture('/assets/Drones/star-field.png');
     texture.minFilter = THREE.NearestFilter
     starMat.map = texture
@@ -274,12 +266,6 @@ var Globe = function(opts) {
     geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
     point = new THREE.Mesh(geometry);
 
-    renderer = new THREE.WebGLRenderer({antialias: true});
-    renderer.domElement.style.position = 'absolute';
-    document.body.appendChild(renderer.domElement)
-    renderer.setSize(w, h);
-
-    startStats()
 
     let controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 300000;
@@ -293,15 +279,6 @@ var Globe = function(opts) {
     event.preventDefault();
     dist.earth -= event.wheelDeltaY * 0.3
     return false;
-  }
-
-  function animate() {
-    TWEEN.update();
-
-    opts.update()
-
-    requestAnimationFrame(animate);
-    render(clock.getDelta() );
   }
 
   function createBoxes() {
@@ -463,6 +440,20 @@ var Globe = function(opts) {
     boxes.push(box)
   }
 
+  function update(time) {
+    earthMesh.material.uniforms.time.value = time * 0.05;
+    earthMesh.material.uniforms.wobble.value = earth.wobble;
+    earthMesh.material.uniforms.glowIntensity.value = earth.glowing;
+    earthMesh.material.uniforms.redIntensity.value = 1 -earth.glowing / 3;
+
+    let atmosphereUniforms = Shaders['atmosphere'].uniforms;
+    atmosphereUniforms.glowIntensity.value = earth.glowing * 4;
+    atmosphereUniforms.redIntensity.value = 1- earth.glowing / 3;
+
+    visBoxes()
+    renderPass()
+  }
+/*
   function render(dt) {
 
     stats.begin();
@@ -485,8 +476,13 @@ var Globe = function(opts) {
 
     visBoxes()
 
-// TODO
+    //renderer.render(scene, camera);
+    renderPass()
+    stats.end();
+  }
+*/
 
+// TODO
 /*
     rotation.x += (target.x - rotation.x) * 0.1;
     rotation.y += (target.y - rotation.y) * 0.1;
@@ -501,11 +497,6 @@ var Globe = function(opts) {
     camera.lookAt(mesh.position);
     */
 
-
-    //renderer.render(scene, camera);
-    renderPass()
-    stats.end();
-  }
 
   var set3dPosition = function(obj, coords) {
     console.log(coords)
@@ -695,7 +686,7 @@ var Globe = function(opts) {
 
 
   init();
-  this.animate = animate;
+  this.update = update
 
   this.explode = explode;
   this.createRndFire = createRndFire;
@@ -726,6 +717,8 @@ var Globe = function(opts) {
 class Drones {
   constructor(args)
   {
+    this.run = false
+    this.gui = args.gui
 
     this.stars = []
     this.flySpeed = 0
@@ -733,22 +726,26 @@ class Drones {
     let opts = {}
     this.update = this.update.bind(this)
     opts.update = this.update
+    opts.renderer = args.renderer
+    opts.clock = args.clock
 
     this.globe = new Globe(opts)
+    args.events.on("update", (time) => this.update(time))
+
     this.scene = this.globe.scene
     this.camera = this.globe.camera
 
     this.createTextDiv()
 
-    this.globe.animate()
-
-    this.startGUI()
-
     this.makeStars()
   }
 
-  update()
+  update(time)
   {
+
+    if (!this.run) return
+
+    this.globe.update(time)
 
     if (this.stars) {
 
@@ -870,36 +867,45 @@ class Drones {
 
   startGUI()
   {
-    var gui = new dat.GUI()
-    gui.add(this.globe, 'explode')
-    gui.add(this.globe, 'createRndFire')
-    gui.add(this.globe, 'moveGlobeRnd')
-    gui.add(this.globe, 'moveGlobe')
-    gui.add(this.globe, 'glitch')
-    gui.add(this.globe, 'createBoxes')
-    gui.add(this.globe, 'removeBoxes')
-    gui.add(this.globe, 'visText')
-    gui.add(this.globe.vis, 'amplitude', 0.0, 1.0)
-    gui.add(this.globe.vis, 'speed', 0.0, 1.0)
-    gui.add(this.globe.vis, 'text', 'asdf')
+    this.gui.add(this.globe, 'explode')
+    this.gui.add(this.globe, 'createRndFire')
+    this.gui.add(this.globe, 'moveGlobeRnd')
+    this.gui.add(this.globe, 'moveGlobe')
+    this.gui.add(this.globe, 'glitch')
+    this.gui.add(this.globe, 'createBoxes')
+    this.gui.add(this.globe, 'removeBoxes')
+    this.gui.add(this.globe, 'visText')
+    this.gui.add(this.globe.vis, 'amplitude', 0.0, 1.0)
+    this.gui.add(this.globe.vis, 'speed', 0.0, 1.0)
+    this.gui.add(this.globe.vis, 'text', 'asdf')
 
-    gui.add(this, 'flySpeed', -20, 20)
-    gui.add(this, 'showStars')
+    this.gui.add(this, 'flySpeed', -20, 20)
+    this.gui.add(this, 'showStars')
 
-    gui.add(this.globe, 'showPakistan')
-    gui.add(this.globe, 'showEarth')
+    this.gui.add(this.globe, 'showPakistan')
+    this.gui.add(this.globe, 'showEarth')
 
-    gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
-    gui.add(this.globe.earth, 'wobble', 0.0, 1.0)
+    this.gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
+    this.gui.add(this.globe.earth, 'wobble', 0.0, 1.0)
 
-    gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
-    gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
+    this.gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
+    this.gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
   }
   onResize(e)
   {
     this.globe.renderer.setSize( window.innerWidth, window.innerHeight)
     this.globe.camera.aspect = window.innerWidth / window.innerHeight
     this.globe.camera.updateProjectionMatrix();
+  }
+  play() {
+    this.startGUI()
+    this.run = true
+  }
+  stop() {
+    this.run = false
+    for (var i in this.gui.__controllers) {
+      this.gui.__controllers[i].remove()
+    }
   }
 }
 
