@@ -1,10 +1,8 @@
-/*
+
 import OSC from 'osc/dist/osc-browser.js'
 const oscPort = new OSC.WebSocketPort({
     url: "ws://localhost:8081"
 });
-*/
-
 
 
 var demo

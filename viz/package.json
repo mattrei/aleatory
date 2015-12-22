@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t babelify -g glslify | garnish",
-    "build": "browserify -t babelify -t glslify src/index.js | uglifyjs -cm > dist/js/bundle.js"
+    "osc":  "node ../osc/index.js",
+    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t [ babelify --presets [ es2015 ] ] -g glslify | garnish",
+    "build": "browserify -t [ babelify --presets [ es2015 ] ] -g glslify src/index.js | uglifyjs -cm > dist/js/bundle.js"
   },
   "repository": {
     "type": "git",
@@ -15,14 +16,14 @@
   "author": "matthias treitler",
   "license": "ISC",
   "devDependencies": {
-    "babelify": "^6.4.0",
-    "browserify": "^11.1.0",
+    "babelify": "^7.2.0",
+    "browserify": "^12.0.1",
     "browserify-shim": "^3.8.10",
-    "budo": "^5.1.5",
-    "garnish": "^3.2.1",
-    "glslify": "^2.3.1",
-    "uglify-js": "^2.4.21",
-    "watchify": "^3.2.3"
+    "budo": "^7.1.0",
+    "garnish": "^5.0.1",
+    "glslify": "^5.0.0",
+    "uglify-js": "^2.6.1",
+    "watchify": "^3.6.1"
   },
   "dependencies": {
     "@superguigui/wagner": "0.0.6",
@@ -36,9 +37,10 @@
     "gl-vec3": "^1.0.3",
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
-    "glslify": "^2.3.1",
+    "glslify": "^5.0.0",
     "lerp": "^1.0.3",
     "new-array": "^1.0.0",
+    "osc": "^2.0.2",
     "quick-noise-js": "^1.0.1",
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
