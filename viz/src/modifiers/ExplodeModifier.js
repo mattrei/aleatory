@@ -5,7 +5,7 @@
  * @author alteredq / http://alteredqualia.com/
  */
 
-
+module.exports = function(THREE){
 THREE.ExplodeModifier = function () {
 
 };
@@ -42,3 +42,5 @@ THREE.ExplodeModifier.prototype.modify = function ( geometry ) {
     delete geometry.__tmpVertices;
 
 };
+
+}

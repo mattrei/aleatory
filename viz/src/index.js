@@ -21,8 +21,8 @@ import Drones from './Drones';
 import Mare from './Mare';
 import Heaven from './Heaven';
 //import TextParticles from './TextParticles'
+import TestParticles from './Test_Particles'
 import WienerLinien from './WienerLinien'
-import Staircase from './Staircase'
 
 
 
@@ -49,7 +49,7 @@ oscPort.on("message", function (oscMsg) {
 oscPort.open();
 */
 
- demo = new Executed()
+ demo = new TestParticles()
     window.onresize = demo.onResize.bind(demo);
 
 /*

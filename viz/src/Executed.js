@@ -8,7 +8,7 @@ import tweenr from 'tweenr'
 import TWEEN from 'tween.js'
 const glslify = require('glslify')
 
-const ExplodeModifier = require('./modifiers/ExplodeModifier')
+const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const GeometryUtils = require('./utils/GeometryUtils')
 
@@ -59,7 +59,6 @@ class Demo {
     this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
     this.loader = new THREE.TextureLoader()
     this.executed = []
-    this.bgMesh = null
 
     //scheduled
     this.shaderTime = 0
@@ -94,9 +93,7 @@ class Demo {
     var gui = new dat.GUI()
     gui.add(this, 'resetCamera')
     gui.add(this, 'doVisible')
-    gui.add(this, 'doGrid')
     gui.add(this, 'doSphere')
-    gui.add(this, 'doRandom')
     gui.add(this, 'lookAtRnd')
     gui.add(this, 'lookAtNext')
     gui.add(this, 'smash')
@@ -328,80 +325,6 @@ class Demo {
         this.linesMesh = linesMesh
         group.add( linesMesh );
 
-        //end
-
-
-
-    //let geom = new THREE.IcosahedronGeometry( POLY_SIZE, 0 );
-    let geom = new THREE.BoxGeometry( POLY_SIZE,POLY_SIZE,POLY_SIZE);
-
-    let bggeom = new THREE.BufferGeometry().fromGeometry(geom)
-    bggeom.computeBoundingSphere();
-
-    let bgmat = new THREE.ShaderMaterial( {
-
-        uniforms: {
-          amplitude: { type: "f", value: 1.0 },
-          color:     { type: "c", value: new THREE.Color( 0xffffff ) },
-          time: { type: "f", value: this.shaderTime}
-        },
-        side: THREE.BackSide,
-        vertexShader:   glslify(__dirname + '/glsl/Executed_Cube.vert'),
-        fragmentShader: glslify(__dirname + '/glsl/Executed_Cube.frag'),
-        transparent:    true,
-        depthWrite: true,
-        depthTest: false
-        //lights:         true
-
-      });
-
-/*
-    const BG_P_AMOUNT = 50000
-    let points = THREE.GeometryUtils.randomPointsInGeometry(geom, BG_P_AMOUNT)
-    let geometry = new THREE.BufferGeometry();
-    let data = new Float32Array(BG_P_AMOUNT * 4)
-    for ( var i = 0, j = 0, l = points.length; i < l; i += 4, j += 1 ) {
-            data[ i ] = points[ j ].x;
-            data[ i + 1 ] = points[ j ].y;
-            data[ i + 2 ] = points[ j ].z;
-            data[ i + 3 ] = 0.0;
-          }
-    geometry.addAttribute( 'position', new THREE.BufferAttribute( data, 4))
-*/
-    let bgmesh = new THREE.Mesh(bggeom, bgmat)
-    //let bgmesh = new THREE.Points(geometry, bgmat)
-    this.bgMesh = bgmesh
-   // this.scene.add(bgmesh)
-
-
-
-    let mat = new THREE.MeshLambertMaterial( {
-      color: 0xb9dff2,
-      side: THREE.DoubleSide,
-      wireframe: false});
-
-
-
-
-    //let bgmesh = new THREE.Mesh(geom, mat)
-    //this.scene.add(bgmesh)
-
-
-    let plight = new THREE.PointLight( 0xffffff, 1, 10000 );
-    plight.position.set( -3000, -3000, 50 );
-    this.scene.add( plight );
-
-    let plight2 = new THREE.PointLight( 0xffffff, 1, 10000 );
-    plight2.position.set( 2000, 2000, 1000 );
-    this.scene.add( plight2 );
-
-    let plight3 = new THREE.PointLight( 0xffffff, 1, 7000 );
-    plight3.position.set( 0, -2000, -3000 );
-    this.scene.add( plight3 );
-
-
-    var gridHelper = new THREE.GridHelper( 100, 10 );
-    //this.scene.add( gridHelper );
 
     let executed = this.executed = ExecutedData
 
@@ -429,7 +352,7 @@ class Demo {
           } );
 
 
-          let geom = new THREE.PlaneBufferGeometry(200, 200)
+          let geom = new THREE.PlaneGeometry(200, 200)
 
           // plane
           var plane = new THREE.Mesh(geom, mat);
@@ -465,20 +388,6 @@ class Demo {
           object.lookAt( vector );
 
           this.targets.sphere.push( object );
-
-        }
-
-            // grid
-
-        for ( var i = 0; i < executed.length; i ++ ) {
-
-          var object = new THREE.Object3D();
-
-          object.position.x = ( ( i % 5 ) * 400 ) - 800;
-          object.position.y = ( - ( Math.floor( i / 5 ) % 5 ) * 400 ) + 800;
-          object.position.z = ( Math.floor( i / 25 ) ) * 1000 - 2000;
-
-          this.targets.grid.push( object );
 
         }
 
@@ -638,51 +547,39 @@ class Demo {
 
   smash() {
 
-    let e = this.objects[this.currentIdx % this.objects.length]
-    console.log(e.geometry)
+    let mesh = this.objects[this.currentIdx % this.objects.length]
+    let geometry = mesh.geometry
 
-    let origPoints = e.geometry.attributes.position.array
+    var explodeModifier = new THREE.ExplodeModifier();
+    explodeModifier.modify( geometry );
 
-    let points = new THREE.GeometryUtils.randomPointsInBufferGeometry(e.geometry, 20)
+    console.log(geometry.vertices)
 
-    let p = []
-    for (let i=0; i<points.length;i++){
-      p.push([points[i].x, points[i].y])
+
+    for(var i = 0; i < (geometry.vertices.length); i++)
+    {
+
+        var pos = new THREE.Vector3();
+        var v = geometry.vertices[i]
+
+
+        pos.x = v.x * (Math.random() * 100 + 50);
+        pos.y = v.y * (Math.random() * 100 + 50);
+        pos.z = v.z * (Math.random() * 100 + 50);
+
+
+        new TWEEN.Tween(geometry.vertices[i])
+        .to( { x: pos.x, y: pos.y, z: pos.z }, 3000 )
+        .easing( TWEEN.Easing.Exponential.InOut )
+        .onUpdate( () => { geometry.verticesNeedUpdate = true })
+        .start();
+
+
     }
 
-    console.log(p)
-
-    let triangles = triangulate(p)
-
-    console.log(triangles)
-
-     for(var i = 0; i < (origPoints.length); i+=3)
-                {
-
-          var pos = new THREE.Vector3();
-          let x = origPoints[i],
-            y = origPoints[i+1],
-            z = origPoints[i+2]
+    mesh.visible = false
 
 
-          origPoints[i] = x * (Math.random() * 100 + 50);
-          origPoints[i+1] = y * (Math.random() * 100 + 50);
-          origPoints[i+2] = z * (Math.random() * 100 + 50);
-
-
-/*
-                    new TWEEN.Tween(geometry.vertices[i])
-                    .to( { x: pos.x, y: pos.y, z: pos.z }, 3000 )
-                    .easing( TWEEN.Easing.Exponential.InOut )
-                    .onUpdate( function() {
-                    e.geometry.attributes.position.needsUpdate = true;})
-                    .start();
-                    */
-
-
-                }
-
-    e.geometry.attributes.position.needsUpdate = true;
   }
 
   lookAtRnd()
@@ -691,12 +588,6 @@ class Demo {
     let e = this.objects[this.currentIdx]
 
     this.lookAt(e)
-  }
-
-  doGrid()
-  {
-    this.targetView = 'grid'
-    this.transform( this.targets.grid, 2000 );
   }
 
   doSphere() {
@@ -777,18 +668,9 @@ class Demo {
 
     this.animateESphere()
 
-    //this.executed
-    /*
-    this.objects.forEach((e, i) => {
-      if (i !== this.currentIdx) {
-        e.material.uniforms.time.value += this.clock.getDelta();
-       // e.material.uniforms.showCurrent.value = 0
-       // e.material.uniforms.numberCurrents.value = 0
-      }
-    })    */
     let e = this.objects[this.currentIdx % this.objects.length]
     if (e) {
-      e.material.uniforms.time.value += this.clock.getDelta();
+      e.material.uniforms.time.value = this.shaderTime
       e.material.uniforms.showCurrent.value = this.current.show
       e.material.uniforms.numberCurrents.value = this.current.number
     }
@@ -802,9 +684,6 @@ class Demo {
       this.particleSystem.rotation.z = Math.PI - this.shaderTime * 0.004;
     }
 
-    if (this.bgMesh) {
-      this.bgMesh.material.uniforms.time.value = this.shaderTime
-    }
 
     this.stats.end()
     requestAnimationFrame(this.update.bind(this));

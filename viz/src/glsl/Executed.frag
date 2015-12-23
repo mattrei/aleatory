@@ -39,8 +39,8 @@ float fbm(vec2 p)
 vec3 clouds( vec2 uv, vec2 dir )
 {
   dir *= time;
-  vec3 finalColor = fbm( (uv * 1.5) + dir ) * vec3( 1.0 );  
-  
+  vec3 finalColor = fbm( (uv * 1.5) + dir ) * vec3( 1.0 );
+
   return finalColor;
 }
 
@@ -48,33 +48,33 @@ vec3 lightning( vec2 uv )
 {
   float timeVal = time;
   vec3 finalColor = vec3( 0.0 );
-  for( int i=0; i < 8; ++i )
+  for( int i=0; i < 3; ++i )
   {
     float indexAsFloat = float(i);
     float amp = 40.0 + (indexAsFloat*1.0);
     float period = 2.0 + (indexAsFloat+2.0);
-    
+
     float thickness = mix( 0.1, 0.7, uv.y * 0.5 + 0.5 );
-    
+
     float intensity = mix( 0.5, 1.5, noise(uv*10.0) );
     float t = abs( thickness / (sin(uv.x + fbm( uv + timeVal * period )) * amp) * intensity );
     float show = fract(abs(sin(timeVal))) >= 0.95 ? 1.0 : 0.0;
     show = showCurrent;
     show = (i < int(numberCurrents)) ? show : 0.0;
     show *= step( abs(fbm( vec2( sin(time * 50.0), 0.0 ) )), 0.4);
-    
-    
+
+
     finalColor +=  t * vec3( 0.3, 0.5, 2.0 ) * show;
   }
-  
+
   return finalColor;
 }
 
-void main( void ) 
+void main( void )
 {
 
   vec2 uv = -1.0 + 2.0 *vUv;
-  
+
   vec3 finalColor = vec3( 0.0 );
 
   finalColor += sin( clouds( uv, vec2( 1.0, 0.1 ) ));
@@ -82,15 +82,15 @@ void main( void )
 
   float xOffset = mix( 0.5, -1.5, fbm(vec2( fract(time), 0.00 ) ) );
   vec2 uvOffset = vec2( xOffset, 0.0 );
-  
+
   vec2 lightningUV = uv + uvOffset;
-  
+
   float theta = 3.14159 * 2.1;
-  lightningUV.x = uv.x * cos(theta) - uv.y*sin(theta); 
-  lightningUV.y = uv.x * sin(theta) + uv.y*cos(theta); 
-  
+  lightningUV.x = uv.x * cos(theta) - uv.y*sin(theta);
+  lightningUV.y = uv.x * sin(theta) + uv.y*cos(theta);
+
   finalColor += lightning( lightningUV + uvOffset );
-  
+
   finalColor -= sin( clouds( uv, vec2( 2.0 ) )) * 0.30;
 
   gl_FragColor = vec4( finalColor, 1.0 );
