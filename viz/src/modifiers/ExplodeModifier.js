@@ -42,5 +42,4 @@ THREE.ExplodeModifier.prototype.modify = function ( geometry ) {
     delete geometry.__tmpVertices;
 
 };
-
 }

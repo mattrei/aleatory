@@ -26,8 +26,8 @@ const Velocity = require('velocity-animate')
 require('velocity-animate/velocity.ui')
 const EffectComposer = require('three-effectcomposer')(THREE)
 
-var WAGNER = require('@superguigui/wagner');
-var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass');
+var WAGNER = require('@superguigui/wagner')
+var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass')
 
 const PARTICLES_AMOUNT = 300000
 
@@ -35,8 +35,8 @@ const FLY_CURVE = 20
 const MAX_POINTS = 500
 const TRIANGLE_GAP = 500
 const NUM_RIBBONS = 15
-const RIBBON_LENGTH = 25
-const RIBBON_GAP = 50
+const RIBBON_LENGTH = 50
+const RIBBON_GAP = 100
 const RIBBON_START = NUM_RIBBONS * RIBBON_GAP * -1
 const STREET_LENGTH = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
 const STREET_WIDTH = 50

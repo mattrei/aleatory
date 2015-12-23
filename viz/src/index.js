@@ -1,77 +1,137 @@
-/*
+global.THREE = require('three')
+const WAGNER = require('@superguigui/wagner')
+
+import TWEEN from 'tween.js'
 import OSC from 'osc/dist/osc-browser.js'
-const oscPort = new OSC.WebSocketPort({
-    url: "ws://localhost:8081"
-});
-*/
-
-
+import Events from 'minivents'
+import Stats from 'stats-js'
+import dat from 'dat-gui'
 
 var demo
 
+// 5 scenes
+import IntroScene from './Intro';
+import ExecutedScene from './Executed';
+import RefugeesScene from './Headlines';
+import DronesScene from './DronesScene'
+import WienerLinienScene from './WienerLinienScene'
+//TODO: OutroScene
 
-import Intro from './Intro';
-import Headlines from './Headlines';
-import Executed from './Executed';
-import Tube from './Tube';
-import Falling from './Falling';
-import Dices from './Dices';
-import Flipper from './Flipper';
-import Drones from './Drones';
-import Mare from './Mare';
-import Heaven from './Heaven';
-//import TextParticles from './TextParticles'
-import TestParticles from './Test_Particles'
-import WienerLinien from './WienerLinien'
+class Main {
 
+  constructor(args) {
+    this.stats = null
+    this.gui = new dat.GUI()
+    this.startStats()
 
+    this.events = new Events()
 
-//const viz = new Intro();
-/*
-oscPort.on("message", function (oscMsg) {
-  console.log(oscMsg)
-  if (oscMsg.address === '/p') {
-        let n = oscMsg.args[0]
-        console.log("Page change. "+ n)
-        router.redirect('#/' + n)
+    this.scenes = {s1: null, current:null}
+
+    this.time = 0
+    this.clock = new THREE.Clock()
+    this.manager = new THREE.LoadingManager()
+    this.loader = new THREE.TextureLoader(this.manager)
+
+    this.oscPort = new OSC.WebSocketPort({
+        url: "ws://localhost:8081"
+    });
+    this.renderer = new THREE.WebGLRenderer({
+            //alpha: true,
+            antialias: true,
+            clearColor: 0,
+            clearAlpha: 1,
+            sortObject: false,
+            autoClear: true
+        });
+        document.body.appendChild(this.renderer.domElement)
+
+    this.composer = new WAGNER.Composer(this.renderer)
+
+    this.events.on("scene", (s) => this.setScene(s))
+
+    //this.onResize = this.onResize.bind(this.onResize)
+    window.onresize = this.onResize.bind(this.onResize)
+    //window.addEventListener('resize', this.onResize, false)
+    this.onResize()
   }
 
-  if (oscMsg.address === '/v') {
-        let n = oscMsg.args[0]
-        let v = oscMsg.args[1]
-        viz.onVariable(n, v)
+  onResize() {
+		this.renderer.setSize(window.innerWidth, window.innerHeight)
   }
-  if (oscMsg.address === '/f') {
-        let n = oscMsg.args[0]
-        viz.onFunc(n)
+
+  setScene(scene) {
+    if (this.scenes.current)
+      this.scenes.current.stop()
+
+    this.scenes.current = this.scenes[scene]
+
+    this.scenes.current.play()
   }
-});
-oscPort.open();
-*/
 
- demo = new TestParticles()
-    window.onresize = demo.onResize.bind(demo);
+  listenOSC() {
 
-/*
-var Router = require('routerjs')
-var router = new Router();
-router.addRoute('#/Intro', function(req, next){
-  console.log("#/Intro")
-  document.body.innerHTML = '';
-    demo = new Intro()
-    window.onresize = demo.onResize.bind(demo);
-});
-router.addRoute('#/Executed', function(req, next){
+    this.oscPort.on("message", (oscMsg) => {
+      console.log(oscMsg)
+      if (oscMsg.address === '/scene') {
+            let n = oscMsg.args[0]
+            console.log("Scene change. "+ n)
+            this.events.emit("scene", n)
+      }
 
-    document.body.innerHTML = '';
-    demo = new Executed()
-    window.onresize = demo.onResize.bind(demo);
+      if (oscMsg.address === '/v') {
+            let n = oscMsg.args[0]
+            let v = oscMsg.args[1]
+            viz.onVariable(n, v)
+      }
+      if (oscMsg.address === '/f') {
+            let n = oscMsg.args[0]
+            viz.onFunc(n)
+      }
+    })
+    this.oscPort.open()
+  }
+
+  startStats() {
+      this.stats = new Stats();
+      this.stats.domElement.style.position = 'absolute';
+      document.body.appendChild(this.stats.domElement);
+  }
+
+  init() {
+    const args = {renderer: this.renderer,
+                  events: this.events,
+                  gui: this.gui,
+                  clock: this.clock,
+                  loader: this.loader}
+
+    this.scenes.s1 = new WienerLinienScene(args)
+    //this.scenes.s2 = new DronesScene(args)
+
+    this.update()
+  }
+
+  update() {
+    this.stats.begin()
+    TWEEN.update()
+
+    this.time++
+
+    this.events.emit("update", this.time)
+
+
+    this.stats.end()
+    requestAnimationFrame(this.update.bind(this))
+ }
+}
+
+
+
+document.addEventListener("DOMContentLoaded", function(event) {
+  const main = new Main()
+  main.listenOSC()
+  main.init()
+
+  main.setScene("s1")
+
 });
-router.addRoute('#/Scheduled', function(req, next){
-  document.body.innerHTML = '';
-    demo = new Scheduled()
-    console.log("sched")
-    window.onresize = demo.onResize.bind(demo);
-});
-*/
-//router.redirect('#/Intro')

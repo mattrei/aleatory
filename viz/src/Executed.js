@@ -1,5 +1,4 @@
-//import THREE from 'three.js';
-global.THREE = require('three.js')
+global.THREE = require('three')
 
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
@@ -9,6 +8,9 @@ import TWEEN from 'tween.js'
 const glslify = require('glslify')
 
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
+var randomSpherical = require('random-spherical/object')( null, THREE.Vector3 )
+//const randomSpherical = require('random-spherical/array')()
+
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const GeometryUtils = require('./utils/GeometryUtils')
 
@@ -277,18 +279,20 @@ class Demo {
 
         for ( var i = 0; i < maxParticleCount; i++ ) {
 
+/*
           let theta = MathF.random(0, Math.PI * 2),  //polar
              phi = MathF.random(0, Math.PI * 2),    //azimuth
-             //dist = MathF.random(E_SM_SPHERE_RADIUS, E_SPHERE_RADIUS)
-             dist  = Math.sqrt(Math.random()) * (E_SPHERE_RADIUS-E_SM_SPHERE_RADIUS) + E_SM_SPHERE_RADIUS
+             dist  =  Math.sqrt(Math.random()) * (E_SPHERE_RADIUS-E_SM_SPHERE_RADIUS) + E_SM_SPHERE_RADIUS
 
           let x = Math.cos(theta) * Math.cos(phi) * dist,
             y = Math.sin(theta) * Math.cos(phi) *  dist,
             z = Math.sin(phi) * dist
+*/
+          var pointOnSurface = randomSpherical( E_SPHERE_RADIUS, new THREE.Vector3(0,0,0) )
 
-          particlePositions[ i * 3     ] = x;
-          particlePositions[ i * 3 + 1 ] = y;
-          particlePositions[ i * 3 + 2 ] = z;
+          particlePositions[ i * 3     ] = pointOnSurface.x
+          particlePositions[ i * 3 + 1 ] = pointOnSurface.y
+          particlePositions[ i * 3 + 2 ] = pointOnSurface.z
 
           // add it to the geometry
           this.particlesData.push( {
