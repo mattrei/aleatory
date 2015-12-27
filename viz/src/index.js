@@ -50,9 +50,7 @@ class Main {
 
     this.events.on("scene", (s) => this.setScene(s))
 
-    //this.onResize = this.onResize.bind(this.onResize)
-    window.onresize = this.onResize.bind(this.onResize)
-    //window.addEventListener('resize', this.onResize, false)
+    window.addEventListener('resize', () => this.onResize(), false)
     this.onResize()
   }
 
