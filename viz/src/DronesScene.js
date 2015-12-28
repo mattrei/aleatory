@@ -1,4 +1,4 @@
-global.THREE = require('three.js')
+global.THREE = require('three')
 import OC    from 'three-orbit-controls';
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'

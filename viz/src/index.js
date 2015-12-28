@@ -1,4 +1,7 @@
 global.THREE = require('three')
+
+const createLoop = require('canvas-loop')
+
 const WAGNER = require('@superguigui/wagner')
 
 import TWEEN from 'tween.js'
@@ -10,9 +13,9 @@ import dat from 'dat-gui'
 var demo
 
 // 5 scenes
-import IntroScene from './Intro';
-import ExecutedScene from './Executed';
-import RefugeesScene from './Headlines';
+//import IntroScene from './Intro';
+//import ExecutedScene from './Executed';
+//import RefugeesScene from './Headlines';
 import DronesScene from './DronesScene'
 import WienerLinienScene from './WienerLinienScene'
 //TODO: OutroScene
@@ -36,15 +39,22 @@ class Main {
     this.oscPort = new OSC.WebSocketPort({
         url: "ws://localhost:8081"
     });
+    //this.canvas = document.createElement('canvas')
     this.renderer = new THREE.WebGLRenderer({
-            //alpha: true,
+        //canvas: this.canvas,
+            alpha: true,
             antialias: true,
             clearColor: 0,
             clearAlpha: 1,
             sortObject: false,
             autoClear: true
         });
-        document.body.appendChild(this.renderer.domElement)
+    this.renderer.gammaInput = true
+		this.renderer.gammaOutput = true
+    document.body.appendChild(this.renderer.domElement)
+
+    //this.app = createLoop(this.canvas, {})
+    //this.app.on('resize', () => this.onResize())
 
     this.composer = new WAGNER.Composer(this.renderer)
 
@@ -97,14 +107,17 @@ class Main {
   }
 
   init() {
-    const args = {renderer: this.renderer,
+    const args = {
+      app: this.app,
+      renderer: this.renderer,
+                  composer: this.composer,
                   events: this.events,
                   gui: this.gui,
                   clock: this.clock,
                   loader: this.loader}
 
     this.scenes.s1 = new WienerLinienScene(args)
-    //this.scenes.s2 = new DronesScene(args)
+    //this.scenes.s1 = new DronesScene(args)
 
     this.update()
   }

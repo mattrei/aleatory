@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "osc": "node ../osc/index.js",
-    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t [ babelify --presets [ es2015 ] ] -g glslify | garnish",
+    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t [ babelify --presets [ es2015 ] --plugins [ syntax-async-functions ] ] -g glslify | garnish",
     "build": "browserify -t [ babelify --presets [ es2015 ] ] -g glslify src/index.js | uglifyjs -cm > dist/js/bundle.js"
   },
   "repository": {
@@ -16,11 +16,13 @@
   "author": "matthias treitler",
   "license": "ISC",
   "devDependencies": {
+    "babel-plugin-transform-regenerator": "^6.3.26",
     "babel-preset-es2015": "^6.3.13",
     "babelify": "^7.2.0",
     "browserify": "^12.0.1",
     "browserify-shim": "^3.8.10",
     "budo": "^7.1.0",
+    "cb2promise": "^1.0.2",
     "garnish": "^5.0.1",
     "glslify": "^5.0.0",
     "uglify-js": "^2.6.1",
@@ -29,9 +31,12 @@
   "dependencies": {
     "@superguigui/wagner": "0.0.6",
     "adaptive-bezier-curve": "^1.0.3",
+    "bfj": "^1.2.1",
     "blast-text": "^2.0.0",
     "boid": "^0.2.0",
     "cannon": "^0.6.2",
+    "canvas-loop": "^1.0.7",
+    "clamp": "^1.0.1",
     "createjs-tweenjs": "^0.6.0",
     "dat-gui": "^0.5.0",
     "delaunay-triangulate": "^1.1.6",
@@ -39,6 +44,7 @@
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
     "glslify": "^5.0.0",
+    "json-parse-async": "^1.0.3",
     "lerp": "^1.0.3",
     "minivents": "^2.0.1",
     "new-array": "^1.0.0",
@@ -47,7 +53,9 @@
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
     "random-spherical": "^1.1.1",
+    "right-now": "^1.0.0",
     "routerjs": "^1.0.3",
+    "run-parallel": "^1.1.4",
     "shader-particle-engine": "^1.0.1",
     "simplex-noise": "^2.2.0",
     "smoothstep": "^1.0.1",
@@ -57,7 +65,8 @@
     "three-effectcomposer": "0.0.1",
     "three-line-2d": "^1.0.9",
     "three-orbit-controls": "^69.0.4",
-    "three.js": "^0.73.0",
+    "three-simplicial-complex": "^69.0.6",
+    "three-vignette-background": "^1.0.2",
     "three.regular.helvetiker": "^1.0.0",
     "tween-chain": "^1.0.0",
     "tween.js": "^15.0.0",
@@ -65,6 +74,7 @@
     "utils-perf": "^1.1.1",
     "velocity-animate": "^1.2.3",
     "web-audio-analyser": "^2.0.0",
+    "webfontloader": "^1.6.16",
     "xtend": "^4.0.0"
   }
 }

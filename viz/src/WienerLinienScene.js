@@ -1,8 +1,11 @@
-import THREE from 'three'
+global.THREE = require('three')
 import TWEEN from 'tween.js'
 
 const Tweenr = new(require('tweenr'))
+const now = require('right-now')
 
+//const parseJSON = require('json-parse-async');
+const createBackground = require('three-vignette-background')
 const newArray = require('new-array')
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -11,18 +14,14 @@ const randomRotation = () => newArray(3).map(randomRadian)
 const randomSphere = require('gl-vec3/random')
 const simplex = new (require('simplex-noise'))()
 
+import Events from 'minivents'
 
-const ConvolutionShader = require('./shaders/ConvolutionShader')(THREE)
-const CopyShader = require('./shaders/CopyShader')(THREE)
-const FXAAShader = require('./shaders/FXAAShader')(THREE)
-
-const EffectComposer = require('./postprocessing/EffectComposer')(THREE)
-const MaskPass = require('./postprocessing/MaskPass')(THREE)
-const RenderPass = require('./postprocessing/RenderPass')(THREE)
-//const BloomPass = require('./postprocessing/BloomPass')(THREE)
-const ShaderPass = require('./postprocessing/ShaderPass')(THREE)
+const runParallel = require('run-parallel')
 
 const OrbitControls = require('three-orbit-controls')(THREE);
+
+const lerp = require('lerp')
+const smoothstep = require('smoothstep')
 
 const WAGNER = require('@superguigui/wagner')
 const MultiPassBloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass')
@@ -30,7 +29,12 @@ const MultiPassBloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPa
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
 
-const Helvetiker = require('./fonts/helvetiker_regular.typeface.js')
+require('./fonts/oswald_regular.typeface.js')
+
+const HALTESTELLEN = require('./test_data/WienerLinienHaltestellen.json')
+const HALTESTELLEN_KEYS = Object.keys(HALTESTELLEN)
+const HALTESTELLEN_LENGTH = HALTESTELLEN_KEYS.length
+
 
 const SCALE_Z=1
 const SCALE = 4000
@@ -49,6 +53,7 @@ const TWEEN_DUR = 15 * 1000
 
 const MAIN_COLOR = new THREE.Color('#fff')
 const ALT_COLOR = new THREE.Color('#000')
+
 
 /*
 add map as surface
@@ -316,7 +321,7 @@ class MetroLine extends Line {
 */
 
         let shapes = THREE.FontUtils.generateShapes( e.name, {
-          font: "helvetiker",
+          font: "oswald",
           weight: "normal",
           size: 5
         } );
@@ -424,10 +429,22 @@ class MetroLine extends Line {
   }
 }
 
+const bgColor1 = new THREE.Color('#fff')
+const bgColor2 = new THREE.Color('#283844')
+const altBgColor1 = invert(bgColor1)
+const altBgColor2 = invert(bgColor2)
+function invert (color) {
+  return new THREE.Color(1 - color.r, 1 - color.g, 1 - color.b)
+}
+
 class WienerLinien {
   constructor(args)
   {
     this.run = false
+    this.last = now()
+    this.events = new Events()
+
+    this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
 
     this.postProcessing = false
 
@@ -440,20 +457,35 @@ class WienerLinien {
     this.camera   = null;
     this.scene    = null;
     this.sceneStation = null;
-    this.composer = null
+
+
     this.bloomPass = null
 
     this.gui = args.gui
     this.renderer = args.renderer
+    this.composer = args.composer
     this.createScene();
     this.initPostProcessing()
+    const bg = createBackground()
+    this.scene.add(bg)
+    this.updateBackground(bg, 1)
+
 
     this.createStars(120).forEach(m => this.scene.add(m))
     this.createAsteroids(100).forEach(m => this.scene.add(m))
 
-    this.lineMeshes = {u1:null}
+    this.spirals = {show: false,
+                    meshes: []}
+    this.haltestellen = {show: true,
+                         meshes: [],
+                        queue: 0}
+    this.initHaltestellen()
+    this.addLight()
 
-    this.createSpiral()
+    this.createSpirals().forEach(m =>  {
+      this.scene.add(m)
+      this.spirals.meshes.push(m)
+    })
 
     //this.onResize();
     //this.update();
@@ -462,6 +494,88 @@ class WienerLinien {
 
     args.events.on("update", (data) => this.update(data))
   }
+
+  updateBackground (bg, colorTween) {
+    const [ width, height ] = [window.innerWidth, window.innerHeight]
+    // very cool
+    this.tmpColors[0].copy(bgColor1).lerp(altBgColor1, colorTween)
+    this.tmpColors[1].copy(bgColor2).lerp(altBgColor2, colorTween)
+    bg.style({
+      aspect: width / height,
+      aspectCorrection: false,
+      scale: 2.5,
+      colors: this.tmpColors,
+      grainScale: 1.5 / Math.min(width, height)
+    })
+  }
+
+  addLight() {
+
+    let h = 0.55,
+      s = 0.9,
+      l = 0.5
+
+    let textureFlare0 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare0.png" ),
+         textureFlare2 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare2.png" ),
+         textureFlare3 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare3.png" );
+
+    let light = new THREE.PointLight( 0xffffff, 1.5, 300);
+    light.color.setHSL( h, s, l );
+    //light.position.set( 0, -10, -500 );
+    this.scene.add( light );
+
+    let flareColor = new THREE.Color( 0xffffff );
+          flareColor.setHSL( h, s, l + 0.5 );
+
+
+    let lensFlare = new THREE.LensFlare( textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor );
+
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
+
+          lensFlare.add( textureFlare3, 60, 0.6, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 70, 0.7, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 120, 0.9, THREE.AdditiveBlending );
+          lensFlare.add( textureFlare3, 70, 1.0, THREE.AdditiveBlending );
+
+          this.lensFlareUpdateCallback = this.lensFlareUpdateCallback.bind(this)
+          lensFlare.customUpdateCallback = this.lensFlareUpdateCallback
+          lensFlare.position.copy( light.position );
+
+
+          this.scene.add( lensFlare );
+  }
+
+  lensFlareUpdateCallback( object ) {
+
+        var f, fl = object.lensFlares.length;
+        var flare;
+        var vecX = -object.positionScreen.x * 2;
+        var vecY = -object.positionScreen.y * 2;
+
+
+        for( f = 0; f < fl; f++ ) {
+
+             flare = object.lensFlares[ f ];
+
+
+             //flare.x *= Math.sin(this.counter)
+             //flare.distance = this.flareSize
+
+             flare.x = object.positionScreen.x + vecX * flare.distance;
+             flare.y = object.positionScreen.y + vecY * flare.distance;
+
+             flare.rotation = this.counter / (50/this.flareRotation) % (Math.PI*2);
+             flare.scale = Math.pow(this.flareSize, 3) * 10
+
+
+        }
+
+        object.lensFlares[ 2 ].y += 0.025;
+        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
+
+      }
 
   createAsteroids (count, app) {
     const geometries = newArray(6).map(asteroidGeom)
@@ -480,18 +594,20 @@ class WienerLinien {
       mesh.position.fromArray(randomSphere([], random(200, 400)))
       return mesh
     })
-    return meshes
 
-    function tick (dt) {
-      dt = dt / 1000
+
+    this.events.on('tick', dt => {
+      dt = dt / 100
       meshes.forEach(mesh => {
         mesh.rotation.x += dt * 0.1 * mesh.direction.x
         mesh.rotation.y += dt * 0.5 * mesh.direction.y
       })
-    }
+    })
+
+    return meshes
 
     function asteroidGeom () {
-      const geometry = new THREE.TetrahedronGeometry(1, randomInt(1, 2))
+      const geometry = new THREE.TetrahedronGeometry(10, randomInt(1, 3))
       geometry.vertices.forEach(v => {
         let steps = 3
         let s = Math.pow(2, steps)
@@ -518,11 +634,21 @@ class WienerLinien {
     const meshes = newArray(count).map(() => {
       const mesh = new THREE.Mesh(geometry, material.clone())
       mesh.material.opacity = random(0.01, 0.5)
-      mesh.scale.multiplyScalar(random(0.1, 1.5))
+      mesh.scale.multiplyScalar(random(1.5, 4.5))
       mesh.rotation.fromArray(randomRotation())
       mesh.position.fromArray(randomSphere([], random(200, 400)))
       return mesh
     })
+
+    const ALT_COLOR = new THREE.Color('black')
+
+    this.events.on('tick', dt => {
+      meshes.forEach(m => {
+        let c = ALT_COLOR.lerp(MAIN_COLOR, dt/100)
+        m.material.color = c
+      })
+    })
+
     return meshes
   }
 
@@ -666,53 +792,29 @@ class WienerLinien {
     this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u1, lineColor: new THREE.Color(0xff0000)}))
     this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u2, lineColor: new THREE.Color(0x00f000)}))
     this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u3, lineColor: new THREE.Color(0x00ffff)}))
-      this.u4 = new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u4, lineColor: new THREE.Color(0x00ff00)})
+
+    this.u4 = new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u4, lineColor: new THREE.Color(0x00ff00)})
     this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u6, lineColor: new THREE.Color(0x00fff0)}))
 
     this.u4.updateTrainData(JSON.parse(U4H[this.idx]))
     this.updateTrainData = this.updateTrainData.bind(this)
     setInterval(this.updateTrainData, 10000)
   }
+
   initPostProcessing() {
-    this.renderer.autoClearColor = true
-    this.composer = new WAGNER.Composer(this.renderer)
-
-
     this.bloomPass = new MultiPassBloomPass({
       blurAmount: 2,
       applyZoomBlur: true
     })
-
-
-
   }
-  /*
-  initPostProcessing() {
-
-    let renderModel = new THREE.RenderPass( this.scene, this.camera )
-    let effectBloom = new THREE.BloomPass( 1.3 + 1),
-      effectCopy = new THREE.ShaderPass( THREE.CopyShader )
-
-    this.effectFXAA = new THREE.ShaderPass( THREE.FXAAShader )
-
-      var width = window.innerWidth || 2;
-      var height = window.innerHeight || 2;
-
-      this.effectFXAA.uniforms[ 'resolution' ].value.set( 1 / width, 1 / height );
-
-      effectCopy.renderToScreen = true;
-
-      this.composer = new THREE.EffectComposer( this.renderer );
-
-      this.composer.addPass( renderModel );
-      this.composer.addPass( this.effectFXAA );
-      this.composer.addPass( effectBloom );
-      this.composer.addPass( effectCopy );
-  }
-  */
 
   startGUI()
   {
+    this.gui.add(this.spirals, 'show').onChange(v => {
+      this.spirals.show = v
+      this.spirals.meshes.forEach(m => m.visible = v)
+    })
+    this.gui.add(this.haltestellen, 'show')
     this.gui.add(this, 'colorize')
     this.gui.add(this, 'morphScale')
     this.gui.add(this, 'morphChaos')
@@ -723,6 +825,8 @@ class WienerLinien {
     this.gui.add(this, 'postProcessing')
     this.gui.add(this, 'followRandomTrain')
     this.gui.add(this, 'unfollowRandomTrain')
+
+
   }
 
   followRandomTrain() {
@@ -741,16 +845,22 @@ class WienerLinien {
 
     if (!this.run) { return }
 
-    TWEEN.update()
+    //TWEEN.update()
 
-    this._updateLineMeshes(time)
+
+    let ntime = now()
+    var dt = ntime - this.last
+    this.events.emit('tick', dt)
+    this.last = ntime
+
+    //this._updateSpirals(time)
+    this._updateHaltestellen(time)
 
     if (this.randomMetro) {
       this.randomMetro.updateFollowTrain(this.camera)
     }
 
     if (this.postProcessing) {
-      //this.composer.render()
       this.composer.reset();
       this.composer.render(this.scene, this.camera);
       this.composer.pass(this.bloomPass)
@@ -761,88 +871,135 @@ class WienerLinien {
     }
   }
 
-  createSpiral() {
 
-    /*
-    	var geo = new Float32Array( 100 * 3 );
-      for( var j = 0; j < geo.length; j += 3 ) {
-        geo[ j ] = geo[ j + 1 ] = geo[ j + 2 ] = Math.random() * 100;
+
+  createSpirals() {
+
+
+    let geo = new Float32Array( 100 * 3 );
+
+    var sz = 2, cxy = 100, cz = cxy * sz;
+    var hxy = Math.PI / cxy, hz = Math.PI / cz;
+    var r = 130;
+
+
+      for( var i = 0; i < geo.length; i += 3 ) {
+        //geo[ j ] = geo[ j + 1 ] = geo[ j + 2 ] = Math.random() * 100;
+
+        var lxy = i * hxy;
+        var lz = i * hz;
+        var rxy = r * 2 /  Math.cosh(lz);
+        var x = rxy * Math.cos(lxy);
+        var y = rxy * Math.sin(lxy);
+        var z = - r * 5 * Math.tanh(lz);
+        //geo[i] =
+
+        geo[ i ] = x
+        geo[i+1] = y
+        geo[i+2] = z
       }
-      */
-    const LEN = 40
 
-    var geo = new THREE.Geometry();
-    for( var j = 0; j < LEN; j ++) {
-      geo.vertices.push(new THREE.Vector3());
+    function _create(i, color, geo) {
+
+      var line = new THREE.MeshLine()
+      line.setGeometry( geo );
+
+       var material = new THREE.MeshLineMaterial({
+        color: new THREE.Color(color),
+        lineWidth: 4
+      });
+
+      var mesh = new THREE.Mesh( line.geometry, material ); // this syntax could definitely be improved!
+      mesh.geo = geo
+      mesh.line = line
+
+      mesh.position.z = i * 80
+
+      return mesh
     }
 
-    var line = new THREE.MeshLine()
-    line.setGeometry( geo );
+    const meshes = []
 
-    var material = new THREE.MeshLineMaterial({color: new THREE.Color('red')});
+    meshes.push(_create(0, 'red', geo))
+    meshes.push(_create(1, 'purple', geo))
+    meshes.push(_create(2, 'orange', geo))
+    meshes.push(_create(3, 'green', geo))
+    meshes.push(_create(4, 'brown', geo))
 
-    var mesh = new THREE.Mesh( line.geometry, material ); // this syntax could definitely be improved!
-    mesh.geo = geo
-    mesh.line = line
-    mesh.head = new THREE.Vector3();
-		mesh.tail = new THREE.Vector3();
+    this.events.on('tick', dt => {
+        if (this.spirals.show) {
+          meshes.forEach(u => u.rotation.z -= 0.05)
+        }
+      })
 
-    this.scene.add( mesh );
-    this.lineMeshes.u1 = mesh
+    return meshes
   }
 
-  _updateLineMeshes(time) {
-
-    let geo = this.lineMeshes.u1.geo,
-        line = this.lineMeshes.u1.line,
-        head = this.lineMeshes.u1.head,
-        tail = this.lineMeshes.u1.tail
-
-
-    tail.copy(head)
-
-    let vec = new THREE.Vector3(),
-        velocity = new THREE.Vector3(),
-        tangent = new THREE.Vector3(),
-        normal = new THREE.Vector3(),
-        up = new THREE.Vector3(0,1,0)
-
-    vec.copy(head)
-
-
-    velocity.x = simplex.noise3D(vec.x, vec.y, vec.z, 0  + time) //* this.speed * guiParams.ribbonSpeed;
-		velocity.y = simplex.noise3D(vec.x, vec.y, vec.z, 50 + time) ;
-		velocity.z = simplex.noise3D(vec.x, vec.y, vec.z, 100+ time) ;
-
-    // location = location + velocity
-    head.add(velocity)
-    //console.log(velocity)
-    //console.log(head)
-
-    // velocity = velocity + accl
-
-
-    /*
-    var simplex = new SimplexNoise()
-    v.x += a * simplex.noise3D(v.x * s * 0, v.y * s, v.z * s)
-    v.y += a * simplex.noise3D(v.x * s, v.y * s * 0, v.z * s)
-    v.z += a * simplex.noise3D(v.x * s, v.y * s, v.z * s * 0)
-    */
-    for( var i = 40 - 1; i > 0; i--) {
-      geo.vertices[i].copy(geo.vertices[i-1])
+  _updateSpirals(time) {
+    this.spirals.spirals.forEach(u => u.visible = this.spirals.show)
+    if (this.spirals.show) {
+      this.spirals.spirals.forEach(u => u.rotation.z -= 0.05)
     }
-    		//calc new L + R edge positions from tangent between head and tail
-		tangent.subVectors(head,tail).normalize();
-    // get rotation axis
-		vec.crossVectors( tangent, up ).normalize();
-		normal.crossVectors( tangent, vec );
-		normal.multiplyScalar(3);
-    console.log(normal)
+  }
 
-    geo.vertices[0].copy(head).add(normal);
-		geo.vertices[1].copy(head).sub(normal);
+  _randHaltestelle() {
+      return HALTESTELLEN[HALTESTELLEN_KEYS[
+        randomInt(0, HALTESTELLEN_LENGTH-1)]]['NAME']
+    }
 
-    line.setGeometry(geo)
+  initHaltestellen() {
+     const MAX = 100
+     const VISIBLE_HS = 5
+
+
+     for (let i=0; i < MAX; i++) {
+       let shapes = THREE.FontUtils.generateShapes( this._randHaltestelle(), {
+            font: "oswald",
+            weight: "normal",
+            size: 25
+          } );
+          let geom = new THREE.ShapeGeometry( shapes );
+          let mat = new THREE.MeshNormalMaterial();
+          let mesh = new THREE.Mesh( geom, mat );
+          geom.center()
+          this.scene.add(mesh)
+
+          mesh._velocity = random(0.3, 0.9)
+          mesh.position.set(random(-100, 100), random(-100, 100), - 500)
+
+          mesh.visible = false
+          this.haltestellen.meshes.push(mesh)
+     }
+
+    this.haltestellen.meshes.slice(0, VISIBLE_HS).forEach(m => m.visible = true)
+    this.haltestellen.queue = VISIBLE_HS
+  }
+
+
+  _updateHaltestellen(time) {
+    if (this.haltestellen.show) {
+      const [hh, wh] = [window.innerHeight/4, window.innerWidth/4]
+
+      this.haltestellen.meshes.forEach((m, i) => {
+
+        if(m.visible) {
+
+          m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500 )
+          m.position.z += time * 0.002 * m._velocity
+
+          if (m.position.z > 0) {
+            m.visible = false
+            this.haltestellen.queue += 1
+
+            let nm = this.haltestellen.meshes[this.haltestellen.queue % this.haltestellen.meshes.length]
+            nm._velocity = random(0.3, 0.9)
+            nm.position.set(random(-wh, wh), random(-hh, hh), - 500)
+            nm.scale.x = nm.scale.y = 0.1
+            nm.visible = true
+          }
+        }
+      })
+    }
   }
 
   play() {
