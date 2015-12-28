@@ -479,7 +479,7 @@ class WienerLinien {
     this.haltestellen = {show: true,
                          meshes: [],
                         queue: 0}
-    this.initHaltestellen()
+    this.createHaltestellen().forEach(m => this.haltestellen.meshes.push(m))
     this.addLight()
 
     this.createSpirals().forEach(m =>  {
@@ -639,13 +639,15 @@ class WienerLinien {
       mesh.position.fromArray(randomSphere([], random(200, 400)))
       return mesh
     })
-
-    const ALT_COLOR = new THREE.Color('black')
+    let time = 0
 
     this.events.on('tick', dt => {
+      //time += 0.1
+      //console.log(time)
       meshes.forEach(m => {
-        let c = ALT_COLOR.lerp(MAIN_COLOR, dt/100)
-        m.material.color = c
+        let c = ALT_COLOR.clone().lerp(MAIN_COLOR, 0)
+        //m.material.color = c
+        //m.material.needsUpdate = true
       })
     })
 
@@ -814,7 +816,9 @@ class WienerLinien {
       this.spirals.show = v
       this.spirals.meshes.forEach(m => m.visible = v)
     })
-    this.gui.add(this.haltestellen, 'show')
+    this.gui.add(this.haltestellen, 'show').onChange(v => {
+      this.haltestellen.show = v
+    })
     this.gui.add(this, 'colorize')
     this.gui.add(this, 'morphScale')
     this.gui.add(this, 'morphChaos')
@@ -852,9 +856,6 @@ class WienerLinien {
     var dt = ntime - this.last
     this.events.emit('tick', dt)
     this.last = ntime
-
-    //this._updateSpirals(time)
-    this._updateHaltestellen(time)
 
     if (this.randomMetro) {
       this.randomMetro.updateFollowTrain(this.camera)
@@ -947,10 +948,11 @@ class WienerLinien {
         randomInt(0, HALTESTELLEN_LENGTH-1)]]['NAME']
     }
 
-  initHaltestellen() {
+  createHaltestellen() {
      const MAX = 100
      const VISIBLE_HS = 5
 
+     const meshes = []
 
      for (let i=0; i < MAX; i++) {
        let shapes = THREE.FontUtils.generateShapes( this._randHaltestelle(), {
@@ -964,15 +966,39 @@ class WienerLinien {
           geom.center()
           this.scene.add(mesh)
 
-          mesh._velocity = random(0.3, 0.9)
+          mesh._velocity = random(0.8, 1.9)
           mesh.position.set(random(-100, 100), random(-100, 100), - 500)
 
           mesh.visible = false
-          this.haltestellen.meshes.push(mesh)
+          meshes.push(mesh)
      }
 
-    this.haltestellen.meshes.slice(0, VISIBLE_HS).forEach(m => m.visible = true)
+    meshes.slice(0, VISIBLE_HS).forEach(m => m.visible = true)
     this.haltestellen.queue = VISIBLE_HS
+
+    const [hh, wh] = [window.innerHeight/4, window.innerWidth/4]
+    this.events.on('tick', dt => {
+      meshes.forEach((m, i) => {
+        if(m.visible) {
+
+          m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500 )
+          m.position.z += dt * 0.02 * m._velocity
+
+          if (m.position.z > 0) {
+            m.visible = false
+            this.haltestellen.queue += 1
+
+            let nm = meshes[this.haltestellen.queue % meshes.length]
+            nm._velocity = random(0.7, 1.9)
+            nm.position.set(random(-wh, wh), random(-hh, hh), - 500)
+            nm.scale.x = nm.scale.y = 0.1
+            nm.visible = true
+          }
+        }
+      })
+    })
+
+    return meshes
   }
 
 

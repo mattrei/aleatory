@@ -31,7 +31,6 @@
   "dependencies": {
     "@superguigui/wagner": "0.0.6",
     "adaptive-bezier-curve": "^1.0.3",
-    "bfj": "^1.2.1",
     "blast-text": "^2.0.0",
     "boid": "^0.2.0",
     "cannon": "^0.6.2",
@@ -44,7 +43,6 @@
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
     "glslify": "^5.0.0",
-    "json-parse-async": "^1.0.3",
     "lerp": "^1.0.3",
     "minivents": "^2.0.1",
     "new-array": "^1.0.0",
