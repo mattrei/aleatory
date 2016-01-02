@@ -98,7 +98,7 @@ a = get_live_data(U4_H)
 puts a.to_json
 
 puts "Sleeping"
-sleep 15
+sleep 9
 
 b = get_live_data(U4_H)
 puts b.to_json
