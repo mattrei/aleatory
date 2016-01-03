@@ -131,10 +131,12 @@ class Main {
                   gui: this.gui,
                   clock: this.clock,
                   loader: this.loader,
-                  analyser: this.analyser.analyser}
+                  analyser: this.analyser}
 
     this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s1 = new DronesScene(args)
+
+    this.setScene("s1")
 
     this.update()
       }, err => console.log(err))
@@ -147,15 +149,6 @@ class Main {
     TWEEN.update()
 
     this.time++
-
-    let analyserNode = null
-    if (this.analyser) {
-     analyserNode = analyser.analyser
-
-     const freqs = analyser.frequencies()
-     console.log(a)
-    }
-
     this.events.emit("update", this.time, this.clock.getDelta())
 
 
@@ -170,6 +163,6 @@ domready(() => {
   const main = new Main()
   main.init()
 
-  main.setScene("s1")
+
 
 })

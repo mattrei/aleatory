@@ -460,6 +460,7 @@ class WienerLinien {
 
     this.bloomPass = null
 
+    this.analyser = args.analyser
     this.gui = args.gui
     this.renderer = args.renderer
     this.composer = args.composer
@@ -924,18 +925,31 @@ class WienerLinien {
 
     this.events.on('tick', dt => {
         if (this.spirals.show) {
-          meshes.forEach(u => u.rotation.z -= 0.05)
+
+          const analyserNode = this.analyser.analyser
+              // grab our byte frequency data for this frame
+          const freqs = this.analyser.frequencies()
+          // find an average signal between two Hz ranges
+          let avg = average(analyserNode, freqs, 40, 100)
+          console.log(avg)
+          //avg = average(analyserNode, freqs, 4400, 4500)
+
+          meshes.forEach(m => {
+            m.rotation.z -= 0.05
+
+            for( let i = 0; i < m.geo.length; i += 3 ) {
+              geo[ i ] += Math.sin(avg) * 20
+              geo[i+1] += Math.sin(avg) * 20
+              //geo[i+2] = z
+            }
+
+            m.line.setGeometry(m.geo)
+
+          })
         }
       })
 
     return meshes
-  }
-
-  _updateSpirals(time) {
-    this.spirals.spirals.forEach(u => u.visible = this.spirals.show)
-    if (this.spirals.show) {
-      this.spirals.spirals.forEach(u => u.rotation.z -= 0.05)
-    }
   }
 
   _randHaltestelle() {
