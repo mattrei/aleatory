@@ -1,8 +1,12 @@
 global.THREE = require('three')
 
+const domready = require('domready')
 const createLoop = require('canvas-loop')
 
 const WAGNER = require('@superguigui/wagner')
+
+const average = require('analyser-frequency-average')
+const audioAnalyser = require('web-audio-analyser')
 
 import TWEEN from 'tween.js'
 import OSC from 'osc/dist/osc-browser.js'
@@ -27,12 +31,15 @@ class Main {
     this.gui = new dat.GUI()
     this.startStats()
 
+    this.analyser = null
+
     this.events = new Events()
 
     this.scenes = {s1: null, current:null}
 
     this.time = 0
     this.clock = new THREE.Clock()
+    this.clock.start()
     this.manager = new THREE.LoadingManager()
     this.loader = new THREE.TextureLoader(this.manager)
 
@@ -64,6 +71,12 @@ class Main {
     this.onResize()
   }
 
+  createLiveAudio() {
+
+
+
+  }
+
   onResize() {
 		this.renderer.setSize(window.innerWidth, window.innerHeight)
   }
@@ -77,9 +90,15 @@ class Main {
     this.scenes.current.play()
   }
 
-  listenOSC() {
+  startStats() {
+      this.stats = new Stats();
+      this.stats.domElement.style.position = 'absolute';
+      document.body.appendChild(this.stats.domElement);
+  }
 
-    this.oscPort.on("message", (oscMsg) => {
+  init() {
+
+        this.oscPort.on("message", (oscMsg) => {
       console.log(oscMsg)
       if (oscMsg.address === '/scene') {
             let n = oscMsg.args[0]
@@ -98,28 +117,29 @@ class Main {
       }
     })
     this.oscPort.open()
-  }
 
-  startStats() {
-      this.stats = new Stats();
-      this.stats.domElement.style.position = 'absolute';
-      document.body.appendChild(this.stats.domElement);
-  }
+    navigator.webkitGetUserMedia({audio: true}, stream => {
 
-  init() {
-    const args = {
+      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+
+
+      const args = {
       app: this.app,
       renderer: this.renderer,
                   composer: this.composer,
                   events: this.events,
                   gui: this.gui,
                   clock: this.clock,
-                  loader: this.loader}
+                  loader: this.loader,
+                  analyser: this.analyser.analyser}
 
     this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s1 = new DronesScene(args)
 
     this.update()
+      }, err => console.log(err))
+
+
   }
 
   update() {
@@ -128,7 +148,15 @@ class Main {
 
     this.time++
 
-    this.events.emit("update", this.time)
+    let analyserNode = null
+    if (this.analyser) {
+     analyserNode = analyser.analyser
+
+     const freqs = analyser.frequencies()
+     console.log(a)
+    }
+
+    this.events.emit("update", this.time, this.clock.getDelta())
 
 
     this.stats.end()
@@ -138,11 +166,10 @@ class Main {
 
 
 
-document.addEventListener("DOMContentLoaded", function(event) {
+domready(() => {
   const main = new Main()
-  main.listenOSC()
   main.init()
 
   main.setScene("s1")
 
-});
+})

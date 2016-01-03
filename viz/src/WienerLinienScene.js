@@ -1,8 +1,8 @@
 global.THREE = require('three')
 import TWEEN from 'tween.js'
+const average = require('analyser-frequency-average')
 
 const Tweenr = new(require('tweenr'))
-const now = require('right-now')
 
 //const parseJSON = require('json-parse-async');
 const createBackground = require('three-vignette-background')
@@ -441,7 +441,6 @@ class WienerLinien {
   constructor(args)
   {
     this.run = false
-    this.last = now()
     this.events = new Events()
 
     this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
@@ -844,18 +843,14 @@ class WienerLinien {
     this.camera.position.set(0, 45, 640)
     this.update()
   }
-  update(time)
+  update(time, delta)
   {
 
     if (!this.run) { return }
 
     //TWEEN.update()
 
-
-    let ntime = now()
-    var dt = ntime - this.last
-    this.events.emit('tick', dt)
-    this.last = ntime
+    this.events.emit('tick', delta)
 
     if (this.randomMetro) {
       this.randomMetro.updateFollowTrain(this.camera)
