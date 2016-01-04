@@ -5,7 +5,7 @@ import Events from 'minivents'
 
 class Scene {
 
-  constructor(args, show) {
+  constructor(args, show, cam) {
       this.fx = {
         active: true,
         bloom: {
@@ -41,6 +41,7 @@ class Scene {
 
       this.show = show
       this._texts = {intro: 'intro!', outro: 'outro!'}
+      this.data = {}
 
         this.run = false
         this.events = new Events()
@@ -55,12 +56,15 @@ class Scene {
 
         this.addFX(this.gui)
 
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 4000)
-        this.camera.position.set(0, 0, 0)
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000)
+
 
 
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.maxDistance = 300000;
+        this.camera.position.set(cam.x, cam.y, cam.z)
+
+
         this.scene = new THREE.Scene()
 
         // shows elements in the scene
@@ -71,6 +75,9 @@ class Scene {
         args.events.on('intro', (data) => this.onIntro(data))
         // update outro text
         args.events.on('outro', (data) => this.onOutro(data))
+
+        args.events.on('data', _ => this.onData(_))
+        args.events.on('func', _ => this.onFunc(_))
 
         args.events.on('update', (data) => this.update(data))
   }
@@ -159,6 +166,16 @@ class Scene {
         }
     }
 
+  onFunc(name) {
+    let f = this[name]
+    f = f.bind(this)
+    f()
+  }
+
+  onData(dict) {
+     this.data = Object.assign(this.data, dict)
+  }
+
     onShow(v) {
       this.show[v] = !this.show[v]
     }
@@ -178,6 +195,12 @@ class Scene {
     }
   _doOutro() {
     this.outro(this._texts.outro)
+  }
+
+  clearScene() {
+    for( let i = this.scene.children.length - 1; i >= 0; i--) {
+      this.scene.remove(this.scene.children[i])
+    }
   }
 
   play() {

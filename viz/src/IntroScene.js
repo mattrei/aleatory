@@ -3,7 +3,6 @@ import Scene from './Scene'
 
 const average = require('analyser-frequency-average')
 const simplex = new (require('simplex-noise'))
-import TWEEN from 'tween.js'
 const random = require('random-float')
 const randomInt = require('random-int')
 
@@ -11,12 +10,6 @@ const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
 const glslify = require('glslify')
-const smoothstep = require('smoothstep')
-const lerp = require('lerp')
-
-const Velocity = require('velocity-animate')
-require('velocity-animate/velocity.ui')
-
 const GeometryUtils = require('./utils/GeometryUtils')
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
@@ -33,7 +26,7 @@ const RIBBON_GAP = 100
 const RIBBON_START = NUM_RIBBONS * RIBBON_GAP * -1
 const STREET_LENGTH = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
 const STREET_WIDTH = 50
-const PLANE_SIZE = {X: 1000, Z: STREET_LENGTH}
+const PLANE_SIZE = {X: window.innerWidth * 2, Z: STREET_LENGTH}
 
 
 
@@ -44,31 +37,19 @@ class IntroScene extends Scene {
         cars: false,
         buildings: false,
         floor: false
-      })
+      }, new THREE.Vector3(0,30,30))
 
 
       this.textMesh = null;
 
-        this.introText = ''
         this.floor = {
-          height: 0,
-          particles: true
+          height: 0
         }
 
         this.street = {
-          speed: 0.5,
-          cars: true,
-          buildings: true
+          speed: 0.5
         }
 
-        this.text = {
-            intro: null,
-            title: null
-        }
-
-        //this.createTextDiv()
-
-        this.camera.position.set(0, 30, 30);
         this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
         this.createText()

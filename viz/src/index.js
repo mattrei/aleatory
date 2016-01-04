@@ -15,7 +15,7 @@ import dat from 'dat-gui'
 
 // 5 scenes
 import IntroScene from './IntroScene'
-//import ExecutedScene from './Executed';
+import ExecutedScene from './ExecutedScene'
 //import RefugeesScene from './Headlines';
 import DronesScene from './DronesScene'
 import WienerLinienScene from './WienerLinienScene'
@@ -99,9 +99,15 @@ class Main {
             console.log("FX " + n)
             this.events.emit("fx", n)
       }
+      //useful?
       if (oscMsg.address === '/cam') {
             let n = oscMsg.args[0]
             console.log("Cam " + n)
+      }
+      if (oscMsg.address === '/data') {
+            let k = oscMsg.args[0]
+            let v = oscMsg.args[0]
+            console.log("Data " + k)
       }
       if (oscMsg.address === '/intro') {
             let text = oscMsg.args[0]
@@ -143,7 +149,8 @@ class Main {
 
     //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s2 = new DronesScene(args)
-    this.scenes.s1 = new IntroScene(args)
+    //this.scenes.s1 = new IntroScene(args)
+    this.scenes.s1 = new ExecutedScene(args)
 
     this.setScene("s1")
 
