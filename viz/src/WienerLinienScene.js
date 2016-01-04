@@ -4,7 +4,6 @@ const average = require('analyser-frequency-average')
 
 const Tweenr = new(require('tweenr'))
 
-//const parseJSON = require('json-parse-async');
 const createBackground = require('three-vignette-background')
 const newArray = require('new-array')
 const random = require('random-float')
@@ -929,9 +928,7 @@ class WienerLinien {
         if (this.spirals.show) {
 
           const analyserNode = this.analyser.analyser
-              // grab our byte frequency data for this frame
           const freqs = this.analyser.frequencies()
-          // find an average signal between two Hz ranges
           let avg = average(analyserNode, freqs, 40, 100),
               high = average(analyserNode, freqs, 4400, 4500)
           avg = smoothstep(0.4, 0.8, avg)

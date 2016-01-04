@@ -40,7 +40,7 @@ class Scene {
       }
 
       this.show = show
-
+      this._texts = {intro: 'intro!', outro: 'outro!'}
 
         this.run = false
         this.events = new Events()
@@ -63,8 +63,15 @@ class Scene {
         this.controls.maxDistance = 300000;
         this.scene = new THREE.Scene()
 
+        // shows elements in the scene
         args.events.on('show', (data) => this.onShow(data))
+        // adds fx to the scene
         args.events.on('fx', (data) => this.onFX(data))
+        // update intro text
+        args.events.on('intro', (data) => this.onIntro(data))
+        // update outro text
+        args.events.on('outro', (data) => this.onOutro(data))
+
         args.events.on('update', (data) => this.update(data))
   }
 
@@ -160,6 +167,19 @@ class Scene {
       this.fx[v].active = !this.fx[v].active
     }
 
+    onIntro(text) {
+      this.intro(text)
+    }
+  _doIntro() {
+    this.intro(this._texts.intro)
+  }
+    onOutro(text) {
+      this.outro(text)
+    }
+  _doOutro() {
+    this.outro(this._texts.outro)
+  }
+
   play() {
     let f = this.gui.addFolder('Viz')
     let fs = f.addFolder('show')
@@ -167,6 +187,12 @@ class Scene {
       fs.add(this.show, s)
     })
     fs.open()
+    let ft = f.addFolder('text')
+    ft.add(this._texts, 'intro')
+    ft.add(this, '_doIntro')
+    ft.add(this._texts, 'outro')
+    ft.add(this, '_doOutro')
+    ft.open()
     this.startGUI(f)
     f.open()
       this.renderer.autoClear = true

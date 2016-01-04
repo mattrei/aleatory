@@ -21,6 +21,10 @@ import DronesScene from './DronesScene'
 import WienerLinienScene from './WienerLinienScene'
 //TODO: OutroScene
 
+// load fonts
+require('./fonts/oswald_regular.typeface.js')
+
+
 class Main {
 
   constructor(args) {
@@ -43,9 +47,7 @@ class Main {
     this.oscPort = new OSC.WebSocketPort({
         url: "ws://localhost:8081"
     });
-    //this.canvas = document.createElement('canvas')
     this.renderer = new THREE.WebGLRenderer({
-        //canvas: this.canvas,
             alpha: true,
             antialias: true,
             clearColor: 0,
@@ -56,9 +58,6 @@ class Main {
     this.renderer.gammaInput = true
 		this.renderer.gammaOutput = true
     document.body.appendChild(this.renderer.domElement)
-
-    //this.app = createLoop(this.canvas, {})
-    //this.app.on('resize', () => this.onResize())
 
     this.composer = new WAGNER.Composer(this.renderer)
     this.canvas = document.createElement('canvas');
@@ -90,7 +89,6 @@ class Main {
             console.log("Scene change. "+ n)
             this.events.emit("scene", n)
       }
-
       if (oscMsg.address === '/show') {
             let n = oscMsg.args[0]
             console.log("Show " + n)
@@ -101,21 +99,33 @@ class Main {
             console.log("FX " + n)
             this.events.emit("fx", n)
       }
-      if (oscMsg.address === '/v') {
+      if (oscMsg.address === '/cam') {
             let n = oscMsg.args[0]
+            console.log("Cam " + n)
+      }
+      if (oscMsg.address === '/intro') {
+            let text = oscMsg.args[0]
+            console.log("Intro " + text)
+      }
+      if (oscMsg.address === '/outro') {
+            let text = oscMsg.args[0]
+            console.log("Outro " + text)
+      }
+      if (oscMsg.address === '/var') {
+            let axis = oscMsg.args[0]
             let v = oscMsg.args[1]
             console.log("Variable change " + n + ' to ' + v)
             this.events.emit("variable", {n: n, v: v})
       }
-      if (oscMsg.address === '/f') {
+      if (oscMsg.address === '/func') {
             let n = oscMsg.args[0]
             viz.onFunc(n)
       }
     })
     this.oscPort.open()
 
-    //navigator.webkitGetUserMedia({audio: true}, stream => {
-      //this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+    navigator.webkitGetUserMedia({audio: true}, stream => {
+      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
 
 
       const args = {
@@ -143,7 +153,7 @@ class Main {
 
 
 
-     // }, err => console.log(err))
+     }, err => console.log(err))
 
 
 

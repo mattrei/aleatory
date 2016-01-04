@@ -8,7 +8,7 @@ const random = require('random-float')
 const randomInt = require('random-int')
 
 const tweenr = require('tweenr')()
-var Tween = require('tween-chain')
+const Tween = require('tween-chain')
 
 const glslify = require('glslify')
 const smoothstep = require('smoothstep')
@@ -16,11 +16,11 @@ const lerp = require('lerp')
 
 const Velocity = require('velocity-animate')
 require('velocity-animate/velocity.ui')
-const EffectComposer = require('three-effectcomposer')(THREE)
-const GeometryUtils = require('./utils/GeometryUtils')
 
-var WAGNER = require('@superguigui/wagner')
-var BloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass')
+const GeometryUtils = require('./utils/GeometryUtils')
+const TextGeometry = require('./geometries/TextGeometry')(THREE)
+const FontUtils = require('./utils/FontUtils')
+
 
 const PARTICLES_AMOUNT = 300000
 
@@ -35,15 +35,14 @@ const STREET_LENGTH = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
 const STREET_WIDTH = 50
 const PLANE_SIZE = {X: 1000, Z: STREET_LENGTH}
 
-const CAMERA_Z_START = 0
 
 
 class IntroScene extends Scene {
     constructor(args) {
       super(args, {
-        particles: true,
-        cars: true,
-        buildings: true,
+        particles: false,
+        cars: false,
+        buildings: false,
         floor: false
       })
 
@@ -69,7 +68,7 @@ class IntroScene extends Scene {
 
         //this.createTextDiv()
 
-        this.camera.position.set(0, 45, CAMERA_Z_START);
+        this.camera.position.set(0, 30, 30);
         this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
         this.createText()
@@ -132,6 +131,37 @@ class IntroScene extends Scene {
 
     createBuildings() {
 
+      let generateTexture = () => {
+        var canvas  = document.createElement( 'canvas' )
+        canvas.width  = 32
+        canvas.height = 64
+        var context = canvas.getContext( '2d' )
+        context.fillStyle = '#ffffff';
+        context.fillRect( 0, 0, 32, 64 );
+         // draw the window rows - with a small noise to simulate light variations in each room
+        for( var y = 2; y < 64; y += 2 ){
+            for( var x = 0; x < 32; x += 2 ){
+                var value   = Math.floor( Math.random() * 64 );
+                context.fillStyle = 'rgb(' + [value, value, value].join( ',' )  + ')';
+                context.fillRect( x, y, 2, 1 );
+            }
+        }
+        var canvas2 = document.createElement( 'canvas' );
+        canvas2.width    = 512;
+        canvas2.height   = 1024;
+        var context = canvas2.getContext( '2d' );
+        // disable smoothing
+        context.imageSmoothingEnabled        = false;
+        // then draw the image
+        context.drawImage( canvas, 0, 0, canvas2.width, canvas2.height );
+        // return the just built canvas2
+        return canvas2;
+      }
+
+      let texture   = new THREE.Texture( generateTexture() )
+      //texture.anisotropy  = this.renderer.getMaxAnisotropy()
+      //texture.needsUpdate = true
+
 
       this.loader.load(
           '/assets/Intro/window.jpg', (sprite) => {
@@ -146,34 +176,45 @@ class IntroScene extends Scene {
             fog: true
           } );
 
+      const SIZE = {x:100, y: 300, z:100}
 
 
       const buildings = []
-        for( var i = 0; i < NUM_RIBBONS * 6; i ++ ){
+        for( var i = 0; i < NUM_RIBBONS * 3; i ++ ){
 
             let building = new THREE.Object3D()
 
             let geometry = new THREE.CubeGeometry( 1, 1, 1 ),
                windowPoints = THREE.GeometryUtils.randomPointsInGeometry(geometry, random(5, 10))
             geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
-            var material = new THREE.MeshLambertMaterial({color: 0x3d5c5c, fog:true, wireframe: false})
+
+
+            //var material = new THREE.MeshLambertMaterial({color: 0x3d5c5c, fog:true, wireframe: false})
+          var material  = new THREE.MeshLambertMaterial({
+            map     : texture
+            //vertexColors    : THREE.VertexColors
+          });
+
             var mesh = new THREE.Mesh( geometry, material );
+
+            // put a random scale
+                const sx = random(SIZE.x, SIZE.x*2),
+                      sy = random(SIZE.y, SIZE.y*2),
+                      sz = sx
+
+               building.scale.set(sx,sy, sz)
 
 
               // put a random position
               let coin = randomInt(0,1) ? -1 : 1
-              building.position.x   = random(70 * coin, 130 * coin)
+              building.position.x = STREET_WIDTH + sx * 0.5 * coin
               building.position.z   = -1 * random(0, STREET_LENGTH)
+              building.rotation.z = Math.PI * 0.1 * coin
               //mesh.position.z   = 200
 
               // put a random rotation
               building.rotation.y   = random(0, Math.PI*2)
-              // put a random scale
-              const sx = Math.random() * Math.random() * Math.random() * Math.random() * 60 + 10,
-                    sy = (Math.random() * Math.random() * Math.random() * sx) * 10 + 20,
-                    sz = sx
 
-             building.scale.set(sx,sy, sz)
 
 
             //this.scene.add(mesh)
@@ -214,7 +255,8 @@ class IntroScene extends Scene {
             if (b.position.z > 0) {
                 b.position.z = STREET_LENGTH * -1
                 let coin = randomInt(0,1) ? -1 : 1
-                b._xoffset = random(70 * coin, 130 * coin)
+                b._xoffset = random(STREET_WIDTH * 2, STREET_WIDTH * 3) * coin
+                //b.rotation.z = Math.PI * 0.1 * coin
 
                 b._yoffset = 30 * Math.sin((70 - Math.abs(b._xoffset)) * 1/(130 - 70))
             }
@@ -270,6 +312,12 @@ class IntroScene extends Scene {
           this.events.on('tick', t => {
 
             particles.visible = this.show.particles
+
+            const analyserNode = this.analyser.analyser
+            const freqs = this.analyser.frequencies()
+            let avg = average(analyserNode, freqs, 20, 60)
+            material.size = 20 + avg * 20
+            material.needsUpdate = true
 
             for (let i = 0; i < geometry.vertices.length; i ++ ) {
 
@@ -469,6 +517,75 @@ class IntroScene extends Scene {
         })
     }
 
+    intro(text) {
+      const DUR = 2
+        let shapes = THREE.FontUtils.generateShapes( text, {
+          font: "oswald",
+          weight: "normal",
+          size: 15
+        } );
+      let geo = new THREE.ShapeGeometry( shapes ),
+          mat = new THREE.MeshBasicMaterial({color: 0xffffff}),
+          mesh = new THREE.Mesh( geo, mat );
+      geo.center()
+      mesh.scale.set(0,0,0)
+      mesh.position.set(0,this.camera.position.y,50)
+      this.scene.add(mesh)
+
+      let chain = Tween()
+
+      chain.chain(mesh.scale,
+                {x: 5, y:5, z:1, duration: DUR/2})
+
+      chain.chain(mesh.position,
+                {x: 0, y:window.innerHeight / 4, z:-STREET_LENGTH/4, duration: DUR/2})
+
+      chain.then(mesh.position, {duration: DUR})
+
+      let out = Tween()
+
+      out.chain(mesh.scale, {x:0,y:0, z:0, duration: DUR/2})
+      out.chain(mesh.position, {x: 0, y:0, z: -STREET_LENGTH, duration: DUR/2})
+
+      chain.then(out)
+      tweenr.to(chain)
+
+    }
+
+    outro(text) {
+       const DUR = 2
+        let shapes = THREE.FontUtils.generateShapes( text, {
+          font: "oswald",
+          weight: "normal",
+          size: 15
+        } );
+      let geo = new THREE.ShapeGeometry( shapes ),
+          mat = new THREE.MeshBasicMaterial({color: 0xffffff}),
+          mesh = new THREE.Mesh( geo, mat );
+      geo.center()
+      mesh.scale.set(0,0,0)
+      mesh.position.set(0,0,-STREET_LENGTH)
+      this.scene.add(mesh)
+
+      let chain = Tween()
+
+      chain.chain(mesh.scale,
+                {x: 5, y:5, z:1, duration: DUR/2})
+
+      chain.chain(mesh.position,
+                {x: 0, y:window.innerHeight / 4, z:-STREET_LENGTH/4, duration: DUR/2})
+
+      chain.then(mesh.position, {duration: DUR})
+
+      let out = Tween()
+
+      out.chain(mesh.scale, {x:0,y:0, z:0, duration: DUR/2})
+      out.chain(mesh.position, {x: this.camera.position.x, y:this.camera.position.y, z:50, duration: DUR/2})
+
+      chain.then(out)
+      tweenr.to(chain)
+    }
+
 
 
     createText() {
@@ -537,44 +654,6 @@ class IntroScene extends Scene {
         geometry.addGroup(0, count, 0)
     }
 
-    createTextDiv() {
-        let div = document.createElement('div')
-        div.id = "textIntro"
-        div.style.cssText = `
-      font-family:Helvetica,Arial,sans-serif;font-size:40px;font-weight:normal;line-height:15px;color:white;
-      `
-        div.style.position = "absolute"
-        div.style.width = "100%"
-        div.style['text-align'] = "center"
-        div.style.top = "50%"
-        document.body.appendChild(div)
-
-        this.text.intro = div
-
-        div = document.createElement('div')
-        div.id = "textTitle"
-        div.style.cssText = `
-      font-family:Helvetica,Arial,sans-serif;font-size:60px;font-weight:bold;line-height:15px;color:white;
-      `
-        div.style.position = "absolute"
-        div.style.width = "100%"
-        div.style['text-align'] = "center"
-        div.style.top = "30%"
-        document.body.appendChild(div)
-
-        div.innerHTML = "aleatory"
-
-        this.text.title = div
-    }
-
-    updateIntroText() {
-        Velocity.animate(this.text.intro, "fadeOut", this.transition / 4)
-            .then((e) => {
-                this.text.intro.innerHTML = this.introText
-                Velocity(this.text.intro, "fadeIn", this.transition)
-            })
-    }
-
     createFloor() {
         var gridHelper = new THREE.GridHelper(100, 10);
         this.scene.add( gridHelper );
@@ -629,15 +708,15 @@ class IntroScene extends Scene {
         gui.add(this.street, 'speed', 0, 1)
         gui.add(this.floor, 'height', 0, 1)
 
-        gui.add(this, 'introText').onChange(this.updateText.bind(this));
-        gui.add(this.textMesh.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
-        gui.add(this, 'updateText')
+        //gui.add(this, 'introText').onChange(this.updateText.bind(this));
+        //gui.add(this.textMesh.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
+        //gui.add(this, 'updateText')
 
-        gui.add(this, 'updateIntroText')
+        //gui.add(this, 'updateIntroText')
 
 //        this.gui.add(this, 'flyingSpeed', 0, 20)
 
-        gui.add(this, 'leave')
+        //gui.add(this, 'leave')
     }
 
     leave() {
