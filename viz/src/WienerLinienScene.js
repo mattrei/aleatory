@@ -464,6 +464,7 @@ class WienerLinien {
     this.gui = args.gui
     this.renderer = args.renderer
     this.composer = args.composer
+
     this.createScene();
     this.initPostProcessing()
     const bg = createBackground()
@@ -596,8 +597,8 @@ class WienerLinien {
     })
 
 
-    this.events.on('tick', dt => {
-      dt = dt / 100
+    this.events.on('tick', t => {
+      const dt = t.dt / 100
       meshes.forEach(mesh => {
         mesh.rotation.x += dt * 0.1 * mesh.direction.x
         mesh.rotation.y += dt * 0.5 * mesh.direction.y
@@ -641,7 +642,7 @@ class WienerLinien {
     })
     let time = 0
 
-    this.events.on('tick', dt => {
+    this.events.on('tick', t => {
       //time += 0.1
       //console.log(time)
       meshes.forEach(m => {
@@ -851,7 +852,7 @@ class WienerLinien {
 
     //TWEEN.update()
 
-    this.events.emit('tick', delta)
+    this.events.emit('tick', {t: time, dt: delta})
 
     if (this.randomMetro) {
       this.randomMetro.updateFollowTrain(this.camera)
@@ -907,7 +908,8 @@ class WienerLinien {
       });
 
       var mesh = new THREE.Mesh( line.geometry, material ); // this syntax could definitely be improved!
-      mesh.geo = geo
+      mesh.origGeo = geo
+      mesh.geo = new Float32Array(geo)
       mesh.line = line
 
       mesh.position.z = i * 80
@@ -923,24 +925,26 @@ class WienerLinien {
     meshes.push(_create(3, 'green', geo))
     meshes.push(_create(4, 'brown', geo))
 
-    this.events.on('tick', dt => {
+    this.events.on('tick', t => {
         if (this.spirals.show) {
 
           const analyserNode = this.analyser.analyser
               // grab our byte frequency data for this frame
           const freqs = this.analyser.frequencies()
           // find an average signal between two Hz ranges
-          let avg = average(analyserNode, freqs, 40, 100)
+          let avg = average(analyserNode, freqs, 40, 100),
+              high = average(analyserNode, freqs, 4400, 4500)
+          avg = smoothstep(0.4, 0.8, avg)
           console.log(avg)
-          //avg = average(analyserNode, freqs, 4400, 4500)
 
-          meshes.forEach(m => {
+          meshes.forEach((m, idx) => {
             m.rotation.z -= 0.05
 
             for( let i = 0; i < m.geo.length; i += 3 ) {
-              geo[ i ] += Math.sin(avg) * 20
-              geo[i+1] += Math.sin(avg) * 20
-              //geo[i+2] = z
+              //geo[ i ] += Math.sin((avg + i) * 0.02) * 1
+              //geo[i] =  geo[i] * simplex.noise2D(geo[i], Math.sin(t.t)) * (20 * avg)
+              //geo[i] += Math.sin(t.t + idx + i * 0.5) * (avg * 20)
+              m.geo[i] = m.origGeo[i] + Math.sin(t.t + idx + i * 0.5) * (avg * 20) * (high * 10)
             }
 
             m.line.setGeometry(m.geo)
@@ -986,12 +990,12 @@ class WienerLinien {
     this.haltestellen.queue = VISIBLE_HS
 
     const [hh, wh] = [window.innerHeight/4, window.innerWidth/4]
-    this.events.on('tick', dt => {
+    this.events.on('tick', t => {
       meshes.forEach((m, i) => {
         if(m.visible) {
 
           m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500 )
-          m.position.z += dt * 0.02 * m._velocity
+          m.position.z += t.dt * 0.02 * m._velocity
 
           if (m.position.z > 0) {
             m.visible = false

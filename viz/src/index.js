@@ -8,16 +8,13 @@ const WAGNER = require('@superguigui/wagner')
 const average = require('analyser-frequency-average')
 const audioAnalyser = require('web-audio-analyser')
 
-import TWEEN from 'tween.js'
 import OSC from 'osc/dist/osc-browser.js'
 import Events from 'minivents'
 import Stats from 'stats-js'
 import dat from 'dat-gui'
 
-var demo
-
 // 5 scenes
-//import IntroScene from './Intro';
+import IntroScene from './IntroScene'
 //import ExecutedScene from './Executed';
 //import RefugeesScene from './Headlines';
 import DronesScene from './DronesScene'
@@ -27,13 +24,13 @@ import WienerLinienScene from './WienerLinienScene'
 class Main {
 
   constructor(args) {
-    this.stats = null
+    this.stats = new Stats()
+    this.stats.domElement.style.position = 'absolute'
+    document.body.appendChild(this.stats.domElement)
     this.gui = new dat.GUI()
-    this.startStats()
+    this.events = new Events()
 
     this.analyser = null
-
-    this.events = new Events()
 
     this.scenes = {s1: null, current:null}
 
@@ -64,21 +61,15 @@ class Main {
     //this.app.on('resize', () => this.onResize())
 
     this.composer = new WAGNER.Composer(this.renderer)
+    this.canvas = document.createElement('canvas');
+    this.ctx = this.canvas.getContext('2d');
 
     this.events.on("scene", (s) => this.setScene(s))
-
-    window.addEventListener('resize', () => this.onResize(), false)
-    this.onResize()
-  }
-
-  createLiveAudio() {
-
-
 
   }
 
   onResize() {
-		this.renderer.setSize(window.innerWidth, window.innerHeight)
+		this.scenes.current.onResize()
   }
 
   setScene(scene) {
@@ -90,15 +81,9 @@ class Main {
     this.scenes.current.play()
   }
 
-  startStats() {
-      this.stats = new Stats();
-      this.stats.domElement.style.position = 'absolute';
-      document.body.appendChild(this.stats.domElement);
-  }
-
   init() {
 
-        this.oscPort.on("message", (oscMsg) => {
+    this.oscPort.on("message", (oscMsg) => {
       console.log(oscMsg)
       if (oscMsg.address === '/scene') {
             let n = oscMsg.args[0]
@@ -106,10 +91,21 @@ class Main {
             this.events.emit("scene", n)
       }
 
+      if (oscMsg.address === '/show') {
+            let n = oscMsg.args[0]
+            console.log("Show " + n)
+            this.events.emit("show", n)
+      }
+      if (oscMsg.address === '/fx') {
+            let n = oscMsg.args[0]
+            console.log("FX " + n)
+            this.events.emit("fx", n)
+      }
       if (oscMsg.address === '/v') {
             let n = oscMsg.args[0]
             let v = oscMsg.args[1]
-            viz.onVariable(n, v)
+            console.log("Variable change " + n + ' to ' + v)
+            this.events.emit("variable", {n: n, v: v})
       }
       if (oscMsg.address === '/f') {
             let n = oscMsg.args[0]
@@ -118,38 +114,46 @@ class Main {
     })
     this.oscPort.open()
 
-    navigator.webkitGetUserMedia({audio: true}, stream => {
-
-      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+    //navigator.webkitGetUserMedia({audio: true}, stream => {
+      //this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
 
 
       const args = {
-      app: this.app,
-      renderer: this.renderer,
+        renderer: this.renderer,
                   composer: this.composer,
                   events: this.events,
                   gui: this.gui,
                   clock: this.clock,
                   loader: this.loader,
-                  analyser: this.analyser}
+                  analyser: this.analyser,
+        // for drawing purposes
+        canvas: this.canvas,
+        ctx: this.ctx
+      }
 
-    this.scenes.s1 = new WienerLinienScene(args)
-    //this.scenes.s1 = new DronesScene(args)
+    //this.scenes.s1 = new WienerLinienScene(args)
+    //this.scenes.s2 = new DronesScene(args)
+    this.scenes.s1 = new IntroScene(args)
 
     this.setScene("s1")
 
+    window.addEventListener('resize', () => this.onResize(), false)
+    this.onResize()
     this.update()
-      }, err => console.log(err))
+
+
+
+     // }, err => console.log(err))
+
 
 
   }
 
   update() {
     this.stats.begin()
-    TWEEN.update()
 
     this.time++
-    this.events.emit("update", this.time, this.clock.getDelta())
+    this.events.emit("update", {time: this.time, delta: this.clock.getDelta()})
 
 
     this.stats.end()
@@ -162,7 +166,6 @@ class Main {
 domready(() => {
   const main = new Main()
   main.init()
-
-
-
 })
+
+
