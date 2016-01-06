@@ -1,7 +1,7 @@
 varying vec2 vUv;
 varying vec3 vColor;
 
-uniform float time;
+uniform float uTime;
 uniform sampler2D bgImg;
 
 

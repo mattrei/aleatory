@@ -11,11 +11,10 @@ class Demo {
   constructor(args)
   {
     this.startStats();
-    this.startGUI();
+
 
     this.particles = null
 
-    this.time = 0
 
     this.loader = new THREE.TextureLoader()
     this.renderer = null;
@@ -23,10 +22,12 @@ class Demo {
     this.scene    = null;
     this.counter  = 0;
     this.clock    = new THREE.Clock();
+    this.clock.start()
 
     this.createRender();
     this.createScene();
     this.addObjects();
+
 
     this.onResize();
     this.update();
@@ -96,7 +97,7 @@ class Demo {
     //this.scene.add( gridHelper );
 
 
-    const PARTICLES_AMOUNT = 40000
+    const PARTICLES_AMOUNT = 100000
     const MAX_PARTICLE_DIST= 50
     const IMG_SCALE = 0.5
 
@@ -108,6 +109,7 @@ class Demo {
     this._getImgData(bgImg.image.src).then(imgData => {
 
       let geometry = new THREE.BufferGeometry()
+      console.log(imgData.width * imgData.height)
 
 
       /*
@@ -124,10 +126,16 @@ class Demo {
       //let colors = geometry.attributes.color.array
       var positions = new Float32Array(PARTICLES_AMOUNT * 3);
       var colors = new Float32Array(PARTICLES_AMOUNT * 3);
-      var sizes = new Float32Array(PARTICLES_AMOUNT);
+      // displacement values
+      var extras = new Float32Array(PARTICLES_AMOUNT * 3);
 
 
-      for (var i = 0, i3 = 0; i < PARTICLES_AMOUNT; i++ , i3 += 3) {
+      let total = imgData.width * imgData.height,
+          step = Math.floor(total / PARTICLES_AMOUNT)
+
+      for (var i = 0, i3 = 0, ipx = 0;
+           i < PARTICLES_AMOUNT;
+           i++ , i3 += 3, ipx += step) {
 
         var position = new THREE.Vector3(
           randf(0, imgData.width ),
@@ -137,10 +145,9 @@ class Demo {
 
 
           // Randomly select a pixel
-          let x = Math.round(imgData.width * Math.random()),
-             y = Math.round(imgData.height * Math.random()),
+          let x = ipx % imgData.width, // Math.round(imgData.width * Math.random()),
+             y = ipx / imgData.width | 0, //Math.round(imgData.height * Math.random()),
              pixel = this._getPixel(imgData, x, y)
-
 
             position = new THREE.Vector3(
               (imgData.width / 2 - x) * IMG_SCALE,
@@ -154,25 +161,28 @@ class Demo {
         positions[i3 + 1] = position.y;
         positions[i3 + 2] = position.z;
 
+        // Extras
+        extras[i3 + 0] = Math.random()
+        extras[i3 + 1] = Math.random()
+        extras[i3 + 2] = Math.random()
+
         // Color
         let color = pixel
         colors[i3 + 0] = color.r/255;
         colors[i3 + 1] = color.g/255;
         colors[i3 + 2] = color.b/255;
 
-        // Size
-        sizes[i] = randf(0.5, 2);
-
       }
 
       geometry.addAttribute( 'position', new THREE.BufferAttribute(positions, 3));
       geometry.addAttribute( 'color', new THREE.BufferAttribute(colors, 3));
-      geometry.addAttribute( 'size', new THREE.BufferAttribute(sizes, 1));
+      geometry.addAttribute( 'extra', new THREE.BufferAttribute(extras, 3));
 
       let material = new THREE.ShaderMaterial( {
 
           uniforms: {
-              time: { type: 'f', value: 0 },
+              uTime: { type: 'f', value: 0 },
+              uAnimation: { type: 'f', value: 0 },
               bgImg: { type: 't', value: bgImg }
           },
           vertexShader: glslify(__dirname + '/glsl/Test_Particles.vert'),
@@ -188,6 +198,7 @@ class Demo {
       this.particles = particles
 
 
+    this.startGUI();
     })
     })
     })
@@ -200,7 +211,8 @@ class Demo {
 
   startGUI()
   {
-    // var gui = new dat.GUI()
+    var gui = new dat.GUI()
+    gui.add(this.particles.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
     // gui.add(camera.position, 'x', 0, 400)
     // gui.add(camera.position, 'y', 0, 400)
     // gui.add(camera.position, 'z', 0, 400)
@@ -210,9 +222,9 @@ class Demo {
   {
     this.stats.begin();
 
-    this.time++
+
     if (this.particles) {
-      this.particles.material.uniforms.time.value = this.time * 0.2
+      this.particles.material.uniforms.uTime.value = this.clock.getElapsedTime() * 0.2
     }
 
     this.renderer.render(this.scene, this.camera);
