@@ -1,4 +1,4 @@
-global.THREE = require('three.js')
+global.THREE = require('three')
 import dat   from 'dat-gui'
 import Stats from 'stats-js'
 import MathF from 'utils-perf'
@@ -109,7 +109,7 @@ class Demo {
     this._getImgData(bgImg.image.src).then(imgData => {
 
       let geometry = new THREE.BufferGeometry()
-      console.log(imgData.width * imgData.height)
+      console.log("Image pixels: " + imgData.width * imgData.height)
 
 
       /*

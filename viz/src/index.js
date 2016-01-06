@@ -38,7 +38,6 @@ class Main {
 
     this.scenes = {s1: null, current:null}
 
-    this.time = 0
     this.clock = new THREE.Clock()
     this.clock.start()
     this.manager = new THREE.LoadingManager()
@@ -147,11 +146,11 @@ class Main {
         ctx: this.ctx
       }
 
-    //this.scenes.s1 = new WienerLinienScene(args)
+    this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s2 = new DronesScene(args)
     //this.scenes.s1 = new IntroScene(args)
     //this.scenes.s1 = new ExecutedScene(args)
-    this.scenes.s1 = new RefugeesScene(args)
+    //this.scenes.s1 = new RefugeesScene(args)
 
     this.setScene("s1")
 
@@ -170,8 +169,8 @@ class Main {
   update() {
     this.stats.begin()
 
-    this.time++
-    this.events.emit("update", {time: this.time, delta: this.clock.getDelta()})
+    this.events.emit("update", {time: this.clock.getElapsedTime(),
+                                delta: this.clock.getDelta()})
 
 
     this.stats.end()
@@ -183,12 +182,11 @@ class Main {
 
 import Test from './Test_Particles'
 domready(() => {
-  /*
+
   const main = new Main()
   main.init()
-  */
 
-  let demo = new Test()
+  //let demo = new Test()
 })
 
 

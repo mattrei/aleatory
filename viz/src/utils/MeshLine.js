@@ -356,3 +356,4 @@ THREE.MeshLineMaterial.prototype.copy = function ( source ) {
 };
 
 export default THREE.MeshLine
+//export THREE.MeshLineMaterial

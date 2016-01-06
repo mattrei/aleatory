@@ -221,6 +221,7 @@ class Scene {
       this.renderer.autoClear = true
       this.run = true
     }
+
     stop() {
       this.renderer.autoClear = false
       this.run = false
