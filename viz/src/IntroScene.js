@@ -32,13 +32,7 @@ const PLANE_SIZE = {X: window.innerWidth * 2, Z: STREET_LENGTH}
 
 class IntroScene extends Scene {
     constructor(args) {
-      super(args, {
-        particles: false,
-        cars: false,
-        buildings: false,
-        floor: false
-      }, new THREE.Vector3(0,30,30))
-
+      super(args, new THREE.Vector3(0,30,30))
 
       this.textMesh = null;
 
@@ -111,6 +105,8 @@ class IntroScene extends Scene {
     }
 
     createBuildings() {
+
+      let conf = {on:false}
 
       let generateTexture = () => {
         var canvas  = document.createElement( 'canvas' )
@@ -220,7 +216,7 @@ class IntroScene extends Scene {
 
         buildings.forEach((b, i) => {
 
-          b.visible = this.show.buildings
+          b.visible = conf.on
 
           let r = Math.sin((t.time + b.position.z * 0.2) * 0.02)
 
@@ -253,6 +249,8 @@ class IntroScene extends Scene {
 
     createParticles() {
 
+      let conf = {on: false, speed: 1, height: 1}
+
       const NUM = 500
 
       let geometry = new THREE.Geometry();
@@ -261,8 +259,8 @@ class IntroScene extends Scene {
 
 					var vertex = new THREE.Vector3();
 
-          vertex.x = random(0, PLANE_SIZE.X) - PLANE_SIZE.X*0.5
-          vertex.z = random(0, -PLANE_SIZE.Z)
+          //vertex.x = random(0, PLANE_SIZE.X) - PLANE_SIZE.X*0.5
+          //vertex.z = random(0, -PLANE_SIZE.Z)
 
           vertex._height = random(1, 5)
           vertex._speed = random(1, 10)
@@ -290,9 +288,26 @@ class IntroScene extends Scene {
           this.scene.add(particles)
 
 
+          this.events.on('visOn', t => {
+            if (t==='particles') {
+              conf.on = true
+              geometry.vertices.forEach(v => {
+                v.x = THREE.Math.randFloatSpread(PLANE_SIZE.X)
+                v.z = random(-PLANE_SIZE.Z, -PLANE_SIZE.Z*2)
+              })
+            }
+          })
+
+          this.events.on('visOff', t => {
+            if (t==='particles') {
+              conf.on = false
+            }
+          })
+
+
           this.events.on('tick', t => {
 
-            particles.visible = this.show.particles
+            particles.visible = conf.on
 
             const analyserNode = this.analyser.analyser
             const freqs = this.analyser.frequencies()
@@ -304,23 +319,30 @@ class IntroScene extends Scene {
 
               let v = geometry.vertices[i]
 
-              v.y = Math.abs( Math.sin((i + t.time * 0.004 * this.street.speed)) * 40 * v._height )
+              v.y = Math.abs( Math.sin((i + t.time * 0.4 * conf.speed)) * 40 * v._height * conf.height )
               v.z += this.street.speed * v._speed
               if (v.z > 0) {
-                v.z = -STREET_LENGTH
-                v._speed = random(1, 10)
-                v._height = random(1, 5)
+                  v.z = -STREET_LENGTH
+                  v._speed = random(1, 10)
+                  v._height = random(1, 5)
               }
 
             }
             geometry.verticesNeedUpdate = true
           })
 
+
+
+          super.addVis('particles', conf)
         })
+
+
 
     }
 
     createCars() {
+
+      let conf = {on:false, speed: 1}
 
       this.loader.load(
 		      '/assets/Intro/cloud.png', (texture) => {
@@ -328,12 +350,12 @@ class IntroScene extends Scene {
             let matFront = new THREE.SpriteMaterial({
                   map: texture,
                   color: 0xded95f,
-              fog: true
+                  fog: true
                 }),
                 matBack = new THREE.SpriteMaterial({
                       map: texture,
                       color: 0xff0000,
-                  fog: true
+                      fog: true
                     })
 
 
@@ -353,7 +375,7 @@ class IntroScene extends Scene {
 
                           sprite.position.set(j*10, 0, 0)
 
-
+                          sprite.visible = false
 
                           scene.add(sprite)
                           pair.push(sprite)
@@ -373,22 +395,34 @@ class IntroScene extends Scene {
               let backs = add(matBack, this.scene)
               let fronts = add(matFront, this.scene)
 
+              this.events.on('visOn', t => {
+                if (t === 'cars') {
+                  conf.on = true
+                  console.log("cars on")
+                }
+
+              })
+
+              this.events.on('visOff', t => {
+                if (t === 'cars') {
+                  conf.on = false
+                }
+              })
+
               this.events.on('tick', t => {
-                if (this.show.cars) {
+                if (conf.on) {
                 let zoffset = random(60, 100)
 
                 fronts.forEach((l, i) => {
 
-
-
                   let back = backs[i]
 
                   l.forEach((s,j) => {
-                    s.visible = this.show.cars
+                    s.visible = conf.on
 
                     let pos = s.position
 
-                    let z = pos.z + this.street.speed * 8 * l._speed
+                    let z = pos.z + conf.speed * 8 * l._speed
                     let r = Math.sin((t.time + z * 0.2) * 0.02)
                     let x = r * 15 + (j*15) - STREET_WIDTH / 2,
                       y = r * 8
@@ -407,12 +441,12 @@ class IntroScene extends Scene {
 
                   l.forEach((s,j) => {
 
-                    s.visible = this.show.cars
+                    s.visible = conf.on
 
 
                     let pos = s.position
 
-                    let z = pos.z - this.street.speed * 8
+                    let z = pos.z - conf.speed * 8
                     let r = Math.sin((t.time + z * 0.2) * 0.02)
                     let x = r * 15 + (j*15) + STREET_WIDTH / 2,
                       y = r * 8
@@ -427,6 +461,8 @@ class IntroScene extends Scene {
                 })
                 }
               })
+
+              super.addVis('cars', conf)
           })
 
     }
@@ -636,9 +672,7 @@ class IntroScene extends Scene {
     }
 
     createFloor() {
-        var gridHelper = new THREE.GridHelper(100, 10);
-        this.scene.add( gridHelper );
-
+      let conf = {on: false, height: 1, speed: 1}
 
         var planeMaterial = new THREE.ShaderMaterial({
             uniforms: {
@@ -652,11 +686,11 @@ class IntroScene extends Scene {
                 },
                 speed: {
                     type: "f",
-                    value: this.speed
+                    value: conf.speed
                 },
                 height: {
                     type: "f",
-                    value: this.height
+                    value: conf.height
                 },
                 noise_elevation: {
                     type: "f",
@@ -674,30 +708,20 @@ class IntroScene extends Scene {
 
         mesh.rotation.set(-Math.PI * 0.5, 0, 0)
         mesh.position.y = -50//-window.innerHeight * 0.15
+        mesh.visible = conf.on
         this.scene.add(mesh)
 
+        this.events.on('visOn', d => mesh.visible = true)
+        this.events.on('visOff', d => mesh.visible = false)
+
         this.events.on('tick', t => {
-          mesh.visible = this.show.floor
-          mesh.material.uniforms.time.value += t.delta / 10
-          mesh.material.uniforms.speed.value = this.street.speed;
-          mesh.material.uniforms.height.value = this.floor.height;
+          mesh.material.uniforms.time.value = t.time * 0.2
+          mesh.material.uniforms.speed.value = conf.speed
+          mesh.material.uniforms.height.value = conf.height
         })
 
-    }
+        super.addVis('floor', conf)
 
-    startGUI(gui) {
-        gui.add(this.street, 'speed', 0, 1)
-        gui.add(this.floor, 'height', 0, 1)
-
-        //gui.add(this, 'introText').onChange(this.updateText.bind(this));
-        //gui.add(this.textMesh.material.uniforms.uAnimation, 'value', 0, 1).name('animation').listen()
-        //gui.add(this, 'updateText')
-
-        //gui.add(this, 'updateIntroText')
-
-//        this.gui.add(this, 'flyingSpeed', 0, 20)
-
-        //gui.add(this, 'leave')
     }
 
     leave() {

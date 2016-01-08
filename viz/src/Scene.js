@@ -5,7 +5,7 @@ import Events from 'minivents'
 
 class Scene {
 
-  constructor(args, show, cam) {
+  constructor(args, cam) {
       this.fx = {
         active: true,
         bloom: {
@@ -39,9 +39,8 @@ class Scene {
 
       }
 
-      this.show = show
       this._texts = {intro: 'intro!', outro: 'outro!'}
-      this.data = {}
+      this.vis = []
 
         this.run = false
         this.events = new Events()
@@ -58,8 +57,6 @@ class Scene {
 
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000)
 
-
-
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.maxDistance = 300000;
         this.camera.position.set(cam.x, cam.y, cam.z)
@@ -68,7 +65,8 @@ class Scene {
         this.scene = new THREE.Scene()
 
         // shows elements in the scene
-        args.events.on('show', (data) => this.onShow(data))
+        args.events.on('on', (data) => this.onVisOn(data))
+        args.events.on('off', (data) => this.onVisOff(data))
         // adds fx to the scene
         args.events.on('fx', (data) => this.onFX(data))
         // update intro text
@@ -76,10 +74,37 @@ class Scene {
         // update outro text
         args.events.on('outro', (data) => this.onOutro(data))
 
-        args.events.on('data', _ => this.onData(_))
+        args.events.on('data', _ => this.onVisParameters(_))
         args.events.on('func', _ => this.onFunc(_))
 
         args.events.on('update', (data) => this.update(data))
+  }
+
+  addVis(name, parameters) {
+
+    this.vis.push({name: parameters})
+
+    let vf = this.gui.addFolder(name)
+      Object.keys(parameters).forEach(p => {
+
+        if (p === 'on' && parameters[p]) {
+            this.onVisOn(name)
+        }
+
+        let vfp = vf.add(parameters, p)
+
+        if (vfp.property === 'on') {
+          vfp.onChange(val => {
+            if (val) {
+              this.onVisOn(name)
+            } else {
+              this.onVisOff(name)
+            }
+          })
+        }
+      })
+
+    vf.open()
   }
 
   addFX(gui) {
@@ -172,12 +197,17 @@ class Scene {
     f()
   }
 
-  onData(dict) {
-     this.data = Object.assign(this.data, dict)
+  onVisParameters(dict) {
+     //this.data = Object.assign(this.data, dict)
+    this.vis = Object.assign(this.vis, dict)
   }
 
-    onShow(v) {
-      this.show[v] = !this.show[v]
+    onVisOn(v) {
+      this.events.emit('visOn', v)
+    }
+
+  onVisOff(v) {
+      this.events.emit('visOff', v)
     }
 
   onFX(v) {
@@ -204,20 +234,15 @@ class Scene {
   }
 
   play() {
-    let f = this.gui.addFolder('Viz')
-    let fs = f.addFolder('show')
-    Object.keys(this.show).forEach(s => {
-      fs.add(this.show, s)
-    })
-    fs.open()
-    let ft = f.addFolder('text')
+
+    let ft = this.gui.addFolder('text')
     ft.add(this._texts, 'intro')
     ft.add(this, '_doIntro')
     ft.add(this._texts, 'outro')
     ft.add(this, '_doOutro')
     ft.open()
-    this.startGUI(f)
-    f.open()
+//    this.startGUI(f)
+//    f.open()
       this.renderer.autoClear = true
       this.run = true
     }

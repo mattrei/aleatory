@@ -19,6 +19,7 @@ const simplex = new (require('simplex-noise'))()
 const runParallel = require('run-parallel')
 
 const lerp = require('lerp')
+const clamp = require('clamp')
 const smoothstep = require('smoothstep')
 
 const MeshLine = require('./utils/MeshLine').MeshLine
@@ -441,7 +442,7 @@ class WienerLinien extends Scene {
       haltestellen: true,
       metros: false,
       net: false,
-      tunnel: false
+      tunnel: false,
     }, new THREE.Vector3(0,45,640))
 
 
@@ -459,25 +460,19 @@ class WienerLinien extends Scene {
 
     this.createBackground()
 
-    this.spirals = {show: false,
-                    meshes: []}
-    this.haltestellen = {show: true,
-                         meshes: [],
-                        queue: 0}
-    this.createHaltestellen().forEach(m => this.haltestellen.meshes.push(m))
-    this.createLight()
+    this.haltestellen = {queue: 0}
+    this.createHaltestellen()
+//    this.createLight()
+
 
     this.createSpirals().forEach(m =>  {
-      this.scene.add(m)
-      this.spirals.meshes.push(m)
+    //  this.scene.add(m)
     })
 
     //this.onResize();
     //this.update();
 
     this.idx = 0
-
-    args.events.on("update", (data) => this.update(data))
   }
 
   createBackground() {
@@ -779,21 +774,20 @@ class WienerLinien extends Scene {
 
   startGUI(gui)
   {
-    gui.add(this.spirals, 'show').onChange(v => {
+    /*gui.add(this.spirals, 'show').onChange(v => {
       this.spirals.show = v
       this.spirals.meshes.forEach(m => m.visible = v)
-    })
+    })*/
+    /*
     gui.add(this.haltestellen, 'show').onChange(v => {
       this.haltestellen.show = v
-    })
+    })*/
     gui.add(this, 'colorize')
     gui.add(this, 'morphScale')
     gui.add(this, 'morphChaos')
     gui.add(this, 'morphOrdered')
     gui.add(this, 'allMode')
     gui.add(this, 'metroMode')
-    gui.add(this, 'clearScene')
-    gui.add(this, 'postProcessing')
     gui.add(this, 'followRandomTrain')
     gui.add(this, 'unfollowRandomTrain')
   }
@@ -873,14 +867,13 @@ class WienerLinien extends Scene {
     meshes.push(_create(4, 'brown', geo))
 
     this.events.on('tick', t => {
-        if (this.spirals.show) {
+        if (this.show.spirals) {
 
           const analyserNode = this.analyser.analyser
           const freqs = this.analyser.frequencies()
           let avg = average(analyserNode, freqs, 40, 100),
               high = average(analyserNode, freqs, 4400, 4500)
-          avg = smoothstep(0.4, 0.8, avg)
-          console.log(avg)
+          avg = clamp(0.4, 0.8, avg)
 
           meshes.forEach((m, idx) => {
             m.rotation.z -= 0.05
@@ -889,7 +882,7 @@ class WienerLinien extends Scene {
               //geo[ i ] += Math.sin((avg + i) * 0.02) * 1
               //geo[i] =  geo[i] * simplex.noise2D(geo[i], Math.sin(t.t)) * (20 * avg)
               //geo[i] += Math.sin(t.t + idx + i * 0.5) * (avg * 20)
-              m.geo[i] = m.origGeo[i] + Math.sin(t.t + idx + i * 0.5) * (avg * 20) * (high * 10)
+              m.geo[i] = m.origGeo[i] + Math.sin(t.time + idx + i * 0.5) * (avg * 20) * (high * 10)
             }
 
             m.line.setGeometry(m.geo)
@@ -935,25 +928,29 @@ class WienerLinien extends Scene {
     this.haltestellen.queue = VISIBLE_HS
 
     const [hh, wh] = [window.innerHeight/4, window.innerWidth/4]
+
     this.events.on('tick', t => {
-      meshes.forEach((m, i) => {
-        if(m.visible) {
 
-          m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500 )
-          m.position.z += t.dt * 0.02 * m._velocity
+      if(this.show.haltestellen) {
+        meshes.forEach((m, i) => {
+          if(m.visible) {
 
-          if (m.position.z > 0) {
-            m.visible = false
-            this.haltestellen.queue += 1
+            m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500 )
+            m.position.z += t.delta + m._velocity
 
-            let nm = meshes[this.haltestellen.queue % meshes.length]
-            nm._velocity = random(0.7, 1.9)
-            nm.position.set(random(-wh, wh), random(-hh, hh), - 500)
-            nm.scale.x = nm.scale.y = 0.1
-            nm.visible = true
+            if (m.position.z > 0) {
+              m.visible = false
+              this.haltestellen.queue += 1
+
+              let nm = meshes[this.haltestellen.queue % meshes.length]
+              nm._velocity = random(0.7, 1.9)
+              nm.position.set(random(-wh, wh), random(-hh, hh), - 500)
+              nm.scale.x = nm.scale.y = 0.1
+              nm.visible = true
+            }
           }
-        }
-      })
+        })
+      }
     })
 
     return meshes

@@ -1,4 +1,5 @@
- global.THREE = require('three')
+require('babel-polyfill')
+global.THREE = require('three')
 
 const domready = require('domready')
 const createLoop = require('canvas-loop')
@@ -88,10 +89,15 @@ class Main {
             console.log("Scene change. "+ n)
             this.events.emit("scene", n)
       }
-      if (oscMsg.address === '/show') {
+      if (oscMsg.address === '/on') {
             let n = oscMsg.args[0]
             console.log("Show " + n)
             this.events.emit("show", n)
+      }
+      if (oscMsg.address === '/off') {
+            let n = oscMsg.args[0]
+            console.log("Hide " + n)
+            this.events.emit("hide", n)
       }
       if (oscMsg.address === '/fx') {
             let n = oscMsg.args[0]
@@ -104,9 +110,11 @@ class Main {
             console.log("Cam " + n)
       }
       if (oscMsg.address === '/data') {
+            let vis = oscMsg.args[0]
             let k = oscMsg.args[0]
             let v = oscMsg.args[0]
             console.log("Data " + k)
+            this.events.emit("data", {vis: {k:v}})
       }
       if (oscMsg.address === '/intro') {
             let text = oscMsg.args[0]
@@ -146,9 +154,9 @@ class Main {
         ctx: this.ctx
       }
 
-    this.scenes.s1 = new WienerLinienScene(args)
+    //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s2 = new DronesScene(args)
-    //this.scenes.s1 = new IntroScene(args)
+    this.scenes.s1 = new IntroScene(args)
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
