@@ -176,11 +176,9 @@ var Globe = function(opts) {
             wobble: {type: 'f', value: earth.wobble},
             time: {type: 'f', value: 0}
           },
-          //vertexShader: shader.vertexShader,
-          //fragmentShader: shader.fragmentShader,
           transparent: true,
-          fragmentShader: glslify(__dirname + '/glsl/Drones_Earth.frag'),
-          vertexShader: glslify(__dirname + '/glsl/Drones_Earth.vert')
+          fragmentShader: glslify(__dirname + '/glsl/Drones/Earth.frag'),
+          vertexShader: glslify(__dirname + '/glsl/Drones/Earth.vert')
 
         });
     material.side = THREE.DoubleSide;

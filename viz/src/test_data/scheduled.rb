@@ -32,7 +32,7 @@ def get_executed(nr)
 
     img = get_encoded_img(agent, "#{URL}#{a[3].children[0]['href']}")
 
-    d = {name: "#{a[9].text} #{a[7].text}", age: a[13].text, 
+    d = {name: "#{a[9].text} #{a[7].text}", age: a[13].text,
       race: a[17].text, date: a[15].text,
       img: "data:image/jpeg;base64,#{img}"}
     a_executed.push(d)

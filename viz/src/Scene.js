@@ -100,15 +100,20 @@ class Scene {
 
           let vfp = vf.add(parameters, p)
 
-          if (vfp.property === 'on') {
+
             vfp.onChange(val => {
-              if (val) {
-                this.onVisOn(name)
+              if (vfp.property === 'on') {
+                  if (val) {
+                    this.onVisOn(name)
+                  } else {
+                    this.onVisOff(name)
+                  }
               } else {
-                this.onVisOff(name)
+                let prop = vfp.property
+                this.onVisParameters({name: {prop: val}})
               }
             })
-          }
+
         //}
       })
 

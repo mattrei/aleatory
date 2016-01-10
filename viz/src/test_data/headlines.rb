@@ -25,6 +25,7 @@ def get_headlines(searchterm)
 	return headlines
 end
 
+# gets max 5 images
 def get_images(searchterm)
 
 	images = []
@@ -32,14 +33,15 @@ def get_images(searchterm)
 	agent = Mechanize.new
 	result = BingSearch.image(searchterm)
 
-	result.each do | img |
+  result.take(5).each do | img |
 	    #puts img.thumbnail.url
 	    #puts img.url
 
 	    encoded_image = Base64.encode64 agent.get("#{img.thumbnail.url}").body_io.string
 	    #puts encoded_image
 	    d = {:url => img.url,
-	    	:img => encoded_image}
+        :img => "data:#{img.media_type};base64,#{encoded_image}"
+      }
 	    images.push(d)
 	end
 
@@ -47,7 +49,7 @@ def get_images(searchterm)
 end
 
 hl = get_headlines('Flüchtlinge')
-puts hl.to_json
+#puts hl.to_json
 
-#imgs = get_images('Flüchtlinge')
-#puts imgs.to_json
+imgs = get_images('Flüchtlinge')
+puts imgs.to_json

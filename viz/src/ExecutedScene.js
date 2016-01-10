@@ -46,7 +46,7 @@ class Demo extends Scene {
 
     this.createBackground()
     this.createCage()
-    this.createAsteroids(100).forEach(m => this.scene.add(m))
+    this.createAsteroids(50).forEach(m => this.scene.add(m))
     this.createExecuted()
     this.createScheduled()
 
@@ -95,7 +95,7 @@ class Demo extends Scene {
   }
 
   outro(text) {
-
+  //TODO
   }
 
   createBackground() {
@@ -152,10 +152,10 @@ class Demo extends Scene {
       const geometry = geometries[randomInt(geometries.length)]
       const mesh = new THREE.Mesh(geometry, material.clone())
       mesh.material.opacity = random(0.05, 0.1)
-      mesh.scale.multiplyScalar(random(1, 2.5))
+      mesh.scale.multiplyScalar(random(8, 16))
       mesh.rotation.fromArray(randomRotation())
       mesh.direction = new THREE.Vector3().fromArray(randomSphere([]))
-      mesh.position.fromArray(randomSphere([], random(4000, 6000)))
+      mesh.position.fromArray(randomSphere([], random(5000, 6000)))
       return mesh
     })
 

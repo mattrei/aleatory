@@ -1,8 +1,8 @@
+const DEMO = true
 global.THREE = require('three')
 import Scene from './Scene'
 
 import TWEEN from 'tween.js'
-const average = require('analyser-frequency-average')
 
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
@@ -437,13 +437,13 @@ function invert (color) {
 class WienerLinien extends Scene {
   constructor(args)
   {
-    super(args, {
+    super(args, /*{
       spirals: true,
       haltestellen: true,
       metros: false,
       net: false,
       tunnel: false,
-    }, new THREE.Vector3(0,45,640))
+    },*/ new THREE.Vector3(0,45,640))
 
 
     this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
@@ -458,16 +458,10 @@ class WienerLinien extends Scene {
     this.sceneStation = null;
 
 
-    this.createBackground()
-
-    this.haltestellen = {queue: 0}
-    this.createHaltestellen()
+    this.background()
+    this.haltestellen()
+    //this.spirals()
 //    this.createLight()
-
-
-    this.createSpirals().forEach(m =>  {
-    //  this.scene.add(m)
-    })
 
     //this.onResize();
     //this.update();
@@ -475,12 +469,12 @@ class WienerLinien extends Scene {
     this.idx = 0
   }
 
-  createBackground() {
+  background() {
     const bg = vignetteBackground()
     this.scene.add(bg)
     this.updateBackground(bg, 1)
 
-        this.createStars(120).forEach(m => this.scene.add(m))
+    this.createStars(120).forEach(m => this.scene.add(m))
     this.createAsteroids(100).forEach(m => this.scene.add(m))
   }
 
@@ -497,74 +491,6 @@ class WienerLinien extends Scene {
       grainScale: 1.5 / Math.min(width, height)
     })
   }
-
-  createLight() {
-
-    let h = 0.55,
-      s = 0.9,
-      l = 0.5
-
-    let textureFlare0 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare0.png" ),
-         textureFlare2 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare2.png" ),
-         textureFlare3 = THREE.ImageUtils.loadTexture( "/assets/WienerLinien/lensflare3.png" );
-
-    let light = new THREE.PointLight( 0xffffff, 1.5, 300);
-    light.color.setHSL( h, s, l );
-    //light.position.set( 0, -10, -500 );
-    this.scene.add( light );
-
-    let flareColor = new THREE.Color( 0xffffff );
-          flareColor.setHSL( h, s, l + 0.5 );
-
-
-    let lensFlare = new THREE.LensFlare( textureFlare0, 700, 0.0, THREE.AdditiveBlending, flareColor );
-
-          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-          lensFlare.add( textureFlare2, 512, 0.0, THREE.AdditiveBlending );
-
-          lensFlare.add( textureFlare3, 60, 0.6, THREE.AdditiveBlending );
-          lensFlare.add( textureFlare3, 70, 0.7, THREE.AdditiveBlending );
-          lensFlare.add( textureFlare3, 120, 0.9, THREE.AdditiveBlending );
-          lensFlare.add( textureFlare3, 70, 1.0, THREE.AdditiveBlending );
-
-          this.lensFlareUpdateCallback = this.lensFlareUpdateCallback.bind(this)
-          lensFlare.customUpdateCallback = this.lensFlareUpdateCallback
-          lensFlare.position.copy( light.position );
-
-
-          this.scene.add( lensFlare );
-  }
-
-  lensFlareUpdateCallback( object ) {
-
-        var f, fl = object.lensFlares.length;
-        var flare;
-        var vecX = -object.positionScreen.x * 2;
-        var vecY = -object.positionScreen.y * 2;
-
-
-        for( f = 0; f < fl; f++ ) {
-
-             flare = object.lensFlares[ f ];
-
-
-             //flare.x *= Math.sin(this.counter)
-             //flare.distance = this.flareSize
-
-             flare.x = object.positionScreen.x + vecX * flare.distance;
-             flare.y = object.positionScreen.y + vecY * flare.distance;
-
-             flare.rotation = this.counter / (50/this.flareRotation) % (Math.PI*2);
-             flare.scale = Math.pow(this.flareSize, 3) * 10
-
-
-        }
-
-        object.lensFlares[ 2 ].y += 0.025;
-        object.lensFlares[ 3 ].rotation = object.positionScreen.x * 0.5 + THREE.Math.degToRad( 45 );
-
-      }
 
   createAsteroids (count, app) {
     const geometries = newArray(6).map(asteroidGeom)
@@ -782,6 +708,7 @@ class WienerLinien extends Scene {
     gui.add(this.haltestellen, 'show').onChange(v => {
       this.haltestellen.show = v
     })*/
+    /*
     gui.add(this, 'colorize')
     gui.add(this, 'morphScale')
     gui.add(this, 'morphChaos')
@@ -790,6 +717,7 @@ class WienerLinien extends Scene {
     gui.add(this, 'metroMode')
     gui.add(this, 'followRandomTrain')
     gui.add(this, 'unfollowRandomTrain')
+    */
   }
 
   followRandomTrain() {
@@ -812,8 +740,14 @@ class WienerLinien extends Scene {
 
 
 
-  createSpirals() {
+  spirals() {
 
+    const VIS = 'spirals'
+    const conf = {on: false}
+
+    const group = new THREE.Group()
+    this.scene.add(group)
+    group.visible = conf.on
 
     let geo = new Float32Array( 100 * 3 );
 
@@ -838,15 +772,16 @@ class WienerLinien extends Scene {
         geo[i+2] = z
       }
 
-    function _create(i, color, geo) {
+    const _create = (i, color) => {
 
       var line = new THREE.MeshLine()
       line.setGeometry( geo );
 
-       var material = new THREE.MeshLineMaterial({
-        color: new THREE.Color(color),
-        lineWidth: 4
-      });
+      let material = new THREE.MeshLineMaterial({
+          color: new THREE.Color(color),
+          lineWidth: 4,
+          transparent: true
+        });
 
       var mesh = new THREE.Mesh( line.geometry, material ); // this syntax could definitely be improved!
       mesh.origGeo = geo
@@ -860,21 +795,18 @@ class WienerLinien extends Scene {
 
     const meshes = []
 
-    meshes.push(_create(0, 'red', geo))
-    meshes.push(_create(1, 'purple', geo))
-    meshes.push(_create(2, 'orange', geo))
-    meshes.push(_create(3, 'green', geo))
-    meshes.push(_create(4, 'brown', geo))
+    meshes.push(_create(0, 'red'))
+    meshes.push(_create(1, 'purple'))
+    meshes.push(_create(2, 'orange'))
+    meshes.push(_create(3, 'green'))
+    meshes.push(_create(4, 'brown'))
+
+    meshes.forEach(m => group.add(m))
 
     this.events.on('tick', t => {
-        if (this.show.spirals) {
 
-          const analyserNode = this.analyser.analyser
-          const freqs = this.analyser.frequencies()
-          let avg = average(analyserNode, freqs, 40, 100),
-              high = average(analyserNode, freqs, 4400, 4500)
-          avg = clamp(0.4, 0.8, avg)
-
+          const low = super.getFreq(40, 100)
+          const high = super.getFreq(4400, 4500)
           meshes.forEach((m, idx) => {
             m.rotation.z -= 0.05
 
@@ -882,31 +814,50 @@ class WienerLinien extends Scene {
               //geo[ i ] += Math.sin((avg + i) * 0.02) * 1
               //geo[i] =  geo[i] * simplex.noise2D(geo[i], Math.sin(t.t)) * (20 * avg)
               //geo[i] += Math.sin(t.t + idx + i * 0.5) * (avg * 20)
-              m.geo[i] = m.origGeo[i] + Math.sin(t.time + idx + i * 0.5) * (avg * 20) * (high * 10)
+              m.geo[i] = m.origGeo[i] + Math.sin(t.time + idx + i * 0.5) * (low * 20) * (high * 10)
             }
 
             m.line.setGeometry(m.geo)
 
           })
-        }
       })
 
-    return meshes
+    this.events.on(VIS + '::visOn', _ => {
+        group.visible = true
+        meshes.forEach(m => {
+
+          m.material.opacity = 0
+          tweenr.to(m.material, {opacity: 1, duration: 2})
+        })
+    })
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+
+    super.addVis(VIS, conf)
   }
 
-  _randHaltestelle() {
-      return HALTESTELLEN[HALTESTELLEN_KEYS[
-        randomInt(0, HALTESTELLEN_LENGTH-1)]]['NAME']
-    }
 
-  createHaltestellen() {
+
+  haltestellen() {
      const MAX = 100
      const VISIBLE_HS = 5
 
+    const VIS = 'haltestellen'
+    const conf = {on: false}
+
+    const group = new THREE.Group()
+    this.scene.add(group)
+    group.visible = conf.on
+
      const meshes = []
 
+     const _randHaltestelle = () => {
+        return HALTESTELLEN[HALTESTELLEN_KEYS[
+          randomInt(0, HALTESTELLEN_LENGTH-1)]]['NAME']
+      }
+
      for (let i=0; i < MAX; i++) {
-       let shapes = THREE.FontUtils.generateShapes( this._randHaltestelle(), {
+       let shapes = THREE.FontUtils.generateShapes( _randHaltestelle(), {
             font: "oswald",
             weight: "normal",
             size: 25
@@ -921,6 +872,7 @@ class WienerLinien extends Scene {
           mesh.position.set(random(-100, 100), random(-100, 100), - 500)
 
           mesh.visible = false
+          group.add(mesh)
           meshes.push(mesh)
      }
 
@@ -931,7 +883,6 @@ class WienerLinien extends Scene {
 
     this.events.on('tick', t => {
 
-      if(this.show.haltestellen) {
         meshes.forEach((m, i) => {
           if(m.visible) {
 
@@ -950,10 +901,12 @@ class WienerLinien extends Scene {
             }
           }
         })
-      }
     })
 
-    return meshes
+    this.events.on(VIS + '::visOn', _ => group.visible = true)
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    super.addVis(VIS, conf)
   }
 
 

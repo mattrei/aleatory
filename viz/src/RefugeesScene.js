@@ -1,14 +1,14 @@
+const DEMO = true
 global.THREE = require('three')
 import Scene from './Scene'
+
+const glslify = require('glslify')
 
 const random = require('random-float')
 const randomInt = require('random-int')
 
-const TWEEN = require('tween.js')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
-
-import randomSphere from 'gl-vec3/random'
 
 const sineInOut = require('eases/sine-in-out')
 
@@ -18,29 +18,17 @@ const Boid = require('boid')
 class Demo extends Scene {
   constructor(args)
   {
-    super(args, {
-      headlines: true
-    }, new THREE.Vector3(0,45,240))
+    super(args, new THREE.Vector3(0,45,240))
 
-    this.currIdx = 0
+    //this.background()
+    this.headlines()
+    this.pictures()
 
-    this.curr = "hello world"
-
-    // demo
-    super.onData({headlines: require('./test_data/headlines.json')})
-
-    this.flockingSpeed = 3
-
-    this.system = null
-
-    this.createBackground()
-
-    //this.initParticulate()
-
-    this.createHeadlines()
+    if (DEMO) super.onVisParameters({headlines: {data: require('./test_data/headlines.json')}})
+    if (DEMO) super.onVisParameters({pictures: {data: require('./test_data/pictures.json')}})
   }
 
-  createBackground()
+  background()
   {
       let intensity = 200
 
@@ -71,25 +59,222 @@ class Demo extends Scene {
 
   }
 
-  startGUI(gui)
-  {
-    gui.add(this, 'shuffle')
-    gui.add(this, 'resetLast')
-    gui.add(this, 'showNext')
-    gui.add(this, 'flockingSpeed', 0, 20)
+  pictures() {
+    const VIS = 'pictures'
+    const conf = {on:true, animation: 1}
+
+    const group = new THREE.Group()
+    this.scene.add(group)
+    group.visible = conf.on
+
+    const meshes=[]
+    let mIdx = 0
+
+    const _getImgData = (pic) => {
+
+      return new Promise(function (fulfill, reject){
+
+        var canvas = document.createElement("canvas");
+        var context = canvas.getContext("2d");
+        var image = new Image();
+        image.src = pic;
+        image.onload = function() {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          //context.globalAlpha = 0;
+          context.drawImage(image, 0, 0);
+          var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+          fulfill(imgData)
+        }
+
+      })
+    }
+
+    const _getPixel = (imgData, x, y) => {
+      var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+      r = imgData.data[offset];
+      g = imgData.data[offset + 1];
+      b = imgData.data[offset + 2];
+      a = imgData.data[offset + 3];
+
+      return new THREE.Color(r,g,b)
+    }
+
+    const MAX_PARTICLES = 100000
+    const MAX_PARTICLE_DIST= 50
+    const IMG_SCALE = 1
+
+    this.events.on(VIS + '::data', data => {
+
+      data.forEach(d => {
+
+        //this.loader.load('/assets/for_particles.jpg', (testImg) => {
+        //const bgImg = testImg.image.src
+        const bgImg = d.img
+
+        _getImgData(bgImg).then(imgData => {
+
+          let geometry = new THREE.BufferGeometry()
+
+          const imgSize = imgData.width * imgData.height
+          console.log("Image pixels: " + imgData.width * imgData.height)
+
+          let PARTICLES_AMOUNT = MAX_PARTICLES
+          if (MAX_PARTICLES > imgSize) {
+            PARTICLES_AMOUNT = imgSize
+          }
+
+          var positions = new Float32Array(PARTICLES_AMOUNT * 3);
+          var colors = new Float32Array(PARTICLES_AMOUNT * 3);
+          // displacement values
+          var extras = new Float32Array(PARTICLES_AMOUNT * 3);
+
+
+          let total = imgData.width * imgData.height,
+              step = Math.floor(total / PARTICLES_AMOUNT)
+
+          for (var i = 0, i3 = 0, ipx = 0;
+               i < PARTICLES_AMOUNT;
+               i++ , i3 += 3, ipx += step) {
+
+              let x = ipx % imgData.width,
+                 y = ipx / imgData.width | 0,
+                 pixel = _getPixel(imgData, x, y)
+
+              let position = new THREE.Vector3(
+                  (imgData.width / 2 - x) * IMG_SCALE,
+                  (imgData.height / 2 - y) * IMG_SCALE,
+                  0)
+
+
+
+            // Position
+            positions[i3 + 0] = position.x;
+            positions[i3 + 1] = position.y;
+            positions[i3 + 2] = position.z;
+
+            // Extras
+            extras[i3 + 0] = Math.random()
+            extras[i3 + 1] = Math.random()
+            extras[i3 + 2] = Math.random()
+
+            // Color
+            let color = pixel
+            colors[i3 + 0] = color.r/255;
+            colors[i3 + 1] = color.g/255;
+            colors[i3 + 2] = color.b/255;
+
+          }
+
+          geometry.addAttribute( 'position', new THREE.BufferAttribute(positions, 3));
+          geometry.addAttribute( 'color', new THREE.BufferAttribute(colors, 3));
+          geometry.addAttribute( 'extra', new THREE.BufferAttribute(extras, 3));
+
+          let material = new THREE.ShaderMaterial( {
+
+              uniforms: {
+                  uTime: { type: 'f', value: 0 },
+                  uTimeInit: { type: 'f', value: randomInt(0, 100) },
+                  uAnimation: { type: 'f', value: conf.animation },
+                  bgImg: { type: 't', value: bgImg }
+              },
+              vertexShader: glslify(__dirname + '/glsl/Refugees/Picture.vert'),
+              fragmentShader: glslify(__dirname + '/glsl/Refugees/Picture.frag'),
+              blending: THREE.AdditiveBlending,
+              transparent: false,
+              depthWrite: true,
+              depthTest: false
+          } );
+
+          let particles = new THREE.Points(geometry, material)
+          particles.visible = true
+          group.add(particles)
+
+          meshes.push(particles)
+
+          this.events.on('tick', t => {
+            material.uniforms.uTime.value = t.time * 0.2
+          })
+        })
+
+      //})//test
+
+      })
+
+    })
+
+
+    const doNext = () => {
+      mIdx += 1
+      let m = meshes[mIdx % meshes.length]
+
+      m.material.uniforms.uAnimation.value = 1
+
+      tweenr.to(m.material.uniforms.uAnimation, {
+        value: 0, duration: 2})
+
+      tweenr.to(m.position, {
+        z: 200, duration: 2})
+
+    }
+    this.events.on(VIS + '::doNext', p => {
+      doNext() /*p.duration?*/
+    })
+    conf.doNext = doNext
+
+    const doReset = () => {
+      meshes.forEach(m => {
+
+        if (m.visible) {
+        tweenr.to(m.material.uniforms.uAnimation, {
+          value: 1, duration: 2})
+          //.on('complete', () => m.visible = false)
+        }
+        tweenr.to(m.position, {
+          z: 0, duration: 2})
+      })
+    }
+    this.events.on(VIS + '::doReset', p => {
+      doReset() /*p.duration?*/
+    })
+    conf.doReset = doReset
+
+    this.events.on(VIS + '::animation', p => {
+      let m = meshes[mIdx % meshes.length]
+      m.material.uniforms.uAnimation.value = p
+    })
+    this.events.on(VIS + '::visOn', _ => group.visible = true)
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    super.addVis(VIS, conf)
   }
 
-  createHeadlines()
+  headlines()
   {
 
+    const VIS = 'headlines'
+    const conf = {on:false, speed: 1}
+
+    let group = new THREE.Group()
+    this.scene.add(group)
+    group.visible = conf.on
+
+    this.events.on(VIS + '::visOn', _ => group.visible = true)
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    const meshes=[],
+          descriptions=[]
+    let mIdx = 0
+
+
     const SPREAD = 200
-    let createText = (text) => {
+    let boidText = (text) => {
           let material = new THREE.MeshNormalMaterial();
 
           material =  new THREE.MeshPhongMaterial( { color: 0xffffff, specular: 0xffffff, metal: true})
 
           let pos = 0
-          let meshes = []
+          let textMeshes = []
           for (var i=0; i < text.length; i++) {
             let c = text[i]
 
@@ -113,9 +298,9 @@ class Demo extends Scene {
             textMesh.relposition.x = pos
 
             var p = new THREE.Object3D();
-            p.position.x = random(-SPREAD, SPREAD)
-            p.position.y = random(-SPREAD, SPREAD)
-            p.position.z = random(0, -SPREAD*2)
+            p.position.x = THREE.Math.randFloatSpread(SPREAD)
+            p.position.y = THREE.Math.randFloatSpread(SPREAD)
+            p.position.z = THREE.Math.randFloatSpread(SPREAD)
 
             textMesh.randposition = p.position
             textMesh.position.copy(p.position)
@@ -130,46 +315,141 @@ class Demo extends Scene {
             pos += w + 2
 
             material.side = THREE.DoubleSide;
-            this.scene.add( textMesh );
-            meshes.push(textMesh)
+            group.add( textMesh )
+            textMeshes.push(textMesh)
           }
 
-          return meshes
+          return textMeshes
     }
 
+    let staticText = (text => {
+          let material =  new THREE.MeshPhongMaterial( {
+            color: 0xffffff,
+            specular: 0xffffff,
+            metal: true,
+            transparent: true
+          })
 
-    this.data.headlines.forEach(h => {
-      let meshes = createText(h.title)
-      h.meshes = meshes
-      h.meshes.forEach(m => {
+            let shapes = THREE.FontUtils.generateShapes(text, {
+              font: "oswald",
+              weight: "normal",
+              size: 10
+            } ),
+              geometry = new THREE.ShapeGeometry( shapes )
 
-        var boid = new Boid()
-        boid.setBounds(window.innerWidth, window.innerHeight)
-        boid.position.x = m.position.x
-        boid.position.y = m.position.y
-        boid.maxSpeed = this.flockingSpeed
-        boid.velocity.x = random(5, 10)
-        boid.velocity.y = random(5, 10)
+      geometry.center()
+            let mesh = new THREE.Mesh( geometry, material );
+          mesh.visible = false
+          group.add(mesh)
+          return mesh
+    })
 
-        //m.boid = wanderer
+    const BOUNDS = {x: window.innerWidth, y: window.innerHeight}
+    this.events.on(VIS + '::data', data => {
 
-        this.events.on('tick', t => {
-          if (!m.isShown) {
-            boid.wander().update()
-            boid.maxSpeed = this.flockingSpeed
-            m.position.x = boid.position.x - window.innerWidth / 2
-            m.position.y = boid.position.y - window.innerHeight / 2
-          }
+        data.forEach(headline => {
+
+          const text = headline.date + ' ' + headline.title + ' ' + headline.source
+
+          let textMeshes = boidText(text)
+          meshes.push(textMeshes)
+
+          let descriptionMesh = staticText(headline.descr)
+          descriptions.push(descriptionMesh)
+
+          textMeshes.forEach(m => {
+
+            var boid = new Boid()
+            boid.setBounds(BOUNDS.x, BOUNDS.y)
+            boid.position.x = m.position.x
+            boid.position.y = m.position.y
+            boid.maxSpeed = this.flockingSpeed * 2
+            boid.velocity.x = random(5, 10)
+            boid.velocity.y = random(5, 10)
+
+            this.events.on('tick', t => {
+              if (!m.isShown) {
+                boid.wander().update()
+                boid.maxSpeed = conf.speed
+                m.position.x = boid.position.x - window.innerWidth / 2
+                m.position.y = boid.position.y - window.innerHeight / 2
+              }
+            })
+
+          })
         })
 
-      })
     })
-  }
 
 
-  shuffle()
-  {
-    const DURATION = 2
+
+    const DUR = 2
+
+    const doNext = () => {
+
+
+
+      let descr = descriptions[mIdx % descriptions.length]
+      descr.visible = true
+      descr.position.set(0,0,100)
+      descr.material.opacity = 0
+
+      tweenr.to(descr.material, {
+          opacity: 1,
+          duration: random(DUR*2,DUR*4)
+        })
+
+      let textMeshes = meshes[mIdx % meshes.length]
+      textMeshes.forEach(m => {
+        m.isShown = true
+
+        tweenr.to(m.position, {
+          x: m.relposition.x, y: m.relposition.y, z: m.relposition.z,
+          duration: random(DUR,DUR*2)
+        })
+
+        tweenr.to(m.rotation, {
+          x: 0, y: 0, z: 0, duration: random(DUR,DUR*2)
+        })
+      })
+
+      mIdx += 1
+    }
+
+    this.events.on(VIS + '::doNext', _ => doNext())
+    conf.doNext = doNext
+
+
+    const doReset = () => {
+
+      let descr = descriptions[mIdx - 1 % descriptions.length]
+
+      tweenr.to(descr.material, {
+          opacity: 0,
+          duration: random(DUR*2,DUR*4)})
+          .on('complete', () => descr.visible = false)
+
+      let textMeshes = meshes[mIdx - 1 % meshes.length]
+      textMeshes.forEach(m => {
+
+        tweenr.to(m.position, {
+          x: m.randposition.x, y: m.randposition.y, z: m.randposition.z,
+          duration: random(DUR,DUR*2)})
+          .on('complete', () => m.isShown = false)
+
+        tweenr.to(m.rotation, {
+          x: random(0, Math.PI*2), y: random(0, Math.PI*2), z: random(0, Math.PI*2),
+          duration: random(DUR,DUR*2)})
+
+      })
+    }
+
+    this.events.on(VIS + '::doReset', _ => doReset())
+    conf.doReset = doReset
+
+
+    const doShuffle = () => {
+      const DURATION = 2
     const SPREAD = 400
 
     let randPos = () => {
@@ -186,8 +466,8 @@ class Demo extends Scene {
       }
 
 
-    this.data.headlines.forEach(h => {
-      h.meshes.forEach(m => {
+    meshes.forEach(textMeshes => {
+      textMeshes.forEach(m => {
 
         let p = randPos()
         let r = randRot()
@@ -206,62 +486,13 @@ class Demo extends Scene {
       })
 
     })
+    }
 
-  }
+    // TODO needed?
+    this.events.on(VIS + '::doShuffle', _ => doShuffle())
+    conf.doShuffle = doShuffle
 
-  resetLast() {
-    let oh = this.data.headlines[this.currIdx - 1 % this.data.headlines.length]
-    oh.meshes.forEach(m => {
-
-      new TWEEN.Tween( m.position )
-            .to( { x: m.randposition.x, y: m.randposition.y, z: m.randposition.z },
-                random(2000,4000 ))
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .onComplete(() => {
-              m.isShown = false
-            })
-            .start();
-
-          new TWEEN.Tween( m.rotation )
-            .to( { x: Math.random() * Math.PI * 2,
-                  y: Math.random() * Math.PI * 2,
-                  z: Math.random() * Math.PI * 2 },
-                random(2000, 4000))
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .start();
-    })
-  }
-
-  showNext()
-  {
-
-
-    let h = this.data.headlines[this.currIdx++ % this.data.headlines.length]
-    let duration = 2000
-    console.log(h.meshes)
-    h.meshes.forEach(m => {
-      m.isShown = true
-
-      tweenr.to(m.position, {
-        x: m.relposition.x, y: m.relposition.y, z: m.relposition.z, duration: random(2,4)
-      })
-
-      tweenr.to(m.rotation, {
-        x: 0, y: 0, z: 0, duration: random(2,4)
-      })
-      /*
-      new TWEEN.Tween( m.position )
-            .to( { x: m.relposition.x, y: m.relposition.y, z: m.relposition.z }, Math.random() * DURATION + DURATION )
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .start();
-
-          new TWEEN.Tween( m.rotation )
-            .to( { x: 0, y: 0, z: 0 }, Math.random() * DURATION + DURATION )
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .start();
-            */
-    })
-
+    super.addVis(VIS, conf)
 
   }
 
@@ -281,15 +512,9 @@ class Demo extends Scene {
 
         this.lights.l4.position.x = Math.sin( time * 0.3 ) * d;
         this.lights.l4.position.z = Math.sin( time * 0.5 ) * d;
-
-
-
-
-
   }
 
   tick(time, delta) {
-      TWEEN.update()
   }
 }
 

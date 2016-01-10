@@ -36,10 +36,10 @@ class IntroScene extends Scene {
         this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
         this.createText()
-        this.createBackground()
-        this.createStreet()
+        this.background()
+        this.street()
         this.createBuildings()
-        this.createCars()
+        this.cars()
         this.createParticles()
         this.createFloor()
 
@@ -48,7 +48,7 @@ class IntroScene extends Scene {
         //this.createFlyingLine()
     }
 
-    createBackground() {
+    background() {
 
       const skyVertex = `
       varying vec2 vUV;
@@ -237,6 +237,7 @@ class IntroScene extends Scene {
 
     createParticles() {
 
+      const VIS = 'particles'
       let conf = {on: false, speed: 1, height: 1}
 
       const NUM = 500
@@ -276,21 +277,15 @@ class IntroScene extends Scene {
           this.scene.add(particles)
 
 
-          this.events.on('visOn', t => {
-            if (t==='particles') {
+          this.events.on(VIS + '::visOn', t => {
               conf.on = true
               geometry.vertices.forEach(v => {
                 v.x = THREE.Math.randFloatSpread(PLANE_SIZE.X)
                 v.z = random(-PLANE_SIZE.Z, -PLANE_SIZE.Z*2)
               })
-            }
           })
 
-          this.events.on('visOff', t => {
-            if (t==='particles') {
-              conf.on = false
-            }
-          })
+          this.events.on(VIS + '::visOff', _ => conf.on = false)
 
 
           this.events.on('tick', t => {
@@ -320,16 +315,19 @@ class IntroScene extends Scene {
 
 
 
-          super.addVis('particles', conf)
+          super.addVis(VIS, conf)
         })
 
 
 
     }
 
-    createCars() {
+    cars() {
 
+      const VIS = 'cars'
       let conf = {on:false, speed: 1}
+
+      const NUM = 8
 
       this.loader.load(
 		      '/assets/Intro/cloud.png', (texture) => {
@@ -349,7 +347,7 @@ class IntroScene extends Scene {
 
               function add(mat, scene) {
                 const pairs = []
-                for (var i = 0; i < 5; i++) {
+                for (var i = 0; i < NUM; i++) {
                   let pair = []
                   for (let j = 0; j < 2; j++) {
 
@@ -382,19 +380,8 @@ class IntroScene extends Scene {
               let backs = add(matBack, this.scene)
               let fronts = add(matFront, this.scene)
 
-              this.events.on('visOn', t => {
-                if (t === 'cars') {
-                  conf.on = true
-                  console.log("cars on")
-                }
-
-              })
-
-              this.events.on('visOff', t => {
-                if (t === 'cars') {
-                  conf.on = false
-                }
-              })
+              this.events.on(VIS + '::visOn', _ => conf.on = true)
+              this.events.on(VIS + '::visOff', _ => conf.on = false)
 
               this.events.on('tick', t => {
                 if (conf.on) {
@@ -454,7 +441,7 @@ class IntroScene extends Scene {
 
     }
 
-    createStreet() {
+    street() {
       const VIS = 'street'
       let conf = {on: false, speed: 1}
 
@@ -489,17 +476,8 @@ class IntroScene extends Scene {
 
         this.scene.add(new THREE.AmbientLight(0xffffff))
 
-        this.events.on('visOn', d => {
-          if (d===VIS) {
-            group.visible = true
-          }
-        })
-
-        this.events.on('visOff', d => {
-          if (d===VIS) {
-            group.visible = false
-          }
-        })
+        this.events.on(VIS+'::visOn', _ => group.visible = true)
+        this.events.on(VIS+'::visOff', _ => group.visible = false)
 
         this.events.on('tick', t => {
 
@@ -723,8 +701,8 @@ class IntroScene extends Scene {
         mesh.visible = conf.on
         this.scene.add(mesh)
 
-        this.events.on('visOn', d => d===VIS ? mesh.visible = true : null)
-        this.events.on('visOff', d => d===VIS ? mesh.visible = false : null)
+        this.events.on(VIS + '::visOn', _ => mesh.visible = true)
+        this.events.on(VIS + '::visOff', _ => mesh.visible = false)
 
         this.events.on('tick', t => {
           mesh.material.uniforms.time.value = t.time * 0.2

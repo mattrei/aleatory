@@ -123,25 +123,6 @@ class Main {
             let text = oscMsg.args[0]
             console.log("Outro " + text)
       }
-
-
-      /*
-      if (oscMsg.address === '/var') {
-            let axis = oscMsg.args[0]
-            let v = oscMsg.args[1]
-            console.log("Variable change " + n + ' to ' + v)
-            this.events.emit("variable", {n: n, v: v})
-      }
-      if (oscMsg.address === '/func') {
-            let n = oscMsg.args[0]
-            viz.onFunc(n)
-      }
-            //useful?
-      if (oscMsg.address === '/cam') {
-            let n = oscMsg.args[0]
-            console.log("Cam " + n)
-      }
-      */
     })
     this.oscPort.open()
 
@@ -162,10 +143,10 @@ class Main {
         ctx: this.ctx
       }
 
-    //this.scenes.s1 = new WienerLinienScene(args)
+    this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s2 = new DronesScene(args)
     //this.scenes.s1 = new IntroScene(args)
-    this.scenes.s1 = new ExecutedScene(args)
+    //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
     this.setScene("s1")
