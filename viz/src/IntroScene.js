@@ -1,7 +1,6 @@
 global.THREE = require('three')
 import Scene from './Scene'
 
-const average = require('analyser-frequency-average')
 const simplex = new (require('simplex-noise'))
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -298,10 +297,9 @@ class IntroScene extends Scene {
 
             particles.visible = conf.on
 
-            const analyserNode = this.analyser.analyser
-            const freqs = this.analyser.frequencies()
-            let avg = average(analyserNode, freqs, 20, 60)
-            material.size = 20 + avg * 20
+            const freq = super.getFreq(20, 60)
+
+            material.size = 20 + freq * 20
             material.needsUpdate = true
 
             for (let i = 0; i < geometry.vertices.length; i ++ ) {
@@ -545,7 +543,7 @@ class IntroScene extends Scene {
 
     intro(text) {
       const DUR = 2
-        let shapes = THREE.FontUtils.generateShapes( text, {
+      let shapes = THREE.FontUtils.generateShapes( text, {
           font: "oswald",
           weight: "normal",
           size: 15
@@ -623,15 +621,13 @@ class IntroScene extends Scene {
         geometry.addAttribute( 'extras', new THREE.BufferAttribute( new Float32Array(PARTICLES_AMOUNT * 2), 2 ) );
 
         let material = new THREE.ShaderMaterial( {
-
             uniforms: {
                 uTime: { type: 'f', value: 0 },
                 uAnimation: { type: 'f', value: 0 },
                 uOffset: { type: 'v2', value: new THREE.Vector2() }
             },
-            //attributes: geometry.attributes,
-            vertexShader: glslify(__dirname + '/glsl/Intro_Text.vert'),
-            fragmentShader: glslify(__dirname + '/glsl/Intro_Text.frag'),
+            vertexShader: glslify(__dirname + '/glsl/Intro/Text.vert'),
+            fragmentShader: glslify(__dirname + '/glsl/Intro/Text.frag'),
             blending: THREE.AdditiveBlending,
             transparent: true,
             depthWrite: true,
@@ -714,8 +710,8 @@ class IntroScene extends Scene {
                 },
             },
             transparent: true,
-            fragmentShader: glslify(__dirname + '/glsl/Intro_Terrain.frag'),
-            vertexShader: glslify(__dirname + '/glsl/Intro_Terrain.vert')
+            fragmentShader: glslify(__dirname + '/glsl/Intro/Floor.frag'),
+            vertexShader: glslify(__dirname + '/glsl/Intro/Floor.vert')
             //wireframe: true
         });
 

@@ -62,6 +62,36 @@ class Demo extends Scene {
   intro(text) {
       const DUR = 2
 
+      let shapes = THREE.FontUtils.generateShapes( text, {
+          font: "oswald",
+          weight: "normal",
+          size: 15
+        } );
+      let geo = new THREE.ShapeGeometry( shapes ),
+          mat = new THREE.ShaderMaterial({
+            uniforms: {
+              iGlobalTime: {
+                type: 'f',
+                value: 1
+              }
+            },
+            fragmentShader: glslify(__dirname + '/glsl/Executed/Text.frag'),
+            vertexShader: glslify(__dirname + '/glsl/Executed/Text.vert'),
+            transparent: true
+          })
+
+
+
+      let mesh = new THREE.Mesh( geo, mat );
+      geo.center()
+      //mesh.scale.set(0,0,0)
+      mesh.position.set(0,this.camera.position.y,50)
+      this.scene.add(mesh)
+
+      this.events.on('tick', t => {
+        mat.uniforms.iGlobalTime.value = t.time
+      })
+
   }
 
   outro(text) {
@@ -471,7 +501,7 @@ class Demo extends Scene {
     this.events.on(VIS + '::doSmash', p => doSmash())
 
 
-        let conf = {on:true,
+        let conf = {on: false,
                doSphere: doSphere,
                doNext: doNext,
                doRnd: doRnd,
@@ -479,6 +509,7 @@ class Demo extends Scene {
                currentOn:false,
                currents: 1
                }
+        group.visible = conf.on
 
     this.events.on(VIS + '::data', data => {
 
@@ -504,8 +535,8 @@ class Demo extends Scene {
                     },
                     side: THREE.DoubleSide,
                     transparent: true,
-                    fragmentShader: glslify(__dirname + '/glsl/Executed.frag'),
-                    vertexShader: glslify(__dirname + '/glsl/Executed.vert')
+                    fragmentShader: glslify(__dirname + '/glsl/Executed/Picture.frag'),
+                    vertexShader: glslify(__dirname + '/glsl/Executed/Picture.vert')
                 } );
 
                 // plane
