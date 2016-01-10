@@ -34,20 +34,9 @@ class IntroScene extends Scene {
     constructor(args) {
       super(args, new THREE.Vector3(0,30,30))
 
-      this.textMesh = null;
-
-        this.floor = {
-          height: 0
-        }
-
-        this.street = {
-          speed: 0.5
-        }
-
         this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
         this.createText()
-
         this.createBackground()
         this.createStreet()
         this.createBuildings()
@@ -223,7 +212,7 @@ class IntroScene extends Scene {
             b.position.x = (r * 15) + b._xoffset
             b.position.y = r * 8 + b._yoffset
 
-            b.position.z += this.street.speed * 8
+            b.position.z += conf.speed * 8
 
             //let delta = Math.abs(100 * simplex.noise2D(i, this.shaderTime * 0.09 * this.street.speed))
             //b.scale.y = Math.max(30, delta)
@@ -320,7 +309,7 @@ class IntroScene extends Scene {
               let v = geometry.vertices[i]
 
               v.y = Math.abs( Math.sin((i + t.time * 0.4 * conf.speed)) * 40 * v._height * conf.height )
-              v.z += this.street.speed * v._speed
+              v.z += conf.speed * v._speed
               if (v.z > 0) {
                   v.z = -STREET_LENGTH
                   v._speed = random(1, 10)
@@ -468,6 +457,12 @@ class IntroScene extends Scene {
     }
 
     createStreet() {
+      const VIS = 'street'
+      let conf = {on: false, speed: 1}
+
+      let group = new THREE.Group()
+      this.scene.add(group)
+      group.visible = conf.on
 
         let geom = new THREE.PlaneBufferGeometry(3, (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS, 2, 2)
         let mat = new THREE.LineBasicMaterial( {color: 0xffffff, linewidth: 5} )
@@ -475,10 +470,10 @@ class IntroScene extends Scene {
         mesh.rotation.x = Math.PI * 0.5
 
         let left = new THREE.Line(new THREE.Geometry(), mat);
-        this.scene.add(left)
+        group.add(left)
 
         let right = new THREE.Line(new THREE.Geometry(), mat);
-        this.scene.add(right)
+        group.add(right)
 
         let middle = []
         for (let i=1; i < NUM_RIBBONS+1; i++) {
@@ -490,11 +485,23 @@ class IntroScene extends Scene {
 
             mesh.position.z = (RIBBON_GAP + RIBBON_LENGTH) * i * -1
 
-            this.scene.add(mesh)
+            group.add(mesh)
             middle.push(mesh)
         }
 
         this.scene.add(new THREE.AmbientLight(0xffffff))
+
+        this.events.on('visOn', d => {
+          if (d===VIS) {
+            group.visible = true
+          }
+        })
+
+        this.events.on('visOff', d => {
+          if (d===VIS) {
+            group.visible = false
+          }
+        })
 
         this.events.on('tick', t => {
 
@@ -504,7 +511,7 @@ class IntroScene extends Scene {
 
           middle.forEach((m, i) => {
 
-              m.position.z += this.street.speed * 8
+              m.position.z += conf.speed * 8
               let r = Math.sin((t.time + m.position.z * 0.2) * 0.02)
               m.position.x = r * 15
               m.position.y = r * 8
@@ -532,6 +539,8 @@ class IntroScene extends Scene {
           right.geometry.verticesNeedUpdate = true
 
         })
+
+        super.addVis(VIS, conf)
     }
 
     intro(text) {
@@ -607,6 +616,8 @@ class IntroScene extends Scene {
 
     createText() {
 
+      let conf = {on: false, text: ''}
+
         let geometry = new THREE.BufferGeometry();
         geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array(PARTICLES_AMOUNT * 3), 3 ));
         geometry.addAttribute( 'extras', new THREE.BufferAttribute( new Float32Array(PARTICLES_AMOUNT * 2), 2 ) );
@@ -627,9 +638,12 @@ class IntroScene extends Scene {
             depthTest: false
         } );
 
-        this.textMesh = new THREE.Points( geometry, material );
-        this.scene.add( this.textMesh );
+        let mesh = new THREE.Points( geometry, material )
+        mesh.visible = conf.on
+        this.scene.add( mesh )
 
+
+        super.addVis('text', conf)
 
     }
 
@@ -672,6 +686,8 @@ class IntroScene extends Scene {
     }
 
     createFloor() {
+
+      const VIS = 'floor'
       let conf = {on: false, height: 1, speed: 1}
 
         var planeMaterial = new THREE.ShaderMaterial({
@@ -711,8 +727,8 @@ class IntroScene extends Scene {
         mesh.visible = conf.on
         this.scene.add(mesh)
 
-        this.events.on('visOn', d => mesh.visible = true)
-        this.events.on('visOff', d => mesh.visible = false)
+        this.events.on('visOn', d => d===VIS ? mesh.visible = true : null)
+        this.events.on('visOff', d => d===VIS ? mesh.visible = false : null)
 
         this.events.on('tick', t => {
           mesh.material.uniforms.time.value = t.time * 0.2
@@ -720,89 +736,11 @@ class IntroScene extends Scene {
           mesh.material.uniforms.height.value = conf.height
         })
 
-        super.addVis('floor', conf)
+        super.addVis(VIS, conf)
 
-    }
-
-    leave() {
-
-        let tchain = Tween()
-
-
-        this.triangles.forEach(t => {
-
-
-            tchain.chain(
-
-            t.position, {
-              x: random(-50, 50),
-              y: random(-50, 50),
-              z: random(CAMERA_Z_START + 10 , CAMERA_Z_START + 100),
-              duration: 2
-            }
-            )
-            tchain.chain(
-            t.rotation, {
-              x: random(-Math.PI * 2, Math.PI * 2),
-              y: random(-Math.PI, Math.PI),
-              z: random(-Math.PI, Math.PI),
-              duration: 2
-            }
-            )
-        })
-
-        let lchain = Tween()
-        this.flyingLines.forEach(f => {
-            lchain.chain(
-            f.position, {
-              x: MathF.random(-200, 200),
-              y: MathF.random(-200, 200),
-              z: MathF.random(CAMERA_Z_START + 10 , CAMERA_Z_START + 100),
-              duration: 4
-            }
-            )
-        })
-        lchain.then(this.floor.plane.position, {
-              z: MathF.random(200, 500),
-              duration: 2
-            })
-
-        tchain.then(lchain)
-
-        tweenr.to(tchain)
     }
 
     tick(time, delta) {
-    }
-
-    tick2(time, delta) {
-
-        this.textMesh.material.uniforms.uTime.value += 0.003;
-        this.textMesh.material.uniforms.uOffset.value.set(-window.innerWidth / 2, -window.innerHeight / 2);
-
-
-        let fixedScale = 2 * Math.tan(this.camera.fov / 360 * Math.PI) / window.innerHeight;
-
-        this.textMesh.position.copy(this.camera.position);
-        this.textMesh.rotation.copy(this.camera.rotation);
-        this.textMesh.position.z -= 780
-        this.textMesh.position.x += window.innerWidth / 2
-        this.textMesh.position.y -= window.innerHeight / 4
-
-
-/*
-        this.triangles.forEach((t, i) => {
-            t.material.uniforms.time.value = this.floor.plane.material.uniforms.time.value
-            t.material.uniforms.speed.value = this.floor.plane.material.uniforms.speed.value
-            t.material.uniforms.dist.value = 1 - (t.position.z / (this.camera.position.z - TRIANGLE_GAP * NUM_TRIANGLES))
-        })
-
-        this.flyingLines.forEach((t, i) => {
-            t.material.uniforms.time.value += (this.shaderTime + i * 5) * 0.001
-            t.material.uniforms.speed.value = this.floor.plane.material.uniforms.speed.value
-        })
-        */
-
     }
 }
 

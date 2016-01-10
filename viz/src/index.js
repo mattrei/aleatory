@@ -92,30 +92,29 @@ class Main {
       if (oscMsg.address === '/on') {
             let n = oscMsg.args[0]
             console.log("Show " + n)
-            this.events.emit("show", n)
+            this.events.emit("on", n)
       }
       if (oscMsg.address === '/off') {
             let n = oscMsg.args[0]
             console.log("Hide " + n)
-            this.events.emit("hide", n)
+            this.events.emit("off", n)
       }
+
+      if (oscMsg.address === '/vis') {
+            let n = oscMsg.args[0]
+            let d = oscMsg.args[1]
+            // like d = {data: JSON}
+            console.log("vis " + n)
+            this.events.emit("vis", {n: d})
+      }
+
       if (oscMsg.address === '/fx') {
             let n = oscMsg.args[0]
             console.log("FX " + n)
             this.events.emit("fx", n)
       }
-      //useful?
-      if (oscMsg.address === '/cam') {
-            let n = oscMsg.args[0]
-            console.log("Cam " + n)
-      }
-      if (oscMsg.address === '/data') {
-            let vis = oscMsg.args[0]
-            let k = oscMsg.args[0]
-            let v = oscMsg.args[0]
-            console.log("Data " + k)
-            this.events.emit("data", {vis: {k:v}})
-      }
+
+
       if (oscMsg.address === '/intro') {
             let text = oscMsg.args[0]
             console.log("Intro " + text)
@@ -124,6 +123,9 @@ class Main {
             let text = oscMsg.args[0]
             console.log("Outro " + text)
       }
+
+
+      /*
       if (oscMsg.address === '/var') {
             let axis = oscMsg.args[0]
             let v = oscMsg.args[1]
@@ -134,6 +136,12 @@ class Main {
             let n = oscMsg.args[0]
             viz.onFunc(n)
       }
+            //useful?
+      if (oscMsg.address === '/cam') {
+            let n = oscMsg.args[0]
+            console.log("Cam " + n)
+      }
+      */
     })
     this.oscPort.open()
 
@@ -156,8 +164,8 @@ class Main {
 
     //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s2 = new DronesScene(args)
-    this.scenes.s1 = new IntroScene(args)
-    //this.scenes.s1 = new ExecutedScene(args)
+    //this.scenes.s1 = new IntroScene(args)
+    this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
     this.setScene("s1")
@@ -177,8 +185,10 @@ class Main {
   update() {
     this.stats.begin()
 
+    const dt = this.clock.getDelta()
+
     this.events.emit("update", {time: this.clock.getElapsedTime(),
-                                delta: this.clock.getDelta()})
+                                delta: dt})
 
 
     this.stats.end()

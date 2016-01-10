@@ -1,7 +1,7 @@
 global.THREE = require('three')
 const OrbitControls = require('three-orbit-controls')(THREE)
 import Events from 'minivents'
-
+const average = require('analyser-frequency-average')
 
 class Scene {
 
@@ -65,8 +65,10 @@ class Scene {
         this.scene = new THREE.Scene()
 
         // shows elements in the scene
-        args.events.on('on', (data) => this.onVisOn(data))
-        args.events.on('off', (data) => this.onVisOff(data))
+        args.events.on('on', _ => this.onVisOn(_))
+        args.events.on('off', _ => this.onVisOff(_))
+        args.events.on('vis', _ => this.onVisParameters(_))
+
         // adds fx to the scene
         args.events.on('fx', (data) => this.onFX(data))
         // update intro text
@@ -74,10 +76,11 @@ class Scene {
         // update outro text
         args.events.on('outro', (data) => this.onOutro(data))
 
-        args.events.on('data', _ => this.onVisParameters(_))
+
         args.events.on('func', _ => this.onFunc(_))
 
-        args.events.on('update', (data) => this.update(data))
+        // requestAnimationFrame
+        args.events.on('update', _ => this.update(_))
   }
 
   addVis(name, parameters) {
@@ -87,21 +90,26 @@ class Scene {
     let vf = this.gui.addFolder(name)
       Object.keys(parameters).forEach(p => {
 
-        if (p === 'on' && parameters[p]) {
-            this.onVisOn(name)
-        }
+        //if (p !== 'data') {
+          // ignore the data parameter
+          // because its no use for dat-gui
 
-        let vfp = vf.add(parameters, p)
-
-        if (vfp.property === 'on') {
-          vfp.onChange(val => {
-            if (val) {
+          if (p === 'on' && parameters[p]) {
               this.onVisOn(name)
-            } else {
-              this.onVisOff(name)
-            }
-          })
-        }
+          }
+
+          let vfp = vf.add(parameters, p)
+
+          if (vfp.property === 'on') {
+            vfp.onChange(val => {
+              if (val) {
+                this.onVisOn(name)
+              } else {
+                this.onVisOff(name)
+              }
+            })
+          }
+        //}
       })
 
     vf.open()
@@ -120,7 +128,7 @@ class Scene {
 
 
 
-    let f = gui.addFolder('FX')
+    let f = gui.addFolder('**=FX=**')
     f.add(this.fx, 'active')
 
     f.add(this.fx.bloom, 'active').name('Bloom')
@@ -191,23 +199,24 @@ class Scene {
         }
     }
 
-  onFunc(name) {
-    let f = this[name]
-    f = f.bind(this)
-    f()
-  }
-
   onVisParameters(dict) {
-     //this.data = Object.assign(this.data, dict)
-    this.vis = Object.assign(this.vis, dict)
+    // emits 'VIS::parameters' events
+    Object.keys(dict).forEach(d => {
+
+      Object.keys(dict[d]).forEach(d2 => {
+
+        // we emit the name of the vis and its properties
+        this.events.emit(d + '::' + d2, dict[d][d2])
+      })
+    })
   }
 
-    onVisOn(v) {
-      this.events.emit('visOn', v)
+  onVisOn(v) {
+      this.events.emit(v+'::visOn')
     }
 
   onVisOff(v) {
-      this.events.emit('visOff', v)
+      this.events.emit(v+'::visOff')
     }
 
   onFX(v) {
@@ -233,9 +242,13 @@ class Scene {
     }
   }
 
+  getFreq(min, max) {
+    return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
+  }
+
   play() {
 
-    let ft = this.gui.addFolder('text')
+    let ft = this.gui.addFolder('**=text=**')
     ft.add(this._texts, 'intro')
     ft.add(this, '_doIntro')
     ft.add(this._texts, 'outro')

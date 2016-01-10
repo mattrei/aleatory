@@ -1,14 +1,22 @@
+const DEMO = true
 global.THREE = require('three')
 import Scene from './Scene'
 
 const random = require('random-float')
 const randomInt = require('random-int')
 
+const simplex = new (require('simplex-noise'))()
+
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
 import TWEEN from 'tween.js'
 const glslify = require('glslify')
+const newArray = require('new-array')
+
+const randomRadian = () => random(-Math.PI, Math.PI)
+const randomRotation = () => newArray(3).map(randomRadian)
+const randomSphere = require('gl-vec3/random')
 
 const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
 var randomSpherical = require('random-spherical/object')( null, THREE.Vector3 )
@@ -28,76 +36,36 @@ require('velocity-animate/velocity.ui')
 const POLY_SIZE = 8000
 const SPHERE_SIZE = 1500
 
-const E_SPHERE_RADIUS = 3500
-const E_SM_SPHERE_RADIUS = 3000
 
 class Demo extends Scene {
   constructor(args)
   {
-    super(args, {
-      executed: true,
-      cage: true,
-      scheduled: false
-    }, new THREE.Vector3(0,0,5000))
-
-    this.current = {show: 0.0, number: 1}
+    super(args, new THREE.Vector3(0,0,5000))
 
     this.text = {name: null, date: null, intro: null}
-    this.introText = ''
-
-    this.targetView = 'grid'
-
-    //executed
-    this.minDistance = 100
-    this.particlesData = []
-
-
-    this.targets = { table: [], sphere: [], helix: [], grid: [], random: [] };
-
-
-    this.currentIdx = 0
-    this.transition = 2000
-
-    this.executed = {
-      meshes: [],
-      idx: 0
-    }
-    this.scheduled = {
-      meshes: [],
-      idx: 0
-    }
-
-    // demo
-    super.onData({executed: require('./test_data/executed.json')})
-    super.onData({scheduled: require('./test_data/scheduled.json')})
-
 
     this.createBackground()
     this.createCage()
-
-
-
+    this.createAsteroids(100).forEach(m => this.scene.add(m))
     this.createExecuted()
     this.createScheduled()
+
+    // demo
+    if (DEMO) {
+      super.onVisParameters({executed: {data: require('./test_data/executed.json')}})
+      super.onVisParameters({scheduled: {data: require('./test_data/scheduled.json')}})
+    }
+
+
   }
 
-  startGUI(gui)
-  {
-    gui.add(this, 'resetCamera')
-    gui.add(this, 'doSphere')
-    gui.add(this, 'doRandom')
-    gui.add(this, 'lookAtRnd')
-    gui.add(this, 'lookAtNext')
-    gui.add(this, 'smash')
-    gui.add(this, 'transition', 500, 5000)
+  intro(text) {
+      const DUR = 2
 
-    gui.add(this.current, 'show', 0, 5)
-    gui.add(this.current, 'number', 1, 8)
+  }
 
-    gui.add(this, 'minDistance', 100, 1000)
+  outro(text) {
 
-    gui.add(this, 'nextScheduled')
-    gui.add(this, 'clearScene')
   }
 
   createBackground() {
@@ -143,16 +111,73 @@ class Demo extends Scene {
 
   }
 
+  createAsteroids (count) {
+    const geometries = newArray(6).map(asteroidGeom)
+    const material = new THREE.MeshBasicMaterial({
+      color: 0xffffff,
+      transparent: true,
+      wireframe: true
+    })
+    const meshes = newArray(count).map(() => {
+      const geometry = geometries[randomInt(geometries.length)]
+      const mesh = new THREE.Mesh(geometry, material.clone())
+      mesh.material.opacity = random(0.05, 0.1)
+      mesh.scale.multiplyScalar(random(1, 2.5))
+      mesh.rotation.fromArray(randomRotation())
+      mesh.direction = new THREE.Vector3().fromArray(randomSphere([]))
+      mesh.position.fromArray(randomSphere([], random(4000, 6000)))
+      return mesh
+    })
+
+
+    this.events.on('tick', t => {
+      const dt = t.delta / 10
+      //console.log(t)
+      meshes.forEach(mesh => {
+        mesh.rotation.x += dt * 0.1 * mesh.direction.x
+        mesh.rotation.y += dt * 0.5 * mesh.direction.y
+      })
+    })
+
+    return meshes
+
+    function asteroidGeom () {
+      const geometry = new THREE.TetrahedronGeometry(10, randomInt(1, 3))
+      geometry.vertices.forEach(v => {
+        let steps = 3
+        let s = Math.pow(2, steps)
+        let a = 0.75
+        for (let i = 0; i < steps; i++) {
+          v.x += a * simplex.noise3D(v.x * s * 0, v.y * s, v.z * s)
+          v.y += a * simplex.noise3D(v.x * s, v.y * s * 0, v.z * s)
+          v.z += a * simplex.noise3D(v.x * s, v.y * s, v.z * s * 0)
+          s *= 0.25
+          a *= 1 / steps * i
+        }
+      })
+      geometry.computeFaceNormals()
+      geometry.verticesNeedsUpdate = true
+      return geometry
+    }
+  }
+
+
   createCage()
   {
 
+    const VIS = 'cage'
+
+    const E_SPHERE_RADIUS = 3500
+    const E_SM_SPHERE_RADIUS = 3000
+
+    const conf = {on: false, minDistance: 1, speed: 1, open: false}
+
     let group = new THREE.Group()
+    group.visible = conf.on
     this.scene.add( group )
 
-    const MAX = 2000,
-          MAX_LINES = 2000
-
-
+    const MAX = 800,
+          MAX_LINES = 600
 
     // create the points
     let pMaterial = new THREE.PointsMaterial( {
@@ -165,8 +190,11 @@ class Demo extends Scene {
 
     let r = E_SPHERE_RADIUS
 
+    let particlesData = []
+
     let pGeometry = new THREE.BufferGeometry();
-    let particlePositions = new Float32Array( MAX * 3 );
+    let particlePositions = new Float32Array( MAX * 3 )
+
 
         for ( let i = 0; i < MAX; i++ ) {
 
@@ -177,7 +205,7 @@ class Demo extends Scene {
           particlePositions[ i * 3 + 2 ] = pointOnSurface.z
 
           // add it to the geometry
-          this.particlesData.push( {
+          particlesData.push( {
             velocity: new THREE.Vector3( random(-3, 3), random(-3, 3), random(-3, 3) ),
             numConnections: 0
           } );
@@ -214,54 +242,75 @@ class Demo extends Scene {
         let linesMesh = new THREE.LineSegments( lGeometry, lMaterial );
         group.add( linesMesh );
 
+    this.events.on(VIS + '::visOn', d => {
+        group.visible = true
+        pMaterial.opacity = 0
+        tweenr.to(pMaterial, {opacity: 1, duration: 2})
+    })
+
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
     this.events.on('tick', t => {
 
-      group.visible = this.show.cage
+      if (!conf.on) return
+
+      const freq = super.getFreq(200, 600)
+
+      //pMaterial.opacity = 1 - Math.sin(t.time * 0.2) * 0.5
 
       let vertexpos = 0,
          colorpos = 0,
          numConnected = 0
 
+
+      let mixColor = new THREE.Color(1, 1, 1)
+
         for ( var i = 0; i < MAX_LINES; i++ )
-          this.particlesData[ i ].numConnections = 0;
+          particlesData[ i ].numConnections = 0;
 
         for ( var i = 0; i < MAX_LINES; i++ ) {
 
           // get the particle
-          let particleData = this.particlesData[i];
+          let particleData = particlesData[i];
 
-          particlePositions[ i * 3     ] += particleData.velocity.x;
-          particlePositions[ i * 3 + 1 ] += particleData.velocity.y;
-          particlePositions[ i * 3 + 2 ] += particleData.velocity.z;
+          particlePositions[ i * 3     ] += particleData.velocity.x * conf.speed
+          particlePositions[ i * 3 + 1 ] += particleData.velocity.y * conf.speed
+          particlePositions[ i * 3 + 2 ] += particleData.velocity.z * conf.speed
 
           let x = particlePositions[ i * 3 ],
             y = particlePositions[ i * 3 + 1 ],
             z = particlePositions[ i * 3 + 2 ]
 
-          if (Math.sqrt(x*x + y*y + z*z) > E_SPHERE_RADIUS ||
-            Math.sqrt(x*x + y*y + z*z) < E_SM_SPHERE_RADIUS) {
-            particleData.velocity.x = -particleData.velocity.x;
-            particleData.velocity.y = -particleData.velocity.y;
-            particleData.velocity.z = -particleData.velocity.z;
+          let maxRadius = E_SPHERE_RADIUS
+          if (conf.open) {
+            maxRadius = E_SPHERE_RADIUS * 10
           }
+            if (Math.sqrt(x*x + y*y + z*z) > maxRadius ||
+                Math.sqrt(x*x + y*y + z*z) < E_SM_SPHERE_RADIUS) {
+              particleData.velocity.x = -particleData.velocity.x;
+              particleData.velocity.y = -particleData.velocity.y;
+              particleData.velocity.z = -particleData.velocity.z;
+            }
+
+
 
 
           // Check collision
           for ( var j = i + 1; j < MAX_LINES; j++ ) {
 
-            let particleDataB = this.particlesData[ j ];
+            let particleDataB = particlesData[ j ];
 
             var dx = particlePositions[ i * 3     ] - particlePositions[ j * 3     ];
             var dy = particlePositions[ i * 3 + 1 ] - particlePositions[ j * 3 + 1 ];
             var dz = particlePositions[ i * 3 + 2 ] - particlePositions[ j * 3 + 2 ];
             var dist = Math.sqrt( dx * dx + dy * dy + dz * dz );
 
-            if ( dist < this.minDistance ) {
+            if ( dist < conf.minDistance * 200 ) {
 
               particleData.numConnections++;
               particleDataB.numConnections++;
 
-              var alpha = 1.0 - dist / this.minDistance;
+              var alpha = 1.0 - dist / conf.minDistance * 200
 
               linePositions[ vertexpos++ ] = particlePositions[ i * 3     ];
               linePositions[ vertexpos++ ] = particlePositions[ i * 3 + 1 ];
@@ -271,15 +320,23 @@ class Demo extends Scene {
               linePositions[ vertexpos++ ] = particlePositions[ j * 3 + 1 ];
               linePositions[ vertexpos++ ] = particlePositions[ j * 3 + 2 ];
 
-              lineColors[ colorpos++ ] = alpha;
-              lineColors[ colorpos++ ] = alpha;
-              lineColors[ colorpos++ ] = alpha;
 
-              lineColors[ colorpos++ ] = alpha;
-              lineColors[ colorpos++ ] = alpha;
-              lineColors[ colorpos++ ] = alpha;
+
+              let color = new THREE.Color(0, 0, 0)
+              color.lerp(mixColor, freq)
+
+
+              lineColors[ colorpos++ ] = color.r
+              lineColors[ colorpos++ ] = color.g
+              lineColors[ colorpos++ ] = color.b
+
+              lineColors[ colorpos++ ] = color.r
+              lineColors[ colorpos++ ] = color.g
+              lineColors[ colorpos++ ] = color.b
 
               numConnected++;
+
+
             }
           }
         }
@@ -293,78 +350,222 @@ class Demo extends Scene {
 
     })
 
+    super.addVis(VIS, conf)
+
   }
 
   createExecuted()
   {
 
+    const VIS = 'executed'
+
+
     let group = new THREE.Group()
     this.scene.add( group )
 
-    this.data.executed.forEach((e,i) => {
+    let idx = 0
+    let meshes = [],
+        spherePositions = [],
+        view = 'sphere'
 
-      this.loader.load(e.img, (texture) => {
+    let doSphere = (dur) => {
+         for ( let i = 0; i < meshes.length; i ++ ) {
 
-          texture.minFilter = THREE.LinearFilter
-          /*let img = new THREE.MeshBasicMaterial({
-              map: texture,
-              color: 0xffffff,
-              side: THREE.DoubleSide,
-          });*/
-          let geom = new THREE.PlaneGeometry(200, 200),
-             mat = new THREE.ShaderMaterial( {
-              uniforms: {
-                resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
-                time: { type: "f", value: 0.1 },
-                showCurrent: { type: "f", value: this.showCurrent},
-                numberCurrents: { type: "f", value: this.numberCurrents},
-                bgImg: { type: "t", value: texture }
-              },
-              side: THREE.DoubleSide,
-              transparent: true,
-              fragmentShader: glslify(__dirname + '/glsl/Executed.frag'),
-              vertexShader: glslify(__dirname + '/glsl/Executed.vert')
-          } );
+          var m = meshes[ i ];
+          var target = spherePositions[ i ];
+           dur = 2
 
-          // plane
-          let mesh = new THREE.Mesh(geom, mat)
-          mesh.overdraw = true
+          m.matrixAutoUpdate = true
 
-          mesh.userData = e
+          tweenr.to(m.position,
+                    { x: target.position.x, y: target.position.y, z: target.position.z,
+                     duration: random(dur, dur * 2) })
 
-          group.add(mesh)
+          tweenr.to(m.rotation,
+                    { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z,
+                     duration: random(dur, dur * 2) })
+          //.on('update', () => object.updateMatrix())
 
-          this.executed.meshes.push(mesh)
-      })
-
-    })
-
-        var vector = new THREE.Vector3();
-
-        // sphere
-        for ( var i = 0, l = this.data.executed.length; i < l; i ++ ) {
-
-          var phi = Math.acos( -1 + ( 2 * i ) / l );
-          var theta = Math.sqrt( l * Math.PI ) * phi;
-
-          var object = new THREE.Object3D();
-
-          object.position.x = SPHERE_SIZE * Math.cos( theta ) * Math.sin( phi );
-          object.position.y = SPHERE_SIZE * Math.sin( theta ) * Math.sin( phi );
-          object.position.z = SPHERE_SIZE * Math.cos( phi );
-
-          vector.copy( object.position ).multiplyScalar( 2 );
-
-          object.lookAt( vector );
-
-          this.targets.sphere.push( object );
 
         }
+    }
 
-        //this.camera.target = this.data.executed[0]
-    this.events.on('tick', t => {
-      group.visible = this.show.executed
+    const LOOKAT_DUR = 2
+    let doLookAt = (m) => {
+      if (!this.camera.target) {
+        this.camera.target = m
+      }
+
+      let vector = new THREE.Vector3()
+      if (view === 'sphere') {
+        vector.copy( m.position ).multiplyScalar( 1.2 );
+      } else if (view === 'grid') {
+        vector.copy( m.position )
+        vector.z -= 400
+      }
+
+
+    // move to vector
+      tweenr.to(this.camera.position,
+                { x: vector.x, y: vector.y, z: vector.z, duration: LOOKAT_DUR })
+        .on('update', () => { this.camera.lookAt(this.camera.target) })
+        .on('complete', () => { this.camera.lookAt(this.camera.target) })
+      tweenr.to(this.camera.target,
+                { x: m.position.x, y: m.position.y, z: m.position.z, duration: LOOKAT_DUR})
+
+      /*
+      let d = m.userData
+
+      this.text.name.innerHTML = d.name + " (" + d.age + ")"
+      this.text.date.innerHTML = d.date
+      Velocity(this.text.name, "fadeIn", this.transition/2 )
+      Velocity(this.text.date, "fadeIn", this.transition/2 )
+      */
+    }
+
+    let doSmash = () => {
+      let mesh = meshes[idx % meshes.length],
+         geometry = mesh.geometry
+
+      mesh.dynamic = true
+
+      var explodeModifier = new THREE.ExplodeModifier();
+      explodeModifier.modify( geometry );
+
+      console.log(geometry.vertices)
+
+
+      for(var i = 0; i < (geometry.vertices.length); i++)
+      {
+
+          var pos = new THREE.Vector3();
+          var v = geometry.vertices[i]
+
+
+          pos.x = v.x + random(50, 1000)
+          pos.y = v.y + random(50, 1000)
+          pos.z = v.z + random(50, 1000)
+
+
+          tweenr.to(v,
+            { x: pos.x, y: pos.y, z: pos.z, duration: LOOKAT_DUR })
+            .on('update', () => geometry.verticesNeedUpdate = true)
+            .on('complete', () => mesh.visible = false)
+      }
+    }
+
+    let doNext = () => {
+      idx++
+      let m = meshes[idx % meshes.length]
+      doLookAt(m)
+    }
+
+    let doRnd = () => {
+      let m = meshes[randomInt(0, meshes.length - 1)]
+      doLookAt(m)
+    }
+
+    this.events.on(VIS + '::doSphere', p => doSphere(2 /*p.duration*/))
+    this.events.on(VIS + '::doRnd', p => doRnd())
+    this.events.on(VIS + '::doNext', p => doNext())
+    this.events.on(VIS + '::doSmash', p => doSmash())
+
+
+        let conf = {on:true,
+               doSphere: doSphere,
+               doNext: doNext,
+               doRnd: doRnd,
+               doSmash: doSmash,
+               currentOn:false,
+               currents: 1
+               }
+
+    this.events.on(VIS + '::data', data => {
+
+        data.forEach((e,i) => {
+
+            this.loader.load(e.img, (texture) => {
+
+                texture.minFilter = THREE.LinearFilter
+                /*let img = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    color: 0xffffff,
+                    side: THREE.DoubleSide,
+                });*/
+                let geom = new THREE.PlaneGeometry(200, 200),
+                   mat = new THREE.ShaderMaterial( {
+                    uniforms: {
+                      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
+                      time: { type: "f", value: 0.1 },
+                      timeInit: { type: "f", value: Math.random() * 1000 },
+                      showCurrent: { type: "f", value: conf.currentOn},
+                      numberCurrents: { type: "f", value: conf.currents},
+                      bgImg: { type: "t", value: texture }
+                    },
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    fragmentShader: glslify(__dirname + '/glsl/Executed.frag'),
+                    vertexShader: glslify(__dirname + '/glsl/Executed.vert')
+                } );
+
+                // plane
+                let mesh = new THREE.Mesh(geom, mat)
+                mesh.overdraw = true
+
+                mesh.userData = e
+
+                group.add(mesh)
+
+                meshes.push(mesh)
+            })
+
+          })
+
+
+
+          var vector = new THREE.Vector3();
+
+          // sphere
+          for ( var i = 0, l = data.length; i < l; i ++ ) {
+
+            var phi = Math.acos( -1 + ( 2 * i ) / l );
+            var theta = Math.sqrt( l * Math.PI ) * phi;
+
+            var object = new THREE.Object3D();
+
+            object.position.x = SPHERE_SIZE * Math.cos( theta ) * Math.sin( phi );
+            object.position.y = SPHERE_SIZE * Math.sin( theta ) * Math.sin( phi );
+            object.position.z = SPHERE_SIZE * Math.cos( phi );
+
+            vector.copy( object.position ).multiplyScalar( 2 );
+
+            object.lookAt( vector );
+
+            spherePositions.push( object );
+
+          }
     })
+
+    this.events.on(VIS + '::visOn', _ => group.visible = true)
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    this.events.on('tick', t => {
+
+      meshes.forEach(m => m.material.uniforms.time.value = t.time)
+
+      let m = meshes[idx % meshes.length]
+      if (m) {
+        m.material.uniforms.showCurrent.value = conf.currentOn
+        m.material.uniforms.numberCurrents.value = conf.currents
+      }
+
+    })
+
+
+
+
+    super.addVis(VIS, conf)
+
   }
 
 
@@ -383,106 +584,7 @@ class Demo extends Scene {
   }
 
 
-  lookAt(e)
-  {
-
-        //this.camera.rotation.copy(e.rotation)
-    let vector = new THREE.Vector3()
-    if (this.targetView === 'sphere') {
-      vector.copy( e.position ).multiplyScalar( 1.2 );
-    } else if (this.targetView === 'grid') {
-      vector.copy( e.position )
-      vector.z -= 400
-    }
-
-
-    // move to vector
-         new TWEEN.Tween( this.camera.position )
-            .to( { x: vector.x, y: vector.y, z: vector.z }, this.transition )
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .onUpdate(() => {
-          this.camera.lookAt(this.camera.target);
-      }).onComplete(() => {
-          this.camera.lookAt(this.camera.target);
-      })
-                  .start();
-
-
-       new TWEEN.Tween(this.camera.target).to({
-          x: e.position.x,
-          y: e.position.y,
-          z: e.position.z
-      }, this.transition).easing(TWEEN.Easing.Linear.None).onUpdate(() => {
-      }).onComplete(() => {
-          //this.camera.lookAt(e.position);
-      }).start();
-
-
-      let d = e.userData
-
-      this.text.name.innerHTML = d.name + " (" + d.age + ")"
-      this.text.date.innerHTML = d.date
-      Velocity(this.text.name, "fadeIn", this.transition/2 )
-      Velocity(this.text.date, "fadeIn", this.transition/2 )
-  }
-
-  lookAtNext()
-  {
-    this.currentIdx++
-    let e = this.executed.meshes[this.currentIdx % this.executed.meshes.length]
-    this.lookAt(e)
-  }
-
-  smash() {
-
-    let mesh = this.executed.meshes[this.currentIdx % this.executed.meshes.length]
-    let geometry = mesh.geometry
-
-    var explodeModifier = new THREE.ExplodeModifier();
-    explodeModifier.modify( geometry );
-
-    console.log(geometry.vertices)
-
-
-    for(var i = 0; i < (geometry.vertices.length); i++)
-    {
-
-        var pos = new THREE.Vector3();
-        var v = geometry.vertices[i]
-
-
-        pos.x = v.x * (Math.random() * 100 + 50);
-        pos.y = v.y * (Math.random() * 100 + 50);
-        pos.z = v.z * (Math.random() * 100 + 50);
-
-
-        new TWEEN.Tween(geometry.vertices[i])
-        .to( { x: pos.x, y: pos.y, z: pos.z }, 3000 )
-        .easing( TWEEN.Easing.Exponential.InOut )
-        .onUpdate( () => { geometry.verticesNeedUpdate = true })
-        .start();
-
-
-    }
-
-    mesh.visible = false
-
-
-  }
-
-  lookAtRnd()
-  {
-    this.currentIdx = Math.floor(Math.random() * this.executed.meshes.length)
-    let e = this.executed.meshes[this.currentIdx]
-
-    this.lookAt(e)
-  }
-
-  doSphere() {
-    this.targetView = 'sphere'
-    this.transform( this.targets.sphere, 2 );
-  }
-
+/*
   doRandom() {
     this.targetView = 'random'
 
@@ -503,196 +605,27 @@ class Demo extends Scene {
 
     this.transform( this.targets.random, 2 )
   }
-
-  transform( targets, duration ) {
-
-
-        for ( var i = 0; i < this.executed.meshes.length; i ++ ) {
-
-          var object = this.executed.meshes[ i ];
-          var target = targets[ i ];
-
-          tweenr.to(object.position,
-                    { x: target.position.x, y: target.position.y, z: target.position.z, duration: random(duration, duration * 2) })
-            /*
-          tweenr.to(object.rotation,
-                    { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z, duration: random(duration, duration * 2) })
-*/
-          /*
-          new TWEEN.Tween( object.position )
-            .to( { x: target.position.x, y: target.position.y, z: target.position.z }, Math.random() * duration + duration )
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .start();
-            */
-
-          new TWEEN.Tween( object.rotation )
-            .to( { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z }, duration*1000 )
-            .easing( TWEEN.Easing.Exponential.InOut )
-            .start();
-
-
-
-        }
-
-      }
+  */
 
   createScheduled() {
+
+    const VIS = 'scheduled'
+
 
     const NUM_PARTICLES = 400000
     const MAX_PARTICLE_DIST = 6000
 
-    this.loader.load('assets/Executed/particle.png', (particleImg) => {
+    let group = new THREE.Group()
+    this.scene.add(group)
 
-    this.data.scheduled.forEach(s => {
-      this.loader.load(s.img, (texture) => {
-        texture.minFilter = THREE.LinearFilter
+    const meshes = []
+    let mIdx = 0
 
-            let getPixel = (imgData, x, y) => {
-              var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
-              r = imgData.data[offset];
-              g = imgData.data[offset + 1];
-              b = imgData.data[offset + 2];
-              a = imgData.data[offset + 3];
+    let doNext = () => {
 
-              let avg = (r + g + b) / 3
-
-              return Math.floor(avg / (256 / 3))
-
-            }
-
-
-
-         let getImgData = (pic) => {
-
-
-            return new Promise(function (fulfill, reject){
-
-              var canvas = document.createElement("canvas");
-              var context = canvas.getContext("2d");
-              var image = new Image();
-              image.src = pic;
-              image.onload = function() {
-
-                canvas.width = image.width;
-                canvas.height = image.height;
-                context.drawImage(image, 0, 0);
-                var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-                fulfill(imgData)
-              }
-
-            })
-
-          }
-
-
-        getImgData(s.img).then((imgData => {
-          console.log("creating particles")
-
-          //this.scheduled.push({img: texture, imgData: imgData})
-
-          var particleShader = THREE.ParticleShader;
-          var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
-          particleUniforms.texture.value = particleImg;
-          particleUniforms.fog.value = 1;
-
-
-          var particleMaterial = new THREE.ShaderMaterial({
-
-            uniforms: particleUniforms,
-            vertexShader: particleShader.vertexShader,
-            fragmentShader: particleShader.fragmentShader,
-            blending: THREE.AdditiveBlending,
-            depthTest: false,
-            transparent: true
-          });
-
-          let geometry = new THREE.BufferGeometry();
-
-          var positions = new Float32Array(NUM_PARTICLES * 3);
-          var colors = new Float32Array(NUM_PARTICLES * 3);
-          var sizes = new Float32Array(NUM_PARTICLES);
-
-          var color = new THREE.Color();
-
-          let imageScale = 25,
-            zSpread = 200
-
-
-          for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++ , i3 += 3) {
-
-            var position = new THREE.Vector3(
-              random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
-              random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
-              random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
-            );
-
-            var gotIt = false;
-
-              // Randomly select a pixel
-              var x = Math.round(imgData.width * Math.random());
-              var y = Math.round(imgData.height * Math.random());
-              var bw = getPixel(imgData, x, y);
-
-              // Read color from pixel
-              if (bw == 1) {
-                // If black, get position
-
-                position = new THREE.Vector3(
-                  (imgData.width / 2 - x) * imageScale,
-                  (y - imgData.height / 2) * imageScale,
-                  Math.random() * zSpread * 2 - Math.random() * zSpread
-                );
-              }
-            // Position
-            positions[i3 + 0] = position.x;
-            positions[i3 + 1] = position.y;
-            positions[i3 + 2] = position.z;
-
-            // Color
-            color.setRGB(1, 1, 1);
-            colors[i3 + 0] = color.r;
-            colors[i3 + 1] = color.g;
-            colors[i3 + 2] = color.b;
-
-            // Size
-            sizes[i] = 20;
-
-          }
-
-          geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-          geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
-          geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-          let points = new THREE.Points(geometry, particleMaterial);
-          points.visible = false
-          this.scene.add(points)
-
-          this.scheduled.meshes.push(points)
-          console.log(points)
-
-          this.events.on('tick', t => {
-            points.rotation.x = -t.delta * 0.002;
-            points.rotation.y = -t.delta * 0.002;
-            points.rotation.z = Math.PI - t.delta * 0.004;
-          })
-
-        }))
-      })
-
-
-
-    })
-    })
-
-
-
-
-
-  }
-
-  nextScheduled() {
-
-    this.scheduled.meshes[this.scheduled.idx++].visible = true
+      meshes[mIdx % meshes.length].visible = false
+      mIdx += 1
+      meshes[mIdx % meshes.length].visible = true
 
 
 /*
@@ -716,7 +649,170 @@ class Demo extends Scene {
     rt.start()
 */
     //this.drawScheduledText()
+
+    }
+
+
+    this.events.on(VIS + '::visOn', _ => group.visible = true)
+    this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+
+    this.events.on(VIS + '::doNext', p => doNext())
+
+    const conf = {on:false, doNext: doNext}
+
+    this.events.on(VIS + '::data', data => {
+
+       this.loader.load('assets/Executed/particle.png', (particleImg) => {
+
+        data.forEach(s => {
+          this.loader.load(s.img, (texture) => {
+            texture.minFilter = THREE.LinearFilter
+
+                let getPixel = (imgData, x, y) => {
+                  var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+                  r = imgData.data[offset];
+                  g = imgData.data[offset + 1];
+                  b = imgData.data[offset + 2];
+                  a = imgData.data[offset + 3];
+
+                  let avg = (r + g + b) / 3
+
+                  return Math.floor(avg / (256 / 3))
+
+                }
+
+
+
+             let getImgData = (pic) => {
+
+
+                return new Promise(function (fulfill, reject){
+
+                  var canvas = document.createElement("canvas");
+                  var context = canvas.getContext("2d");
+                  var image = new Image();
+                  image.src = pic;
+                  image.onload = function() {
+
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    context.drawImage(image, 0, 0);
+                    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    fulfill(imgData)
+                  }
+
+                })
+
+              }
+
+
+            getImgData(s.img).then((imgData => {
+              console.log("creating particles")
+
+              //this.scheduled.push({img: texture, imgData: imgData})
+
+              var particleShader = THREE.ParticleShader;
+              var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
+              particleUniforms.texture.value = particleImg;
+              particleUniforms.fog.value = 1;
+
+
+              var particleMaterial = new THREE.ShaderMaterial({
+
+                uniforms: particleUniforms,
+                vertexShader: particleShader.vertexShader,
+                fragmentShader: particleShader.fragmentShader,
+                blending: THREE.AdditiveBlending,
+                depthTest: false,
+                transparent: true
+              });
+
+              let geometry = new THREE.BufferGeometry();
+
+              var positions = new Float32Array(NUM_PARTICLES * 3);
+              var colors = new Float32Array(NUM_PARTICLES * 3);
+              var sizes = new Float32Array(NUM_PARTICLES);
+
+              var color = new THREE.Color();
+
+              let imageScale = 25,
+                zSpread = 200
+
+
+              for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++ , i3 += 3) {
+
+                var position = new THREE.Vector3(
+                  random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+                  random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+                  random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
+                );
+
+                var gotIt = false;
+
+                  // Randomly select a pixel
+                  var x = Math.round(imgData.width * Math.random());
+                  var y = Math.round(imgData.height * Math.random());
+                  var bw = getPixel(imgData, x, y);
+
+                  // Read color from pixel
+                  if (bw == 1) {
+                    // If black, get position
+
+                    position = new THREE.Vector3(
+                      (imgData.width / 2 - x) * imageScale,
+                      (y - imgData.height / 2) * imageScale,
+                      Math.random() * zSpread * 2 - Math.random() * zSpread
+                    );
+                  }
+                // Position
+                positions[i3 + 0] = position.x;
+                positions[i3 + 1] = position.y;
+                positions[i3 + 2] = position.z;
+
+                // Color
+                color.setRGB(1, 1, 1);
+                colors[i3 + 0] = color.r;
+                colors[i3 + 1] = color.g;
+                colors[i3 + 2] = color.b;
+
+                // Size
+                sizes[i] = 20;
+
+              }
+
+              geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+              geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+              geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+              let points = new THREE.Points(geometry, particleMaterial);
+              points.visible = conf.on
+              //this.scene.add(points)
+              group.add(points)
+
+              meshes.push(points)
+
+              this.events.on('tick', t => {
+                points.rotation.x = -t.delta * 0.002;
+                points.rotation.y = -t.delta * 0.002;
+                points.rotation.z = Math.PI - t.delta * 0.004;
+              })
+
+            }))
+          })
+
+        })
+
+        })
+
+    })
+
+
+
+    super.addVis(VIS, conf)
+
   }
+
 
   drawScheduledText() {
 
@@ -792,18 +888,15 @@ class Demo extends Scene {
 
   tick(time, delta) {
 
-
+/*
     TWEEN.update()
 
 
-    let e = this.executed.meshes[this.currentIdx % this.executed.meshes.length]
-    if (e) {
-      e.material.uniforms.time.value = time
-      e.material.uniforms.showCurrent.value = this.current.show
-      e.material.uniforms.numberCurrents.value = this.current.number
-    }
+
+    */
 
     }
+
 
 }
 

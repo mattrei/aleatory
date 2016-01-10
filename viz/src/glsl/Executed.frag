@@ -4,6 +4,7 @@ varying vec2 vUv;
 
 uniform float numberCurrents;
 uniform float time;
+uniform float timeInit;
 uniform float showCurrent;
 uniform vec2 resolution;
 
@@ -38,7 +39,7 @@ float fbm(vec2 p)
 
 vec3 clouds( vec2 uv, vec2 dir )
 {
-  dir *= time;
+  dir *= time + timeInit;
   vec3 finalColor = fbm( (uv * 1.5) + dir ) * vec3( 1.0 );
 
   return finalColor;
@@ -80,7 +81,7 @@ void main( void )
   finalColor += sin( clouds( uv, vec2( 1.0, 0.1 ) ));
   finalColor.rgb *= texture2D(bgImg, vUv ).rgb;
 
-  float xOffset = mix( 0.5, -1.5, fbm(vec2( fract(time), 0.00 ) ) );
+  float xOffset = mix( 0.5, -1.5, fbm(vec2( fract(time + timeInit), 0.00 ) ) );
   vec2 uvOffset = vec2( xOffset, 0.0 );
 
   vec2 lightningUV = uv + uvOffset;
