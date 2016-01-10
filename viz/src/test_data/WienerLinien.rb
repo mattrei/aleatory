@@ -94,13 +94,26 @@ open("#{URL}monitor#{req}") {|f|
 end
 
 
+loop do
+  a = get_live_data(U4_H)
+  puts "sending"
+  @client.send(OSC::Message.new("/vis" , "metro", "data", a.to_json))
+  sleep 10
+end
+
+=begin
 a = get_live_data(U4_H)
-puts a.to_json
+#puts a.to_json
+puts "sending"
+@client.send(OSC::Message.new("/vis" , "metro", "data", a.to_json))
 
 puts "Sleeping"
 sleep 10
 
 b = get_live_data(U4_H)
-puts b.to_json
+#puts b.to_json
+puts "sending"
+@client.send(OSC::Message.new("/vis" , "metro", "data", b.to_json))
 
 puts a == b
+=end

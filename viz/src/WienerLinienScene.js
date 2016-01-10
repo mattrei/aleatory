@@ -641,7 +641,7 @@ class WienerLinien extends Scene {
     group.visible = conf.on
 
     let metroTopo = require('./test_data/WienerLinienMetro.json')
-    console.log(metroTopo)
+//    console.log(metroTopo)
 
     const _uToColor = (u) => {
       if (u === 'u1') return new THREE.Color(0xff0000)
@@ -745,6 +745,11 @@ class WienerLinien extends Scene {
 
     this.events.on(VIS + '::visOn', _ => group.visible = true)
     this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    this.events.on(VIS + '::data', d => {
+      console.log("got data")
+      console.log(d)
+    })
 
     this.events.on('tick', t => {
 

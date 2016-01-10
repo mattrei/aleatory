@@ -110,11 +110,7 @@ class Scene {
                   }
               } else {
                 let prop = vfp.property
-                const dict = {}
-                const v = {}
-                v[prop] = val
-                dict[name] = v
-                this.onVisParameters(dict)
+                this.onVisParameters({[name]:{[prop]:val}})
               }
             })
 

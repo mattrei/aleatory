@@ -1,4 +1,9 @@
-# Music
+# Ruby
+`gem install mechanize`
+`gem install osc-ruby`
+`gem install bing-search`
+
+# Jack2
 
 Install `jack2-dbus` and `qjackctl`
 
@@ -7,28 +12,25 @@ Install `jack2-dbus` and `qjackctl`
 Set in `qjackctl` in `Connect` a link between `Supercollider` and `PulseAudio JACK Source`
 In `pavucontrol` set under `Recording` as input `JACK Source`
 
-Chapters
+# Chapters
 
 ## Intro
-* TextParticles
 
-## The Scheduled
+## Executed
 * Executed
 * Scheduled
 * Heaven
 
 ## Refuges
-* Headline
-* MareNostrum
-
-## Aleatory
-* Dices
-* Staircase
-* Tube
-* Falling
+* Headline(bing)
+* MareNostrum (MigrantFiles)
 
 ## WienerLinien
 * WienerLinien
+* Tube
 
 ## Drones
-* Drones
+* (DronesRepor)
+
+## Outro
+* LaserShow?

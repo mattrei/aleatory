@@ -101,11 +101,11 @@ class Main {
       }
 
       if (oscMsg.address === '/vis') {
-            let n = oscMsg.args[0]
-            let d = oscMsg.args[1]
-            // like d = {data: JSON}
-            console.log("vis " + n)
-            this.events.emit("vis", {n: d})
+            let name = oscMsg.args[0],
+             prop = oscMsg.args[1],
+             val = oscMsg.args[2]
+
+            this.events.emit("vis", {[name]:{[prop]:val}})
       }
 
       if (oscMsg.address === '/fx') {
