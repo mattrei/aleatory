@@ -57,375 +57,6 @@ add map as surface
 https://github.com/geommills/esrileaflet3JS/blob/master/scripts/client/src/terrain.js
 */
 
-class Line {
-  constructor(args)
-  {
-    this.scene = args.scene
-    this.topo = args.topo
-    this.events = args.events
-    this.lineColor = args.lineColor
-    this.linewidth = args.linewidth
-
-    this.particles = null
-    this.normalGeometry = []
-    this.line = null
-    this.trains = []
-    this.spline = null
-
-    this.uniforms = {
-
-        c: { type: "f", value: 0.5 },
-        p:   { type: "f", value: 1.0 },
-        color:     { type: "c", value: this.lineColor }
-
-      };
-
-
-    this.draw()
-  }
-
-  colorize(h) {
-
-    new TWEEN.Tween(this.line.material.color)
-    .to({r: Math.random(), g: Math.random(), b: Math.random()}, 500)
-    .easing(TWEEN.Easing.Quartic.In)
-    .start();
-
-    //this.line.material.color.setHSL(h, Math.random(), Math.random())
-    //this.line.material.needsUpdate = true
-  }
-
-  chaos() {
-
-    for (let i = 0; i < this.line.geometry.vertices.length/10; i++) {
-
-        var vertex = new THREE.Vector3();
-        vertex.x = Math.random() * 1000 - 500;
-        vertex.y = Math.random() * 1000 - 500;
-        vertex.z = Math.random() * 1000 - 500;
-
-        let origVertex = this.line.geometry.vertices[i]
-        origVertex.origPos = new THREE.Vector3()
-        origVertex.origPos.copy(origVertex)
-
-        new TWEEN
-          .Tween(origVertex)
-          .to({x: vertex.x,
-              y: vertex.y,
-              z: vertex.z}, (TWEEN_DUR*Math.random()*0.5) + TWEEN_DUR*0.5)
-          .onUpdate(() => {
-            this.line.geometry.verticesNeedUpdate = true;
-          })
-          .start();
-    }
-
-/*
-    this.boxes.forEach(b => {
-
-      b.origPos = new THREE.Vector3()
-      b.origPos.copy(b.position)
-
-        var vertex = new THREE.Vector3();
-        vertex.x = Math.random() * 800 - 400;
-        vertex.y = Math.random() * 800 - 400;
-        vertex.z = Math.random() * 800 - 400;
-
-
-      new TWEEN
-          .Tween(b.position)
-          .to({x: vertex.x,
-              y: vertex.y,
-              z: vertex.z}, (TWEEN_DUR*Math.random()*0.5) + TWEEN_DUR*0.5)
-          .start();
-    })
-*/
-
-  }
-
-  scale(s) {
-
-        new TWEEN
-          .Tween(this.line.scale)
-          .to({x: s,
-              y: s,
-              z: s}, (2*1000*Math.random()) + 2000)
-          .onUpdate(() => {
-            this.line.geometry.verticesNeedUpdate = true;
-          })
-          .start();
-  }
-
-  ordered() {
-
-    for (let i = 0; i < this.line.geometry.vertices.length/10; i++) {
-
-        let vertex = this.line.geometry.vertices[i]
-
-        new TWEEN
-          .Tween(vertex)
-          .to({x: vertex.origPos.x,
-              y: vertex.origPos.y,
-              z: vertex.origPos.z}, (4*1000*Math.random()) + 4000)
-          .onUpdate(() => {
-            this.line.geometry.verticesNeedUpdate = true;
-          })
-          .start();
-    }
-
-          new TWEEN
-          .Tween(this.line.scale)
-          .to({x: 1,
-              y: 1,
-              z: 1}, (4*1000*Math.random()) + 4000)
-          .onUpdate(() => {
-            this.line.geometry.verticesNeedUpdate = true;
-          })
-          .start();
-
-/*
-    this.boxes.forEach(b => {
-
-
-        var vertex = new THREE.Vector3();
-        vertex.x = Math.random() * 1000 - 500;
-        vertex.y = Math.random() * 1000 - 500;
-        vertex.z = Math.random() * 1000 - 500;
-
-
-      new TWEEN
-          .Tween(b.position)
-          .to({x: b.origPos.x,
-              y: b.origPos.y,
-              z: b.origPos.z}, (4*1000*Math.random()) + 4000)
-          .start();
-    })
-*/
-  }
-
-  draw() {
-    let numPoints = this.topo.length * 2;
-
-    let particlePositions = new Float32Array( numPoints * 3 );
-
-    let pMaterial = new THREE.PointsMaterial( {
-          color: 0xFFFFFF,
-          size: 8,
-          blending: THREE.AdditiveBlending,
-          transparent: true,
-          sizeAttenuation: false
-        } );
-    let pGeometry = new THREE.BufferGeometry();
-
-
-    let points = []
-    if (this.topo instanceof Array) {
-      //sometimes the data may be curropt
-      this.topo.forEach((t, i) => {
-
-        let e = t[1]
-        let y = (e.coord.lat - CENTER_LAT) * SCALE,
-         x = (e.coord.lng - CENTER_LNG) * SCALE,
-         z = Math.random() * SCALE_Z
-        points.push(new THREE.Vector3(x, y, z))
-
-        particlePositions[ i * 3     ] = x;
-        particlePositions[ i * 3 + 1 ] = y;
-        particlePositions[ i * 3 + 2 ] = z;
-      })
-
-      pGeometry.addAttribute( 'position', new THREE.BufferAttribute( particlePositions, 3 ));
-      let particlesMesh = new THREE.Points( pGeometry, pMaterial );
-      this.particles = particlesMesh
-      this.scene.add(particlesMesh)
-
-
-      //console.log(points)
-      this.spline = new THREE.CatmullRomCurve3(points);
-
-
-/*
-      var material = new THREE.ShaderMaterial({
-          uniforms: this.uniforms,
-          vertexShader: Shaders.line.vertexShader,
-          fragmentShader: Shaders.line.fragmentShader,
-          //blending:       THREE.AdditiveBlending,
-          depthTest:      false,
-          transparent:    true
-      });
-*/
-
-
-      let material = new THREE.LineBasicMaterial({
-          color: this.lineColor,
-          linewidth: this.linewidth
-      });
-
-      var geometry = new THREE.Geometry();
-      var splinePoints = this.spline.getPoints(numPoints);
-
-      for (var i = 0; i < splinePoints.length; i++) {
-          geometry.vertices.push(splinePoints[i]);
-      }
-
-      let line = new THREE.Line(geometry, material);
-      this.scene.add(line);
-
-      this.line = line
-    } // endif
-
-  }
-}
-
-class MetroLine extends Line {
-  constructor(args) {
-    args.linewidth = 5
-    super(args)
-
-
-    this.tangent = new THREE.Vector3();
-    this.axis = new THREE.Vector3();
-    this.camera = args.camera
-
-    this.textMeshes = []
-
-    this.drawText()
-
-    this.update = this.update.bind(this)
-    setInterval(this.update, 1000)  // every second
-  }
-  drawText() {
-    this.topo.forEach(t => {
-      let e = t[1]
-      let y = (e.coord.lat - CENTER_LAT) * SCALE,
-         x = (e.coord.lng - CENTER_LNG) * SCALE,
-         z = Math.random() * SCALE_Z
-         /*
-        let geomText = new THREE.TextGeometry( e.name, {
-
-              size: 8,
-              height: 5,
-              curveSegments: 3,
-
-              font: "helvetiker",
-              weight: "normal",
-              style: "normal",
-
-              bevelThickness: 2,
-              bevelSize: 1,
-              bevelEnabled: true
-
-            });
-*/
-
-        let shapes = THREE.FontUtils.generateShapes( e.name, {
-          font: "oswald",
-          weight: "normal",
-          size: 5
-        } );
-        let geomText = new THREE.ShapeGeometry( shapes );
-        let matText = new THREE.MeshBasicMaterial({color: 0xffffff});
-        let meshText = new THREE.Mesh( geomText, matText );
-
-        meshText.position.x = x
-        meshText.position.y = y
-        meshText.position.ẑ = 20
-        meshText.lookAt(this.camera.position)
-        this.textMeshes.push(meshText)
-        this.scene.add(meshText)
-    })
-
-  }
-  updateTrainData(trainsData) {
-    // here we set the trains
-    //console.log(trainsData)
-    this.trains.forEach(t => {
-      this.scene.remove(t)
-    })
-    this.trains = []
-
-    let trainGeom = new THREE.BoxGeometry(10, 5, 4),
-      trainMat = new THREE.MeshBasicMaterial({
-        color: 0xffff00
-      });
-
-
-    let dists = this.spline.getLengths(this.topo.length-1)
-    trainsData.forEach((t,i) => {
-
-      let p = t.cnt / t.dur
-      let train = new THREE.Mesh(trainGeom, trainMat);
-      train.progress = p
-      train.duration = t.dur
-      train.stationidx = i
-
-      let a = dists[i],
-        b = dists[i + 1],
-        pos = (Math.abs(a-b) * p) + a,
-        arc = pos / this.spline.getLength()
-
-      train.arc = arc
-      train.b = dists[i+1]
-
-      train.step = (Math.abs(arc - train.b) / this.spline.getLength()) / t.dur
-
-      train.tangent = new THREE.Vector3();
-      train.axis = new THREE.Vector3();
-
-      this.scene.add(train)
-      this.trains.push(train)
-    })
-
-  }
-  update() {
-    this.trains.forEach(t => {
-
-      let arc = t.arc + t.step
-      if (arc <= 1) {
-        /*
-        t.position.copy( this.spline.getPointAt(arc) );
-        this.tangent = this.spline.getTangentAt(arc).normalize();
-        this.axis.crossVectors(UP, this.tangent).normalize();
-        let radians = Math.acos(UP.dot(this.tangent));
-        t.quaternion.setFromAxisAngle(this.axis, radians);
-        t.arc = arc
-        */
-        t.position.copy( this.spline.getPointAt(arc) );
-        t.tangent = this.spline.getTangentAt(arc).normalize();
-        t.axis.crossVectors(UP, t.tangent).normalize();
-        let radians = Math.acos(UP.dot(t.tangent));
-        t.quaternion.setFromAxisAngle(t.axis, radians);
-        t.arc = arc
-      }
-
-
-    })
-    this.textMeshes.forEach(m => {
-      m.lookAt(this.camera.position)
-    })
-  }
-  updateFollowTrain(splineCamera) {
-    //console.log(this.randomTrain.position)
-    //camera.position.copy(this.randomTrain.position)
-
-      var time = Date.now();
-      var looptime = 20 * 1000;
-      var t = ( time % looptime ) / looptime;
-
-      let arc = t % 1
-     splineCamera.position.copy( this.spline.getPointAt(arc) );
-     console.log(splineCamera.position)
-      this.tangent = this.spline.getTangentAt(arc).normalize();
-      this.axis = this.axis.crossVectors(UP, this.tangent).normalize();
-      let radians = Math.acos(UP.dot(this.tangent));
-
-      //splineCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), -Math.PI/2);
-
-      splineCamera.lookAt(splineCamera.position)
-      splineCamera.quaternion.setFromAxisAngle(new THREE.Vector3(0,1,0), radians);
-
-  }
-}
-
 const bgColor1 = new THREE.Color('#fff')
 const bgColor2 = new THREE.Color('#283844')
 const altBgColor1 = invert(bgColor1)
@@ -439,28 +70,12 @@ class WienerLinien extends Scene {
   {
     super(args, new THREE.Vector3(0,45,640))
 
-
     this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
 
-
-    this.line = null
-    this.particles = null
-
-    this.lines = []
-    this.randomMetro = null
-
-    this.sceneStation = null;
-
-
     this.background()
-    this.haltestellen()
-    this.spirals()
+    //this.haltestellen()
+    //this.spirals()
     this.metro()
-
-    //this.onResize();
-    //this.update();
-
-    this.idx = 0
   }
 
   background() {
@@ -563,13 +178,6 @@ class WienerLinien extends Scene {
     return meshes
   }
 
-  updateTrainData() {
-    console.log("updating")
-    this.idx++
-    console.log(this.idx)
-    this.u4.updateTrainData(JSON.parse(U4H[this.idx%2]))
-  }
-
   colorize() {
     this.lines.forEach(l => {
       l.colorize(Math.random())
@@ -613,31 +221,17 @@ class WienerLinien extends Scene {
       l.ordered()
     })
   }
-  metroMode() {
-    //this.clearScene()
-/*
-    let topo = JSON.parse(U_TOPO)
-    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u1, lineColor: new THREE.Color(0xff0000)}))
-    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u2, lineColor: new THREE.Color(0x00f000)}))
-    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u3, lineColor: new THREE.Color(0x00ffff)}))
-
-    this.u4 = new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u4, lineColor: new THREE.Color(0x00ff00)})
-    this.lines.push(new MetroLine({scene: this.scene, camera: this.camera, sceneStation: this.sceneStation, topo: topo.u6, lineColor: new THREE.Color(0x00fff0)}))
-
-    this.u4.updateTrainData(JSON.parse(U4H[this.idx]))
-    this.updateTrainData = this.updateTrainData.bind(this)
-    setInterval(this.updateTrainData, 10000)
-    */
-  }
 
   metro() {
     const VIS = 'metro'
-    const conf = {on: true, text: true}
+    const conf = {on: true, text: true, train: true}
 
     const group = new THREE.Group(),
-      textGroup = new THREE.Group()
+      textGroup = new THREE.Group(),
+      trainGroup = new THREE.Group()
     this.scene.add(group)
     group.add(textGroup)
+    group.add(trainGroup)
     group.visible = conf.on
 
     let metroTopo = require('./test_data/WienerLinienMetro.json')
@@ -678,7 +272,11 @@ class WienerLinien extends Scene {
           //sometimes the data may be curropt
           topo.forEach((t, i) => {
 
-            let e = t[1]
+            t.push(i)// push the index as 3rd element
+
+            let id = t[0],
+               e = t[1]
+
             let y = (e.coord.lat - CENTER_LAT) * SCALE,
              x = (e.coord.lng - CENTER_LNG) * SCALE,
              z = Math.random() * SCALE_Z
@@ -707,7 +305,6 @@ class WienerLinien extends Scene {
               textGroup.add(meshText)
 
           })
-          //group.add(textGroup)
 
           pGeometry.addAttribute( 'position', new THREE.BufferAttribute( particlePositions, 3 ));
           let pMesh = new THREE.Points( pGeometry, pMaterial );
@@ -730,54 +327,132 @@ class WienerLinien extends Scene {
           }
 
           let line = new THREE.Line(geometry, material);
+          line._spline = spline
+          line._topo = topo
+          line._name = u
+          line._trains = []
           group.add(line)
           meshes.push(line)
         }
     })
 
-    /*
-    this.u4.updateTrainData(JSON.parse(U4H[this.idx]))
-    this.updateTrainData = this.updateTrainData.bind(this)
-    setInterval(this.updateTrainData, 10000)
-    */
-
     this.events.on(VIS + '::text', p => textGroup.visible = p)
+    this.events.on(VIS + '::train', p => trainGroup.visible = p)
 
     this.events.on(VIS + '::visOn', _ => group.visible = true)
     this.events.on(VIS + '::visOff', _ => group.visible = false)
 
-    this.events.on(VIS + '::data', d => {
-      console.log("got data")
-      console.log(d)
+
+    this.events.on(VIS + '::data', data => {
+        let trainGeom = new THREE.BoxGeometry(10, 5, 4),
+          trainMat = new THREE.MeshBasicMaterial({
+            color: 0xffff00
+          });
+
+        meshes.forEach(m => {
+
+
+
+          if (m._name !== 'au4') {
+
+          let spline = m._spline,
+            topo = m._topo,
+            name = m._name
+
+            let dists = spline.getLengths(topo.length-1)
+
+            const live = data[name]
+            console.log(name)
+            console.log(live)
+
+            live.forEach(t => {
+              //console.log(t)
+              let stationA = 0,
+                  stationB = 0,
+                  stationAName = '',
+                  stationBName = ''
+
+              topo.forEach(to => {
+                if (to[0] === t.a[0]) {
+                  stationA = to[2]
+                  stationAName = to[1].name
+                }
+                if (to[0] === t.b[0]) {
+                  stationB = to[2]
+                  stationBName = to[1].name
+                }
+              })
+
+
+              let a = dists[stationA],
+                b = dists[stationB],
+                p = t.cnt / t.dur,
+                pos = (Math.abs(a-b) * p) + a,
+                posArc = pos / spline.getLength(),
+                bArc = b / spline.getLength()
+
+              // get a train that has a simmilar posArc
+              const RANGE = 0.1
+              let train = null
+              m._trains.forEach(_ => {
+                if (Math.abs(_.posArc - posArc) <= RANGE) {
+                  train = _
+                  if (_.posArc < posArc) train.posArc = posArc
+                }
+              })
+              if (!train) {
+                train = new THREE.Mesh(trainGeom, trainMat)
+
+
+                train.posArc = posArc
+                train._line = m
+
+                m._trains.push(train)
+                trainGroup.add(train)
+
+              }
+
+
+              train.stepPerSecond = Math.abs(train.posArc - bArc) / t.dur
+
+              //console.log("a " + stationAName + " b "  + stationBName )
+              //console.log("dur " + t.dur + " arc " + posArc + " " + bArc + " sps " + train.stepPerSecond)
+            })
+
+          }
+        })
+
+
+
+
     })
 
+
+    let lastTime = 0
     this.events.on('tick', t => {
+
+      if (Math.floor(t.time) - lastTime > 1) {
+        lastTime = Math.floor(t.time)
+      } else {
+        return
+      }
+
+      meshes.forEach(m => {
+
+        m._trains.forEach(t => {
+
+          t.posArc += t.stepPerSecond
+          if (t.posArc <= 1) {
+            t.position.copy( t._line._spline.getPointAt(t.posArc) )
+          } else {
+             t._ended = true
+          }
+        })
+      })
 
     })
 
     super.addVis(VIS, conf)
-  }
-
-  startGUI(gui)
-  {
-    /*gui.add(this.spirals, 'show').onChange(v => {
-      this.spirals.show = v
-      this.spirals.meshes.forEach(m => m.visible = v)
-    })*/
-    /*
-    gui.add(this.haltestellen, 'show').onChange(v => {
-      this.haltestellen.show = v
-    })*/
-    /*
-    gui.add(this, 'colorize')
-    gui.add(this, 'morphScale')
-    gui.add(this, 'morphChaos')
-    gui.add(this, 'morphOrdered')
-    gui.add(this, 'allMode')
-    gui.add(this, 'metroMode')
-    gui.add(this, 'followRandomTrain')
-    gui.add(this, 'unfollowRandomTrain')
-    */
   }
 
   followRandomTrain() {
@@ -998,10 +673,4 @@ class WienerLinien extends Scene {
   }
 }
 
-export default WienerLinien;
-
-const U4H = [
-'[{"a":[4407,{"name":"Braunschweiggasse","dep":"2015-10-02T22:17:07+02:00","cnt":7,"coord":{"lat":16.2958489362735,"lng":48.1893909421753}}],"b":[4409,{"name":"Hietzing","dep":"2015-10-02T22:10:07+02:00","cnt":0,"coord":{"lat":16.3048074382037,"lng":48.1875411225411}}],"dur":420,"cnt":0,"elapsed":-5},{"a":[4437,{"name":"Längenfeldgasse","dep":"2015-10-02T22:15:07+02:00","cnt":5,"coord":{"lat":16.3350274604032,"lng":48.1848294222246}}],"b":[4415,{"name":"Margaretengürtel","dep":"2015-10-02T22:10:07+02:00","cnt":0,"coord":{"lat":16.3430565952858,"lng":48.1884624935717}}],"dur":300,"cnt":0,"elapsed":-5},{"a":[4419,{"name":"Kettenbrückengasse","dep":"2015-10-02T22:13:07+02:00","cnt":3,"coord":{"lat":16.3580963578673,"lng":48.1966084835194}}],"b":[4421,{"name":"Karlsplatz","dep":"2015-10-02T22:10:07+02:00","cnt":0,"coord":{"lat":16.3696266443499,"lng":48.2003468882865}}],"dur":180,"cnt":0,"elapsed":-5},{"a":[4425,{"name":"Wien Mitte-Landstraße","dep":"2015-10-02T22:13:07+02:00","cnt":3,"coord":{"lat":16.3849013036542,"lng":48.2068884928784}}],"b":[4427,{"name":"Schwedenplatz","dep":"2015-10-02T22:11:07+02:00","cnt":1,"coord":{"lat":16.3781379720207,"lng":48.2118734058631}}],"dur":120,"cnt":60,"elapsed":54},{"a":[4439,{"name":"Spittelau","dep":"2015-10-02T22:17:07+02:00","cnt":7,"coord":{"lat":16.3585973388896,"lng":48.2348654941687}}],"b":[4435,{"name":"Heiligenstadt","dep":"2015-10-02T22:10:12+02:00","cnt":null,"coord":{"lat":16.3657126383479,"lng":48.2481647787235}}],"dur":414,"cnt":0,"elapsed":0}]',
-'[{"a":[4407,{"name":"Braunschweiggasse","dep":"2015-10-02T22:17:19+02:00","cnt":7,"coord":{"lat":16.2958489362735,"lng":48.1893909421753}}],"b":[4409,{"name":"Hietzing","dep":"2015-10-02T22:10:19+02:00","cnt":0,"coord":{"lat":16.3048074382037,"lng":48.1875411225411}}],"dur":420,"cnt":0,"elapsed":-3},{"a":[4437,{"name":"Längenfeldgasse","dep":"2015-10-02T22:15:19+02:00","cnt":5,"coord":{"lat":16.3350274604032,"lng":48.1848294222246}}],"b":[4415,{"name":"Margaretengürtel","dep":"2015-10-02T22:10:19+02:00","cnt":0,"coord":{"lat":16.3430565952858,"lng":48.1884624935717}}],"dur":300,"cnt":0,"elapsed":-3},{"a":[4421,{"name":"Karlsplatz","dep":"2015-10-02T22:14:19+02:00","cnt":4,"coord":{"lat":16.3696266443499,"lng":48.2003468882865}}],"b":[4423,{"name":"Stadtpark","dep":"2015-10-02T22:11:19+02:00","cnt":1,"coord":{"lat":16.3797045857124,"lng":48.202834635245}}],"dur":180,"cnt":60,"elapsed":56},{"a":[4425,{"name":"Wien Mitte-Landstraße","dep":"2015-10-02T22:13:19+02:00","cnt":3,"coord":{"lat":16.3849013036542,"lng":48.2068884928784}}],"b":[4427,{"name":"Schwedenplatz","dep":"2015-10-02T22:11:19+02:00","cnt":1,"coord":{"lat":16.3781379720207,"lng":48.2118734058631}}],"dur":120,"cnt":60,"elapsed":56},{"a":[4439,{"name":"Spittelau","dep":"2015-10-02T22:17:19+02:00","cnt":7,"coord":{"lat":16.3585973388896,"lng":48.2348654941687}}],"b":[4435,{"name":"Heiligenstadt","dep":"2015-10-02T22:10:22+02:00","cnt":null,"coord":{"lat":16.3657126383479,"lng":48.2481647787235}}],"dur":416,"cnt":0,"elapsed":0}]'
-]
-const U4H_TOPO = '[[4401,{"name":"Hütteldorf","coord":{"lat":16.2616900341892,"lng":48.1967033921057}}],[4403,{"name":"Ober St. Veit","coord":{"lat":16.2761421051764,"lng":48.1922152206823}}],[4405,{"name":"Unter St. Veit","coord":{"lat":16.2862309151268,"lng":48.191059913826}}],[4407,{"name":"Braunschweiggasse","coord":{"lat":16.2958489362735,"lng":48.1893909421753}}],[4409,{"name":"Hietzing","coord":{"lat":16.3048074382037,"lng":48.1875411225411}}],[4411,{"name":"Schönbrunn","coord":{"lat":16.3188756298956,"lng":48.1860242352856}}],[4413,{"name":"Meidling Hauptstraße","coord":{"lat":16.3278462545748,"lng":48.1836150390959}}],[4437,{"name":"Längenfeldgasse","coord":{"lat":16.3350274604032,"lng":48.1848294222246}}],[4415,{"name":"Margaretengürtel","coord":{"lat":16.3430565952858,"lng":48.1884624935717}}],[4417,{"name":"Pilgramgasse","coord":{"lat":16.3543418369313,"lng":48.192148491652}}],[4419,{"name":"Kettenbrückengasse","coord":{"lat":16.3580963578673,"lng":48.1966084835194}}],[4421,{"name":"Karlsplatz","coord":{"lat":16.3696266443499,"lng":48.2003468882865}}],[4423,{"name":"Stadtpark","coord":{"lat":16.3797045857124,"lng":48.202834635245}}],[4425,{"name":"Wien Mitte-Landstraße","coord":{"lat":16.3849013036542,"lng":48.2068884928784}}],[4427,{"name":"Schwedenplatz","coord":{"lat":16.3781379720207,"lng":48.2118734058631}}],[4429,{"name":"Schottenring","coord":{"lat":16.3720190919918,"lng":48.2166328870559}}],[4431,{"name":"Roßauer Lände","coord":{"lat":16.3676222777947,"lng":48.2223538520703}}],[4433,{"name":"Friedensbrücke","coord":{"lat":16.3643548168789,"lng":48.2275707529209}}],[4439,{"name":"Spittelau","coord":{"lat":16.3585973388896,"lng":48.2348654941687}}],[4435,{"name":"Heiligenstadt","coord":{"lat":16.3657126383479,"lng":48.2481647787235}}]]'
+export default WienerLinien

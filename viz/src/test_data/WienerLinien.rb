@@ -45,7 +45,7 @@ open("#{URL}monitor#{req}") {|f|
 return nodes.sort_by { |k,v| rbls.index(k)} #.to_h
 end
 
-def get_live_data(rbls)
+def get_live_metro(rbls)
 req = "?rbl=#{rbls.join("&rbl=")}#{SD}"
 nodes = {}
 graph = []
@@ -93,9 +93,20 @@ open("#{URL}monitor#{req}") {|f|
  return graph
 end
 
+def get_live_data()
+
+  return {
+    :u1 => get_live_metro(U1_H),
+    :u2 => get_live_metro(U2_H),
+    :u3 => get_live_metro(U3_H),
+    :u4 => get_live_metro(U4_H),
+    :u6 => get_live_metro(U6_H)
+  }
+end
+
 
 loop do
-  a = get_live_data(U4_H)
+  a = get_live_data()
   puts "sending"
   @client.send(OSC::Message.new("/vis" , "metro", "data", a.to_json))
   sleep 10

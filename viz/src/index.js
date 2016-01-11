@@ -103,7 +103,7 @@ class Main {
       if (oscMsg.address === '/vis') {
             let name = oscMsg.args[0],
              prop = oscMsg.args[1],
-             val = oscMsg.args[2]
+             val = JSON.parse(oscMsg.args[2])
 
             this.events.emit("vis", {[name]:{[prop]:val}})
       }
@@ -126,8 +126,8 @@ class Main {
     })
     this.oscPort.open()
 
-    navigator.webkitGetUserMedia({audio: true}, stream => {
-      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+    //navigator.webkitGetUserMedia({audio: true}, stream => {
+     // this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
 
 
       const args = {
@@ -157,7 +157,7 @@ class Main {
 
 
 
-     }, err => console.log(err))
+     //}, err => console.log(err))
 
 
 
