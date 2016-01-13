@@ -267,9 +267,10 @@ class Drones extends Scene {
   {
     super(args, new THREE.Vector3(0,0,DISTANCE_EARTH))
 
-    this.background()
+    //this.background()
     //stars()
     this.globe()
+    this.pictures()
   }
 
   globe() {
@@ -620,34 +621,170 @@ class Drones extends Scene {
 
   }
 
-/*
-  startGUI()
-  {
-    this.gui.add(this.globe, 'explode')
-    this.gui.add(this.globe, 'createRndFire')
-    this.gui.add(this.globe, 'moveGlobeRnd')
-    this.gui.add(this.globe, 'moveGlobe')
-    this.gui.add(this.globe, 'glitch')
-    this.gui.add(this.globe, 'createBoxes')
-    this.gui.add(this.globe, 'removeBoxes')
-    this.gui.add(this.globe, 'visText')
-    this.gui.add(this.globe.vis, 'amplitude', 0.0, 1.0)
-    this.gui.add(this.globe.vis, 'speed', 0.0, 1.0)
-    this.gui.add(this.globe.vis, 'text', 'asdf')
+  pictures() {
+    const VIS = 'particles'
+    const conf = {on:true, animation: 1}
 
-    this.gui.add(this, 'flySpeed', -20, 20)
-    this.gui.add(this, 'showStars')
+    const group = new THREE.Group()
+    this.scene.add(group)
+    group.visible = conf.on
 
-    this.gui.add(this.globe, 'showPakistan')
-    this.gui.add(this.globe, 'showEarth')
+    let mesh = null
 
-    this.gui.add(this.globe.earth, 'glowing', 0.3, 3.0)
-    this.gui.add(this.globe.earth, 'wobble', 0.0, 1.0)
+    const _getImgData = (pic) => {
 
-    this.gui.add(this.globe.target, 'x', -Math.PI, Math.PI)
-    this.gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
+      return new Promise(function (fulfill, reject){
+
+        var canvas = document.createElement("canvas");
+        var context = canvas.getContext("2d");
+        var image = new Image();
+        image.src = pic;
+        image.onload = function() {
+          canvas.width = image.width;
+          canvas.height = image.height;
+          context.drawImage(image, 0, 0);
+          var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+          fulfill(imgData)
+        }
+
+      })
+    }
+
+    const _getPixel = (imgData, x, y) => {
+      var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+      r = imgData.data[offset];
+      g = imgData.data[offset + 1];
+      b = imgData.data[offset + 2];
+      a = imgData.data[offset + 3];
+
+      return new THREE.Color(r,g,b)
+    }
+
+    const MAX_PARTICLES = 1000 * 100000// has 2mio pixels
+    const MAX_PARTICLE_DIST= 50
+    const IMG_SCALE = 1
+
+      this.loader.load('/assets/Drones/earth.jpg', (texture) => {
+        const bgImg = texture.image.src
+
+        _getImgData(bgImg).then(imgData => {
+
+          let geometry = new THREE.BufferGeometry()
+
+          const imgSize = imgData.width * imgData.height
+          console.log("Image pixels: " + imgData.width * imgData.height)
+
+          let PARTICLES_AMOUNT = MAX_PARTICLES
+          if (MAX_PARTICLES > imgSize) {
+            PARTICLES_AMOUNT = imgSize
+          }
+
+          var positions = new Float32Array(PARTICLES_AMOUNT * 3);
+          var colors = new Float32Array(PARTICLES_AMOUNT * 3);
+          // displacement values
+          var extras = new Float32Array(PARTICLES_AMOUNT * 3);
+          var puv = new Float32Array(PARTICLES_AMOUNT * 2);
+
+
+          let total = imgData.width * imgData.height,
+              step = Math.floor(total / PARTICLES_AMOUNT)
+
+          for (var i = 0, i2 = 0, i3 = 0, ipx = 0;
+               i < PARTICLES_AMOUNT;
+               i++ , i2 += 2, i3 += 3, ipx += step) {
+
+              let x = ipx % imgData.width,
+                 y = ipx / imgData.width | 0,
+                 pixel = _getPixel(imgData, x, y)
+
+              let position = new THREE.Vector3(
+                  //(x - imgData.width / 2) * IMG_SCALE,
+                  //(imgData.height / 2 - y) * IMG_SCALE,
+                  //0)
+                x,y,0)
+
+
+
+            // UV from 0 to 1
+            puv[i2 + 0] = position.x / imgData.width;
+            puv[i2 + 1] = position.y / imgData.height;
+
+            // Position
+            positions[i3 + 0] = position.x;
+            positions[i3 + 1] = position.y;
+            positions[i3 + 2] = position.z;
+
+            // Extras
+            extras[i3 + 0] = Math.random()
+            extras[i3 + 1] = Math.random()
+            extras[i3 + 2] = Math.random()
+
+            // Color
+            let color = pixel
+            colors[i3 + 0] = color.r/255;
+            colors[i3 + 1] = color.g/255;
+            colors[i3 + 2] = color.b/255;
+
+          }
+
+          geometry.addAttribute( 'position', new THREE.BufferAttribute(positions, 3));
+
+          geometry.addAttribute( 'color', new THREE.BufferAttribute(colors, 3));
+          geometry.addAttribute( 'extra', new THREE.BufferAttribute(extras, 3));
+          //http://stackoverflow.com/questions/15697898/why-particle-system-with-shader-doesnt-work-three-js
+          geometry.addAttribute( 'puv', new THREE.BufferAttribute(puv, 2));
+
+          let material = new THREE.ShaderMaterial( {
+
+              uniforms: {
+                  uTime: { type: 'f', value: 0 },
+                  uTimeInit: { type: 'f', value: randomInt(0, 100) },
+                  uAnimation: { type: 'f', value: conf.animation },
+                  bgImg: { type: 't', value: bgImg },
+                  uSphereRadius: {type: 'f', value: 1000},
+                  uMatrightBottom: { type: 'v2', value: new THREE.Vector2( 180.0, -90.0 ) },
+                  uMatleftTop: { type: 'v2', value: new THREE.Vector2( -180.0, 90.0 ) },
+              },
+              vertexShader: glslify(__dirname + '/glsl/Drones/Globe.vert'),
+              fragmentShader: glslify(__dirname + '/glsl/Drones/Globe.frag'),
+              blending: THREE.AdditiveBlending,
+              transparent: false,
+              depthWrite: true,
+              depthTest: false
+          } );
+
+          let particles = new THREE.Points(geometry, material)
+          particles.visible = true
+          group.add(particles)
+          mesh = particles
+
+          this.events.on('tick', t => {
+            material.uniforms.uTime.value = t.time * 0.2
+          })
+        })
+
+      })
+
+    const doNext = () => {
+
+      mesh.material.uniforms.uAnimation.value = 1
+
+      tweenr.to(mesh.material.uniforms.uAnimation, {
+        value: 0, duration: 2})
+
+    }
+    this.events.on(VIS + '::doNext', p => {
+      doNext() /*p.duration?*/
+    })
+    conf.doNext = doNext
+
+      this.events.on(VIS + '::visOn', _ => group.visible = true)
+      this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+    super.addVis(VIS, conf)
   }
-  */
+
+
 
 }
 
