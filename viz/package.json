@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "osc": "node ../osc/index.js",
-    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t [ babelify --presets [ es2015 ] --plugins [ syntax-async-functions ] ] -g glslify | garnish",
+    "start": "budo --dir dist/ src/index.js:js/bundle.js -v --live -- -t [ babelify --presets [ es2015 stage-0 ] --plugins [ syntax-async-functions ] ] -g glslify | garnish",
     "build": "browserify -t [ babelify --presets [ es2015 stage-0 ] ] -g glslify src/index.js | uglifyjs -cm > dist/js/bundle.js"
   },
   "repository": {

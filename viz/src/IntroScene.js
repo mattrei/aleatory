@@ -44,10 +44,81 @@ class IntroScene extends Scene {
         this.createParticles()
         this.createFloor()
 
+        this.xtion()
 
         //this.createTriangles()
         //this.createFlyingLine()
     }
+
+  xtion() {
+     const VIS = 'xtion'
+     const conf = {on: true}
+     const group = new THREE.Group()
+     group.visible = conf.on
+     this.scene.add(group)
+
+     const width = 640, height = 480;
+		 const nearClipping = 850, farClipping = 4000;
+
+     let geometry = new THREE.BufferGeometry();
+		 let vertices = new Float32Array( width * height * 3 );
+
+					for ( let i = 0, j = 0, l = vertices.length; i < l; i += 3, j ++ ) {
+
+						vertices[ i ] = j % width;
+						vertices[ i + 1 ] = Math.floor( j / width );
+
+					}
+
+		geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+
+
+			let material = new THREE.ShaderMaterial( {
+
+						uniforms: {
+
+							"map": { type: "t", value: null },
+							"width": { type: "f", value: width },
+							"height": { type: "f", value: height },
+							"nearClipping": { type: "f", value: nearClipping },
+							"farClipping": { type: "f", value: farClipping },
+
+							"pointSize": { type: "f", value: 2 },
+							"zOffset": { type: "f", value: 1000 }
+
+						},
+						vertexShader: glslify('./glsl/Xtion.vert'),
+						fragmentShader: glslify('./glsl/Xtion.frag'),
+						blending: THREE.AdditiveBlending,
+						depthTest: false,
+            depthWrite: false,
+						transparent: true
+
+					} );
+
+		let mesh = new THREE.Points( geometry, material )
+    group.add( mesh )
+
+
+    let lastTexture = null
+    this.events.on(VIS+'::data', data => {
+       //console.log("got")
+       //console.log(data)
+
+      this.loader.load(data.img, (texture) => {
+
+        mesh.material.uniforms.map.value = texture
+        mesh.material.needsUpdate = true
+
+        if (lastTexture) lastTexture.dispose()
+        lastTexture = texture
+      })
+     })
+
+
+     super.addVis(VIS, conf)
+
+  }
 
     background() {
 
@@ -96,24 +167,19 @@ class IntroScene extends Scene {
     buildings() {
 
       const VIS = 'buildings'
-      let conf = {on:true, speed: 1}
+      let conf = {on:false, speed: 1}
       const group = new THREE.Group()
+      group.visible = conf.on
       this.scene.add(group)
-      this.scene.visible = conf.on
-
-      const Dyn = require('./utils/DynamicTexture')
-      console.log(Dyn)
 
 
-
-
-      var canvas  = document.createElement( 'canvas' ),
+      const canvas  = document.createElement( 'canvas' ),
           context = canvas.getContext( '2d' );
 
-      var smCanvas  = document.createElement( 'canvas' )
-          //const smCanvas = canvas
-          smCanvas.width  = 32
+      const smCanvas  = document.createElement( 'canvas' ),
+            smContext = smCanvas.getContext( '2d' )
 
+      smCanvas.width  = 32
 
       canvas.width  = 512
       canvas.height = 1024
@@ -124,7 +190,6 @@ class IntroScene extends Scene {
           const freq = super.getFreq(40, 60)
           const height = 64 + freq * 64
           smCanvas.height = height
-          var smContext = smCanvas.getContext( '2d' )
 
           smContext.fillStyle = '#ffffff';
           smContext.fillRect( 0, 0, 32, height );
@@ -143,23 +208,7 @@ class IntroScene extends Scene {
         texture.needsUpdate = true
       })
 
-
-
-
       const meshes = []
-
-      this.loader.load(
-          '/assets/Intro/window.jpg', (sprite) => {
-
-
-					let windowMaterial = new THREE.PointsMaterial( {
-            size: 20,
-            map: sprite,
-            blending: THREE.AdditiveBlending,
-            depthTest: false,
-            transparent : true,
-            fog: true
-          } );
 
       const SIZE = {x:80, y: 400, z:80}
 
@@ -205,10 +254,8 @@ class IntroScene extends Scene {
               windowGeometry.vertices.push( p );
             })
             windowGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
-            let windowParticles = new THREE.Points( windowGeometry, windowMaterial );
 
             building.add(mesh)
-            //building.add(windowParticles)
 
             meshes.push(building)
             group.add(building)
@@ -238,8 +285,6 @@ class IntroScene extends Scene {
           })
 
       })
-
-          })
 
       this.events.on(VIS+'::visOn', _ => group.visible = true)
       this.events.on(VIS+'::visOff', _ => group.visible = false)

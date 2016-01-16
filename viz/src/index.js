@@ -83,7 +83,6 @@ class Main {
   init() {
 
     this.oscPort.on("message", (oscMsg) => {
-      console.log(oscMsg)
       if (oscMsg.address === '/scene') {
             let n = oscMsg.args[0]
             console.log("Scene change. "+ n)
