@@ -54,32 +54,6 @@ const DISTANCE_EARTH = 1000
 var Globe = function(opts) {
   opts = opts || {};
 
-  var Shaders = {
-    'atmosphere' : {
-      uniforms: {
-        'glowIntensity': {type: 'f', value: 12.0},
-        'redIntensity': {type: 'f', value: 1.0}
-      },
-      vertexShader: [
-        'varying vec3 vNormal;',
-        'void main() {',
-          'vNormal = normalize( normalMatrix * normal );',
-          'gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );',
-        '}'
-      ].join('\n'),
-      /*lower intensity pow*/
-      fragmentShader: [
-        'uniform float glowIntensity;',
-        'uniform float redIntensity;',
-        'varying vec3 vNormal;',
-        'void main() {',
-          'float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), glowIntensity );',
-          'vec3 color = mix(vec3(1.,1.,1.), vec3(.5,0.,0.), redIntensity);',
-          'gl_FragColor = vec4( color, 1.0 ) * intensity;',
-        '}'
-      ].join('\n')
-    }
-  };
 
   var stats
 
@@ -111,12 +85,12 @@ var Globe = function(opts) {
   var padding = 40;
 
   var canvas = document.createElement('canvas');
-  
+
   var postprocessing = {};
 
   function startStats()
   {
-    stats = new Stats(); 
+    stats = new Stats();
     stats.domElement.style.position = 'absolute';
     document.body.appendChild(stats.domElement);
   }
@@ -209,10 +183,10 @@ var Globe = function(opts) {
     texture.minFilter = THREE.NearestFilter
     starMat.map = texture
     starMat.side = THREE.BackSide;
-                
+
     var starMesh = new THREE.Mesh(starGeo, starMat);
-    scene.add(starMesh); 
-    
+    scene.add(starMesh);
+
     // Particles
     let emitterSettings = {
                 type: SPE.distributions.SPHERE,
@@ -249,7 +223,7 @@ var Globe = function(opts) {
     particleGroup.addPool(NUM_RAND_FIRES, emitterSettings, false)
     scene.add( particleGroup.mesh );
 
-    
+
 
     // Atmosphere
     shader = Shaders['atmosphere'];
@@ -271,7 +245,7 @@ var Globe = function(opts) {
     mesh.scale.set( 1.1, 1.1, 1.1 );
     scene.add(mesh);
 
-    
+
 
     geometry = new THREE.BoxGeometry(0.75, 0.75, 1);
     geometry.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
@@ -287,7 +261,7 @@ var Globe = function(opts) {
     let controls = new OrbitControls(camera, renderer.domElement);
     controls.maxDistance = 300000;
     renderer.domElement.addEventListener('mousewheel', onMouseWheel, false);
-    
+
     initPass()
 
   }
@@ -317,7 +291,7 @@ var Globe = function(opts) {
       let lat = MathF.random(-90,90),
         lng = MathF.random(-180, 180)
 
-       
+
 
       let p = _getPosFromLatLng(lat, lng)
       addBox(p, MathF.random(1, 5), 0xff00f0)
@@ -333,7 +307,7 @@ var Globe = function(opts) {
 
   function visText() {
 
-      
+
 
         var str = vis.text
         const FONT_SIZE = 120,
@@ -361,7 +335,7 @@ var Globe = function(opts) {
                 index = i / 4;
                 let x = index % width,
                   y = index / width | 0;
-                
+
                 vertices.push(new THREE.Vector2(x,y))
                 count++;
             }
@@ -555,7 +529,7 @@ var Globe = function(opts) {
     tween.on('complete', () => {
       camera.lookAt(new THREE.Vector3(pos.x, pos.y, 0))
     })
-    
+
 
   }
 
@@ -574,7 +548,7 @@ var Globe = function(opts) {
   }
 
   function showEarth() {
-    
+
     let tween = tweenr.to(dist, {
       earth: DISTANCE_EARTH,
       duration: 2
@@ -620,7 +594,7 @@ var Globe = function(opts) {
     })
 
     tween.on('update',() => {
-      _moveEarth()  
+      _moveEarth()
     })
   }
 
@@ -628,7 +602,7 @@ var Globe = function(opts) {
 
     let p = _getPosFromLatLng(lat, lng)
     particleGroup.triggerPoolEmitter( 1, p );
-  } 
+  }
 
   function _getPosFromLatLng(lat, lng) {
 
@@ -636,7 +610,7 @@ var Globe = function(opts) {
        theta = (180 - lng) * Math.PI / 180;
 
     return new THREE.Vector3(
-      200 * Math.sin(phi) * Math.cos(theta), 
+      200 * Math.sin(phi) * Math.cos(theta),
       200 * Math.cos(phi),
       200 * Math.sin(phi) * Math.sin(theta))
   }
@@ -660,23 +634,23 @@ var Globe = function(opts) {
     })
 
     tween.on('update',() => {
-      _moveEarth()  
+      _moveEarth()
     })
-    
+
   }
 
   function explode() {
 
     var geometry = mesh.geometry
 
-   
+
                 for(var i = 0; i < (geometry.vertices.length); i++)
                 {
 
                     var pos = new THREE.Vector3();
                     var v = geometry.vertices[i]
 
-                  
+
                     pos.x = v.x * (Math.random() * 100 + 50);
                     pos.y = v.y * (Math.random() * 100 + 50);
                     pos.z = v.z * (Math.random() * 100 + 50);
@@ -688,7 +662,7 @@ var Globe = function(opts) {
                     .onUpdate( function() { geometry.verticesNeedUpdate = true })
                     .start();
 
-                    
+
                 }
 
   }
@@ -727,7 +701,7 @@ var Globe = function(opts) {
 };
 
 class Drones {
-  constructor(args) 
+  constructor(args)
   {
 
     this.stars = []
@@ -742,24 +716,24 @@ class Drones {
 
     this.createTextDiv()
 
-    this.globe.animate() 
+    this.globe.animate()
 
     this.startGUI()
 
-    
+
     this.makeStars()
 
-    
+
 
   }
 
-  update() 
+  update()
   {
 
     if (this.stars) {
-      
+
       let stars = this.stars.slice(0)
-      
+
       stars.forEach(s => {
         s.position.z += this.flySpeed * 10 //* s.speed
 
@@ -779,7 +753,7 @@ class Drones {
 
   }
 
-  addStar() 
+  addStar()
   {
     let geometry = this.createStarGeometry()
     let star = this.makeStar(geometry)
@@ -789,7 +763,7 @@ class Drones {
     return star
   }
 
-  makeStar(geometry) 
+  makeStar(geometry)
   {
       let material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: Math.random() * 4 } );
 
@@ -805,7 +779,7 @@ class Drones {
       return line
   }
 
-  createStarGeometry() 
+  createStarGeometry()
   {
     let r = 450
     let geometry = new THREE.Geometry();
@@ -856,12 +830,12 @@ class Drones {
 
   showStars() {
     this.stars.forEach(s => {
-      s.visible = !s.visible  
+      s.visible = !s.visible
     })
-    
+
   }
 
-  createTextDiv() 
+  createTextDiv()
   {
     let counter = document.createElement('div')
     counter.id = TEXT_DIV
@@ -871,7 +845,7 @@ class Drones {
     counter.style.position = "absolute"
     counter.style.left = "70%"
     counter.style.top = "50%"
-    document.body.appendChild(counter); 
+    document.body.appendChild(counter);
   }
 
   startGUI()
@@ -902,7 +876,7 @@ class Drones {
     gui.add(this.globe.target, 'y', -PI_HALF, PI_HALF)
   }
   onResize(e)
-  {  
+  {
     this.globe.renderer.setSize( window.innerWidth, window.innerHeight)
     this.globe.camera.aspect = window.innerWidth / window.innerHeight
     this.globe.camera.updateProjectionMatrix();

@@ -45,7 +45,6 @@ varying vec3 vColor;
        //vec3 curlPosition = curl(position + time); //+ (time * 0.05));
        //curlPosition *= - 50.;
 
-       vec3 newPosition = vec3(position.x,position.y, displacement*2.);
        vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
         gl_Position = projectionMatrix * mvPosition;

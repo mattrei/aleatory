@@ -57,6 +57,10 @@ add map as surface
 https://github.com/geommills/esrileaflet3JS/blob/master/scripts/client/src/terrain.js
 */
 
+
+// TODO
+// http://makiopolis.com/
+
 const bgColor1 = new THREE.Color('#fff')
 const bgColor2 = new THREE.Color('#283844')
 const altBgColor1 = invert(bgColor1)

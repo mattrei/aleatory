@@ -2,6 +2,7 @@ global.THREE = require('three')
 const OrbitControls = require('three-orbit-controls')(THREE)
 import Events from 'minivents'
 const average = require('analyser-frequency-average')
+const random = require('random-float')
 
 class Scene {
 
@@ -248,6 +249,8 @@ class Scene {
   }
 
   getFreq(min, max) {
+    if (!this.analyser) return random(min,max)
+
     return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
   }
 

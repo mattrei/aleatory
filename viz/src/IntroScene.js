@@ -13,6 +13,7 @@ const GeometryUtils = require('./utils/GeometryUtils')
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
 
+const smoothstep = require('smoothstep')
 
 const PARTICLES_AMOUNT = 300000
 
@@ -38,15 +39,86 @@ class IntroScene extends Scene {
         this.createText()
         this.background()
         this.street()
-        this.createBuildings()
+        this.buildings()
         this.cars()
         this.createParticles()
         this.createFloor()
 
+        this.xtion()
 
         //this.createTriangles()
         //this.createFlyingLine()
     }
+
+  xtion() {
+     const VIS = 'xtion'
+     const conf = {on: true}
+     const group = new THREE.Group()
+     group.visible = conf.on
+     this.scene.add(group)
+
+     const width = 640, height = 480;
+		 const nearClipping = 850, farClipping = 4000;
+
+     let geometry = new THREE.BufferGeometry();
+		 let vertices = new Float32Array( width * height * 3 );
+
+					for ( let i = 0, j = 0, l = vertices.length; i < l; i += 3, j ++ ) {
+
+						vertices[ i ] = j % width;
+						vertices[ i + 1 ] = Math.floor( j / width );
+
+					}
+
+		geometry.addAttribute( 'position', new THREE.BufferAttribute( vertices, 3 ) );
+
+
+			let material = new THREE.ShaderMaterial( {
+
+						uniforms: {
+
+							"map": { type: "t", value: null },
+							"width": { type: "f", value: width },
+							"height": { type: "f", value: height },
+							"nearClipping": { type: "f", value: nearClipping },
+							"farClipping": { type: "f", value: farClipping },
+
+							"pointSize": { type: "f", value: 2 },
+							"zOffset": { type: "f", value: 1000 }
+
+						},
+						vertexShader: glslify('./glsl/Xtion.vert'),
+						fragmentShader: glslify('./glsl/Xtion.frag'),
+						blending: THREE.AdditiveBlending,
+						depthTest: false,
+            depthWrite: false,
+						transparent: true
+
+					} );
+
+		let mesh = new THREE.Points( geometry, material )
+    group.add( mesh )
+
+
+    let lastTexture = null
+    this.events.on(VIS+'::data', data => {
+       //console.log("got")
+       //console.log(data)
+
+      this.loader.load(data.img, (texture) => {
+
+        mesh.material.uniforms.map.value = texture
+        mesh.material.needsUpdate = true
+
+        if (lastTexture) lastTexture.dispose()
+        lastTexture = texture
+      })
+     })
+
+
+     super.addVis(VIS, conf)
+
+  }
 
     background() {
 
@@ -92,60 +164,56 @@ class IntroScene extends Scene {
 
     }
 
-    createBuildings() {
+    buildings() {
 
-      let conf = {on:false}
-
-      let generateTexture = () => {
-        var canvas  = document.createElement( 'canvas' )
-        canvas.width  = 32
-        canvas.height = 64
-        var context = canvas.getContext( '2d' )
-        context.fillStyle = '#ffffff';
-        context.fillRect( 0, 0, 32, 64 );
-         // draw the window rows - with a small noise to simulate light variations in each room
-        for( var y = 2; y < 64; y += 2 ){
-            for( var x = 0; x < 32; x += 2 ){
-                var value   = Math.floor( Math.random() * 64 );
-                context.fillStyle = 'rgb(' + [value, value, value].join( ',' )  + ')';
-                context.fillRect( x, y, 2, 1 );
-            }
-        }
-        var canvas2 = document.createElement( 'canvas' );
-        canvas2.width    = 512;
-        canvas2.height   = 1024;
-        var context = canvas2.getContext( '2d' );
-        // disable smoothing
-        context.imageSmoothingEnabled        = false;
-        // then draw the image
-        context.drawImage( canvas, 0, 0, canvas2.width, canvas2.height );
-        // return the just built canvas2
-        return canvas2;
-      }
-
-      let texture   = new THREE.Texture( generateTexture() )
-      //texture.anisotropy  = this.renderer.getMaxAnisotropy()
-      //texture.needsUpdate = true
+      const VIS = 'buildings'
+      let conf = {on:false, speed: 1}
+      const group = new THREE.Group()
+      group.visible = conf.on
+      this.scene.add(group)
 
 
-      this.loader.load(
-          '/assets/Intro/window.jpg', (sprite) => {
+      const canvas  = document.createElement( 'canvas' ),
+          context = canvas.getContext( '2d' );
+
+      const smCanvas  = document.createElement( 'canvas' ),
+            smContext = smCanvas.getContext( '2d' )
+
+      smCanvas.width  = 32
+
+      canvas.width  = 512
+      canvas.height = 1024
+      let texture   = new THREE.Texture( canvas )
+      texture.anisotropy  = this.renderer.getMaxAnisotropy()
+
+      this.events.on('tick', t => {
+          const freq = super.getFreq(40, 60)
+          const height = 64 + freq * 64
+          smCanvas.height = height
+
+          smContext.fillStyle = '#ffffff';
+          smContext.fillRect( 0, 0, 32, height );
+           // draw the window rows - with a small noise to simulate light variations in each room
+          for( var y = 2; y < height; y += 2 ){
+              for( var x = 0; x < 32; x += 2 ){
+                  var value   = Math.floor( x % 6 );
+                  smContext.fillStyle = 'rgb(' + [value, value, value].join( ',' )  + ')';
+                  smContext.fillRect( x, y, 2, 1 );
+              }
+          }
+
+        context.imageSmoothingEnabled = false
+        context.drawImage( smCanvas, 0, 0, canvas.width, canvas.height );
+
+        texture.needsUpdate = true
+      })
+
+      const meshes = []
+
+      const SIZE = {x:80, y: 400, z:80}
 
 
-					let windowMaterial = new THREE.PointsMaterial( {
-            size: 20,
-            map: sprite,
-            blending: THREE.AdditiveBlending,
-            depthTest: false,
-            transparent : true,
-            fog: true
-          } );
-
-      const SIZE = {x:100, y: 300, z:100}
-
-
-      const buildings = []
-        for( var i = 0; i < NUM_RIBBONS * 3; i ++ ){
+        for( var i = 0; i < NUM_RIBBONS; i ++ ){
 
             let building = new THREE.Object3D()
 
@@ -154,11 +222,11 @@ class IntroScene extends Scene {
             geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
 
 
-            //var material = new THREE.MeshLambertMaterial({color: 0x3d5c5c, fog:true, wireframe: false})
-          var material  = new THREE.MeshLambertMaterial({
-            map     : texture
-            //vertexColors    : THREE.VertexColors
-          });
+            var material = new THREE.MeshLambertMaterial({
+              map: texture,
+              vertexColors : THREE.VertexColors,
+              color: 0x3d5c5c, fog:false, wireframe: false})
+          //var material  = new THREE.MeshNormalMaterial()
 
             var mesh = new THREE.Mesh( geometry, material );
 
@@ -171,19 +239,14 @@ class IntroScene extends Scene {
 
 
               // put a random position
-              let coin = randomInt(0,1) ? -1 : 1
-              building.position.x = STREET_WIDTH + sx * 0.5 * coin
+              //const leftRight = randomInt(0,1) ? -1 : 1
+              //building.position.x = STREET_WIDTH * 3 * leftRight
               building.position.z   = -1 * random(0, STREET_LENGTH)
-              building.rotation.z = Math.PI * 0.1 * coin
+              //building.rotation.z = Math.PI * 0.05 * leftRight
               //mesh.position.z   = 200
 
               // put a random rotation
-              building.rotation.y   = random(0, Math.PI*2)
-
-
-
-            //this.scene.add(mesh)
-
+              //building.rotation.y   = random(0, Math.PI*2)
 
             let windowGeometry = new THREE.Geometry();
 
@@ -191,20 +254,17 @@ class IntroScene extends Scene {
               windowGeometry.vertices.push( p );
             })
             windowGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
-            let windowParticles = new THREE.Points( windowGeometry, windowMaterial );
 
             building.add(mesh)
-            building.add(windowParticles)
-            this.scene.add(building)
-            buildings.push(building)
+
+            meshes.push(building)
+            group.add(building)
 
         }
 
       this.events.on('tick', t => {
 
-        buildings.forEach((b, i) => {
-
-          b.visible = conf.on
+        meshes.forEach((b, i) => {
 
           let r = Math.sin((t.time + b.position.z * 0.2) * 0.02)
 
@@ -213,15 +273,11 @@ class IntroScene extends Scene {
 
             b.position.z += conf.speed * 8
 
-            //let delta = Math.abs(100 * simplex.noise2D(i, this.shaderTime * 0.09 * this.street.speed))
-            //b.scale.y = Math.max(30, delta)
-            //b.translateY( delta / 4 );
-
             if (b.position.z > 0) {
                 b.position.z = STREET_LENGTH * -1
                 let coin = randomInt(0,1) ? -1 : 1
-                b._xoffset = random(STREET_WIDTH * 2, STREET_WIDTH * 3) * coin
-                //b.rotation.z = Math.PI * 0.1 * coin
+                b._xoffset = random(STREET_WIDTH * 3, STREET_WIDTH * 4) * coin
+                b.rotation.z = -Math.PI * 0.02 * coin
 
                 b._yoffset = 30 * Math.sin((70 - Math.abs(b._xoffset)) * 1/(130 - 70))
             }
@@ -230,7 +286,10 @@ class IntroScene extends Scene {
 
       })
 
-          })
+      this.events.on(VIS+'::visOn', _ => group.visible = true)
+      this.events.on(VIS+'::visOff', _ => group.visible = false)
+
+      super.addVis(VIS, conf)
     }
 
 

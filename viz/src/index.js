@@ -83,7 +83,6 @@ class Main {
   init() {
 
     this.oscPort.on("message", (oscMsg) => {
-      console.log(oscMsg)
       if (oscMsg.address === '/scene') {
             let n = oscMsg.args[0]
             console.log("Scene change. "+ n)
@@ -126,8 +125,8 @@ class Main {
     })
     this.oscPort.open()
 
-    //navigator.webkitGetUserMedia({audio: true}, stream => {
-     // this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+    navigator.webkitGetUserMedia({audio: true}, stream => {
+     this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
 
 
       const args = {
@@ -143,9 +142,9 @@ class Main {
         ctx: this.ctx
       }
 
-    this.scenes.s1 = new WienerLinienScene(args)
-    //this.scenes.s2 = new DronesScene(args)
-    //this.scenes.s1 = new IntroScene(args)
+    //this.scenes.s1 = new WienerLinienScene(args)
+    //this.scenes.s1 = new DronesScene(args)
+    this.scenes.s1 = new IntroScene(args)
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
@@ -157,7 +156,7 @@ class Main {
 
 
 
-     //}, err => console.log(err))
+     }, err => console.log(err))
 
 
 
