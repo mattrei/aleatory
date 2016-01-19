@@ -36,8 +36,15 @@ class Scene {
         copy : {
           active: false,
           pass: null
-        }
-
+        },
+        blend : {
+          active: false,
+          pass: null
+        },
+        godray : {
+          active: false,
+          pass: null
+        },
       }
 
       this._texts = {intro: 'intro!', outro: 'outro!'}
@@ -131,8 +138,8 @@ class Scene {
     const VignettePass = require('@superguigui/wagner/src/passes/vignette/VignettePass')
     const Pixelate = require('@superguigui/wagner/src/passes/pixelate/pixelate')
     const CopyPass = require('@superguigui/wagner/src/passes/copy/CopyPass')
-
-
+    const BlendPass = require('@superguigui/wagner/src/passes/blend/BlendPass')
+    const godRayMultipass = require('@superguigui/wagner/src/passes/godray/godraypass');
 
     let f = gui.addFolder('**=FX=**')
     f.add(this.fx, 'active')
@@ -160,6 +167,9 @@ class Scene {
 
     f.add(this.fx.copy, 'active').name('Copy')
     this.fx.copy.pass = new CopyPass()
+
+    f.add(this.fx.blend, 'active').name('Blend')
+    this.fx.blend.pass = new BlendPass()
   }
 
   update(t)
@@ -190,6 +200,7 @@ class Scene {
       if (this.fx.vignette.active) this.composer.pass(this.fx.vignette.pass)
       if (this.fx.pixelate.active) this.composer.pass(this.fx.pixelate.pass)
       if (this.fx.copy.active) this.composer.pass(this.fx.copy.pass)
+      if (this.fx.blend.active) this.composer.pass(this.fx.blend.pass)
       this.composer.toScreen()
     } else {
       this.renderer.render(this.scene, this.camera)

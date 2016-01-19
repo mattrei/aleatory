@@ -30,7 +30,7 @@
     "watchify": "^3.6.1"
   },
   "dependencies": {
-    "@superguigui/wagner": "0.0.6",
+    "@superguigui/wagner": "^0.1.15",
     "adaptive-bezier-curve": "^1.0.3",
     "analyser-frequency-average": "^1.0.0",
     "babel-polyfill": "^6.3.14",
@@ -67,6 +67,7 @@
     "stats-js": "^1.0.0-alpha1",
     "three": "^0.73.0",
     "three-bmfont-text": "^1.2.0",
+    "three-buffer-vertex-data": "^1.0.0",
     "three-effectcomposer": "0.0.1",
     "three-line-2d": "^1.0.9",
     "three-orbit-controls": "^69.0.4",
