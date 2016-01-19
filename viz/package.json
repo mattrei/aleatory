@@ -47,6 +47,7 @@
     "glsl-curl-noise": "0.0.4",
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
+    "glsl-random": "0.0.5",
     "glslify": "^5.0.0",
     "lerp": "^1.0.3",
     "minivents": "^2.0.1",

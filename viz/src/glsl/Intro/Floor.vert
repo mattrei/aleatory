@@ -3,7 +3,7 @@
 
   varying vec2 vUv;
   varying float vNoise;
-  
+
             // varying vec3  v_line_color;
 
             uniform float time;
@@ -17,15 +17,20 @@
             {
                 vUv = uv;
                 // First perlin passes
-                float displacement  =  pnoise3(.4 * position + vec3( 0, speed * time, 0 ), vec3( 100.0 ) ) * 1. * .7;
+                float displacement  =  pnoise3(.4 * position + vec3( 0, speed * time, 0 ), vec3( 100.0 ) ) * 1. * height;
 
                 displacement       += pnoise3( 2. * position + vec3( 0, speed * time * 5., 0 ), vec3( 100. ) ) * .3 * height;
-                 displacement       += pnoise3( 8. * position + vec3( 0, speed * time * 20., 0 ), vec3( 100. ) ) * .1 * 1.;
+                //displacement       += pnoise3( 8. * position + vec3( 0, speed * time * 20., 0 ), vec3( 100. ) ) * .1 * height;
 
-                // Sinus
-                displacement = displacement + (sin(position.x / 2. - PI / 2.)) + 0.8;
+                float freq = 5.0;
+                float distance = sqrt(((uv.x-0.5) * (uv.x-0.5)) + ((uv.y-0.5) * (uv.y-0.5)));
+                float z = (height * sin(((time * 0.5 * speed) - (distance * freq)) * PI));
 
-                vec3 newPosition = vec3(position.x,position.y, displacement*height);
+
+              // Sinus
+                displacement = displacement + (sin(position.x / 2. - PI / 2.));
+
+                vec3 newPosition = vec3(position.x,position.y, displacement+z);
 
                 vNoise = displacement;
                 //vNoise = sin(position.x / 2. - PI / 2.);

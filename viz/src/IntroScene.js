@@ -42,7 +42,7 @@ class IntroScene extends Scene {
         this.buildings()
         this.cars()
         this.createParticles()
-        this.createFloor()
+        this.floor()
 
         this.xtion()
 
@@ -52,7 +52,7 @@ class IntroScene extends Scene {
 
   xtion() {
      const VIS = 'xtion'
-     const conf = {on: true}
+     const conf = {on: false}
      const group = new THREE.Group()
      group.visible = conf.on
      this.scene.add(group)
@@ -718,11 +718,16 @@ class IntroScene extends Scene {
         geometry.addGroup(0, count, 0)
     }
 
-    createFloor() {
+    floor() {
 
       const VIS = 'floor'
-      let conf = {on: false, height: 1, speed: 1}
+      let group = new THREE.Group()
+      this.scene.add(group)
+      let conf = {on: false, height: 1, speed: 1, segments: 20, wireframe: true}
+      group.visible = conf.on
 
+      let mesh = null
+      const create = (segments) => {
         var planeMaterial = new THREE.ShaderMaterial({
             uniforms: {
                 resolution: {
@@ -748,25 +753,38 @@ class IntroScene extends Scene {
             },
             transparent: true,
             fragmentShader: glslify(__dirname + '/glsl/Intro/Floor.frag'),
-            vertexShader: glslify(__dirname + '/glsl/Intro/Floor.vert')
-            //wireframe: true
+            vertexShader: glslify(__dirname + '/glsl/Intro/Floor.vert'),
+            wireframe: conf.wireframe,
+            wireframeLinewidth: 2,
         });
 
-        let geometry = new THREE.PlaneGeometry(PLANE_SIZE.X, PLANE_SIZE.Z, 20, 20);
-        let mesh = new THREE.Mesh(geometry, planeMaterial);
+        let geometry = new THREE.PlaneBufferGeometry(PLANE_SIZE.X, PLANE_SIZE.Z, segments, segments)
+        mesh = new THREE.Mesh(geometry, planeMaterial);
 
         mesh.rotation.set(-Math.PI * 0.5, 0, 0)
         mesh.position.y = -50//-window.innerHeight * 0.15
-        mesh.visible = conf.on
-        this.scene.add(mesh)
 
-        this.events.on(VIS + '::visOn', _ => mesh.visible = true)
-        this.events.on(VIS + '::visOff', _ => mesh.visible = false)
+        group.add(mesh)
+
+
 
         this.events.on('tick', t => {
           mesh.material.uniforms.time.value = t.time * 0.2
           mesh.material.uniforms.speed.value = conf.speed
           mesh.material.uniforms.height.value = conf.height
+        })
+
+      }
+
+      create(conf.segments)
+
+      this.events.on(VIS + '::visOn', _ => group.visible = true)
+      this.events.on(VIS + '::visOff', _ => group.visible = false)
+        this.events.on(VIS+'::wireframe', d => mesh.material.wireframe = d)
+
+        this.events.on(VIS+'::segments', d => {
+          group.remove(mesh)
+          create(d)
         })
 
         super.addVis(VIS, conf)
