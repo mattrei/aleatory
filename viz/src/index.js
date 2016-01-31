@@ -41,6 +41,7 @@ class Main {
 
     this.clock = new THREE.Clock()
     this.clock.start()
+    this.time = 0
     this.manager = new THREE.LoadingManager()
     this.loader = new THREE.TextureLoader(this.manager)
 
@@ -143,8 +144,8 @@ class Main {
       }
 
     //this.scenes.s1 = new WienerLinienScene(args)
-    //this.scenes.s1 = new DronesScene(args)
-    this.scenes.s1 = new IntroScene(args)
+    this.scenes.s1 = new DronesScene(args)
+    //this.scenes.s1 = new IntroScene(args)
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
@@ -166,8 +167,9 @@ class Main {
     this.stats.begin()
 
     const dt = this.clock.getDelta()
+    this.time += dt
 
-    this.events.emit("update", {time: this.clock.getElapsedTime(),
+    this.events.emit("update", {time: this.time,
                                 delta: dt})
 
 

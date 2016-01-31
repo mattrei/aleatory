@@ -2,7 +2,7 @@ import Scene from './Scene'
 global.THREE = require('three')
 import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'
-const simplex = new (require('simplex-noise'))
+const simplex = new(require('simplex-noise'))
 
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -26,36 +26,38 @@ const DISTANCE_EARTH = 1000
 
 var Globe = function(opts) {
 
-  var distance = DISTANCE_EARTH
-  var dist = {earth: DISTANCE_EARTH}
-  var padding = 40;
-
-
-  function createBoxes() {
-
-    //for (let i=-90; i < 90; i += MathF.random(3, 8)) {
-    //  for (let j=-180; j < 180; j += 4) {
-
-
-    for (let i=0; i<500; i++) {
-      let lat = MathF.random(-90,90),
-        lng = MathF.random(-180, 180)
-
-
-
-      let p = _getPosFromLatLng(lat, lng)
-      addBox(p, MathF.random(1, 5), 0xff00f0)
+    var distance = DISTANCE_EARTH
+    var dist = {
+        earth: DISTANCE_EARTH
     }
-  }
+    var padding = 40;
 
-  function visBoxes() {
 
-    boxes.forEach((b,i) => {
-      funkUp(b)
-    })
-  }
+    function createBoxes() {
 
-  function visText() {
+        //for (let i=-90; i < 90; i += MathF.random(3, 8)) {
+        //  for (let j=-180; j < 180; j += 4) {
+
+
+        for (let i = 0; i < 500; i++) {
+            let lat = MathF.random(-90, 90),
+                lng = MathF.random(-180, 180)
+
+
+
+            let p = _getPosFromLatLng(lat, lng)
+            addBox(p, MathF.random(1, 5), 0xff00f0)
+        }
+    }
+
+    function visBoxes() {
+
+        boxes.forEach((b, i) => {
+            funkUp(b)
+        })
+    }
+
+    function visText() {
 
 
 
@@ -79,14 +81,14 @@ var Globe = function(opts) {
         var data = ctx.getImageData(0, 0, width, height).data;
         var count = 0;
         console.log(data.length)
-        for(var i = 0, len = data.length; i < len; i+=4) {
-            if(data[i] > 0) {
+        for (var i = 0, len = data.length; i < len; i += 4) {
+            if (data[i] > 0) {
                 // is white
                 index = i / 4;
                 let x = index % width,
-                  y = index / width | 0;
+                    y = index / width | 0;
 
-                vertices.push(new THREE.Vector2(x,y))
+                vertices.push(new THREE.Vector2(x, y))
                 count++;
             }
         }
@@ -95,494 +97,635 @@ var Globe = function(opts) {
 
         vertices.forEach(v => {
 
-          var axis = new THREE.Vector3( 0, 0, 1 );
-          var angle = Math.PI / 2;
-          var a = new THREE.Euler( 0, 0, angle, 'XYZ' );
-          //pos.applyAxisAngle( axis, angle );
-          //pos.translate()
-          //v.applyEuler(a)
+            var axis = new THREE.Vector3(0, 0, 1);
+            var angle = Math.PI / 2;
+            var a = new THREE.Euler(0, 0, angle, 'XYZ');
+            //pos.applyAxisAngle( axis, angle );
+            //pos.translate()
+            //v.applyEuler(a)
 
-          let pos = _getPosFromLatLng(v.x * 3, v.y * 3)
+            let pos = _getPosFromLatLng(v.x * 3, v.y * 3)
 
-          addBox(pos, MathF.random(1, 5), 0xff00f0)
+            addBox(pos, MathF.random(1, 5), 0xff00f0)
         })
 
-  }
+    }
 
-  function funkUp (box) {
-    var verts = box.geometry.vertices
-    let p = box.position
+    function funkUp(box) {
+        var verts = box.geometry.vertices
+        let p = box.position
 
-    let height = simplex.noise4D(p.x, p.y,0, shaderTime * vis.speed)
-    let size = 300 * vis.amplitude * height
-    let c = simplex.noise4D(p.x, p.y, 0, shaderTime * 0.1)
+        let height = simplex.noise4D(p.x, p.y, 0, shaderTime * vis.speed)
+        let size = 300 * vis.amplitude * height
+        let c = simplex.noise4D(p.x, p.y, 0, shaderTime * 0.1)
 
-    box.material.color.setHSL(c, MathF.random(0.6, 0.9), height)
+        box.material.color.setHSL(c, MathF.random(0.6, 0.9), height)
 
-    box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
-    box.updateMatrix();
-  }
+        box.scale.z = Math.max(size, 0.1); // avoid non-invertible matrix
+        box.updateMatrix();
+    }
 
-  function removeBoxes() {
+    function removeBoxes() {
 
-    let tween = Tween()
+        let tween = Tween()
 
-    boxes.forEach(b => {
-
-
-      tween.chain(b.position, {
-        x: MathF.random(b.position.x, 500),
-        y: MathF.random(b.position.y, 500),
-        z: MathF.random(b.position.z, 500),
-        duration: MathF.random(4, 5)
-      })
-
-      //scene.remove(b)
-    })
-
-    let tween2 = Tween()
-
-    boxes.forEach(b => {
-
-      tween2.chain(b.position, {
-        x: this.camera.position.x,
-        y: this.camera.position.y,
-        z: this.camera.position.z + 500,
-        duration: MathF.random(2, 3)
-      })
-      //scene.remove(b)
-    })
-
-    tween.then(tween2)
-
-    tween2.on('complete', () => {
-      boxes.forEach(b => {
-
-        scene.remove(b)
-      })
-    })
-
-    tweenr.to(tween)
+        boxes.forEach(b => {
 
 
-    boxes = []
-  }
+            tween.chain(b.position, {
+                x: MathF.random(b.position.x, 500),
+                y: MathF.random(b.position.y, 500),
+                z: MathF.random(b.position.z, 500),
+                duration: MathF.random(4, 5)
+            })
+
+            //scene.remove(b)
+        })
+
+        let tween2 = Tween()
+
+        boxes.forEach(b => {
+
+            tween2.chain(b.position, {
+                    x: this.camera.position.x,
+                    y: this.camera.position.y,
+                    z: this.camera.position.z + 500,
+                    duration: MathF.random(2, 3)
+                })
+                //scene.remove(b)
+        })
+
+        tween.then(tween2)
+
+        tween2.on('complete', () => {
+            boxes.forEach(b => {
+
+                scene.remove(b)
+            })
+        })
+
+        tweenr.to(tween)
 
 
-  function addBox(pos, size, color) {
-
-    let geom  = new THREE.CubeGeometry(4, 4, 1);
-    geom.applyMatrix(new THREE.Matrix4().makeTranslation(0,0,-0.5));
-
-    let mat = new THREE.MeshBasicMaterial({color: color})
+        boxes = []
+    }
 
 
-    let box = new THREE.Mesh(geom, mat)
+    function addBox(pos, size, color) {
+
+        let geom = new THREE.CubeGeometry(4, 4, 1);
+        geom.applyMatrix(new THREE.Matrix4().makeTranslation(0, 0, -0.5));
+
+        let mat = new THREE.MeshBasicMaterial({
+            color: color
+        })
 
 
-    box.position.copy(pos)
-    box.lookAt(mesh.position);
-
-    box.scale.z = Math.max( size, 0.1 ); // avoid non-invertible matrix
-    box.updateMatrix();
-
-    scene.add(box)
-    boxes.push(box)
-  }
+        let box = new THREE.Mesh(geom, mat)
 
 
-  function showPakistan() {
+        box.position.copy(pos)
+        box.lookAt(mesh.position);
 
-    const LAT = 33.6,
-      LNG = 73.1
+        box.scale.z = Math.max(size, 0.1); // avoid non-invertible matrix
+        box.updateMatrix();
 
-
-    let pos = calculate2dPosition(LAT, LNG)
-    let tween = Tween()
-    console.log(pos)
-
-    tween.chain(target, {
-      x: pos.x,
-      y: pos.y-0.2,
-      duration: 2
-    })
-    tween.chain(dist, {
-      earth: 400,
-      duration: 2
-    })
+        scene.add(box)
+        boxes.push(box)
+    }
 
 
-    tweenr.to(tween)
-    tween.on('update', () => {
-      _moveEarth()
-    })
+    function showPakistan() {
 
-    tween.on('complete', () => {
-      camera.lookAt(new THREE.Vector3(pos.x, pos.y, 0))
-    })
+        const LAT = 33.6,
+            LNG = 73.1
 
 
-  }
+        let pos = calculate2dPosition(LAT, LNG)
+        let tween = Tween()
+        console.log(pos)
+
+        tween.chain(target, {
+            x: pos.x,
+            y: pos.y - 0.2,
+            duration: 2
+        })
+        tween.chain(dist, {
+            earth: 400,
+            duration: 2
+        })
 
 
-  function showEarth() {
+        tweenr.to(tween)
+        tween.on('update', () => {
+            _moveEarth()
+        })
 
-    let tween = tweenr.to(dist, {
-      earth: DISTANCE_EARTH,
-      duration: 2
-    })
-
-    tween.on('update', () => {
-      _moveEarth()
-    })
-
-  }
+        tween.on('complete', () => {
+            camera.lookAt(new THREE.Vector3(pos.x, pos.y, 0))
+        })
 
 
+    }
+
+
+    function showEarth() {
+
+        let tween = tweenr.to(dist, {
+            earth: DISTANCE_EARTH,
+            duration: 2
+        })
+
+        tween.on('update', () => {
+            _moveEarth()
+        })
+
+    }
 
 
 
-  function createFire(lat, lng) {
 
-    let p = _getPosFromLatLng(lat, lng)
-    particleGroup.triggerPoolEmitter( 1, p );
-  }
 
-  function _getPosFromLatLng(lat, lng) {
+    function createFire(lat, lng) {
 
-    let phi = (90 - lat) * Math.PI / 180,
-       theta = (180 - lng) * Math.PI / 180;
+        let p = _getPosFromLatLng(lat, lng)
+        particleGroup.triggerPoolEmitter(1, p);
+    }
 
-    return new THREE.Vector3(
-      200 * Math.sin(phi) * Math.cos(theta),
-      200 * Math.cos(phi),
-      200 * Math.sin(phi) * Math.sin(theta))
-  }
+    function _getPosFromLatLng(lat, lng) {
+
+        let phi = (90 - lat) * Math.PI / 180,
+            theta = (180 - lng) * Math.PI / 180;
+
+        return new THREE.Vector3(
+            200 * Math.sin(phi) * Math.cos(theta),
+            200 * Math.cos(phi),
+            200 * Math.sin(phi) * Math.sin(theta))
+    }
 
 
 };
 
 class Drones extends Scene {
-  constructor(args)
-  {
-    super(args, new THREE.Vector3(0,0,DISTANCE_EARTH))
+    constructor(args) {
+        super(args, new THREE.Vector3(0, 0, DISTANCE_EARTH))
 
-    //this.background()
-    //stars()
-    this.globe()
-    this.pictures()
-  }
-
-  globe() {
-
-    const VIS='globe'
-    let conf = {on: false}
-    const group = new THREE.Group()
-    group.visible = conf.on
-    this.scene.add(group)
-
-    let mesh = null,
-        particleGroup = null
-
-
-    this.loader.load('/assets/Drones/world.jpg', texture => {
-      this.loader.load('./assets/Drones/smokeparticle.png', smoke => {
-
-      let geometry = new THREE.SphereGeometry(200, 40, 30)
-      const explodeModifier = new THREE.ExplodeModifier()
-      explodeModifier.modify( geometry )
-
-      const material = new THREE.ShaderMaterial({
-
-          //uniforms: uniforms,
-          uniforms: {
-            texture: { type: 't', value: texture },
-            glowIntensity: {type: 'f', value: 3},
-            redIntensity: {type: 'f', value: 0},
-            wobble: {type: 'f', value: 0},
-            time: {type: 'f', value: 0}
-          },
-          transparent: true,
-          fragmentShader: glslify(__dirname + '/glsl/Drones/Earth.frag'),
-          vertexShader: glslify(__dirname + '/glsl/Drones/Earth.vert')
-
-        });
-      material.side = THREE.DoubleSide;
-
-
-      mesh = new THREE.Mesh(geometry, material)
-      mesh.rotation.y = Math.PI;
-      group.add(mesh)
-
-
-      // add atmosphere
-      let atmoMaterial = new THREE.ShaderMaterial({
-
-          uniforms: {
-            glowIntensity: {type: 'f', value: 1},
-            redIntensity: {type: 'f', value: 0}
-          },
-          fragmentShader: glslify(__dirname + '/glsl/Drones/Atmosphere.frag'),
-          vertexShader: glslify(__dirname + '/glsl/Drones/Atmosphere.vert'),
-          side: THREE.BackSide,
-          blending: THREE.AdditiveBlending,
-          transparent: true
-
-        });
-
-      const atmoMesh = new THREE.Mesh(geometry, atmoMaterial)
-      atmoMesh.scale.set( 1.1, 1.1, 1.1 )
-      group.add(atmoMesh)
-      mesh.atmosphere = atmoMesh
-
-
-          // Particles
-      let emitterSettings = {
-                  type: SPE.distributions.SPHERE,
-                  position: {
-                      spread: new THREE.Vector3(10),
-                      radius: 1,
-                  },
-                  velocity: {
-                      value: new THREE.Vector3( 100 )
-                  },
-                  size: {
-                      value: [ 30, 0 ]
-                  },
-                  opacity: {
-                      value: [1, 0]
-                  },
-                  color: {
-                      value: [new THREE.Color('yellow'),new THREE.Color('red')]
-                  },
-                  particleCount: 100,
-                  alive: true,
-                  duration: 0.05,
-                  maxAge: {
-                      value: 0.5
-                  }
-              };
-
-      particleGroup = new SPE.Group({
-              texture: {
-                value: smoke
-              },
-              blending: THREE.AdditiveBlending
-      });
-      particleGroup.addPool(NUM_RAND_FIRES, emitterSettings, false)
-      group.add( particleGroup.mesh )
-
-
-      this.events.on('tick', t => {
-        particleGroup.tick( t.delta )
-      })
-    })
-    })
-
-
-    const doWobble = () => {
-      const wobble = 1,
-            glowing = 1
-
-      mesh.material.uniforms.wobble.value = wobble;
-      mesh.material.uniforms.glowIntensity.value = glowing;
-      mesh.material.uniforms.redIntensity.value = 1 -glowing / 3;
-
-
-      mesh.atmosphere.material.uniforms.glowIntensity.value = glowing * 4;
-      mesh.atmosphere.material.uniforms.redIntensity.value = 1- glowing / 3;
-    }
-    this.events.on(VIS+'::doWobble', (p) => {
-      doWobble()
-    })
-    conf.doWobble = doWobble
-
-
-    const doExplode = () => {
-                const geometry = mesh.geometry
-
-
-                for(var i = 0; i < (geometry.vertices.length); i++)
-                {
-
-                    var pos = new THREE.Vector3();
-                    var v = geometry.vertices[i]
-
-
-                    pos.x += v.x * random(0,50)
-                    pos.y += v.y * random(0,50)
-                    pos.z += v.z * random(0,50)
-
-
-                tweenr.to(geometry.vertices[i],
-                     { x: pos.x, y: pos.y, z: pos.z, duration: 5 })
-                  .on('update', _ => geometry.verticesNeedUpdate = true)
-                  .on('complete', _ => group.visible = false)
-
-
-                }
+        //this.background()
+        //stars()
+        this.globe()
+        this.particles()
     }
 
+    globe() {
 
-    this.events.on(VIS+'::doExplode', (p) => {
-      doExplode()
-    })
-    conf.doExplode = doExplode
-
-    // camera's position
-    const cameraRotation = { x: 0, y: 0 };
-    const cameraTarget = { x: 0, y: 0 };
-
-    const ALTITUDE = 1000
-
-    const posOnSphere = (obj, coords) => {
-      var x = coords.x;
-      var y = coords.y;
-      var altitude = coords.altitude;
-
-      obj.position.set(
-        altitude * Math.sin(x) * Math.cos(y),
-        altitude * Math.sin(y),
-        altitude * Math.cos(x) * Math.cos(y)
-      );
-    }
-
-
-    const moveEarth = () => {
-        cameraRotation.x += (cameraTarget.x - cameraRotation.x) * 0.1;
-        cameraRotation.y += (cameraTarget.y - cameraRotation.y) * 0.1;
-
-        // determine camera position
-        posOnSphere(this.camera, {
-          x: cameraRotation.x,
-          y: cameraRotation.y,
-          altitude: ALTITUDE
-        })
-        this.camera.lookAt(mesh.position)
-      }
-
-
-      const latLngOnSphere = (lat, lng) => {
-        const phi = (90 + lng) * Math.PI / 180,
-         theta = (180 - lat) * Math.PI / 180
-
-        return {
-          x: phi - Math.PI,
-          y: Math.PI - theta
+        const VIS = 'globe'
+        let conf = {
+            on: false, rings: true, wobble: false
         }
-      }
+        const group = new THREE.Group()
+        group.visible = conf.on
+        this.scene.add(group)
 
-  const doLatLng = (lat=32, lng=69) => {
-
-    let p = latLngOnSphere(lat, lng)
-
-    tweenr.to(cameraTarget, {
-      x: p.x,
-      y: p.y,
-      duration: 0.5
-    }).on('update', _ => moveEarth())
-  }
-    this.events.on(VIS+'::doLatLng', (p) => doLatLng(37/*p.lat*/, 58/*p.lng*/))
-    conf.doLatLng = doLatLng
+        let mesh = null,
+            particleGroup = null
 
 
-    const doRnd = () => {
+        const SIZE = 200
+        this.loader.load('/assets/Drones/world.jpg', texture => {
+            this.loader.load('./assets/Drones/smokeparticle.png', smoke => {
 
-      let moveX = random(-Math.PI*2,Math.PI*2),
-        moveY = random(-Math.PI,Math.PI)
+                let geometry = new THREE.SphereGeometry(SIZE, 40, 30)
+                const explodeModifier = new THREE.ExplodeModifier()
+                explodeModifier.modify(geometry)
 
-      moveX *= Math.random() * 0.8;
-      moveY *= Math.random() * 0.8;
+                const material = new THREE.ShaderMaterial({
 
-      tweenr.to(cameraTarget, {
-        x: moveX,
-        y: moveY,
-        duration: 0.5
-      })
-        .on('update', _ => moveEarth())
+                    //uniforms: uniforms,
+                    uniforms: {
+                        texture: {
+                            type: 't',
+                            value: texture
+                        },
+                        glowIntensity: {
+                            type: 'f',
+                            value: 3
+                        },
+                        redIntensity: {
+                            type: 'f',
+                            value: 0
+                        },
+                        wobble: {
+                            type: 'f',
+                            value: 0
+                        },
+                        time: {
+                            type: 'f',
+                            value: 0
+                        }
+                    },
+                    transparent: true,
+                    fragmentShader: glslify(__dirname + '/glsl/Drones/Earth.frag'),
+                    vertexShader: glslify(__dirname + '/glsl/Drones/Earth.vert')
+
+                });
+                material.side = THREE.DoubleSide;
+
+
+                mesh = new THREE.Mesh(geometry, material)
+                mesh.rotation.y = Math.PI;
+                group.add(mesh)
+
+
+                // add atmosphere
+                let atmoMaterial = new THREE.ShaderMaterial({
+
+                    uniforms: {
+                        glowIntensity: {
+                            type: 'f',
+                            value: 1
+                        },
+                        redIntensity: {
+                            type: 'f',
+                            value: 0
+                        }
+                    },
+                    fragmentShader: glslify(__dirname + '/glsl/Drones/Atmosphere.frag'),
+                    vertexShader: glslify(__dirname + '/glsl/Drones/Atmosphere.vert'),
+                    side: THREE.BackSide,
+                    blending: THREE.AdditiveBlending,
+                    transparent: true
+
+                });
+
+                const atmoMesh = new THREE.Mesh(geometry, atmoMaterial)
+                atmoMesh.scale.set(1.1, 1.1, 1.1)
+                group.add(atmoMesh)
+                mesh.atmosphere = atmoMesh
+
+
+                // Particles
+                let emitterSettings = {
+                    type: SPE.distributions.SPHERE,
+                    position: {
+                        spread: new THREE.Vector3(10),
+                        radius: 1,
+                    },
+                    velocity: {
+                        value: new THREE.Vector3(100)
+                    },
+                    size: {
+                        value: [30, 0]
+                    },
+                    opacity: {
+                        value: [1, 0]
+                    },
+                    color: {
+                        value: [new THREE.Color('yellow'), new THREE.Color('red')]
+                    },
+                    particleCount: 100,
+                    alive: true,
+                    duration: 0.05,
+                    maxAge: {
+                        value: 0.5
+                    }
+                };
+
+                particleGroup = new SPE.Group({
+                    texture: {
+                        value: smoke
+                    },
+                    blending: THREE.AdditiveBlending
+                });
+                particleGroup.addPool(NUM_RAND_FIRES, emitterSettings, false)
+                group.add(particleGroup.mesh)
+
+
+                const createRing = (radius) => {
+
+                    let color = new THREE.Color()
+                    color.setHSL((180+Math.random()*40)/360, 1.0, 0.5)
+
+                          let  segments = 64,
+                            ringMaterial = new THREE.LineBasicMaterial( {
+                              color: color.clone(),
+                              linewidth: 4,
+                              transparent: true,
+                            } ),
+                            /*ringMaterial = new THREE.RawShaderMaterial({
+                                vertexShader: glslify('./glsl/Drones/Ring.vert'),
+                                fragmentShader: glslify('./glsl/Drones/Ring.frag'),
+                                blending: THREE.AdditiveBlending,
+                                transparent: true,
+                                depthTest: false
+                            }),*/
+                            ringGeometry = new THREE.Geometry()//new THREE.CircleGeometry( radius, segments );
+
+
+                          let offset = random(0, 50)
+
+                      for (let i=0; i<=Math.PI*2+0.1;i+=0.1) {
+                        ringGeometry.vertices.push(
+                          new THREE.Vector3(Math.cos(i)*(radius+offset), 0, Math.sin(i)*radius)
+                        )
+                      }
+
+                        // Remove center vertex
+                        //ringGeometry.vertices.shift();
+                        let ringMesh = new THREE.Line(ringGeometry, ringMaterial)
+                        ringMesh._radius = radius
+                        ringMesh._offset = offset
+                        ringMesh.position.set(0,0,0)
+                        ringMesh.rotation.set(0,0,random(-Math.PI/8, Math.PI/8))
+                        group.add(ringMesh)
+
+                         let randTheta = random(-Math.PI/4, Math.PI/4),
+                            finalRadius = Math.cos( randTheta ) * SIZE + 50
+
+                          tweenr.to(ringMesh, {ease: 'expoOut', _radius: finalRadius, _offset: 0, duration: 2}).on('update', _ => {
+                            ringMesh.geometry.vertices = []
+                            for (let i=0; i<=Math.PI*2+0.1;i+=0.1) {
+
+                                  ringMesh.geometry.vertices.push(
+                                    new THREE.Vector3(Math.cos(i)*(ringMesh._radius+ringMesh._offset), 0, Math.sin(i)*ringMesh._radius)
+                                  )
+                                }
+
+                            ringMesh.geometry.verticesNeedUpdate = true
+
+                          })
+                          tweenr.to(ringMesh.position, {x: 0, y: randTheta * SIZE, z: 0, duration: 2})
+                          tweenr.to(ringMesh.rotation, {x: 0, y: 0, z: 0, duration: 2})
+                          tweenr.to(ringMesh.material, {ease: 'expoIn', opacity: 0, duration: 5})
+                            .on('update', _ => ringMesh.material.needsUpdate = true)
+                            .on('complete', _ => group.remove(ringMesh))
+
+                              this.events.on('tick', t => {
+                                  const freq = super.getFreq(200, 400)
+                                  let hsl = color.getHSL()
+                                  hsl.l *= freq
+
+                                  ringMaterial.color.setHSL(hsl.h, hsl.s, hsl.l)
+                                  ringMaterial.needsUpdate = true
+                              })
+
+                        return ringMesh
+                }
+
+                let lastTime = 0
+                this.events.on('tick', t => {
+                    particleGroup.tick(t.delta)
+
+                    if (conf.rings) {
+
+                      const freq = super.getFreq(0, 20)
+                      //console.log(freq)
+
+                      if (freq > 0.5) {
+                        //
+                        if (t.time - lastTime > random(0.5, 2)) {
+                          let ring = createRing(SIZE*20)
+                          lastTime = t.time
+                        }
+                      }
+                    }
+
+                  let wobble = 0,
+                      glowing = 1.0
+
+                  material.uniforms.redIntensity.value = 0
+                  atmoMaterial.uniforms.redIntensity.value = 0
+                  if (conf.wobble) {
+                    wobble = 0.5
+                    glowing = 1.0
+                    material.uniforms.redIntensity.value = Math.sin(t.time)
+                    atmoMaterial.uniforms.redIntensity.value = Math.sin(t.time)
+                  }
+
+                    material.uniforms.wobble.value = wobble
+                    material.uniforms.glowIntensity.value = glowing
+
+                    material.uniforms.time.value = t.time
+
+
+                    atmoMaterial.uniforms.glowIntensity.value = glowing
+
+
+                })
+
+                this.events.on(VIS + '::visOn', (_) => {
+
+                    group.visible = true
+                    mesh.scale.set(0, 0, 0)
+                    mesh.atmosphere.scale.set(0, 0, 0)
+                    tweenr.to(mesh.scale, {
+                        x: 1,
+                        y: 1,
+                        z: 1,
+                        duration: 2
+                    })
+                    tweenr.to(mesh.atmosphere.scale, {
+                        x: 1.1,
+                        y: 1.1,
+                        z: 1.1,
+                        duration: 2
+                    })
+
+                })
+                this.events.on(VIS + '::visOff', (_) => group.visible = false)
+            })
+        })
+
+
+        const doExplode = () => {
+            const geometry = mesh.geometry
+
+
+            for (var i = 0; i < (geometry.vertices.length); i++) {
+
+                var pos = new THREE.Vector3();
+                var v = geometry.vertices[i]
+
+
+                pos.x += v.x * random(0, 50)
+                pos.y += v.y * random(0, 50)
+                pos.z += v.z * random(0, 50)
+
+
+                tweenr.to(geometry.vertices[i], {
+                        x: pos.x,
+                        y: pos.y,
+                        z: pos.z,
+                        duration: 5
+                    })
+                    .on('update', _ => geometry.verticesNeedUpdate = true)
+                    .on('complete', _ => group.visible = false)
+
+
+            }
+        }
+
+
+        this.events.on(VIS + '::doExplode', (p) => {
+            doExplode()
+        })
+        conf.doExplode = doExplode
+
+        // camera's position
+        const cameraRotation = {
+            x: 0,
+            y: 0
+        };
+        const cameraTarget = {
+            x: 0,
+            y: 0
+        };
+
+        const ALTITUDE = 1000
+
+        const posOnSphere = (obj, coords) => {
+            var x = coords.x;
+            var y = coords.y;
+            var altitude = coords.altitude;
+
+            obj.position.set(
+                altitude * Math.sin(x) * Math.cos(y),
+                altitude * Math.sin(y),
+                altitude * Math.cos(x) * Math.cos(y)
+            );
+        }
+
+
+        const moveEarth = () => {
+            cameraRotation.x += (cameraTarget.x - cameraRotation.x) * 0.1;
+            cameraRotation.y += (cameraTarget.y - cameraRotation.y) * 0.1;
+
+            // determine camera position
+            posOnSphere(this.camera, {
+                x: cameraRotation.x,
+                y: cameraRotation.y,
+                altitude: ALTITUDE
+            })
+            this.camera.lookAt(mesh.position)
+        }
+
+
+        const latLngOnSphere = (lat, lng) => {
+            const phi = (90 + lng) * Math.PI / 180,
+                theta = (180 - lat) * Math.PI / 180
+
+            return {
+                x: phi - Math.PI,
+                y: Math.PI - theta
+            }
+        }
+
+        const doLatLng = (lat = 32, lng = 69) => {
+
+            let p = latLngOnSphere(lat, lng)
+
+            tweenr.to(cameraTarget, {
+                x: p.x,
+                y: p.y,
+                duration: 0.5
+            }).on('update', _ => moveEarth())
+        }
+        this.events.on(VIS + '::doLatLng', (p) => doLatLng(37 /*p.lat*/ , 58 /*p.lng*/ ))
+        conf.doLatLng = doLatLng
+
+
+        const doRnd = () => {
+
+            let moveX = random(-Math.PI * 2, Math.PI * 2),
+                moveY = random(-Math.PI, Math.PI)
+
+            moveX *= Math.random() * 0.8;
+            moveY *= Math.random() * 0.8;
+
+            tweenr.to(cameraTarget, {
+                    x: moveX,
+                    y: moveY,
+                    duration: 0.5
+                })
+                .on('update', _ => moveEarth())
+
+        }
+        this.events.on(VIS + '::doRnd', (p) => doRnd())
+        conf.doRnd = doRnd
+
+        const doRndFire = () => {
+
+            let lat = random(-90, 90),
+                lng = random(-180, 180)
+
+            let p = _getPosFromLatLng(lat, lng)
+
+            particleGroup.triggerPoolEmitter(1, p);
+
+        }
+        this.events.on(VIS + '::doRndFire', (p) => doRndFire())
+        conf.doRndFire = doRndFire
+
+
+
+
+        super.addVis(VIS, conf)
 
     }
-    this.events.on(VIS+'::doRnd', (p) => doRnd())
-    conf.doRnd = doRnd
 
-    const doRndFire = () => {
 
-      let lat = random(-90, 90),
-          lng = random(-180, 180)
-
-      let p = _getPosFromLatLng(lat, lng)
-
-      particleGroup.triggerPoolEmitter( 1, p );
+    tick(time, delta) {
 
     }
-    this.events.on(VIS+'::doRndFire', (p) => doRndFire())
-    conf.doRndFire = doRndFire
 
+    stars() {
+        const VIS = 'stars'
+        const conf = {
+            on: false,
+            speed: 1
+        }
+        const group = new THREE.Group()
 
-    this.events.on(VIS+'::visOn', (_) => {
-
-      group.visible = true
-      mesh.scale.set(0,0,0)
-      mesh.atmosphere.scale.set(0,0,0)
-      tweenr.to(mesh.scale, {x:1,y:1,z:1, duration: 2})
-      tweenr.to(mesh.atmosphere.scale, {x:1.1,y:1.1,z:1.1, duration: 2})
-
-    })
-    this.events.on(VIS+'::visOff', (_) => group.visible = false)
-
-    super.addVis(VIS, conf)
-
-  }
-
-
-  tick(time, delta)
-  {
-
-  }
-
-  stars()
-  {
-    const VIS='stars'
-    const conf = {on: false, speed: 1}
-    const group = new THREE.Group()
-
-    let geometry = new THREE.Geometry();
-    let material = new THREE.LineBasicMaterial( { color: 0xffffff, opacity: 1, linewidth: Math.random() * 4 } );
+        let geometry = new THREE.Geometry();
+        let material = new THREE.LineBasicMaterial({
+            color: 0xffffff,
+            opacity: 1,
+            linewidth: Math.random() * 4
+        });
 
         let r = 450
 
-    let vertex1 = new THREE.Vector3();
-          vertex1.x = Math.random() * 2 - 1;
-          vertex1.y = Math.random() * 2 - 1;
-          vertex1.z = Math.random() * 2 - 1;
-          vertex1.normalize();
-          vertex1.multiplyScalar( r );
+        let vertex1 = new THREE.Vector3();
+        vertex1.x = Math.random() * 2 - 1;
+        vertex1.y = Math.random() * 2 - 1;
+        vertex1.z = Math.random() * 2 - 1;
+        vertex1.normalize();
+        vertex1.multiplyScalar(r);
 
-          let vertex2 = vertex1.clone();
-          vertex2.multiplyScalar( Math.random() * 0.09 + 1 );
+        let vertex2 = vertex1.clone();
+        vertex2.multiplyScalar(Math.random() * 0.09 + 1);
 
-          geometry.vertices.push( vertex1 );
-          geometry.vertices.push( vertex2 );
+        geometry.vertices.push(vertex1);
+        geometry.vertices.push(vertex2);
 
-    let star = this.makeStar(geometry)
-    star.visible = false
-    this.scene.add( star )
+        let star = this.makeStar(geometry)
+        star.visible = false
+        this.scene.add(star)
 
 
-          let s = Math.random() * 10
-          let line = new THREE.LineSegments( geometry, material );
-          line.scale.x = line.scale.y = line.scale.z = s;
-          line.originalScale = s
-          line.speed = Math.random()
-          line.rotation.y = Math.random() * Math.PI;
-          line.updateMatrix();
-          line.position.z = Math.random() * -5000
+        let s = Math.random() * 10
+        let line = new THREE.LineSegments(geometry, material);
+        line.scale.x = line.scale.y = line.scale.z = s;
+        line.originalScale = s
+        line.speed = Math.random()
+        line.rotation.y = Math.random() * Math.PI;
+        line.updateMatrix();
+        line.position.z = Math.random() * -5000
 
-    super.addVis(VIS, conf)
-  }
+        super.addVis(VIS, conf)
+    }
 
-  background() {
-    const skyVertex = `
+    background() {
+        const skyVertex = `
     varying vec2 vUV;
     void main() {
       vUV = uv;
@@ -591,7 +734,7 @@ class Drones extends Scene {
     }
     `
 
-    const skyFragment = `
+        const skyFragment = `
     uniform sampler2D texture;
     varying vec2 vUV;
     void main() {
@@ -600,189 +743,237 @@ class Drones extends Scene {
     }
     `
 
-    this.loader.load(
-        '/assets/Drones/galaxy_starfield.png', (texture) => {
-          const geometry = new THREE.SphereGeometry(7000, 60, 40),
-             material = new THREE.ShaderMaterial( {
-            uniforms:       {
-              texture: { type: 't', value: texture }
-            },
-            vertexShader:   skyVertex,
-            fragmentShader: skyFragment
-          });
+        this.loader.load(
+            '/assets/Drones/galaxy_starfield.png', (texture) => {
+                const geometry = new THREE.SphereGeometry(7000, 60, 40),
+                    material = new THREE.ShaderMaterial({
+                        uniforms: {
+                            texture: {
+                                type: 't',
+                                value: texture
+                            }
+                        },
+                        vertexShader: skyVertex,
+                        fragmentShader: skyFragment
+                    });
 
-          let skyBox = new THREE.Mesh(geometry, material);
-          skyBox.scale.set(-1, 1, 1);
-          skyBox.rotation.order = 'XZY';
-          skyBox.renderOrder = 1000.0;
-          skyBox.rotation.y = Math.PI*-0.5
-          this.scene.add(skyBox)
-        })
+                let skyBox = new THREE.Mesh(geometry, material);
+                skyBox.scale.set(-1, 1, 1);
+                skyBox.rotation.order = 'XZY';
+                skyBox.renderOrder = 1000.0;
+                skyBox.rotation.y = Math.PI * -0.5
+                this.scene.add(skyBox)
+            })
 
-  }
+    }
 
-  pictures() {
-    const VIS = 'particles'
-    const conf = {on:true, animation: 1}
-
-    const group = new THREE.Group()
-    this.scene.add(group)
-    group.visible = conf.on
-
-    let mesh = null
-
-    const _getImgData = (pic) => {
-
-      return new Promise(function (fulfill, reject){
-
-        var canvas = document.createElement("canvas");
-        var context = canvas.getContext("2d");
-        var image = new Image();
-        image.src = pic;
-        image.onload = function() {
-          canvas.width = image.width;
-          canvas.height = image.height;
-          context.drawImage(image, 0, 0);
-          var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-          fulfill(imgData)
+    particles() {
+        const VIS = 'particles'
+        const conf = {
+            on: true,
+            animation: 1
         }
 
-      })
-    }
+        const group = new THREE.Group()
+        this.scene.add(group)
+        group.visible = conf.on
 
-    const _getPixel = (imgData, x, y) => {
-      var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
-      r = imgData.data[offset];
-      g = imgData.data[offset + 1];
-      b = imgData.data[offset + 2];
-      a = imgData.data[offset + 3];
+        let mesh = null
 
-      return new THREE.Color(r,g,b)
-    }
+        const _getImgData = (pic) => {
 
-    const MAX_PARTICLES = 1000 * 100000// has 2mio pixels
-    const MAX_PARTICLE_DIST= 50
-    const IMG_SCALE = 1
+            return new Promise(function(fulfill, reject) {
 
-      this.loader.load('/assets/Drones/earth.jpg', (texture) => {
-        const bgImg = texture.image.src
+                var canvas = document.createElement("canvas");
+                var context = canvas.getContext("2d");
+                var image = new Image();
+                image.src = pic;
+                image.onload = function() {
+                    canvas.width = image.width;
+                    canvas.height = image.height;
+                    context.drawImage(image, 0, 0);
+                    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                    fulfill(imgData)
+                }
 
-        _getImgData(bgImg).then(imgData => {
+            })
+        }
 
-          let geometry = new THREE.BufferGeometry()
+        const _getPixel = (imgData, x, y) => {
+            var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+            r = imgData.data[offset];
+            g = imgData.data[offset + 1];
+            b = imgData.data[offset + 2];
+            a = imgData.data[offset + 3];
 
-          const imgSize = imgData.width * imgData.height
-          console.log("Image pixels: " + imgData.width * imgData.height)
+            return new THREE.Color(r/255, g/255, b/255)
+        }
 
-          let PARTICLES_AMOUNT = MAX_PARTICLES
-          if (MAX_PARTICLES > imgSize) {
-            PARTICLES_AMOUNT = imgSize
-          }
+        const MAX_PARTICLES = 1000 * 100000 // has 2mio pixels
+        const MAX_PARTICLE_DIST = 50
+        const IMG_SCALE = 1
 
-          var positions = new Float32Array(PARTICLES_AMOUNT * 3);
-          var colors = new Float32Array(PARTICLES_AMOUNT * 3);
-          // displacement values
-          var extras = new Float32Array(PARTICLES_AMOUNT * 3);
-          var puv = new Float32Array(PARTICLES_AMOUNT * 2);
+        this.loader.load('/assets/Drones/earth_political_alpha.png', (texture) => {
+            const bgImg = texture.image.src
+
+            _getImgData(bgImg).then(imgData => {
+
+                let geometry = new THREE.BufferGeometry()
+
+                const imgSize = imgData.width * imgData.height
+                console.log("Image pixels: " + imgData.width * imgData.height)
+
+                let PARTICLES_AMOUNT = MAX_PARTICLES
+                if (MAX_PARTICLES > imgSize) {
+                    PARTICLES_AMOUNT = imgSize
+                }
+
+              // get number of pixels
+              let numParticles = 0
+              for (let i = 0; i < imgSize; i++) {
+
+                    let x = i % imgData.width,
+                        y = i / imgData.width | 0,
+                        pixel = _getPixel(imgData, x, y)
+                    if (pixel.r !== 0 && pixel.g !== 0 && pixel.b !== 0) {
+                      // pixel is not black
+                      numParticles++
+                    }
+
+              }
+              console.log(numParticles)
+              PARTICLES_AMOUNT = numParticles
+
+                var positions = new Float32Array(PARTICLES_AMOUNT * 3);
+                var colors = new Float32Array(PARTICLES_AMOUNT * 3);
+                // displacement values
+                var extras = new Float32Array(PARTICLES_AMOUNT * 3);
+                var puv = new Float32Array(PARTICLES_AMOUNT * 2);
 
 
-          let total = imgData.width * imgData.height,
-              step = Math.floor(total / PARTICLES_AMOUNT)
+                let total = imgData.width * imgData.height,
+                    step = Math.floor(total / PARTICLES_AMOUNT)
 
-          for (var i = 0, i2 = 0, i3 = 0, ipx = 0;
-               i < PARTICLES_AMOUNT;
-               i++ , i2 += 2, i3 += 3, ipx += step) {
+                for (var i = 0, i2 = 0, i3 = 0, ipx = 0; i < PARTICLES_AMOUNT; i++, i2 += 2, i3 += 3, ipx += step) {
 
-              let x = ipx % imgData.width,
-                 y = ipx / imgData.width | 0,
-                 pixel = _getPixel(imgData, x, y)
+                    let x = ipx % imgData.width,
+                        y = ipx / imgData.width | 0,
+                        pixel = _getPixel(imgData, x, y)
 
-              let position = new THREE.Vector3(
-                  //(x - imgData.width / 2) * IMG_SCALE,
-                  //(imgData.height / 2 - y) * IMG_SCALE,
-                  //0)
-                x,y,0)
+                    //if (pixel.r === 1 && pixel.g === 1 && pixel.b === 1) {
+
+                    if (pixel.r !== 0) {
+                    let position = new THREE.Vector3(
+                        //(x - imgData.width / 2) * IMG_SCALE,
+                        //(imgData.height / 2 - y) * IMG_SCALE,
+                        //0)
+                        x, y, 0)
 
 
 
-            // UV from 0 to 1
-            puv[i2 + 0] = position.x / imgData.width;
-            puv[i2 + 1] = position.y / imgData.height;
+                    // UV from 0 to 1
+                    puv[i2 + 0] = position.x / imgData.width;
+                    puv[i2 + 1] = position.y / imgData.height;
 
-            // Position
-            positions[i3 + 0] = position.x;
-            positions[i3 + 1] = position.y;
-            positions[i3 + 2] = position.z;
+                    // Position
+                    positions[i3 + 0] = position.x;
+                    positions[i3 + 1] = position.y;
+                    positions[i3 + 2] = position.z;
 
-            // Extras
-            extras[i3 + 0] = Math.random()
-            extras[i3 + 1] = Math.random()
-            extras[i3 + 2] = Math.random()
+                    // Extras
+                    extras[i3 + 0] = random(1, 200)
+                    extras[i3 + 1] = random(1, 200)
+                    extras[i3 + 2] = random(1, 200)
 
-            // Color
-            let color = pixel
-            colors[i3 + 0] = color.r/255;
-            colors[i3 + 1] = color.g/255;
-            colors[i3 + 2] = color.b/255;
+                    // Color
+                    colors[i3 + 0] = pixel.r
+                    colors[i3 + 1] = pixel.g
+                    colors[i3 + 2] = pixel.b
+                    }
 
-          }
+                }
 
-          geometry.addAttribute( 'position', new THREE.BufferAttribute(positions, 3));
+                geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
 
-          geometry.addAttribute( 'color', new THREE.BufferAttribute(colors, 3));
-          geometry.addAttribute( 'extra', new THREE.BufferAttribute(extras, 3));
-          //http://stackoverflow.com/questions/15697898/why-particle-system-with-shader-doesnt-work-three-js
-          geometry.addAttribute( 'puv', new THREE.BufferAttribute(puv, 2));
+                geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+                geometry.addAttribute('extra', new THREE.BufferAttribute(extras, 3));
+                //http://stackoverflow.com/questions/15697898/why-particle-system-with-shader-doesnt-work-three-js
+                geometry.addAttribute('puv', new THREE.BufferAttribute(puv, 2));
 
-          let material = new THREE.ShaderMaterial( {
+                let material = new THREE.ShaderMaterial({
 
-              uniforms: {
-                  uTime: { type: 'f', value: 0 },
-                  uTimeInit: { type: 'f', value: randomInt(0, 100) },
-                  uAnimation: { type: 'f', value: conf.animation },
-                  bgImg: { type: 't', value: bgImg },
-                  uSphereRadius: {type: 'f', value: 1000},
-                  uMatrightBottom: { type: 'v2', value: new THREE.Vector2( 180.0, -90.0 ) },
-                  uMatleftTop: { type: 'v2', value: new THREE.Vector2( -180.0, 90.0 ) },
-              },
-              vertexShader: glslify(__dirname + '/glsl/Drones/Globe.vert'),
-              fragmentShader: glslify(__dirname + '/glsl/Drones/Globe.frag'),
-              blending: THREE.AdditiveBlending,
-              transparent: false,
-              depthWrite: true,
-              depthTest: false
-          } );
+                    uniforms: {
+                        uTime: {
+                            type: 'f',
+                            value: 0
+                        },
+                        uTimeInit: {
+                            type: 'f',
+                            value: randomInt(0, 100)
+                        },
+                        uAnimation: {
+                            type: 'f',
+                            value: conf.animation
+                        },
+                        bgImg: {
+                            type: 't',
+                            value: bgImg
+                        },
+                        uSphereRadius: {
+                            type: 'f',
+                            value: 1000
+                        },
+                        uMatrightBottom: {
+                            type: 'v2',
+                            value: new THREE.Vector2(180.0, -90.0)
+                        },
+                        uMatleftTop: {
+                            type: 'v2',
+                            value: new THREE.Vector2(-180.0, 90.0)
+                        },
+                    },
+                    vertexShader: glslify(__dirname + '/glsl/Drones/Globe.vert'),
+                    fragmentShader: glslify(__dirname + '/glsl/Drones/Globe.frag'),
+                    blending: THREE.AdditiveBlending,
+                    transparent: true,
+                    depthWrite: true,
+                    depthTest: false
+                });
 
-          let particles = new THREE.Points(geometry, material)
-          particles.visible = true
-          group.add(particles)
-          mesh = particles
+                let particles = new THREE.Points(geometry, material)
+                particles.visible = true
+                group.add(particles)
+                mesh = particles
 
-          this.events.on('tick', t => {
-            material.uniforms.uTime.value = t.time * 0.2
-          })
+                this.events.on('tick', t => {
+                    material.uniforms.uTime.value = t.time * 0.2
+
+                    //material.uniforms.uAnimation.value = conf.animation
+                })
+            })
+
         })
 
-      })
+        const doNext = () => {
 
-    const doNext = () => {
+            mesh.material.uniforms.uAnimation.value = 0
 
-      mesh.material.uniforms.uAnimation.value = 1
+            tweenr.to(mesh.material.uniforms.uAnimation, {
+                value: 1,
+                duration: 2
+            })
 
-      tweenr.to(mesh.material.uniforms.uAnimation, {
-        value: 0, duration: 2})
+        }
+        this.events.on(VIS + '::doNext', p => {
+            doNext() /*p.duration?*/
+        })
+        conf.doNext = doNext
 
+        this.events.on(VIS + '::visOn', _ => group.visible = true)
+        this.events.on(VIS + '::visOff', _ => group.visible = false)
+
+        super.addVis(VIS, conf)
     }
-    this.events.on(VIS + '::doNext', p => {
-      doNext() /*p.duration?*/
-    })
-    conf.doNext = doNext
-
-      this.events.on(VIS + '::visOn', _ => group.visible = true)
-      this.events.on(VIS + '::visOff', _ => group.visible = false)
-
-    super.addVis(VIS, conf)
-  }
 
 
 

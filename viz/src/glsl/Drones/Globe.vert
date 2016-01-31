@@ -1,10 +1,11 @@
 #pragma glslify: pnoise3 = require(glsl-noise/periodic/3d)
 #pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
 #pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
+#pragma glslify: curl = require(glsl-curl-noise)
 #pragma glslify: PI = require(glsl-pi)
 
 attribute vec3 color;
-attribute vec3 extras;
+attribute vec3 extra;
 attribute vec2 puv;
 
 
@@ -55,31 +56,33 @@ varying vec3 vColor;
 				return latlong;
 		}
 
+vec3 chaosPosition(vec3 pos) {
+  return vec3(pos.x + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.x,
+              pos.y + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.y,
+              pos.z + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.z);
+}
+
 
    void main() {
         vUv = uv;
        vColor = color;
      vec3 pos = position;
 
-/*
-       float R = 50.;
-       float lng = position.x/R;
-       float lat = 2. * atan(exp(position.y/R)) - PI/2.;
+     vec3 chaosPosition = chaosPosition(pos);
 
-       float S = 10.;
-       //pos.x = S * cos(lat) * cos(lng);
-       //pos.y = S * cos(lat) * sin(lng);
-       //pos.z = S * sin(lat);
-       pos.x = S * sin(position.x) * cos(position.y);
-       pos.y = S * sin(position.y);
-       pos.z = S * cos(position.x) * cos(position.y);
-       */
-
-       vec2 newLatLong = uvToLatLong(puv, uMatleftTop, uMatrightBottom);
+      vec2 newLatLong = uvToLatLong(puv, uMatleftTop, uMatrightBottom);
 
 			vec3 goalPosition = latLongToVector3(newLatLong.y, newLatLong.x, uSphereRadius);
       // goalPosition *= 500.;
-			vec3 newPosition = mix( position, goalPosition, pow(uAnimation) );
+
+       vec3 newPosition = mix( chaosPosition, position, 1./pow(uAnimation, 2.));
+			//vec3 newPosition = mix( position, goalPosition, pow(uAnimation, 2.) );
+
+
+      //vec3 curlPosition = curl(position + uTime); //+ (uTime * 0.05));
+      //curlPosition *= - 50.;
+      //newPosition.x += snoise3(position.xyz * 0.02 + 50.0 + uTime) * 200.;
+      //newPosition.y += snoise3(position.xyz * 0.02 + 50.0 + uTime) * 200.;
 
       //newPosition.z *= sin(uTime) * 10.;
 			// original mvPosition setting

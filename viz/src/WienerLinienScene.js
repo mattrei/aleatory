@@ -76,10 +76,62 @@ class WienerLinien extends Scene {
 
     this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
 
-    this.background()
+    this.intro()
+    //this.background()
     //this.haltestellen()
     //this.spirals()
     this.metro()
+  }
+
+  intro() {
+
+    const VIS = 'intro'
+    const conf = {on: true, num: 100, dist: 500}
+    const group = new THREE.Group()
+    group.visible = conf.on
+    this.scene.add(group)
+
+    this.loader.load('/assets/WienerLinien/particle.png', texture =>  {
+
+      const geometry = new THREE.Geometry(),
+        material = new THREE.PointsMaterial({
+          color: 0xFFFFFF,
+          size: 16,
+          //opacity: 0,
+          blending: THREE.AdditiveBlending,
+          depthTest: false,
+          map: texture,
+          transparent: true
+        })
+
+      for (let i = 0; i < conf.num; i++) {
+        const v = new THREE.Vector3(THREE.Math.randFloatSpread(conf.dist), THREE.Math.randFloatSpread(conf.dist), THREE.Math.randFloatSpread(conf.dist))
+        geometry.vertices.push(v)
+      }
+
+
+        const points = new THREE.Points(geometry, material)
+
+        const materialLine = new THREE.LineBasicMaterial({
+          color: 0xFFFFFF,
+          opacity: .6,
+          transparent: true
+        });
+        const line = new THREE.Line(geometry.clone(), materialLine)
+        group.add(points)
+        group.add(line)
+
+
+        this.events.on('tick', t => {
+          points.rotation.x += Math.PI / 1800;
+          line.rotation.x += Math.PI / 1800;
+        })
+    })
+
+
+
+    super.addVis(VIS, conf)
+
   }
 
   background() {
@@ -196,7 +248,7 @@ class WienerLinien extends Scene {
 
   topo() {
     const VIS = 'topo'
-    const conf = {on: true}
+    const conf = {on: false}
 
     const group = new THREE.Group()
     this.scene.add(group)
@@ -228,7 +280,7 @@ class WienerLinien extends Scene {
 
   metro() {
     const VIS = 'metro'
-    const conf = {on: true, text: true, train: true}
+    const conf = {on: false, text: true, train: true}
 
     const group = new THREE.Group(),
       textGroup = new THREE.Group(),
