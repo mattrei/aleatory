@@ -45,6 +45,7 @@
     "domready": "^1.0.8",
     "gl-vec3": "^1.0.3",
     "glsl-curl-noise": "0.0.4",
+    "glsl-easings": "^1.0.0",
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
     "glsl-random": "0.0.5",

@@ -1,5 +1,5 @@
 precision mediump float;
-
+//unused
 void main() {
         vec2 center = vec2(0.5, 0.5);
         float t = 0.05 / length(gl_PointCoord - center);

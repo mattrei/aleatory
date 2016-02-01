@@ -771,7 +771,7 @@ class Drones extends Scene {
         const VIS = 'particles'
         const conf = {
             on: true,
-            animation: 1
+            sphere: 0, flat: 0
         }
 
         const group = new THREE.Group()
@@ -809,11 +809,12 @@ class Drones extends Scene {
             return new THREE.Color(r/255, g/255, b/255)
         }
 
-        const MAX_PARTICLES = 1000 * 100000 // has 2mio pixels
+        const MAX_PARTICLES = 1000 * 300000 // has 2mio pixels
         const MAX_PARTICLE_DIST = 50
         const IMG_SCALE = 1
 
         this.loader.load('/assets/Drones/earth_political_alpha.png', (texture) => {
+          this.loader.load('/assets/nova_particle.png', (particleTexture) => {
             const bgImg = texture.image.src
 
             _getImgData(bgImg).then(imgData => {
@@ -886,9 +887,10 @@ class Drones extends Scene {
                     extras[i3 + 2] = random(1, 200)
 
                     // Color
-                    colors[i3 + 0] = pixel.r
-                    colors[i3 + 1] = pixel.g
-                    colors[i3 + 2] = pixel.b
+                    let color = new THREE.Color().setHSL(simplex.noise2D(position.x, position.y)*0.5, 0.8, 0.1 )
+                    colors[i3 + 0] = color.r
+                    colors[i3 + 1] = color.g
+                    colors[i3 + 2] = color.b
                     }
 
                 }
@@ -911,9 +913,13 @@ class Drones extends Scene {
                             type: 'f',
                             value: randomInt(0, 100)
                         },
-                        uAnimation: {
+                        uAnimationSphere: {
                             type: 'f',
-                            value: conf.animation
+                            value: conf.sphere
+                        },
+                        uAnimationFlat: {
+                            type: 'f',
+                            value: conf.flat
                         },
                         bgImg: {
                             type: 't',
@@ -937,7 +943,7 @@ class Drones extends Scene {
                     blending: THREE.AdditiveBlending,
                     transparent: true,
                     depthWrite: true,
-                    depthTest: false
+                    depthTest: false,
                 });
 
                 let particles = new THREE.Points(geometry, material)
@@ -951,23 +957,56 @@ class Drones extends Scene {
                     //material.uniforms.uAnimation.value = conf.animation
                 })
             })
+          })
 
         })
 
-        const doNext = () => {
+        const doFlat = () => {
 
-            mesh.material.uniforms.uAnimation.value = 0
-
-            tweenr.to(mesh.material.uniforms.uAnimation, {
+            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
                 value: 1,
                 duration: 2
             })
-
+            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+                value: 0,
+                duration: 2
+            })
         }
-        this.events.on(VIS + '::doNext', p => {
-            doNext() /*p.duration?*/
+        this.events.on(VIS + '::doFlat', p => {
+            doFlat() /*p.duration?*/
         })
-        conf.doNext = doNext
+        conf.doFlat = doFlat
+
+        const doSphere = () => {
+
+            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+                value: 1,
+                duration: 2
+            })
+            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
+                value: 0,
+                duration: 2
+            })
+        }
+        this.events.on(VIS + '::doSphere', p => {
+            doSphere() /*p.duration?*/
+        })
+        conf.doSphere = doSphere
+
+        const doChaos = () => {
+            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+                value: 0,
+                duration: 2
+            })
+            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
+                value: 0,
+                duration: 2
+            })
+        }
+        this.events.on(VIS + '::doChaos', p => {
+            doChaos() /*p.duration?*/
+        })
+        conf.doChaos = doChaos
 
         this.events.on(VIS + '::visOn', _ => group.visible = true)
         this.events.on(VIS + '::visOff', _ => group.visible = false)

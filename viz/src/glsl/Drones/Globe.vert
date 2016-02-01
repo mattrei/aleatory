@@ -1,8 +1,6 @@
-#pragma glslify: pnoise3 = require(glsl-noise/periodic/3d)
-#pragma glslify: snoise3 = require(glsl-noise/simplex/3d)
-#pragma glslify: snoise2 = require(glsl-noise/simplex/2d)
-#pragma glslify: curl = require(glsl-curl-noise)
+#pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: PI = require(glsl-pi)
+#pragma glslify: ease = require(glsl-easings/quadratic-in)
 
 attribute vec3 color;
 attribute vec3 extra;
@@ -11,7 +9,8 @@ attribute vec2 puv;
 
 uniform float uTime;
 uniform float uTimeInit;
-uniform float uAnimation;
+uniform float uAnimationSphere;
+uniform float uAnimationFlat;
 
 uniform vec2 uMatrightBottom;
 uniform vec2 uMatleftTop;
@@ -57,9 +56,10 @@ varying vec3 vColor;
 		}
 
 vec3 chaosPosition(vec3 pos) {
-  return vec3(pos.x + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.x,
-              pos.y + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.y,
-              pos.z + snoise3(position.xyz * 0.02 + 50.0 + uTime) * 1000. * extra.z);
+  float vel = uTime * 0.05;
+  return vec3(pos.x + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1)) * 1000.,
+              pos.y + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1 + 1.25)) * 1000.,
+              pos.z + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1 + 12.25)) * 1000.);
 }
 
 
@@ -68,32 +68,23 @@ vec3 chaosPosition(vec3 pos) {
        vColor = color;
      vec3 pos = position;
 
-     vec3 chaosPosition = chaosPosition(pos);
 
       vec2 newLatLong = uvToLatLong(puv, uMatleftTop, uMatrightBottom);
 
-			vec3 goalPosition = latLongToVector3(newLatLong.y, newLatLong.x, uSphereRadius);
-      // goalPosition *= 500.;
+			vec3 spherePosition = latLongToVector3(newLatLong.y, newLatLong.x, uSphereRadius);
+      vec3 chaosPosition = chaosPosition(pos);
+      vec3 flatPosition = position;
 
-       vec3 newPosition = mix( chaosPosition, position, 1./pow(uAnimation, 2.));
-			//vec3 newPosition = mix( position, goalPosition, pow(uAnimation, 2.) );
+       vec3 newPosition = chaosPosition;
+
+     newPosition = mix( newPosition, spherePosition, ease(uAnimationSphere));
+     newPosition = mix( newPosition, flatPosition, ease(uAnimationFlat));
 
 
-      //vec3 curlPosition = curl(position + uTime); //+ (uTime * 0.05));
-      //curlPosition *= - 50.;
-      //newPosition.x += snoise3(position.xyz * 0.02 + 50.0 + uTime) * 200.;
-      //newPosition.y += snoise3(position.xyz * 0.02 + 50.0 + uTime) * 200.;
+      //newPosition.z += sin(newPosition.x * 0.01 + newPosition.y * 0.01 + uTime * 10.) * 200.;
 
-      //newPosition.z *= sin(uTime) * 10.;
-			// original mvPosition setting
-		  // vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
 		  vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
-      //vViewPosition = -mvPosition.xyz; // ah HA
-
-
-       //vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
         gl_Position = projectionMatrix * mvPosition;
-      //gl_PointSize = size * 300.0 / length(mvPosition.xyz);
-       gl_PointSize = 1.0;
+       gl_PointSize = 25.0;
       }
