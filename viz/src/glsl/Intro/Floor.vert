@@ -3,6 +3,7 @@
 
   varying vec2 vUv;
   varying float vNoise;
+varying float vY;
 
             // varying vec3  v_line_color;
 
@@ -33,6 +34,7 @@
                 vec3 newPosition = vec3(position.x,position.y, displacement+z);
 
                 vNoise = displacement;
+                vY = newPosition.z;
                 //vNoise = sin(position.x / 2. - PI / 2.);
                 //vec3 newPosition = position + normal * vec3(sin(time * 0.2) * 3.0);
                 gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );

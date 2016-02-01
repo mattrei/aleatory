@@ -1,6 +1,8 @@
 #pragma glslify: PI = require('glsl-pi')
 
 varying vec2 vUv;
+varying float vNoise;
+varying float vY;
 //varying float vNoise;
 uniform float time;
 uniform float speed;
@@ -18,6 +20,7 @@ uniform float speed;
 
             vec3 color = vec3(r,g,b);
             //color *= vNoise;
+            gl_FragColor = vec4(cos(vY * 2.0), vY * 3.0, 1.0, 1.0);
 
-            gl_FragColor = vec4(color, alpha);
+            //gl_FragColor = vec4(color, alpha);
         }
