@@ -4,6 +4,7 @@ import Scene from './Scene'
 const simplex = new (require('simplex-noise'))
 const random = require('random-float')
 const randomInt = require('random-int')
+const clamp = require('clamp')
 
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
@@ -32,23 +33,192 @@ const PLANE_SIZE = {X: window.innerWidth * 2, Z: STREET_LENGTH}
 
 class IntroScene extends Scene {
     constructor(args) {
-      super(args, new THREE.Vector3(0,30,30))
+      super(args, new THREE.Vector3(0,0,50))
 
-        this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
+        //this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
         this.createText()
-        this.background()
+        //this.background()
         this.street()
         this.buildings()
         this.cars()
         this.createParticles()
         this.floor()
+        this.visparticles()
 
         this.xtion()
 
         //this.createTriangles()
         //this.createFlyingLine()
     }
+
+    visparticles() {
+     const VIS = 'visparticles'
+     const conf = {on: true}
+     const group = new THREE.Group()
+     group.visible = conf.on
+     this.scene.add(group)
+
+      class StarParticle {
+        constructor(args) {
+          this._vertex = args.vertex
+          this._position = new THREE.Vector3()
+          this._initialForce = new THREE.Vector3()
+          this._velocity = new THREE.Vector3()
+          this._vec = new THREE.Vector3()
+          this._zoom = new THREE.Vector3()
+          this._max = random(10000, 25000)
+          this._amount = 0
+          this._fx = new THREE.Vector3()
+        }
+       init(position, force) {
+            this._vertex.copy(position);
+            this._position.copy(position);
+            this._initialForce.copy(force).multiplyScalar(0.25);
+            this._initialForce.x = clamp(this._initialForce.x, -10, 10);
+            this._initialForce.y = clamp(this._initialForce.y, -10, 10);
+
+            this._velocity.add(new THREE.Vector3(0, 0, 10));
+            if (!random(0, 5)) _zoom.z = 1;
+
+            this._vec.set(random(-10, 10) / 5, random(-10, 10) / 5, random(-10, 10) / 5);
+            this._initialForce.add(this._vec);
+        }
+
+        update(mouse, delta) {
+            if (this._position.z < -this._max) return;
+            this._position.add(this._initialForce);
+            this._position.add(this._zoom);
+            this._position.add(this._velocity);
+            this._vertex.copy(this._position);
+
+            this._zoom.z *= 1.0095;
+
+            if (this._initialForce.z > -10) this._initialForce.z -= 0.009;
+
+            this._velocity.multiplyScalar(0.9);
+
+            this._vec.subVectors(mouse, this._position);
+            var dSq = this._vec.lengthSq();
+
+            var f = dSq / 40000;
+            f = f < 0 ? 0.1 : f > 1 ? 1 : f;
+
+            var a = Math.atan2(this._vec.y, this._vec.x);
+
+            this._fx.set(0, 0, 0);
+            this._fx.x += Math.cos(a) * this._amount;
+            this._fx.y += Math.sin(a) * this._amount;
+            this._velocity.add(this._fx);
+
+          //console.log(this._vertex)
+        }
+      }
+
+     const particles = []
+     const pool = []
+     let poolIdx = 0
+     const MAX_PARTICLES =  2000
+
+     this.loader.load('/assets/star.png', (starTexture) => {
+       this.loader.load('/assets/palette.jpg', (paletteTexture) => {
+
+       const geometry = new THREE.Geometry(),
+             material = /*new THREE.PointsMaterial( {
+               map: starTexture, size: 1, color: 0xff0000} );
+             */
+
+             new THREE.ShaderMaterial({
+               uniforms: {
+                palette: {
+                    type: "t",
+                    value: paletteTexture
+                },
+                map: {
+                    type: "t",
+                    value: starTexture
+                },
+                size: {
+                    type: "f",
+                    value: 175 / 2
+                },
+                opacity: {
+                    type: "f",
+                    value: 0.75
+                },
+                area: {
+                    type: "f",
+                    value: 3000
+                }
+               },
+               vertexShader: glslify('./glsl/Intro/Stars.vert'),
+               fragmentShader: glslify('./glsl/Intro/Stars.frag'),
+               transparent: true,
+               depthTest: false,
+               blending: THREE.AdditiveBlending,
+             })
+
+
+         // fill pool
+          for (var i = 0; i < MAX_PARTICLES; i++) {
+            const vertex = new THREE.Vector3(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+            //const vertex = new THREE.Vector3(random(0, 100),random(0,100),0)
+
+            const p = new StarParticle({vertex: vertex})
+            geometry.vertices.push(vertex)
+            //B.scale.value[D] = Utils.doRandom(3, 10) / 10;
+            //B.alpha.value[D] = Utils.doRandom(3, 10) / 10;
+
+
+            let mouse = new THREE.Vector3(),
+                force = new THREE.Vector3(-0.01, 0.02, 0)
+            pool.push(p)
+            //p.init(mouse, force)
+            //particles.push(p)
+          }
+
+         const mesh = new THREE.Points(geometry, material)
+         this.scene.add(mesh)
+
+         const j = new THREE.Vector3(),
+               lastMouse = new THREE.Vector3(),
+               mouse = new THREE.Vector3()// todo
+         this.events.on('tick', t => {
+
+             const freq = super.getFreq(200, 400)
+             mouse.z += 0.1
+             mouse.y = freq * 500
+
+              var delta = j.subVectors(mouse, lastMouse).length()
+
+              particles.forEach(p => {
+                  p.update(mouse, delta);
+              })
+
+              lastMouse.copy(mouse)
+
+              geometry.verticesNeedUpdate = true
+               //mesh.rotation.z += 0.1
+               //mesh.position.z += 0.1
+
+               // get new particles from pool
+            for (var i = 0; i < 1; i++) {
+               let o = pool[poolIdx++ % MAX_PARTICLES]
+               let force = new THREE.Vector3(random(-10,10), random(-10,10), random(-1,1))
+               o.init(mouse, force)
+              particles.push(o)
+            }
+         })
+
+
+       })
+     })
+
+
+
+
+     super.addVis(VIS, conf)
+  }
 
   xtion() {
      const VIS = 'xtion'
