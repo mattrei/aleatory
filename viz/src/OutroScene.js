@@ -2,6 +2,7 @@ global.THREE = require('three')
 import Scene from './Scene'
 
 const simplex = new (require('simplex-noise'))()
+const noise = new (require('noisejs')).Noise(Math.random())
 
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -88,7 +89,7 @@ class DemoScene extends Scene {
               //basePos[j + 1] = vertices[j + 1];
               //basePos[j + 2] = vertices[j + 2];
           }
-           this.drawParticles()
+           this.initParticles()
 
          }
         generateHeight(width, height) {
@@ -101,12 +102,13 @@ class DemoScene extends Scene {
                     y = Math.floor(i / width)
 
                 data[i] = Math.abs(simplex.noise2D(x, y)) * 1.75
+                //data[i] = Math.abs(noise.perlin2(x / 100, y / 100)) * 1.75
             }
           console.log(data)
-          console.log(Math.abs(simplex.noise2D(5, 88)))
+          //console.log(Math.abs(noise.perlin2(15/100, 88/100)))
           return data
         }
-       drawParticles() {
+       initParticles() {
          const material = new THREE.ShaderMaterial({
                 uniforms: {
                   amplitude: {
@@ -155,7 +157,9 @@ class DemoScene extends Scene {
 
 
 
+        const points = new THREE.Points(this.geometry, material)
 
+        this.group.add(points)
        }
        update(time) {
 
