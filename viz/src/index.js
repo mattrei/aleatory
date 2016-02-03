@@ -14,13 +14,14 @@ import Events from 'minivents'
 import Stats from 'stats-js'
 import dat from 'dat-gui'
 
-// 5 scenes
+// 6 scenes
 import IntroScene from './IntroScene'
 import ExecutedScene from './ExecutedScene'
 import RefugeesScene from './RefugeesScene'
 import DronesScene from './DronesScene'
 import WienerLinienScene from './WienerLinienScene'
-//TODO: OutroScene
+import OutroScene from './OutroScene'
+  // 7scene ThisbeautifulWorld
 
 // load fonts
 require('./fonts/oswald_regular.typeface.js')
@@ -145,7 +146,8 @@ class Main {
 
     //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s1 = new DronesScene(args)
-    this.scenes.s1 = new IntroScene(args)
+    //this.scenes.s1 = new IntroScene(args)
+      this.scenes.s1 = new OutroScene(args)
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 

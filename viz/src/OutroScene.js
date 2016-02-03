@@ -1,7 +1,8 @@
 global.THREE = require('three')
 import Scene from './Scene'
 
-const simplex = new (require('simplex-noise'))
+const simplex = new (require('simplex-noise'))()
+
 const random = require('random-float')
 const randomInt = require('random-int')
 
@@ -32,12 +33,152 @@ const PLANE_SIZE = {X: window.innerWidth * 2, Z: STREET_LENGTH}
 //https://github.com/crma16/sound-experiments/blob/master/src/layouts/webgl-background/objects/Wave.js
 class DemoScene extends Scene {
     constructor(args) {
-      super(args, new THREE.Vector3(0,30,30))
+      super(args, new THREE.Vector3(0,30,0))
 
-        this.wave()
-        this.xtion()
-
+        this.soundwave()
+        this.soundscape()
     }
+
+  soundscape() {
+    const VIS = 'soundscape'
+     const conf = {on: true}
+     const group = new THREE.Group()
+     group.visible = conf.on
+     this.scene.add(group)
+
+
+     const SIZE = {WIDTH: 100, DEPTH: 100}
+
+     class Soundscape extends THREE.Object3D {
+        constructor(args) {
+          super()
+          this.particle = args.particle
+          this.group = args.group
+
+          this.geometry = new THREE.PlaneBufferGeometry(500, 500, SIZE.WIDTH - 1, SIZE.DEPTH - 1);
+          // trick! make the underground visible and not the top
+           this.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+
+          this.vertices = this.geometry.attributes.position.array
+
+
+
+        this.material = new THREE.MeshBasicMaterial({
+            color: 0x448844,
+            shading: THREE.FlatShading,
+            wireframe: false,
+            wireframeLinewidth: 2,
+            transparent: true
+        });
+
+
+          this.mesh = new THREE.Mesh(this.geometry, this.material)
+
+          this.group.add(this.mesh)
+        }
+         init() {
+
+           let data = this.generateHeight(256, 256)
+             for (var i = 0, j = 0; i < this.vertices.length; i++, j += 3) {
+
+              // only modifiy y of position
+              this.vertices[j + 1] = data[i] * 10;
+
+              //basePos[j + 0] = this.vertices[j + 0];
+              //basePos[j + 1] = vertices[j + 1];
+              //basePos[j + 2] = vertices[j + 2];
+          }
+           this.drawParticles()
+
+         }
+        generateHeight(width, height) {
+          let size = width * height,
+            data = new Uint8Array(size)
+
+            for (let i = 0; i < size; i++) {
+
+                let x = i % width,
+                    y = Math.floor(i / width)
+
+                data[i] = Math.abs(simplex.noise2D(x, y)) * 1.75
+            }
+          console.log(data)
+          console.log(Math.abs(simplex.noise2D(5, 88)))
+          return data
+        }
+       drawParticles() {
+         const material = new THREE.ShaderMaterial({
+                uniforms: {
+                  amplitude: {
+                      type: "f",
+                      value: 1.0
+                  },
+                  color: {
+                      type: "c",
+                      value: new THREE.Color(0xffffff)
+                  },
+                  texture: {
+                      type: "t",
+                      value: this.particle
+                  }
+                },
+                vertexShader: glslify('./glsl/Outro/Soundscape.vert'),
+                fragmentShader: glslify('./glsl/Outro/Soundscape.frag'),
+                transparent: true,
+                side: THREE.DoubleSide,
+                blending: THREE.AdditiveBlending,
+                opacity: 0.7,
+                // vertexColors: THREE.VertexColors,
+            })
+
+          const colors = new Float32Array(this.vertices.length * 3)
+          const sizes = new Float32Array(this.vertices.length)
+
+          const color = new THREE.Color(0xffaa00) // red
+          for (let v = 0; v < this.vertices.length; v++) {
+             colors[v*3 + 0] = color.r
+             colors[v*3 + 1] = color.g
+             colors[v*3 + 2] = color.b
+
+            if (this.vertices[v] < 0)// does what?
+                color.setHSL(0.5 + 0.1 * (v / this.vertices.length), 0.7, 0.5);
+            else
+                color.setHSL(0.0 + 0.1 * (v / this.vertices.length), 0.9, 0.5);
+
+            sizes[v] = Math.floor(random(0, 100)) + 15
+          }
+
+
+
+         this.geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3))
+         this.geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1))
+
+
+
+
+       }
+       update(time) {
+
+
+          this.geometry.attributes.size.needsUpdate = true
+          this.geometry.attributes.position.needsUpdate = true
+          this.geometry.attributes.color.needsUpdate = true
+       }
+     }
+
+
+    this.loader.load('/assets/Outro/particle.png', texture => {
+
+      const ss = new Soundscape({group:group, particle: texture})
+      ss.init()
+
+      this.events.on('tick', t => {
+         ss.update(t.time)
+      })
+    })
+
+     super.addVis(VIS, conf)
+  }
 
   xtion() {
      const VIS = 'xtion'
@@ -109,53 +250,10 @@ class DemoScene extends Scene {
 
   }
 
-    background() {
 
-      const skyVertex = `
-      varying vec2 vUV;
+    soundwave() {
 
-      void main() {
-        vUV = uv;
-        vec4 pos = vec4(position, 1.0);
-        gl_Position = projectionMatrix * modelViewMatrix * pos;
-      }
-      `
-
-      const skyFragment = `
-      uniform sampler2D texture;
-      varying vec2 vUV;
-
-      void main() {
-        vec4 sample = texture2D(texture, vUV);
-        gl_FragColor = vec4(sample.xyz, sample.w);
-      }
-      `
-
-      this.loader.load(
-		      '/assets/Intro/eso_dark.jpg', (texture) => {
-            var geometry = new THREE.SphereGeometry(3000, 60, 40);
-            var material = new THREE.ShaderMaterial( {
-              uniforms:       {
-                texture: { type: 't', value: texture }
-              },
-              vertexShader:   skyVertex,
-              fragmentShader: skyFragment
-            });
-
-            let skyBox = new THREE.Mesh(geometry, material);
-            skyBox.scale.set(-1, 1, 1);
-            skyBox.rotation.order = 'XZY';
-            skyBox.renderOrder = 1000.0;
-            skyBox.rotation.y = Math.PI*-0.5
-            this.scene.add(skyBox);
-          })
-
-
-    }
-
-    wave() {
-
-      const VIS = 'wave'
+      const VIS = 'soundwave'
       let conf = {on:false, speed: 1}
       const group = new THREE.Group()
       group.visible = conf.on
@@ -163,7 +261,6 @@ class DemoScene extends Scene {
 
 
     const SIZE = 2.0
-    const mesh = null
 
     this.loader.load('/assets/Outro/particle.png', texture => {
       const plane = new THREE.PlaneGeometry(150, 100, 150, 150),
@@ -175,15 +272,15 @@ class DemoScene extends Scene {
             sizes = new Float32Array(nbParticles);
 
     for (let i = 0, i3 = 0; i < nbParticles; i ++, i3 += 3) {
-      this.positions[ i3 + 0 ] = plane.vertices[ i ].x;
-      this.positions[ i3 + 1 ] = plane.vertices[ i ].y;
-      this.positions[ i3 + 2 ] = plane.vertices[ i ].z;
+      positions[ i3 + 0 ] = plane.vertices[ i ].x;
+      positions[ i3 + 1 ] = plane.vertices[ i ].y;
+      positions[ i3 + 2 ] = plane.vertices[ i ].z;
 
-      this.sizes[ i ] = this.particleSize;
+      sizes[ i ] = this.particleSize
     }
 
-    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-    geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
+    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3))
+    geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1))
 
 
       const material = new THREE.ShaderMaterial({
@@ -192,19 +289,18 @@ class DemoScene extends Scene {
           sprite: { type: 't', value: texture },
           speed: { type: 'f', value: 1.0 },
         },
-        vertexShader: require('./glsl/Outro/wave.vert'),
-        fragmentShader: glslify('./glsl/Outro/wave.frag'),
+        vertexShader: glslify('./glsl/Outro/Soundwave.vert'),
+        fragmentShader: glslify('./glsl/Outro/Soundwave.frag'),
         depthTest: false,
         transparent: true,
       })
 
 
 
+       const mesh = new THREE.Points(geometry, material)
+      mesh.rotation.x = -0.45 * Math.PI
 
-
-
-     mesh = new THREE.Points(this.geometry, this.material);
-      mesh.rotation.x = -0.45 * Math.PI;
+      group.add(mesh)
 
       this.events.on('tick', t => {
          material.uniforms.time.value = t.time

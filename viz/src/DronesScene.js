@@ -405,11 +405,11 @@ class Drones extends Scene {
       }
     }
 
-    const satellites = []
+    let sats = []
 
     this.loader.load('/assets/Drones/satelliteparticle.png', texture => {
 
-      satellites.push(new Satellite({texture: texture,
+      sats.push(new Satellite({texture: texture,
                                      group: group,
                                      pos: new THREE.Vector3(random(0,100),random(0,100),0),
                                      /*velocity: */
@@ -421,7 +421,7 @@ class Drones extends Scene {
     const doAdd = () => {
       const min = random (1, 3) * 1000,
             max = random (4, 9) * 1000
-      satellites.push(new Satellite({texture: texture,
+      sats.push(new Satellite({texture: texture,
                                      group: group,
                                      pos: new THREE.Vector3(random(0,100),random(0,100),0),
                                      freqRange: {min: min, max: max},
@@ -434,7 +434,7 @@ class Drones extends Scene {
 
 
 
-      satellites.forEach(s => {
+      sats.forEach(s => {
         const f = s.freqRange()
 
         const freq = super.getFreq(f.min, f.max)
