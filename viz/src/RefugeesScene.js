@@ -1,4 +1,3 @@
-const DEMO = true
 global.THREE = require('three')
 import Scene from './Scene'
 
@@ -24,8 +23,8 @@ class Demo extends Scene {
     this.headlines()
     this.pictures()
 
-    if (DEMO) super.onVisParameters({headlines: {data: require('./test_data/headlines.json')}})
-    if (DEMO) super.onVisParameters({pictures: {data: require('./test_data/pictures.json')}})
+    if (super.demo()) super.onVisParameters({headlines: {data: require('./test_data/headlines.json')}})
+    if (super.demo()) super.onVisParameters({pictures: {data: require('./test_data/pictures.json')}})
   }
 
   background()

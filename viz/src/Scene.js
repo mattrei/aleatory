@@ -50,6 +50,7 @@ class Scene {
       this._texts = {intro: 'intro!', outro: 'outro!'}
       this.vis = []
 
+        this.demo = args.demo
         this.run = false
         this.events = new Events()
         this.analyser = args.analyser
@@ -58,6 +59,8 @@ class Scene {
         this.composer = args.composer
         this.loader = args.loader
         this.clock = args.clock
+
+        this.video = args.video
         this.canvas = args.canvas
         this.ctx = args.ctx
 
@@ -68,6 +71,8 @@ class Scene {
         this.controls = new OrbitControls(this.camera, this.renderer.domElement);
         this.controls.maxDistance = 300000;
         this.camera.position.set(cam.x, cam.y, cam.z)
+
+
 
 
         this.scene = new THREE.Scene()
@@ -89,6 +94,10 @@ class Scene {
 
         // requestAnimationFrame
         args.events.on('update', _ => this.update(_))
+  }
+
+  demo() {
+    return this.demo
   }
 
   addVis(name, parameters) {

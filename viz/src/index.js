@@ -20,6 +20,7 @@ import ExecutedScene from './ExecutedScene'
 import RefugeesScene from './RefugeesScene'
 import DronesScene from './DronesScene'
 import WienerLinienScene from './WienerLinienScene'
+import OceanScene from './OceanScene'
 import OutroScene from './OutroScene'
   // 7scene ThisbeautifulWorld
 
@@ -37,6 +38,7 @@ class Main {
     this.events = new Events()
 
     this.analyser = null
+    this.video = null
 
     this.scenes = {s1: null, current:null}
 
@@ -127,11 +129,19 @@ class Main {
     })
     this.oscPort.open()
 
-    navigator.webkitGetUserMedia({audio: true}, stream => {
+    navigator.webkitGetUserMedia({audio: true, video: true}, stream => {
      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+     this.video	= document.createElement('video')
+     this.video.width	= 512
+     this.video.height	= 512
+     this.video.autoplay	= true;
+     this.video.src	= URL.createObjectURL(stream)
 
 
       const args = {
+
+        demo: true,
+
         renderer: this.renderer,
                   composer: this.composer,
                   events: this.events,
@@ -139,6 +149,9 @@ class Main {
                   clock: this.clock,
                   loader: this.loader,
                   analyser: this.analyser,
+        // webcam video
+        video: this.video,
+
         // for drawing purposes
         canvas: this.canvas,
         ctx: this.ctx
@@ -147,9 +160,13 @@ class Main {
     //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s1 = new DronesScene(args)
     //this.scenes.s1 = new IntroScene(args)
-      this.scenes.s1 = new OutroScene(args)
+
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
+
+      this.scenes.s1 = new OceanScene(args)
+      //TODO
+      //this.scenes.s1 = new OutroScene(args)
 
     this.setScene("s1")
 
