@@ -131,12 +131,13 @@ class Main {
 
     navigator.webkitGetUserMedia({audio: true, video: true}, stream => {
      this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
+     /*
      this.video	= document.createElement('video')
      this.video.width	= 512
      this.video.height	= 512
      this.video.autoplay	= true;
      this.video.src	= URL.createObjectURL(stream)
-
+*/
 
       const args = {
 

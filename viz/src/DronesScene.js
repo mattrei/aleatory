@@ -1,6 +1,5 @@
 import Scene from './Scene'
 global.THREE = require('three')
-import TWEEN from 'tween.js'
 import SPE from './ShaderParticleEngine/SPE'
 const simplex = new(require('simplex-noise'))
 

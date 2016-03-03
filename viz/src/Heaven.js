@@ -1,4 +1,4 @@
-global.THREE = require('three.js')
+global.THREE = require('three')
 import OC    from 'three-orbit-controls';
 import dat   from 'dat-gui' ;
 import Stats from 'stats-js' ;
@@ -21,7 +21,7 @@ const NUM_BIRDS = 400
 // https://docs.google.com/spreadsheets/d/1YNqIzyQfEn4i_be2GGWESnG2Q80E_fLASffsXdCOftI/edit#gid=1085726718
 
 class Demo {
-  constructor(args) 
+  constructor(args)
   {
 
     this.birdText = ''
@@ -29,7 +29,7 @@ class Demo {
     this.startStats();
     this.startGUI();
 
-    
+
     this.textMesh = null
 
     this.renderer = null;
@@ -57,7 +57,7 @@ class Demo {
 
   startStats()
   {
-    this.stats = new Stats(); 
+    this.stats = new Stats();
     this.stats.domElement.style.position = 'absolute';
     document.body.appendChild(this.stats.domElement);
   }
@@ -89,7 +89,7 @@ class Demo {
 
   addObjects()
   {
-    var gridHelper = new THREE.GridHelper( 100, 10 );        
+    var gridHelper = new THREE.GridHelper( 100, 10 );
     //this.scene.add( gridHelper );
 
 
@@ -108,12 +108,12 @@ class Demo {
     let mesh = new THREE.Mesh( new THREE.BoxGeometry( 10000, 10000, 10000, 7, 7, 7 ),
      new THREE.MeshFaceMaterial( materials ) );
     mesh.scale.x = - 1;
-    
+
     this.scene.add(mesh);
 
   }
 
-  addBirds() 
+  addBirds()
   {
 
         for ( var i = 0; i < NUM_BIRDS; i ++ ) {
@@ -167,7 +167,7 @@ class Demo {
     this.addText()
 
         let points = THREE.GeometryUtils.randomPointsInGeometry( this.textMesh.geometry, NUM_BIRDS );
-        
+
         for ( var i = 0; i < NUM_BIRDS; i ++ ) {
           let b = this.birds[i]
           b.inText = true
@@ -256,9 +256,9 @@ class Demo {
     requestAnimationFrame(this.update.bind(this));
   }
 
-  render() 
+  render()
   {
-    
+
       for ( var i = 0, il = this.birds.length; i < il; i++ ) {
 
           let bird = this.birds[ i ];
@@ -281,7 +281,7 @@ class Demo {
             bird.geometry.vertices[ 5 ].y = bird.geometry.vertices[ 4 ].y = Math.sin( bird.phase ) * 5;
           }
         }
-        
+
 
   }
 

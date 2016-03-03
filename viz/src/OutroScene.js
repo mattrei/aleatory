@@ -101,11 +101,9 @@ class DemoScene extends Scene {
                 let x = i % width,
                     y = Math.floor(i / width)
 
-                data[i] = Math.abs(simplex.noise2D(x, y)) * 1.75
+                data[i] = Math.abs(simplex.noise2D(x, y)) * 1.1
                 //data[i] = Math.abs(noise.perlin2(x / 100, y / 100)) * 1.75
             }
-          console.log(data)
-          //console.log(Math.abs(noise.perlin2(15/100, 88/100)))
           return data
         }
        initParticles() {
@@ -115,7 +113,7 @@ class DemoScene extends Scene {
                       type: "f",
                       value: 1.0
                   },
-                  color: {
+                  bcolor: {
                       type: "c",
                       value: new THREE.Color(0xffffff)
                   },
@@ -147,7 +145,7 @@ class DemoScene extends Scene {
             else
                 color.setHSL(0.0 + 0.1 * (v / this.vertices.length), 0.9, 0.5);
 
-            sizes[v] = Math.floor(random(0, 100)) + 15
+            sizes[v] = Math.floor(random(1, 5))
           }
 
 

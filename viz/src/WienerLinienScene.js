@@ -1,8 +1,6 @@
-const DEMO = true
 global.THREE = require('three')
 import Scene from './Scene'
 
-import TWEEN from 'tween.js'
 
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')

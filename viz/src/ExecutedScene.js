@@ -10,7 +10,6 @@ const simplex = new (require('simplex-noise'))()
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
-import TWEEN from 'tween.js'
 const glslify = require('glslify')
 const newArray = require('new-array')
 
@@ -28,10 +27,6 @@ const GeometryUtils = require('./utils/GeometryUtils')
 
 const ParticleShader = require('./shaders/ParticleShader')(THREE)
 
-
-
-const Velocity = require('velocity-animate')
-require('velocity-animate/velocity.ui')
 
 const POLY_SIZE = 8000
 const SPHERE_SIZE = 1500
