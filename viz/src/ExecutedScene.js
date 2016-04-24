@@ -17,7 +17,8 @@ const randomRadian = () => random(-Math.PI, Math.PI)
 const randomRotation = () => newArray(3).map(randomRadian)
 const randomSphere = require('gl-vec3/random')
 
-const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
+const ExplodeModifier = require('./modifiers/ExplodeModifier')
+const TessellateModifier = require('./modifiers/TessellateModifier')
 var randomSpherical = require('random-spherical/object')( null, THREE.Vector3 )
 //const randomSpherical = require('random-spherical/array')()
 
@@ -39,14 +40,14 @@ class Demo extends Scene {
 
     this.text = {name: null, date: null, intro: null}
 
-    this.createBackground()
-    this.createCage()
-    this.createAsteroids(50).forEach(m => this.scene.add(m))
-    this.createExecuted()
-    this.createScheduled()
+    this.background()
+    this.cage()
+    this.asteroids(50).forEach(m => this.scene.add(m))
+    this.executed()
+    this.scheduled()
 
     // demo
-    if (DEMO) {
+    if (super.demo()) {
       super.onVisParameters({executed: {data: require('./test_data/executed.json')}})
       super.onVisParameters({scheduled: {data: require('./test_data/scheduled.json')}})
     }
@@ -93,7 +94,7 @@ class Demo extends Scene {
   //TODO
   }
 
-  createBackground() {
+  background() {
 
     const skyVertex = `
     varying vec2 vUV;
@@ -136,16 +137,24 @@ class Demo extends Scene {
 
   }
 
-  createAsteroids (count) {
+  asteroids (count) {
     const geometries = newArray(6).map(asteroidGeom)
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
       transparent: true,
       wireframe: true
     })
+
+
     const meshes = newArray(count).map(() => {
       const geometry = geometries[randomInt(geometries.length)]
       const mesh = new THREE.Mesh(geometry, material.clone())
+
+
+      const pColor = new THREE.Color()
+      pColor.setHSL((180+Math.random()*40)/360, 1.0, 0.5 + Math.random() * 0.2)
+      mesh.material.color = pColor
+
       mesh.material.opacity = random(0.05, 0.1)
       mesh.scale.multiplyScalar(random(8, 16))
       mesh.rotation.fromArray(randomRotation())
@@ -156,7 +165,7 @@ class Demo extends Scene {
 
 
     this.events.on('tick', t => {
-      const dt = t.delta / 10
+      const dt = t.delta
       //console.log(t)
       meshes.forEach(mesh => {
         mesh.rotation.x += dt * 0.1 * mesh.direction.x
@@ -187,7 +196,7 @@ class Demo extends Scene {
   }
 
 
-  createCage()
+  cage()
   {
 
     const VIS = 'cage'
@@ -201,8 +210,8 @@ class Demo extends Scene {
     group.visible = conf.on
     this.scene.add( group )
 
-    const MAX = 800,
-          MAX_LINES = 600
+    const MAX = 600,
+          MAX_LINES = 400
 
     // create the points
     let pMaterial = new THREE.PointsMaterial( {
@@ -212,6 +221,14 @@ class Demo extends Scene {
           transparent: true,
           sizeAttenuation: false
         } );
+
+    pMaterial = new THREE.ShaderMaterial({
+        fragmentShader: glslify(__dirname + '/glsl/Executed/Cage.frag'),
+        vertexShader: glslify(__dirname + '/glsl/Executed/Cage.vert'),
+        blending: THREE.AdditiveBlending,
+        transparent: true,
+        depthTest: false
+    });
 
     let r = E_SPHERE_RADIUS
 
@@ -249,11 +266,18 @@ class Demo extends Scene {
     // now create the lines
     let segments = MAX * MAX
       let linePositions = new Float32Array( segments * 3 ),
-        lineColors = new Float32Array( segments * 3 )
+        lineColors = new THREE.Float32Attribute( segments * 3, 3 )
       let lGeometry = new THREE.BufferGeometry();
 
         lGeometry.addAttribute( 'position', new THREE.BufferAttribute( linePositions, 3 ).setDynamic( true ) );
-        lGeometry.addAttribute( 'color', new THREE.BufferAttribute( lineColors, 3 ).setDynamic( true ) );
+
+        for (var i = 0; i < segments*3; i++) {
+            var pColor = new THREE.Color();
+            pColor.setHSL((180+Math.random()*40)/360, 1.0, 0.5 + Math.random() * 0.2);
+            lineColors.setXYZ(i, pColor.r, pColor.g, pColor.b);
+        }
+
+        lGeometry.addAttribute( 'color', lineColors);
 
         lGeometry.computeBoundingSphere();
         lGeometry.setDrawRange( 0, 0 );
@@ -267,13 +291,9 @@ class Demo extends Scene {
         let linesMesh = new THREE.LineSegments( lGeometry, lMaterial );
         group.add( linesMesh );
 
-    this.events.on(VIS + '::visOn', d => {
-        group.visible = true
-        pMaterial.opacity = 0
-        tweenr.to(pMaterial, {opacity: 1, duration: 2})
-    })
+    this.events.on(VIS + '::visOn', d => super.fadeIn(group, 2))
 
-    this.events.on(VIS + '::visOff', _ => group.visible = false)
+    this.events.on(VIS + '::visOff', _ => super.fadeOut(group, 10))
 
     this.events.on('tick', t => {
 
@@ -288,7 +308,7 @@ class Demo extends Scene {
          numConnected = 0
 
 
-      let mixColor = new THREE.Color(1, 1, 1)
+      let mixColor = new THREE.Color(0, 0, 0)
 
         for ( var i = 0; i < MAX_LINES; i++ )
           particlesData[ i ].numConnections = 0;
@@ -347,7 +367,11 @@ class Demo extends Scene {
 
 
 
-              let color = new THREE.Color(0, 0, 0)
+
+              let color = new THREE.Color()
+//              color.setHSL((180+Math.random()*40)/360, 1.0, 0.5 + Math.random() * 0.2);
+
+
               color.lerp(mixColor, freq)
 
 
@@ -379,7 +403,7 @@ class Demo extends Scene {
 
   }
 
-  createExecuted()
+  executed()
   {
 
     const VIS = 'executed'
@@ -449,34 +473,16 @@ class Demo extends Scene {
     }
 
     let doSmash = () => {
-      let mesh = meshes[idx % meshes.length],
-         geometry = mesh.geometry
+      let mesh = meshes[idx % meshes.length]
 
-      mesh.dynamic = true
-
-      var explodeModifier = new THREE.ExplodeModifier();
-      explodeModifier.modify( geometry );
-
-      console.log(geometry.vertices)
-
-
-      for(var i = 0; i < (geometry.vertices.length); i++)
-      {
-
-          var pos = new THREE.Vector3();
-          var v = geometry.vertices[i]
-
-
-          pos.x = v.x + random(50, 1000)
-          pos.y = v.y + random(50, 1000)
-          pos.z = v.z + random(50, 1000)
-
-
+      tweenr.to(mesh.material, {opacity: 0, duration: 2})
+        .on('complete', () => mesh.visible = false)
+/*
           tweenr.to(v,
             { x: pos.x, y: pos.y, z: pos.z, duration: LOOKAT_DUR })
             .on('update', () => geometry.verticesNeedUpdate = true)
             .on('complete', () => mesh.visible = false)
-      }
+            */
     }
 
     let doNext = () => {
@@ -513,12 +519,7 @@ class Demo extends Scene {
             this.loader.load(e.img, (texture) => {
 
                 texture.minFilter = THREE.LinearFilter
-                /*let img = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    color: 0xffffff,
-                    side: THREE.DoubleSide,
-                });*/
-                let geom = new THREE.PlaneGeometry(200, 200),
+                let planeGeometry = new THREE.PlaneGeometry(200, 200),
                    mat = new THREE.ShaderMaterial( {
                     uniforms: {
                       resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
@@ -526,22 +527,43 @@ class Demo extends Scene {
                       timeInit: { type: "f", value: Math.random() * 1000 },
                       showCurrent: { type: "f", value: conf.currentOn},
                       numberCurrents: { type: "f", value: conf.currents},
-                      bgImg: { type: "t", value: texture }
+                      bgImg: { type: "t", value: texture },
+                      smashAmplitude: { type: "f", value: 0.0 }
                     },
                     side: THREE.DoubleSide,
                     transparent: true,
                     fragmentShader: glslify(__dirname + '/glsl/Executed/Picture.frag'),
                     vertexShader: glslify(__dirname + '/glsl/Executed/Picture.vert')
-                } );
+                } )
 
-                // plane
-                let mesh = new THREE.Mesh(geom, mat)
-                mesh.overdraw = true
 
+                const tessellateModifier = new THREE.TessellateModifier( 8 )
+                      for ( var i = 0; i < 6; i ++ ) {
+                        tessellateModifier.modify( planeGeometry )
+                      }
+                const explodeModifier = new THREE.ExplodeModifier()
+                explodeModifier.modify( planeGeometry )
+
+                const numFaces = planeGeometry.faces.length;
+
+                const geometry = new THREE.BufferGeometry().fromGeometry( planeGeometry );
+                const displacement = new Float32Array( numFaces * 3 * 3 );
+
+          			for ( var f = 0; f < numFaces; f ++ ) {
+          				const index = 9 * f;
+          				const d = 10 * ( 0.5 - Math.random() );
+          				for ( var i = 0; i < 3; i ++ ) {
+          					displacement[ index + ( 3 * i )     ] = 10 * ( 0.5 - Math.random() );
+          					displacement[ index + ( 3 * i ) + 1 ] = 10 * ( 0.5 - Math.random() );
+          					displacement[ index + ( 3 * i ) + 2 ] = 10 * ( 0.5 - Math.random() );
+          				}
+          			}
+                geometry.addAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
+
+                let mesh = new THREE.Mesh(geometry, mat)
                 mesh.userData = e
 
                 group.add(mesh)
-
                 meshes.push(mesh)
             })
 
@@ -581,6 +603,8 @@ class Demo extends Scene {
 
       let m = meshes[idx % meshes.length]
       if (m) {
+        m.material.uniforms.smashAmplitude.value = 100.0 * Math.sin( t.time * 0.5 );
+
         m.material.uniforms.showCurrent.value = conf.currentOn
         m.material.uniforms.numberCurrents.value = conf.currents
       }
@@ -633,7 +657,7 @@ class Demo extends Scene {
   }
   */
 
-  createScheduled() {
+  scheduled() {
 
     const VIS = 'scheduled'
 
@@ -738,17 +762,21 @@ class Demo extends Scene {
 
               //this.scheduled.push({img: texture, imgData: imgData})
 
-              var particleShader = THREE.ParticleShader;
-              var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
-              particleUniforms.texture.value = particleImg;
-              particleUniforms.fog.value = 1;
+              //var particleShader = THREE.ParticleShader;
+              //var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
+              //particleUniforms.texture.value = particleImg;
+              //particleUniforms.fog.value = 1;
 
 
               var particleMaterial = new THREE.ShaderMaterial({
 
-                uniforms: particleUniforms,
-                vertexShader: particleShader.vertexShader,
-                fragmentShader: particleShader.fragmentShader,
+                uniforms: {
+              		color:     { type: "c", value: new THREE.Color( 0xffffff ) },
+              		texture:   { type: "t", value: particleImg },
+              		fog: 		 { type: "f", value: 1.0 }
+              	},
+                vertexShader: glslify('./glsl/Executed/Scheduled.vert'),
+                fragmentShader: glslify('./glsl/Executed/Scheduled.frag'),
                 blending: THREE.AdditiveBlending,
                 depthTest: false,
                 transparent: true

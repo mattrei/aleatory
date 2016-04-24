@@ -13,7 +13,7 @@ var Tween = require('tween-chain')
 const FontUtils = require('./utils/FontUtils')
 const GeometryUtils = require('./utils/GeometryUtils')
 
-const ExplodeModifier = require('./modifiers/ExplodeModifier')(THREE)
+const ExplodeModifier = require('./modifiers/ExplodeModifier')
 
 const glslify = require('glslify')
 
