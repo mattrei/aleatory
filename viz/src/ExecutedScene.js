@@ -26,9 +26,6 @@ const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
 const GeometryUtils = require('./utils/GeometryUtils')
 
-const ParticleShader = require('./shaders/ParticleShader')(THREE)
-
-
 const POLY_SIZE = 8000
 const SPHERE_SIZE = 1500
 
@@ -42,7 +39,7 @@ class Demo extends Scene {
 
     this.background()
     this.cage()
-    this.asteroids(50).forEach(m => this.scene.add(m))
+    this.asteroids()
     this.executed()
     this.scheduled()
 
@@ -137,7 +134,19 @@ class Demo extends Scene {
 
   }
 
-  asteroids (count) {
+  asteroids () {
+
+    const VIS = 'asteroids',
+      NUM_ASTEROIDS = 50
+
+
+    const conf = {on: true}
+
+    const group = new THREE.Group()
+    group.visible = conf.on
+    this.scene.add(group)
+
+
     const geometries = newArray(6).map(asteroidGeom)
     const material = new THREE.MeshBasicMaterial({
       color: 0xffffff,
@@ -146,7 +155,7 @@ class Demo extends Scene {
     })
 
 
-    const meshes = newArray(count).map(() => {
+    const meshes = newArray(NUM_ASTEROIDS).map(() => {
       const geometry = geometries[randomInt(geometries.length)]
       const mesh = new THREE.Mesh(geometry, material.clone())
 
@@ -160,8 +169,11 @@ class Demo extends Scene {
       mesh.rotation.fromArray(randomRotation())
       mesh.direction = new THREE.Vector3().fromArray(randomSphere([]))
       mesh.position.fromArray(randomSphere([], random(5000, 6000)))
+
+      group.add(mesh)
       return mesh
     })
+
 
 
     this.events.on('tick', t => {
@@ -173,7 +185,6 @@ class Demo extends Scene {
       })
     })
 
-    return meshes
 
     function asteroidGeom () {
       const geometry = new THREE.TetrahedronGeometry(10, randomInt(1, 3))
@@ -193,6 +204,11 @@ class Demo extends Scene {
       geometry.verticesNeedsUpdate = true
       return geometry
     }
+
+    this.events.on(VIS+'::visOn', _ => super.fadeIn(group, 5))
+    this.events.on(VIS+'::visOff', _ => super.fadeOut(group, 5))
+
+    super.addVis(VIS, conf)
   }
 
 
@@ -673,9 +689,16 @@ class Demo extends Scene {
 
     let doNext = () => {
 
-      meshes[mIdx % meshes.length].visible = false
+      const oldMesh = meshes[mIdx % meshes.length]
       mIdx += 1
-      meshes[mIdx % meshes.length].visible = true
+      const newMesh = meshes[mIdx % meshes.length]
+
+      tweenr.to(oldMesh.material, {opacity: 0, duration: 2})
+        .on('complete', _ => {
+          oldMesh.visible = false
+          newMesh.visible = true
+        })
+      tweenr.to(newMesh.material, {opacity: 1, delay: 2, duration: 5})
 
 
 /*

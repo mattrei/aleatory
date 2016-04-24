@@ -507,7 +507,7 @@ class IntroScene extends Scene {
           })
       })
 
-      this.events.on(VIS+'::visOn', _ => this.fadeIn(group, 5))
+      this.events.on(VIS+'::visOn', _ => super.fadeIn(group, 5))
       this.events.on(VIS+'::visOff', _ => group.visible = false)
 
       super.addVis(VIS, conf)
