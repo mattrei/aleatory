@@ -38,8 +38,8 @@ THREE.GeometryUtils = {
 
 			var point = new THREE.Vector3();
 
-			var a = THREE.Math.random16();
-			var b = THREE.Math.random16();
+			var a = Math.random();
+			var b = Math.random();
 
 			if ( ( a + b ) > 1 ) {
 
@@ -162,7 +162,7 @@ THREE.GeometryUtils = {
 
 		for ( i = 0; i < n; i ++ ) {
 
-			r = THREE.Math.random16() * totalArea;
+			r = Math.random() * totalArea;
 
 			index = binarySearchIndices( r );
 
@@ -206,7 +206,7 @@ THREE.GeometryUtils = {
 			vB.set( vertices[ i * 9 + 3 ], vertices[ i * 9 + 4 ], vertices[ i * 9 + 5 ] );
 			vC.set( vertices[ i * 9 + 6 ], vertices[ i * 9 + 7 ], vertices[ i * 9 + 8 ] );
 
-			var area = THREE.GeometryUtils.triangleArea( vA, vB, vC );
+			area = THREE.GeometryUtils.triangleArea( vA, vB, vC );
 			totalArea += area;
 
 			cumulativeAreas.push( totalArea );
@@ -255,7 +255,7 @@ THREE.GeometryUtils = {
 
 		for ( i = 0; i < n; i ++ ) {
 
-			r = THREE.Math.random16() * totalArea;
+			r = Math.random() * totalArea;
 
 			index = binarySearchIndices( r );
 

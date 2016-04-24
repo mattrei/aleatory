@@ -3,6 +3,7 @@ const OrbitControls = require('three-orbit-controls')(THREE)
 import Events from 'minivents'
 const average = require('analyser-frequency-average')
 const random = require('random-float')
+const tweenr = require('tweenr')()
 
 class Scene {
 
@@ -272,6 +273,25 @@ class Scene {
     if (!this.analyser) return random(min,max)
 
     return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
+  }
+
+  fadeIn(group, duration) {
+    group.visible = true
+    group.traverse(n => {
+      if (n.material) {
+        n.material.opacity = 0
+        tweenr.to(n.material, {opacity: 1, duration: duration})
+      }
+    })
+  }
+
+  fadeOut(group, duration) {
+    group.traverse(n => {
+      if (n.material) {
+        tweenr.to(n.material, {opacity: 0, duration: 2})
+          .on('complete', () => group.visible = false)
+      }
+    })
   }
 
   play() {

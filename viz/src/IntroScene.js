@@ -13,6 +13,7 @@ const glslify = require('glslify')
 const GeometryUtils = require('./utils/GeometryUtils')
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')
+require('./utils/THREE.MeshLine')
 
 const smoothstep = require('smoothstep')
 
@@ -45,8 +46,9 @@ class IntroScene extends Scene {
         this.createParticles()
         this.floor()
         this.visparticles()
+        this.city()
 
-        this.xtion()
+//        this.xtion()
 
         //this.createTriangles()
         //this.createFlyingLine()
@@ -54,7 +56,7 @@ class IntroScene extends Scene {
 
     visparticles() {
      const VIS = 'visparticles'
-     const conf = {on: true}
+     const conf = {on: false}
      const group = new THREE.Group()
      group.visible = conf.on
      this.scene.add(group)
@@ -83,6 +85,19 @@ class IntroScene extends Scene {
 
             this._vec.set(random(-10, 10) / 5, random(-10, 10) / 5, random(-10, 10) / 5);
             this._initialForce.add(this._vec);
+        }
+
+        rise(deltaY) {
+          //this._position.add(this._initialForce);
+          //this._position.add(this._zoom);
+          //this._position.add(this._velocity);
+          this._vertex.copy(this._position);
+
+          this._fx.set(0, 0, 0)
+          this._fx.y = deltaY
+
+          //this._position.set(this._fx);
+          this._position.y = this._fx.y
         }
 
         update(mouse, delta) {
@@ -118,7 +133,8 @@ class IntroScene extends Scene {
      const particles = []
      const pool = []
      let poolIdx = 0
-     const MAX_PARTICLES =  2000
+     const MAX_PARTICLES =  2000,
+      START_PARTICLES = 80
 
      this.loader.load('/assets/star.png', (starTexture) => {
        this.loader.load('/assets/palette.jpg', (paletteTexture) => {
@@ -140,7 +156,7 @@ class IntroScene extends Scene {
                 },
                 size: {
                     type: "f",
-                    value: 175 / 2
+                    value: 10
                 },
                 opacity: {
                     type: "f",
@@ -168,8 +184,6 @@ class IntroScene extends Scene {
             geometry.vertices.push(vertex)
             //B.scale.value[D] = Utils.doRandom(3, 10) / 10;
             //B.alpha.value[D] = Utils.doRandom(3, 10) / 10;
-
-
             let mouse = new THREE.Vector3(),
                 force = new THREE.Vector3(-0.01, 0.02, 0)
             pool.push(p)
@@ -178,12 +192,22 @@ class IntroScene extends Scene {
           }
 
          const mesh = new THREE.Points(geometry, material)
-         this.scene.add(mesh)
+         group.add(mesh)
+
+         let isIntro = true,
+          intro = {
+            height: 0,
+            mesh: null,
+            geometry: new THREE.Geometry(),
+            particles: []
+          }
 
          const j = new THREE.Vector3(),
                lastMouse = new THREE.Vector3(),
                mouse = new THREE.Vector3()// todo
          this.events.on('tick', t => {
+
+           if (!isIntro) {
 
              const freq = super.getFreq(200, 400)
              mouse.z += 0.1
@@ -194,28 +218,57 @@ class IntroScene extends Scene {
               particles.forEach(p => {
                   p.update(mouse, delta);
               })
-
               lastMouse.copy(mouse)
 
               geometry.verticesNeedUpdate = true
-               //mesh.rotation.z += 0.1
-               //mesh.position.z += 0.1
-
                // get new particles from pool
-            for (var i = 0; i < 1; i++) {
+            for (var i = 0; i < 8; i++) {
                let o = pool[poolIdx++ % MAX_PARTICLES]
                let force = new THREE.Vector3(random(-10,10), random(-10,10), random(-1,1))
                o.init(mouse, force)
               particles.push(o)
             }
+          } else {
+
+            intro.particles.forEach(p => {
+                p.rise(intro.height)
+            })
+            intro.geometry.verticesNeedUpdate = true
+          }
          })
+         this.events.on(VIS+'::visOn', _ => {
+           group.visible = true
+
+           for (let i = 0; i< START_PARTICLES; i++) {
+             let force = new THREE.Vector3(0, random(0,10), 0),
+              pos = new THREE.Vector3(random(-100,100), random(0,10), random(-100,100))
+
+
+              const vertex = new THREE.Vector3(Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY, Number.POSITIVE_INFINITY)
+              const p = new StarParticle({vertex: vertex})
+              geometry.vertices.push(vertex)
+              p.init(pos, force)
+              intro.particles.push(p)
+
+
+              intro.mesh = new THREE.Points(intro.geometry, material)
+
+
+           }
+           tweenr.to(intro, {height:500, duration: 5})
+           tweenr.to(this.camera.position, {y:500, duration: 5})
+            .on('complete', _ => {
+              isIntro = false
+              super.fadeOut(intro.mesh, 2)
+            })
+
+
+         })
+         this.events.on(VIS+'::visOff', _ => group.visible = false)
 
 
        })
      })
-
-
-
 
      super.addVis(VIS, conf)
   }
@@ -345,10 +398,8 @@ class IntroScene extends Scene {
 
       const canvas  = document.createElement( 'canvas' ),
           context = canvas.getContext( '2d' );
-
       const smCanvas  = document.createElement( 'canvas' ),
             smContext = smCanvas.getContext( '2d' )
-
       smCanvas.width  = 32
 
       canvas.width  = 512
@@ -395,7 +446,8 @@ class IntroScene extends Scene {
             var material = new THREE.MeshLambertMaterial({
               map: texture,
               vertexColors : THREE.VertexColors,
-              color: 0x3d5c5c, fog:false, wireframe: false})
+              color: 0x3d5c5c, fog:false, wireframe: false,
+               transparent: true})
           //var material  = new THREE.MeshNormalMaterial()
 
             var mesh = new THREE.Mesh( geometry, material );
@@ -436,7 +488,8 @@ class IntroScene extends Scene {
 
         meshes.forEach((b, i) => {
 
-          let r = Math.sin((t.time + b.position.z * 0.2) * 0.02)
+
+          const r = this._streetFunc(b.position.z, t.time)
 
             b.position.x = (r * 15) + b._xoffset
             b.position.y = r * 8 + b._yoffset
@@ -451,17 +504,69 @@ class IntroScene extends Scene {
 
                 b._yoffset = 30 * Math.sin((70 - Math.abs(b._xoffset)) * 1/(130 - 70))
             }
-
           })
-
       })
 
-      this.events.on(VIS+'::visOn', _ => group.visible = true)
+      this.events.on(VIS+'::visOn', _ => this.fadeIn(group, 5))
       this.events.on(VIS+'::visOff', _ => group.visible = false)
 
       super.addVis(VIS, conf)
     }
 
+    city() {
+      const VIS = 'city'
+      let conf = {on:true}
+      const group = new THREE.Group()
+      group.visible = conf.on
+      this.scene.add(group)
+
+      const NUM_BUILDINGS = 100,
+        MAX_HEIGHT = 50,
+        MAX_WIDTH = 10,
+        MAX_RADIUS = NUM_BUILDINGS / 2
+      const meshes = []
+
+      for( var i = 0; i < NUM_BUILDINGS; i ++ ){
+        //console.log(1-Math.sin(i/NUM_BUILDINGS))
+        const factor = i/NUM_BUILDINGS //1-Math.pow(i/NUM_BUILDINGS, 2)
+
+          let geometry = new THREE.CubeGeometry( 1, 1, 1 ),
+             windowPoints = THREE.GeometryUtils.randomPointsInGeometry(geometry, random(5, 10))
+          geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
+
+          var material = new THREE.MeshLambertMaterial({
+            //map: texture,
+            vertexColors : THREE.VertexColors,
+            color: 0x3d5c5c, fog:false, wireframe: true,
+             transparent: true})
+        //var material  = new THREE.MeshNormalMaterial()
+
+          const size = (1-Math.pow(factor,2)),
+            scale = MAX_WIDTH * size,
+            height = MAX_HEIGHT * (1-Math.pow(factor,0.2)),
+            //maxRadius = Math.pow(1-factor, 2) * MAX_RADIUS,
+            //radius = smoothstep(0, MAX_RADIUS, factor * MAX_RADIUS), //Math.sqrt(Math.random(0,1)) * maxRadius,
+            radius = (Math.pow(factor,0.6) * MAX_RADIUS),
+            angle = random(0, Math.PI * 2)
+
+          console.log(factor + ' ' + size  + ' ' + radius + '  ' + angle)
+          var mesh = new THREE.Mesh( geometry, material )
+
+          mesh.scale.set(scale, height, scale)
+          const x = radius * Math.cos(angle) + scale * 0.5,
+            z = radius * Math.sin(angle) + scale + 0.5
+
+          mesh.position.set(x, 0, z)
+
+          meshes.push(mesh)
+          group.add(mesh)
+        }
+
+        super.addVis(VIS, conf)
+
+        this.events.on(VIS+'::visOn', _ => this.fadeIn(group, 5))
+        this.events.on(VIS+'::visOff', _ => this.fadeOut(group, 10))
+    }
 
 
     createParticles() {
@@ -551,10 +656,18 @@ class IntroScene extends Scene {
 
     }
 
+    _streetFunc(z, time) {
+      return simplex.noise2D(z * 0.0002, time * 1)
+
+    }
+
     cars() {
 
       const VIS = 'cars'
       let conf = {on:false, speed: 1}
+      let group = new THREE.Group()
+      this.scene.add(group)
+      group.visible = conf.on
 
       const NUM = 8
 
@@ -591,7 +704,7 @@ class IntroScene extends Scene {
 
                           sprite.visible = false
 
-                          scene.add(sprite)
+                          group.add(sprite)
                           pair.push(sprite)
 
                   }
@@ -606,11 +719,11 @@ class IntroScene extends Scene {
                 return pairs
               }
 
-              let backs = add(matBack, this.scene)
-              let fronts = add(matFront, this.scene)
+              let backs = add(matBack, group)
+              let fronts = add(matFront, group)
 
-              this.events.on(VIS + '::visOn', _ => conf.on = true)
-              this.events.on(VIS + '::visOff', _ => conf.on = false)
+              this.events.on(VIS + '::visOn', _ => this.fadeIn(group, 2))
+              this.events.on(VIS + '::visOff', _ => this.fadeOut(group, 4))
 
               this.events.on('tick', t => {
                 if (conf.on) {
@@ -626,7 +739,8 @@ class IntroScene extends Scene {
                     let pos = s.position
 
                     let z = pos.z + conf.speed * 8 * l._speed
-                    let r = Math.sin((t.time + z * 0.2) * 0.02)
+                    //let r = Math.sin((t.time + z * 0.2) * 0.02)
+                    const r = this._streetFunc(z, t.time)
                     let x = r * 15 + (j*15) - STREET_WIDTH / 2,
                       y = r * 8
 
@@ -650,7 +764,10 @@ class IntroScene extends Scene {
                     let pos = s.position
 
                     let z = pos.z - conf.speed * 8
-                    let r = Math.sin((t.time + z * 0.2) * 0.02)
+                    //let r = Math.sin((t.time + z * 0.2) * 0.02)
+                    const r = this._streetFunc(z, t.time)
+
+
                     let x = r * 15 + (j*15) + STREET_WIDTH / 2,
                       y = r * 8
 
@@ -679,7 +796,7 @@ class IntroScene extends Scene {
       group.visible = conf.on
 
         let geom = new THREE.PlaneBufferGeometry(3, (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS, 2, 2)
-        let mat = new THREE.LineBasicMaterial( {color: 0xffffff, linewidth: 5} )
+        let mat = new THREE.LineBasicMaterial( {color: 0xffffff, linewidth: 5, transparent: true} )
         let mesh = new THREE.Mesh(geom, mat)
         mesh.rotation.x = Math.PI * 0.5
 
@@ -692,7 +809,7 @@ class IntroScene extends Scene {
         let middle = []
         for (let i=1; i < NUM_RIBBONS+1; i++) {
             let geom = new THREE.PlaneGeometry(5, RIBBON_LENGTH, 2, 2)
-            let mat = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide} )
+            let mat = new THREE.MeshBasicMaterial( {color: 0xffffff, side: THREE.DoubleSide, transparent: true} )
 
             let mesh = new THREE.Mesh(geom, mat)
             mesh.rotation.x = Math.PI * 0.5
@@ -705,8 +822,8 @@ class IntroScene extends Scene {
 
         this.scene.add(new THREE.AmbientLight(0xffffff))
 
-        this.events.on(VIS+'::visOn', _ => group.visible = true)
-        this.events.on(VIS+'::visOff', _ => group.visible = false)
+        this.events.on(VIS+'::visOn', _ => this.fadeIn(group, 2))
+        this.events.on(VIS+'::visOff', _ => this.fadeOut(group, 2))
 
         this.events.on('tick', t => {
 
@@ -717,7 +834,14 @@ class IntroScene extends Scene {
           middle.forEach((m, i) => {
 
               m.position.z += conf.speed * 8
-              let r = Math.sin((t.time + m.position.z * 0.2) * 0.02)
+
+
+              //let r = Math.sin((t.time + m.position.z * 0.2) * 0.02)
+              //const r = simplex.noise2D(m.position.z * 0.0002, t.time * 0.5)
+              const r = this._streetFunc(m.position.z, t.time)
+
+
+
               m.position.x = r * 15
               m.position.y = r * 8
               m.rotation.z = r * 0.05

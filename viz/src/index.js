@@ -158,14 +158,17 @@ class Main {
         ctx: this.ctx
       }
 
+
+    this.scenes.s1 = new IntroScene(args)
+
     //this.scenes.s1 = new WienerLinienScene(args)
     //this.scenes.s1 = new DronesScene(args)
-    //this.scenes.s1 = new IntroScene(args)
+
 
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
-      this.scenes.s1 = new OceanScene(args)
+      //this.scenes.s1 = new OceanScene(args)
       //TODO
       //this.scenes.s1 = new OutroScene(args)
 
@@ -208,5 +211,3 @@ domready(() => {
 
   //let demo = new Test()
 })
-
-

@@ -123,14 +123,31 @@ THREE.MeshLine.prototype.process = function() {
 		this.indices_array.push( n + 2, n + 1, n + 3 );
 	}
 
-	this.attributes = {
-		position: new THREE.BufferAttribute( new Float32Array( this.positions ), 3 ),
-		previous: new THREE.BufferAttribute( new Float32Array( this.previous ), 3 ),
-		next: new THREE.BufferAttribute( new Float32Array( this.next ), 3 ),
-		side: new THREE.BufferAttribute( new Float32Array( this.side ), 1 ),
-		width: new THREE.BufferAttribute( new Float32Array( this.width ), 1 ),
-		uv: new THREE.BufferAttribute( new Float32Array( this.uvs ), 2 ),
-		index: new THREE.BufferAttribute( new Uint16Array( this.indices_array ), 1 )
+	if (!this.attributes) {
+		this.attributes = {
+			position: new THREE.BufferAttribute( new Float32Array( this.positions ), 3 ),
+			previous: new THREE.BufferAttribute( new Float32Array( this.previous ), 3 ),
+			next: new THREE.BufferAttribute( new Float32Array( this.next ), 3 ),
+			side: new THREE.BufferAttribute( new Float32Array( this.side ), 1 ),
+			width: new THREE.BufferAttribute( new Float32Array( this.width ), 1 ),
+			uv: new THREE.BufferAttribute( new Float32Array( this.uvs ), 2 ),
+			index: new THREE.BufferAttribute( new Uint16Array( this.indices_array ), 1 )
+		}
+	} else {
+		this.attributes.position.copyArray(new Float32Array(this.positions));
+		this.attributes.position.needsUpdate = true;
+		this.attributes.previous.copyArray(new Float32Array(this.previous));
+		this.attributes.previous.needsUpdate = true;
+		this.attributes.next.copyArray(new Float32Array(this.next));
+		this.attributes.next.needsUpdate = true;
+		this.attributes.side.copyArray(new Float32Array(this.side));
+		this.attributes.side.needsUpdate = true;
+		this.attributes.width.copyArray(new Float32Array(this.width));
+		this.attributes.width.needsUpdate = true;
+		this.attributes.uv.copyArray(new Float32Array(this.uvs));
+		this.attributes.uv.needsUpdate = true;
+		this.attributes.index.copyArray(new Uint16Array(this.index));
+		this.attributes.index.needsUpdate = true;
 	}
 
 	this.geometry.addAttribute( 'position', this.attributes.position );
@@ -141,29 +158,6 @@ THREE.MeshLine.prototype.process = function() {
 	this.geometry.addAttribute( 'uv', this.attributes.uv );
 
 	this.geometry.setIndex( this.attributes.index );
-
-}
-
-THREE.MeshLineMaterial = function() {
-
-	this.material = new THREE.RawShaderMaterial( {
-		uniforms:{
-			lineWidth: { type: 'f', value: 1 },
-			map: { type: 't', value: strokeTexture },
-			useMap: { type: 'f', value: 0 },
-			color: { type: 'c', value: new THREE.Color( colors[ ~~Maf.randomInRange( 0, colors.length ) ] ) },
-			resolution: { type: 'v2', value: resolution },
-			sizeAttenuation: { type: 'f', value: 1 },
-			near: { type: 'f', value: camera.near },
-			far: { type: 'f', value: camera.far }
-		},
-		vertexShader: document.getElementById( 'vs-line' ).textContent,
-		fragmentShader: document.getElementById( 'fs-line' ).textContent,
-		/*side: THREE.DoubleSide,
-		transparent: true,
-		depthTest: false,
-		blending: THREE.AdditiveAlphaBlending*/
-	});
 
 }
 
@@ -354,6 +348,3 @@ THREE.MeshLineMaterial.prototype.copy = function ( source ) {
 	return this;
 
 };
-
-export default THREE.MeshLine
-//export THREE.MeshLineMaterial

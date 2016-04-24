@@ -23,6 +23,8 @@ const NUM_RAND_FIRES = 100
 
 const DISTANCE_EARTH = 1000
 
+//https://github.com/luigimannoni/luigimannoni.github.io/blob/master/experiments/hexoplanet-webgl/javascripts/main.js
+
 var Globe = function(opts) {
 
     var distance = DISTANCE_EARTH
