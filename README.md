@@ -34,3 +34,9 @@ In `pavucontrol` set under `Recording` as input `JACK Source`
 
 ## Outro
 * LaserShow?
+
+
+# Useful stuff
+https://www.flickr.com/photos/kynd/9546075099
+http://xdpixel.com/category/math/page/2/
+https://github.com/silviopaganini/maths

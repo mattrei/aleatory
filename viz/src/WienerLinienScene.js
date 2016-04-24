@@ -49,6 +49,8 @@ const TWEEN_DUR = 15 * 1000
 const MAIN_COLOR = new THREE.Color('#fff')
 const ALT_COLOR = new THREE.Color('#000')
 
+// https://www.youtube.com/watch?v=16oLi1kvLHs
+// https://github.com/Makio64/treeline_casestudy/blob/49e10162578d63c3be1107e58f032dece01fafdd/src/coffee/tree_p/Branch.coffee
 
 /*
 add map as surface

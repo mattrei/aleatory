@@ -29,6 +29,8 @@ const GeometryUtils = require('./utils/GeometryUtils')
 const POLY_SIZE = 8000
 const SPHERE_SIZE = 1500
 
+// http://p5aholic.me/
+
 
 class Demo extends Scene {
   constructor(args)

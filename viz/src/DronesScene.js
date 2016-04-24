@@ -16,6 +16,7 @@ const GeometryUtils = require('./utils/GeometryUtils')
 const ExplodeModifier = require('./modifiers/ExplodeModifier')
 
 const glslify = require('glslify')
+//https://avseoul.github.io/particleEqualizer/index.html
 
 //https://docs.google.com/spreadsheets/d/1NAfjFonM-Tn7fziqiv33HlGt09wgLZDSCP-BQaux51w/edit#gid=1000652376
 
