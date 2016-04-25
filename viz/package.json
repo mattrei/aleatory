@@ -27,6 +27,7 @@
     "garnish": "^5.0.1",
     "glslify": "^5.0.0",
     "uglify-js": "^2.6.1",
+    "vector-devtools": "0.0.0",
     "watchify": "^3.6.1"
   },
   "dependencies": {
@@ -48,6 +49,8 @@
     "glsl-curl-noise": "0.0.4",
     "glsl-easings": "^1.0.0",
     "glsl-fxaa": "^3.0.0",
+    "glsl-hsl2rgb": "^1.1.0",
+    "glsl-hsv2rgb": "^1.0.0",
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
     "glsl-random": "0.0.5",
