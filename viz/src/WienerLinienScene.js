@@ -20,8 +20,8 @@ const lerp = require('lerp')
 const clamp = require('clamp')
 const smoothstep = require('smoothstep')
 
-const MeshLine = require('./utils/MeshLine').MeshLine
-const MeshMaterial = require('./utils/MeshLine').MeshLineMaterial
+const MeshLine = require('./utils/THREE.MeshLine')
+//const MeshMaterial = require('./utils/MeshLine').MeshLineMaterial
 
 const TextGeometry = require('./geometries/TextGeometry')(THREE)
 const FontUtils = require('./utils/FontUtils')

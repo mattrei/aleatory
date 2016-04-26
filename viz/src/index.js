@@ -18,7 +18,7 @@ import dat from 'dat-gui'
 import IntroScene from './IntroScene'
 import ExecutedScene from './ExecutedScene'
 import RefugeesScene from './RefugeesScene'
-import DronesScene from './DronesScene'
+import DronesScene from './Drones/scene'
 import WienerLinienScene from './WienerLinienScene'
 import OceanScene from './OceanScene'
 import OutroScene from './OutroScene'
@@ -162,11 +162,13 @@ class Main {
     //this.scenes.s1 = new IntroScene(args)
 
     //this.scenes.s1 = new WienerLinienScene(args)
-    //this.scenes.s1 = new DronesScene(args)
 
 
-    this.scenes.s1 = new ExecutedScene(args)
+
+    //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
+
+    this.scenes.s1 = new DronesScene(args)
 
       //this.scenes.s1 = new OceanScene(args)
       //TODO
