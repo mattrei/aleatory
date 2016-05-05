@@ -1,0 +1,19 @@
+global.THREE = require('three')
+import Scene from '../Scene'
+
+import soundscape from './soundscape'
+import soundwave from './soundwave'
+
+//https://github.com/crma16/sound-experiments/blob/master/src/layouts/webgl-background/objects/Wave.js
+class OutroScene extends Scene {
+  constructor(args) {
+    super(args, new THREE.Vector3(0, 30, 0))
+
+    soundscape(this)
+    soundwave(this, false)
+  }
+
+  tick(time, delta) {}
+}
+
+export default OutroScene

@@ -102,6 +102,10 @@ class Scene {
     return this.textCanvas.getContext('2d')
   }
 
+  getLoader() {
+    return this.loader
+  }
+
   demo() {
     return this.demo
   }

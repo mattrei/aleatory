@@ -1,5 +1,5 @@
 
-
+//https://github.com/brunoimbrizi/experiments/blob/master/07/src/view/LineView.coffee
 function metro() {
   const VIS = 'metro'
   const conf = {on: false, text: true, train: true}

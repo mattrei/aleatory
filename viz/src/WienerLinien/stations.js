@@ -4,20 +4,19 @@ const VISIBLE_HS = 5
 const random = require('random-float')
 const randomInt = require('random-int')
 const glslify = require('glslify')
+const Color = require('color')
 
 const simplex = new(require('simplex-noise'))
 const smoothstep = require('smoothstep')
 
 require('../utils/THREE.MeshLine')
 
-let resolution = new THREE.Vector2( window.innerWidth, window.innerHeight );
-
 const HALTESTELLEN = require('./WienerLinienHaltestellen.json'),
  HALTESTELLEN_KEYS = Object.keys(HALTESTELLEN),
  HALTESTELLEN_LENGTH = HALTESTELLEN_KEYS.length
 
  const VIS = 'stations'
- const conf = {on: true}
+ const conf = {on: true, ribbonSpeed: 0.5}
 
 
  function _randHaltestelle() {
@@ -148,110 +147,130 @@ function background(group)
   }
 
 
+class Ribbon {
+  constructor(props) {
+
+    this.LINE_LENGTH = 50
+
+    this.smoothX = 0
+    this.smoothY = 0
+    this.smoothZ = 0
+
+    this.rotateCoef = randomInt(0,1) == 0 ? -1 : 1
+    this.seed = randomInt(1, 100)
+
+    this.geometry = new Float32Array( this.LINE_LENGTH * 3 )
+    this.geometryClone = new Float32Array( this.LINE_LENGTH * 3 )
+
+    for( var j = 0; j < this.geometry.length; j += 3 ) {
+       this.geometry[ j ] = this.geometry[ j + 1 ] = this.geometry[ j + 2 ] = j;
+       this.geometryClone[ j ] = this.geometryClone[ j + 1 ] = this.geometryClone[ j + 2 ] = 0;
+     }
+
+     // line
+     this.line = new THREE.MeshLine();
+     this.line.setGeometry( this.geometry );
+
+     this.lineClone = new THREE.MeshLine();
+     this.lineClone.setGeometry( this.geometryClone );
+
+
+      this.material = new THREE.MeshLineMaterial({
+        useMap: false,
+        opacity: 1,
+        color: new THREE.Color(props.color.hexString()),
+        lineWidth:10,
+        transparent: true
+      })
+      this.materialClone = new THREE.MeshLineMaterial({
+        useMap: false,
+        color: new THREE.Color(props.color.lighten(0.4).hexString()),
+        lineWidth:6,
+        opacity: 0.8,
+        transparent: true
+      })
+
+      this.mesh = new THREE.Mesh( this.line.geometry, this.material );
+      this.meshClone = new THREE.Mesh( this.lineClone.geometry, this.materialClone );
+
+
+      props.group.add(this.mesh)
+      props.group.add(this.meshClone)
+  }
+
+  update(time) {
+
+    const speed = conf.ribbonSpeed + 0.8
+    const rotateSpeed = 1.1 * this.rotateCoef
+    const smoothCoef = 0.05
+
+
+    //const low = scene.getFreq(40, 100)
+    //const high = scene.getFreq(4400, 4500)
+
+    for( var j = 0; j < this.geometry.length; j+= 3 ) {
+      this.geometry[ j ] = this.geometry[ j + 3 ] * speed //* Math.sin(t.time + j * );
+      this.geometry[ j + 1 ] = this.geometry[ j + 4 ] * speed //* Math.sin(t.time + j);
+      this.geometry[ j + 2 ] = this.geometry[ j + 5 ] * speed //* Math.sin(t.time + j);
+
+      this.geometryClone[ j ] = this.geometryClone[ j + 3 ] * speed;
+      this.geometryClone[ j + 1 ] = this.geometryClone[ j + 4 ] * speed;
+      this.geometryClone[ j + 2 ] = this.geometryClone[ j + 5 ] * speed;
+    }
+
+
+    this.seed += 0.001
+    const nx = simplex.noise2D(this.seed, time * 0.1),
+      ny = simplex.noise2D(this.seed + 10, time * 0.1),
+      nz = simplex.noise2D(this.seed + 100, time * 0.1)
+
+    const globalX = nx * window.innerWidth * 0.25,
+      globalY = ny * window.innerHeight * 0.25,
+      globalZ = Math.abs(nz) * this.LINE_LENGTH
+
+
+    this.smoothX += (globalX - this.smoothX) * smoothCoef;
+    this.smoothY += (globalY - this.smoothY) * smoothCoef;
+    this.smoothZ += (globalZ - this.smoothZ) * smoothCoef;
+
+    this.geometry[ this.geometry.length - 3 ] = this.smoothX
+    this.geometry[ this.geometry.length - 2 ] = this.smoothY
+    this.geometry[ this.geometry.length - 1 ] = this.smoothZ
+
+    this.geometryClone[ this.geometryClone.length - 3 ] = this.smoothX + Math.sin(time * rotateSpeed * 3) * 10;
+    this.geometryClone[ this.geometryClone.length - 2 ] = this.smoothY + Math.cos(time * rotateSpeed * 3) * 10;
+    this.geometryClone[ this.geometryClone.length - 1 ] = this.smoothZ + Math.sin(time * rotateSpeed * 3) * 10;
+
+
+    this.line.setGeometry( this.geometry, ( p ) => {
+      return Math.sin(p * Math.PI);
+    });
+
+    this.lineClone.setGeometry( this.geometryClone, ( p ) => {
+      return Math.sin(p * Math.PI);
+    });
+
+
+  }
+}
+
 function ribbons(scene, group) {
-  const LINE_LENGTH = 40
 
-  let speed = 1.1,
-    rotateSpeed = 1,
-    smoothCoef = 0.05
+    const ribbons  = []
 
-  let smoothX = 0,
-    smoothY = 0,
-    smoothZ = 0
-
-  let globalX = 0,
-      globalY = 0,
-      globalZ = 0
-
-  const geometry = new Float32Array( LINE_LENGTH * 3 ),
-	   geometryClone = new Float32Array( LINE_LENGTH * 3 )
-
-  for( var j = 0; j < geometry.length; j += 3 ) {
-     geometry[ j ] = geometry[ j + 1 ] = geometry[ j + 2 ] = j;
-     geometryClone[ j ] = geometryClone[ j + 1 ] = geometryClone[ j + 2 ] = 0;
-   }
-
-   // line
-   const line = new THREE.MeshLine();
-   line.setGeometry( geometry );
-
-   const lineClone = new THREE.MeshLine();
-   lineClone.setGeometry( geometryClone );
-
-
-
-
-		const material = new THREE.MeshLineMaterial({
-      useMap: false,
-      opacity: 1,
-      color:new THREE.Color(0xffffff),
-      lineWidth:6,
-      transparent: true,
-      resolution: resolution
-    })
-		const materialClone = new THREE.MeshLineMaterial({
-      useMap: false,
-      color:new THREE.Color(0xF1BBF5),
-      lineWidth:4,
-      opacity: 1,
-      transparent: true,
-      resolution: resolution
-    })
-
-
-    const mesh = new THREE.Mesh( line.geometry, material );
-		const meshClone = new THREE.Mesh( lineClone.geometry, materialClone );
-
-
-    group.add(mesh)
-    group.add(meshClone)
-
-    let dist = 0
+//https://color.adobe.com/Wiener-Linien-color-theme-7623513/edit/?copy=true&base=2&rule=Custom&selected=4&name=Copy%20of%20Wiener%20Linien&mode=rgb&rgbvalues=0.847059,0.137255,0.164706,0.509804,0.721569,0.839216,0.580392,0.368627,0.596078,0,0.6,0.286275,0.94902,0.470588,0.188235&swatchOrder=0,1,2,3,4
+    ribbons.push(new Ribbon({color: Color("#D8232A"), group: group}))
+    ribbons.push(new Ribbon({color: Color("#009949"), group: group}))
+    ribbons.push(new Ribbon({color: Color("#F27830"), group: group}))
+    ribbons.push(new Ribbon({color: Color("#945E98"), group: group}))
+    ribbons.push(new Ribbon({color: Color("#774F38"), group: group}))
 
     scene.getEvents().on('tick', t => {
 
-      for( var j = 0; j < geometry.length; j+= 3 ) {
-				geometry[ j ] = geometry[ j + 3 ] * speed;
-				geometry[ j + 1 ] = geometry[ j + 4 ] * speed;
-				geometry[ j + 2 ] = geometry[ j + 5 ] * speed;
 
-				geometryClone[ j ] = geometryClone[ j + 3 ] * speed;
-				geometryClone[ j + 1 ] = geometryClone[ j + 4 ] * speed;
-				geometryClone[ j + 2 ] = geometryClone[ j + 5 ] * speed;
-			}
-
-
-      globalZ = 0;
-
-      dist += 0.001
-      const nx = simplex.noise2D(dist, t.time * 0.1),
-        ny = simplex.noise2D(dist + 10, t.time * 0.1)
-      globalX = nx * window.innerWidth * 0.25
-      globalY = ny * window.innerHeight * 0.25
-
-
-      smoothX += (globalX - smoothX) * smoothCoef;
-      smoothY += (globalY - smoothY) * smoothCoef;
-      smoothZ += (globalZ - smoothZ) * smoothCoef;
-
-      geometry[ geometry.length - 3 ] = smoothX;
-			geometry[ geometry.length - 2 ] = smoothY;
-			geometry[ geometry.length - 1 ] = smoothZ;
-
-			geometryClone[ geometryClone.length - 3 ] = smoothX + Math.sin(t.time * rotateSpeed * 3) * 10;
-			geometryClone[ geometryClone.length - 2 ] = smoothY + Math.cos(t.time * rotateSpeed * 3) * 10;
-			geometryClone[ geometryClone.length - 1 ] = smoothZ + Math.sin(t.time * rotateSpeed * 3) * 10;
-
-
-      line.setGeometry( geometry, ( p ) => {
-				return Math.sin(p * Math.PI);
-			});
-
-      lineClone.setGeometry( geometryClone, ( p ) => {
-        return Math.sin(p * Math.PI);
-      });
-
-
+      ribbons.forEach(r => {
+        r.update(t.time)
+      })
     })
 }
 

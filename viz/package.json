@@ -40,6 +40,7 @@
     "cannon": "^0.6.2",
     "canvas-loop": "^1.0.7",
     "clamp": "^1.0.1",
+    "color": "^0.11.1",
     "color-shader-functions": "0.0.2",
     "createjs-tweenjs": "^0.6.0",
     "dat-gui": "^0.5.0",

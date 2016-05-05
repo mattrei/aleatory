@@ -21,7 +21,7 @@ import RefugeesScene from './RefugeesScene'
 import DronesScene from './Drones/scene'
 import WienerLinienScene from './WienerLinien/scene'
 import OceanScene from './OceanScene'
-import OutroScene from './OutroScene'
+import OutroScene from './Outro/scene'
   // 7scene ThisbeautifulWorld
 
 // load fonts
@@ -184,7 +184,7 @@ class Main {
 
     //this.scenes.s1 = new IntroScene(args)
 
-    this.scenes.s1 = new WienerLinienScene(args)
+    //this.scenes.s1 = new WienerLinienScene(args)
 
 
 
@@ -195,7 +195,7 @@ class Main {
 
       //this.scenes.s1 = new OceanScene(args)
       //TODO
-      //this.scenes.s1 = new OutroScene(args)
+      this.scenes.s1 = new OutroScene(args)
 
     this.setScene("s1")
 
