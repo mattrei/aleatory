@@ -29,7 +29,7 @@ In `pavucontrol` set under `Recording` as input `JACK Source`
 * Scheduled
 * Heaven
 
-## Refuges
+## Refugees
 * Headline(bing)
 * MareNostrum (MigrantFiles)
 
