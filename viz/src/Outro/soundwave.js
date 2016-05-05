@@ -168,7 +168,7 @@ function xtion() {
   })
 
 
-  super.addVis(VIS, conf)
+  //super.addVis(VIS, conf)
 
 }
 

@@ -27,6 +27,8 @@ import OutroScene from './Outro/scene'
 // load fonts
 require('./fonts/oswald_regular.typeface.js')
 
+// TODO: use rhizome?
+const OSC_URL = "ws://localhost:8081"
 
 class Main {
 
@@ -49,7 +51,7 @@ class Main {
     this.loader = new THREE.TextureLoader(this.manager)
 
     this.oscPort = new OSC.WebSocketPort({
-        url: "ws://localhost:8081"
+        url: OSC_URL
     });
     this.renderer = new THREE.WebGLRenderer({
             alpha: true,

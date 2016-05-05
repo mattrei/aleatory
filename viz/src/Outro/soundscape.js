@@ -9,6 +9,9 @@ const randomInt = require('random-int')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
+import Color from 'color'
+
+require('../utils/THREE.MeshLine')
 const glslify = require('glslify')
 const GeometryUtils = require('../utils/GeometryUtils')
 
@@ -54,6 +57,9 @@ function soundscape(scene, on = false) {
 class Soundscape {
   constructor(args) {
 
+    this.GRID_SIZE = SIZE.WIDTH * SIZE.DEPTH
+
+    this.LINES_HEIGHT = 10
     this.MAX_HEIGHT = 20
     this.particle = args.particle
     this.group = args.group
@@ -61,27 +67,30 @@ class Soundscape {
 
     this.seed = randomInt(0, 100)
 
+
+
+    this.initPlane()
+    this.initParticles()
+    this.initLines()
+  }
+  initPlane() {
+
     this.geometry = new THREE.PlaneBufferGeometry(500, 500, SIZE.WIDTH - 1, SIZE.DEPTH - 1);
     // trick! make the underground visible and not the top
     this.geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
 
     this.material = new THREE.MeshBasicMaterial({
-      color: 0x448844,
+      color: 0xf67944,
       shading: THREE.FlatShading,
       wireframe: false,
       wireframeLinewidth: 2,
       transparent: true
     });
 
+    this.line = null
 
     this.mesh = new THREE.Mesh(this.geometry, this.material)
 
-    this.group.add(this.mesh)
-
-    this.initPlane()
-    this.initParticles()
-  }
-  initPlane() {
 
     const positions = this.geometry.attributes.position.array
     // save base position of plane
@@ -94,6 +103,9 @@ class Soundscape {
       basePos[i] = positions[j + 1];
     }
     this.geometry.addAttribute('basePos', new THREE.BufferAttribute(basePos, 1));
+
+    this.group.add(this.mesh)
+
   }
   generateHeight(width, height) {
     let size = width * height,
@@ -106,6 +118,52 @@ class Soundscape {
       data[i] = simplex.noise2D(this.seed + x * 0.02, y * 0.03)
     }
     return data
+  }
+  initLines() {
+
+    this.linesInfo = []
+
+    this.lineGeometry = new THREE.Geometry()
+    const lineMaterial = new THREE.LineBasicMaterial({
+      color: 0xffffff,
+      linewidth: 4,
+      transparent: true,
+      vertexColors: THREE.VertexColors  // color per vertex pair
+    })
+
+    const positions = this.geometry.attributes.position.array
+
+    for (let v = 0; v < positions.length; v++) {
+
+      if (Math.random() > 0.995) {
+        const vertex1 = new THREE.Vector3();
+        vertex1.x = positions[v * 3 + 0];
+        vertex1.y = positions[v * 3 + 1];
+        vertex1.z = positions[v * 3 + 2];
+
+
+        const vertex2 = vertex1.clone()
+        vertex2.y += this.LINES_HEIGHT
+        vertex2.baseY = positions[v * 3 + 1] + this.LINES_HEIGHT;
+
+        this.lineGeometry.vertices.push(vertex1)
+        this.lineGeometry.vertices.push(vertex2)
+
+        const isBass = Math.random() > 0.5 ? true : false
+        const color = isBass ? new THREE.Color(0x007500) : new THREE.Color(0xe6c700)
+
+        this.linesInfo.push(isBass)
+
+        this.lineGeometry.colors.push(color)
+        this.lineGeometry.colors.push(color)
+      }
+
+    }
+
+    this.lines = new THREE.LineSegments(this.lineGeometry, lineMaterial)
+
+    this.group.add(this.lines)
+
   }
   initParticles() {
     this.pointsMaterial = new THREE.ShaderMaterial({
@@ -170,13 +228,14 @@ class Soundscape {
   }
   update(time) {
 
-    const freq = this.scene.getFreq(20, 100)
+    const lowFreq = this.scene.getFreq(20, 100),
+      highFreq = this.scene.getFreq(100, 5000)
 
     let positions = this.geometry.attributes.position.array
     let basePositions = this.geometry.attributes.basePos.array
 
     for (var i = 0, j = 0, l = positions.length; i < l; i++, j += 3) {
-      const destVal = basePositions[i] + freq * basePositions[i] * 0.5
+      const destVal = basePositions[i] + lowFreq * basePositions[i] * 0.5
       positions[j+1] += (destVal - positions[j+1])
     }
 
@@ -186,6 +245,31 @@ class Soundscape {
     this.geometry.attributes.size.needsUpdate = true
     this.geometry.attributes.position.needsUpdate = true
     //this.geometry.attributes.color.needsUpdate = true
+
+
+    let vertices = this.lineGeometry.vertices,
+      colors = this.lineGeometry.colors
+
+     for (let i = 0, j=0; i < vertices.length; i += 2, j++) {
+
+       const isBass = this.linesInfo[i]
+
+       const freq = isBass ? lowFreq : highFreq
+
+       const destVal = vertices[i + 1].baseY + (this.LINES_HEIGHT + freq * 20);
+       vertices[i + 1].y += (destVal - vertices[i + 1].y)
+
+       //colors[ i ] = colors[i]//this.linesColors[j] //colors[i]//new THREE.Color( Math.random(), Math.random(), Math.random() );
+
+       const color = Color(colors[i].getStyle())
+       color.whiten(freq)
+
+       colors[ i ] = new THREE.Color( color.hexString())//this.linesColors[j] //colors[i]//new THREE.Color( Math.random(), Math.random(), Math.random() );
+       colors[ i + 1 ] = colors[ i ]
+     }
+
+     this.lineGeometry.verticesNeedUpdate = true
+     this.lineGeometry.colorsNeedUpdate = true
   }
 }
 

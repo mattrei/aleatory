@@ -9,7 +9,7 @@ class OutroScene extends Scene {
   constructor(args) {
     super(args, new THREE.Vector3(0, 30, 0))
 
-    soundscape(this)
+    soundscape(this, true)
     soundwave(this, false)
   }
 
