@@ -9,7 +9,7 @@ class Scene {
 
   constructor(args, cam) {
       this.fx = {
-        active: true,
+        active: false,
         bloom: {
            active: false,
            pass: null
@@ -63,6 +63,7 @@ class Scene {
 
         this.video = args.video
         this.canvas = args.canvas
+        this.textCanvas = args.textCanvas
         this.ctx = args.ctx
 
         this.addFX(this.gui)
@@ -95,6 +96,10 @@ class Scene {
 
         // requestAnimationFrame
         args.events.on('update', _ => this.update(_))
+  }
+
+  getTextCanvas() {
+    return this.textCanvas.getContext('2d')
   }
 
   demo() {
@@ -182,6 +187,14 @@ class Scene {
     this.fx.blend.pass = new BlendPass()
   }
 
+  getEvents() {
+    return this.events
+  }
+
+  getScene() {
+    return this.scene
+  }
+
   update(t)
   {
 
@@ -218,6 +231,10 @@ class Scene {
   }
 
       onResize() {
+
+        this.textCanvas.width = window.innerWidth
+        this.textCanvas.height = window.innerHeight
+
         this.composer.setSize(window.innerWidth, window.innerHeight)
         this.renderer.setSize(window.innerWidth, window.innerHeight)
         if (this.camera) {

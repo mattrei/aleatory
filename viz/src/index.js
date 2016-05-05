@@ -19,7 +19,7 @@ import IntroScene from './IntroScene'
 import ExecutedScene from './ExecutedScene'
 import RefugeesScene from './RefugeesScene'
 import DronesScene from './Drones/scene'
-import WienerLinienScene from './WienerLinienScene'
+import WienerLinienScene from './WienerLinien/scene'
 import OceanScene from './OceanScene'
 import OutroScene from './OutroScene'
   // 7scene ThisbeautifulWorld
@@ -33,7 +33,7 @@ class Main {
   constructor(args) {
     this.stats = new Stats()
     this.stats.domElement.style.position = 'absolute'
-    document.body.appendChild(this.stats.domElement)
+    document.getElementById('stats').appendChild(this.stats.domElement)
     this.gui = new dat.GUI()
     this.events = new Events()
 
@@ -59,13 +59,33 @@ class Main {
             sortObject: false,
             autoClear: true
         });
+    this.renderer.setClearColor(this.color, 1);
+    this.renderer.autoClearColor = true;
+    this.renderer.shadowMap.enabled = true;
+
     this.renderer.gammaInput = true
 		this.renderer.gammaOutput = true
-    document.body.appendChild(this.renderer.domElement)
+
+    const container = document.getElementById('container');
+    container.appendChild(this.renderer.domElement)
 
     this.composer = new WAGNER.Composer(this.renderer)
     this.canvas = document.createElement('canvas');
+    this.canvas.id = "drawingCanvas"
     this.ctx = this.canvas.getContext('2d');
+    container.appendChild(this.canvas)
+
+    this.textCanvas = document.createElement('canvas')
+    this.textCanvas.id = "textCanvas"
+    this.textCanvas.width = window.innerWidth
+    this.textCanvas.height = window.innerHeight
+    //document.body.appendChild(this.textCanvas)
+
+    this.textCtx = this.textCanvas.getContext('2d')
+
+    this.textCtx.fillRect(20,20,150, 150);
+
+
 
     this.events.on("scene", (s) => this.setScene(s))
 
@@ -73,6 +93,8 @@ class Main {
 
   onResize() {
 		this.scenes.current.onResize()
+    this.textCanvas.width = window.innerWidth
+    this.textCanvas.height = window.innerHeight
   }
 
   setScene(scene) {
@@ -155,20 +177,21 @@ class Main {
 
         // for drawing purposes
         canvas: this.canvas,
+        textCanvas: this.textCanvas,
         ctx: this.ctx
       }
 
 
     //this.scenes.s1 = new IntroScene(args)
 
-    //this.scenes.s1 = new WienerLinienScene(args)
+    this.scenes.s1 = new WienerLinienScene(args)
 
 
 
     //this.scenes.s1 = new ExecutedScene(args)
     //this.scenes.s1 = new RefugeesScene(args)
 
-    this.scenes.s1 = new DronesScene(args)
+    //this.scenes.s1 = new DronesScene(args)
 
       //this.scenes.s1 = new OceanScene(args)
       //TODO

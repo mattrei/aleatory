@@ -1,0 +1,32 @@
+canvas {
+  position: absolute;
+  top: 0;
+  -webkit-transition-duration: .25s;
+          transition-duration: .25s;
+}
+
+div#container {
+  z-index: 0;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  right: 0;
+  margin: auto;
+}
+
+div#stats {
+  position: absolute;
+  top: 0;
+  z-index: 2;
+}
+
+#drawingCanvas {
+  display: none;
+}
+
+div.dg.ac {
+  z-index: 3;
+}
