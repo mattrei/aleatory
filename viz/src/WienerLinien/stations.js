@@ -41,7 +41,10 @@ function text(scene) {
 
 }
 
-function stations(scene) {
+function stations(scene, on = false) {
+
+  conf.on = on
+
   const group = new THREE.Group()
   scene.getScene().add(group)
   group.visible = conf.on

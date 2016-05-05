@@ -110,6 +110,15 @@ class Scene {
     return this.demo
   }
 
+  addVisOn(VIS, f) {
+    this.events.on(VIS+'::visOn', f)
+  }
+
+  addVisOff(VIS, f) {
+    this.events.on(VIS+'::visOff', f)
+  }
+
+
   addVis(name, parameters) {
 
     this.vis.push({name: parameters})

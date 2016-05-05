@@ -29,6 +29,8 @@ const SIZE = {
   DEPTH: 128
 }
 
+//https://github.com/theGlenn/WebGLAudioAPIExperiement/blob/58a2a278db9860a9dc3863117960c6fffd0bcf13/src/js/webgl.js
+
 function soundscape(scene, on = false) {
 
   conf.on = on

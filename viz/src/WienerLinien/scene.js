@@ -64,11 +64,13 @@ function invert (color) {
 }
 
 import stations from './stations'
+import jet from './jet'
 
 class WienerLinien extends Scene {
   constructor(args)
   {
-    super(args, new THREE.Vector3(0,0,640))
+    //super(args, new THREE.Vector3(0,0,640))
+    super(args, new THREE.Vector3(0,0,30))
 
     this.tmpColors = [ new THREE.Color(), new THREE.Color() ]
 
@@ -77,7 +79,8 @@ class WienerLinien extends Scene {
     //this.haltestellen()
     //this.spirals()
 
-    stations(this)
+    stations(this, false)
+    jet(this, true)
 
     //this.metro()
   }

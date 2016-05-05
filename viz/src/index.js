@@ -16,13 +16,13 @@ import dat from 'dat-gui'
 
 // 6 scenes
 import IntroScene from './IntroScene'
-import ExecutedScene from './ExecutedScene'
+import ExecutedScene from './Executed/scene'
 import RefugeesScene from './RefugeesScene'
 import DronesScene from './Drones/scene'
 import WienerLinienScene from './WienerLinien/scene'
 import OceanScene from './OceanScene'
 import OutroScene from './Outro/scene'
-  // 7scene ThisbeautifulWorld
+// 7scene ThisbeautifulWorld
 
 // load fonts
 require('./fonts/oswald_regular.typeface.js')
@@ -42,7 +42,10 @@ class Main {
     this.analyser = null
     this.video = null
 
-    this.scenes = {s1: null, current:null}
+    this.scenes = {
+      s1: null,
+      current: null
+    }
 
     this.clock = new THREE.Clock()
     this.clock.start()
@@ -51,22 +54,22 @@ class Main {
     this.loader = new THREE.TextureLoader(this.manager)
 
     this.oscPort = new OSC.WebSocketPort({
-        url: OSC_URL
+      url: OSC_URL
     });
     this.renderer = new THREE.WebGLRenderer({
-            alpha: true,
-            antialias: true,
-            clearColor: 0,
-            clearAlpha: 1,
-            sortObject: false,
-            autoClear: true
-        });
+      alpha: true,
+      antialias: true,
+      clearColor: 0,
+      clearAlpha: 1,
+      sortObject: false,
+      autoClear: true
+    });
     this.renderer.setClearColor(this.color, 1);
     this.renderer.autoClearColor = true;
     this.renderer.shadowMap.enabled = true;
 
     this.renderer.gammaInput = true
-		this.renderer.gammaOutput = true
+    this.renderer.gammaOutput = true
 
     const container = document.getElementById('container');
     container.appendChild(this.renderer.domElement)
@@ -81,11 +84,11 @@ class Main {
     this.textCanvas.id = "textCanvas"
     this.textCanvas.width = window.innerWidth
     this.textCanvas.height = window.innerHeight
-    //document.body.appendChild(this.textCanvas)
+      //document.body.appendChild(this.textCanvas)
 
     this.textCtx = this.textCanvas.getContext('2d')
 
-    this.textCtx.fillRect(20,20,150, 150);
+    this.textCtx.fillRect(20, 20, 150, 150);
 
 
 
@@ -94,7 +97,7 @@ class Main {
   }
 
   onResize() {
-		this.scenes.current.onResize()
+    this.scenes.current.onResize()
     this.textCanvas.width = window.innerWidth
     this.textCanvas.height = window.innerHeight
   }
@@ -112,50 +115,60 @@ class Main {
 
     this.oscPort.on("message", (oscMsg) => {
       if (oscMsg.address === '/scene') {
-            let n = oscMsg.args[0]
-            console.log("Scene change. "+ n)
-            this.events.emit("scene", n)
+        let n = oscMsg.args[0]
+        console.log("Scene change. " + n)
+        this.events.emit("scene", n)
       }
       if (oscMsg.address === '/on') {
-            let n = oscMsg.args[0]
-            console.log("Show " + n)
-            this.events.emit("on", n)
+        let n = oscMsg.args[0]
+        console.log("Show " + n)
+        this.events.emit("on", n)
       }
       if (oscMsg.address === '/off') {
-            let n = oscMsg.args[0]
-            console.log("Hide " + n)
-            this.events.emit("off", n)
+        let n = oscMsg.args[0]
+        console.log("Hide " + n)
+        this.events.emit("off", n)
       }
 
       if (oscMsg.address === '/vis') {
-            let name = oscMsg.args[0],
-             prop = oscMsg.args[1],
-             val = JSON.parse(oscMsg.args[2])
+        let name = oscMsg.args[0],
+          prop = oscMsg.args[1],
+          val = JSON.parse(oscMsg.args[2])
 
-            this.events.emit("vis", {[name]:{[prop]:val}})
+        this.events.emit("vis", {
+          [name]: {
+            [prop]: val
+          }
+        })
       }
 
       if (oscMsg.address === '/fx') {
-            let n = oscMsg.args[0]
-            console.log("FX " + n)
-            this.events.emit("fx", n)
+        let n = oscMsg.args[0]
+        console.log("FX " + n)
+        this.events.emit("fx", n)
       }
 
 
       if (oscMsg.address === '/intro') {
-            let text = oscMsg.args[0]
-            console.log("Intro " + text)
+        let text = oscMsg.args[0]
+        console.log("Intro " + text)
       }
       if (oscMsg.address === '/outro') {
-            let text = oscMsg.args[0]
-            console.log("Outro " + text)
+        let text = oscMsg.args[0]
+        console.log("Outro " + text)
       }
     })
     this.oscPort.open()
 
-    navigator.webkitGetUserMedia({audio: true, video: true}, stream => {
-     this.analyser = audioAnalyser(stream, {stereo: false, audible: false})
-     /*
+    navigator.webkitGetUserMedia({
+      audio: true,
+      video: true
+    }, stream => {
+      this.analyser = audioAnalyser(stream, {
+          stereo: false,
+          audible: false
+        })
+        /*
      this.video	= document.createElement('video')
      this.video.width	= 512
      this.video.height	= 512
@@ -168,12 +181,12 @@ class Main {
         demo: true,
 
         renderer: this.renderer,
-                  composer: this.composer,
-                  events: this.events,
-                  gui: this.gui,
-                  clock: this.clock,
-                  loader: this.loader,
-                  analyser: this.analyser,
+        composer: this.composer,
+        events: this.events,
+        gui: this.gui,
+        clock: this.clock,
+        loader: this.loader,
+        analyser: this.analyser,
         // webcam video
         video: this.video,
 
@@ -184,30 +197,27 @@ class Main {
       }
 
 
-    //this.scenes.s1 = new IntroScene(args)
+      //this.scenes.s1 = new IntroScene(args)
 
-    //this.scenes.s1 = new WienerLinienScene(args)
+      this.scenes.s1 = new WienerLinienScene(args)
 
+      //this.scenes.s1 = new ExecutedScene(args)
+      //this.scenes.s1 = new RefugeesScene(args)
 
-
-    //this.scenes.s1 = new ExecutedScene(args)
-    //this.scenes.s1 = new RefugeesScene(args)
-
-    //this.scenes.s1 = new DronesScene(args)
+      //this.scenes.s1 = new DronesScene(args)
 
       //this.scenes.s1 = new OceanScene(args)
-      //TODO
-      this.scenes.s1 = new OutroScene(args)
+      //this.scenes.s1 = new OutroScene(args)
 
-    this.setScene("s1")
+      this.setScene("s1")
 
-    window.addEventListener('resize', () => this.onResize(), false)
-    this.onResize()
-    this.update()
-
+      window.addEventListener('resize', () => this.onResize(), false)
+      this.onResize()
+      this.update()
 
 
-     }, err => console.log(err))
+
+    }, err => console.log(err))
 
 
 
@@ -219,13 +229,15 @@ class Main {
     const dt = this.clock.getDelta()
     this.time += dt
 
-    this.events.emit("update", {time: this.time,
-                                delta: dt})
+    this.events.emit("update", {
+      time: this.time,
+      delta: dt
+    })
 
 
     this.stats.end()
     requestAnimationFrame(this.update.bind(this))
- }
+  }
 }
 
 
