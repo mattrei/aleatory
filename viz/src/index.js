@@ -15,12 +15,12 @@ import Stats from 'stats-js'
 import dat from 'dat-gui'
 
 // 6 scenes
-import IntroScene from './IntroScene'
+//import IntroScene from './Intro/Scene'
 import ExecutedScene from './Executed/scene'
-import RefugeesScene from './RefugeesScene'
+//import RefugeesScene from './RefugeesScene'
 import DronesScene from './Drones/scene'
 import WienerLinienScene from './WienerLinien/scene'
-import OceanScene from './OceanScene'
+//import OceanScene from './OceanScene'
 import OutroScene from './Outro/scene'
 // 7scene ThisbeautifulWorld
 

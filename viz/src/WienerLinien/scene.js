@@ -65,6 +65,7 @@ function invert (color) {
 
 import stations from './stations'
 import jet from './jet'
+import tunnel from './tunnel'
 
 class WienerLinien extends Scene {
   constructor(args)
@@ -80,7 +81,8 @@ class WienerLinien extends Scene {
     //this.spirals()
 
     stations(this, false)
-    jet(this, true)
+    jet(this, false)
+    tunnel(this, true)
 
     //this.metro()
   }
