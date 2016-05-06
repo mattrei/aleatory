@@ -7,6 +7,7 @@ const Color = require('color')
 
 const simplex = new(require('simplex-noise'))
 
+
 const VIS = "tunnel"
 
 const conf = {
@@ -22,7 +23,9 @@ function tunnel(scene, on = false) {
   group.visible = conf.on
 
 
-  const tunnel = new Tunnel({group: group})
+  const tunnel = new Tunnel({
+    group: group
+  })
 
   scene.getEvents().on('tick', t => {
     tunnel.update(t.time)
@@ -36,11 +39,12 @@ export default tunnel
 
 
 class Particle {
-  cnstructor(args) {
+  constructor(args) {
     this.position = new THREE.Vector3()
     this.alpha = 1
     this.size = 1
     this.mass = 1
+    this.isActive = true
 
     this.velocity = new THREE.Vector3();
     this.acceleration = new THREE.Vector3();
@@ -79,13 +83,19 @@ class Particle {
   setSize(size) {
     this.size = size
   }
+  getActive() {
+    return this.isActive
+  }
+  setActive(active) {
+    this.isActive = active
+  }
 }
 
 class Tunnel {
 
   constructor(args) {
 
-    this.NUM = 10000
+    this.NUM = 20000
     this.DEPTH = -400
     this.group = args.group
     this.mesh = null
@@ -153,50 +163,72 @@ class Tunnel {
     this.particles.forEach(p => {
       const rad = random(0, Math.PI * 2)
       const range = Math.log(randomInt(2, 128)) / Math.log(128) * 40 + 20
-        const x = Math.cos(rad) * range,
-               y = Math.sin(rad) * range;
+      const x = Math.cos(rad) * range,
+        y = Math.sin(rad) * range;
 
-        const vector = new THREE.Vector3(x, y, random(0, this.DEPTH))
+      const vector = new THREE.Vector3(x, y, random(0, this.DEPTH))
 
-        p.setPosition(vector)
+      p.setPosition(vector)
 
-        const accl = new THREE.Vector3(0,0, random(0, 2))
-        p.setAcceleration(accl)
+      const accel = new THREE.Vector3(0, 0, random(0, 2))
+      p.setAcceleration(accel)
 
-        p.setSize(random(1, 4))
+      p.setAlpha(0)
+      p.setSize(random(2, 4))
 
 
     })
   }
 
-  updateParticles() {
+  updateParticles(time) {
 
-    const vel = new THREE.Vector3(0,0, conf.speed)
+    //const vel = new THREE.Vector3(0,0, conf.speed)
+
+    let numParticles =  Math.pow(conf.speed, 1.8) * this.NUM
+    this.particles.forEach(p => {
+      if (numParticles-- > 0) {
+        p.setActive(true)
+      } else {
+        p.setActive(false)
+        p.setAlpha(0)
+      }
+    })
 
     this.particles.forEach(p => {
 
-      const pos = p.getPosition()
+      if (p.getActive()) {
+
+        const pos = p.getPosition()
+
+        const noiseX = 0,
+          noiseY = 0
+          //const noiseX = simplex.noise2D(pos.z*0.01, time * 0.01) * 0.5,
+          //  noiseY = simplex.noise2D(pos.z*0.01, time * 0.01) * 0.5
+          //const noiseY = simplex.noise2D(pos.z*0.01, (time + 10) * 0.01)
+
+        const vel = new THREE.Vector3(noiseX, noiseY, conf.speed * 3)
 
 
-      p.setVelocity(vel)
-      p.updateVelocity()
-      p.updatePosition()
+        p.setVelocity(vel)
+        p.updateVelocity()
+        p.updatePosition()
 
-      if (p.getAlpha() < 0.8) {
-        p.setAlpha(p.getAlpha() + 0.02)
+        if (p.getAlpha() < 0.8) {
+          p.setAlpha(p.getAlpha() + 0.01)
+        }
+
+        if (pos.z > 0) {
+          pos.z = this.DEPTH
+          p.setAlpha(0)
+          p.setActive(false)
+        }
       }
-
-      if (pos.z > 0) {
-        pos.z = this.DEPTH
-        p.setAlpha(0)
-      }
-
     })
   }
 
   update(time) {
 
-    this.updateParticles()
+    this.updateParticles(time)
 
     const positions = this.mesh.geometry.attributes.position.array,
       opacities = this.mesh.geometry.attributes.vertexOpacity.array,
