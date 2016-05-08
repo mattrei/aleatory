@@ -15,7 +15,7 @@ import Stats from 'stats-js'
 import dat from 'dat-gui'
 
 // 6 scenes
-//import IntroScene from './Intro/Scene'
+import IntroScene from './Intro/scene'
 import ExecutedScene from './Executed/scene'
 //import RefugeesScene from './RefugeesScene'
 import DronesScene from './Drones/scene'
@@ -197,9 +197,8 @@ class Main {
       }
 
 
-      //this.scenes.s1 = new IntroScene(args)
-
-      this.scenes.s1 = new WienerLinienScene(args)
+      this.scenes.s1 = new IntroScene(args)
+      //this.scenes.s1 = new WienerLinienScene(args)
 
       //this.scenes.s1 = new ExecutedScene(args)
       //this.scenes.s1 = new RefugeesScene(args)

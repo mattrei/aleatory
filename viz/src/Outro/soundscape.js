@@ -1,8 +1,4 @@
-global.THREE = require('three')
-
 const simplex = new(require('simplex-noise'))()
-const noise = new(require('noisejs')).Noise(Math.random())
-
 const random = require('random-float')
 const randomInt = require('random-int')
 
