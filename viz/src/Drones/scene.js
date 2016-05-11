@@ -448,7 +448,7 @@ class Drones extends Scene {
 
         const freq = super.getFreq(f.min, f.max)
 
-        s.update(t.time, )
+        s.update(t.time )
       })
     })
 

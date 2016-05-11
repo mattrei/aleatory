@@ -35,7 +35,8 @@ class Main {
   constructor(args) {
     this.stats = new Stats()
     this.stats.domElement.style.position = 'absolute'
-    document.getElementById('stats').appendChild(this.stats.domElement)
+    document.body.appendChild(this.stats.domElement)
+    //document.getElementById('stats').appendChild(this.stats.domElement)
     this.gui = new dat.GUI()
     this.events = new Events()
 
@@ -71,14 +72,14 @@ class Main {
     this.renderer.gammaInput = true
     this.renderer.gammaOutput = true
 
-    const container = document.getElementById('container');
-    container.appendChild(this.renderer.domElement)
+    //const container = document.getElementById('container');
+    document.body.appendChild(this.renderer.domElement)
 
     this.composer = new WAGNER.Composer(this.renderer)
     this.canvas = document.createElement('canvas');
     this.canvas.id = "drawingCanvas"
     this.ctx = this.canvas.getContext('2d');
-    container.appendChild(this.canvas)
+    document.body.appendChild(this.canvas)
 
     this.textCanvas = document.createElement('canvas')
     this.textCanvas.id = "textCanvas"
