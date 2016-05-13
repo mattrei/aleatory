@@ -23,7 +23,9 @@ const conf = {
   on: false,
   speed: 0.5,
   mountainHeight: 0.5,
-  terrainHeight: 0.5
+  terrainHeight: 0.5,
+  yDistortion: 0.5,
+  xDistortion: 0.5
 }
 
 function terrain(scene, on = false) {
@@ -59,6 +61,7 @@ class Terrain {
 
     this.ORB_COLOR = new THREE.Color(0xff00ff)
 
+    this.CAMERA_ORB_DIST = 10
     this.TERRAIN_HEIGHT = 1
     this.MOUNTAIN_HEIGHT = 5
     this.PLANE_WIDTH = 40
@@ -67,7 +70,6 @@ class Terrain {
     this.plane1 = null
     this.plane2 = null
 
-    this.mountains = []
     this.orb = null
     this.orbLight = null
     this.orbCamera = this.scene.getCamera()
@@ -76,8 +78,18 @@ class Terrain {
 
     //this.initPlane()
     this.initLights()
-    this.initMountain()
+    this.plane1 = this.initPlane()
+    this.plane2 = this.initPlane()
+    this.plane1.position.set(0, 0, -this.PLANE_DEPTH * 0.5)
+    this.plane2.position.set(0, 0, -this.PLANE_DEPTH * 1.5)
+
     this.initOrb()
+
+    this.initTerrain(this.plane1, 1)
+    this.initTerrain(this.plane2, 1)
+
+    this.initMountainTerrain(this.plane1, 1)
+    this.initMountainTerrain(this.plane2, 1)
   }
 
   initOrb() {
@@ -109,9 +121,9 @@ class Terrain {
   initLights() {
 
     const hlight = new THREE.HemisphereLight(
-        new THREE.Color(0xffffff),
-        new THREE.Color(0xffffff), 0.8)
-      this.group.add(hlight)
+      new THREE.Color(0xffffff),
+      new THREE.Color(0xffffff), 0.8)
+    this.group.add(hlight)
 
 
 
@@ -122,10 +134,10 @@ class Terrain {
     dirLight.castShadow = true;
     dirLight.shadowMapWidth = 2048;
     dirLight.shadowMapHeight = 2048;
-    this.group.add(dirLight)
+    //this.group.add(dirLight)
   }
 
-  initMountain() {
+  initPlane() {
 
 
     const geometry = new THREE.PlaneBufferGeometry(this.PLANE_WIDTH, this.PLANE_DEPTH,
@@ -145,46 +157,12 @@ class Terrain {
       vertexColors: THREE.VertexColors
     })
 
-
-    const plane1 = new THREE.Mesh(geometry, material)
-    plane1.position.set(0, 0, 0)
-    this.plane1 = plane1
-
-    const plane2 = new THREE.Mesh(geometry, material)
-    plane2.position.set(0, 0, -this.PLANE_DEPTH)
-    this.plane2 = plane2
-
-
-    this.group.add(plane1)
-    this.group.add(plane2)
-
-    for (var i = 0; i < this.PLANE_DEPTH; i++) {
-      //const nal = Math.abs(simplex.noise3D(20, i * 0.1, 0.1)),
-
-      const m = new Mountain({
-        height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
-        range: randomInt(4, 8),
-        zpos: this.PLANE_DEPTH + i,
-        //        xpos: this.PLANE_WIDTH * 1 / 4,
-        anchor: this.PLANE_WIDTH * 1 / 4
-      })
-      this.mountains.push(m)
-
-      const mr = new Mountain({
-        height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
-        range: randomInt(4, 8),
-        zpos: this.PLANE_DEPTH + i,
-        //xpos: this.PLANE_WIDTH * 3 / 4,
-        anchor: this.PLANE_WIDTH * 3 / 4
-      })
-      this.mountains.push(mr)
-    }
-
+    const plane = new THREE.Mesh(geometry, material)
+    this.group.add(plane)
+    return plane
   }
 
   generateHeight(width, height, zpos, time) {
-    //const seed = randomInt(10, 1000)
-
     let size = width * height,
       data = new Float32Array(size)
 
@@ -197,126 +175,49 @@ class Terrain {
     return data
   }
 
-  updateTerrain(plane, time) {
 
-    const speed = conf.speed * 0.6
-
-    const height = this.MOUNTAIN_HEIGHT * conf.mountHeight,
-      terrainHeight = conf.terrainHeight * this.TERRAIN_HEIGHT
-      //console.log(time)
-
-    const positions = plane.geometry.attributes.position.array,
-      colors = plane.geometry.attributes.color.array
-
-    const data = this.generateHeight(this.PLANE_WIDTH, this.PLANE_DEPTH, plane.position.z, time * 0.1)
-      //console.log(data)
-    for (var i = 0, j = 0; i < positions.length; i++, j += 3) {
-      const z = Math.floor(i / this.PLANE_WIDTH)
-
-      positions[j + 1] = simplex.noise2D(plane.position.z - z * 0.05, 1/*time * speed*/) * 1
-      //positions[j + 1] += data[i] * terrainHeight
-    }
-
-    plane.geometry.attributes.position.needsUpdate = true
-
-  }
-
-  initMountainTerrain(plane) {
+  initMountainTerrain(plane, time) {
     const mountainHeight = conf.mountainHeight * this.MOUNTAIN_HEIGHT
+    const speed = conf.speed * 0.5,
+      snowHeight = 5,
+      waterHeight = 2
+    const mountains = []
 
-    for (var i = 0; i < this.PLANE_DEPTH; i++) {
-      //const nal = Math.abs(simplex.noise3D(20, i * 0.1, 0.1)),
+    for (var i = 0; i <= this.PLANE_DEPTH; i++) {
+      const zpos = plane.position.z - i
+      //const xoffset = Math.floor(simplex.noise2D(zpos * 0.5, 0.1) * 1)
+      const xoffset = Math.floor(this._xDistortion(zpos)) //Math.floor(simplex.noise2D(zpos * 0.5, 0.1) * 1)
 
       const m = new Mountain({
+        depthIdx: i,
         height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
-        range: randomInt(4, 8),
-        zpos: this.PLANE_DEPTH + i,
-        //        xpos: this.PLANE_WIDTH * 1 / 4,
-        anchor: this.PLANE_WIDTH * 1 / 4
+        range: Math.floor(simplex.noise2D(zpos * 0.1, 0.1) * 4 + 6),
+        zpos: zpos,
+        xpos: Math.floor(this.PLANE_WIDTH * 1 / 4) + xoffset
       })
-      this.mountains.push(m)
+      mountains.push(m)
 
       const mr = new Mountain({
+        depthIdx: i,
         height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
-        range: randomInt(4, 8),
-        zpos: this.PLANE_DEPTH + i,
-        //xpos: this.PLANE_WIDTH * 3 / 4,
-        anchor: this.PLANE_WIDTH * 3 / 4
+        range: Math.floor(simplex.noise2D(zpos * 0.1, 1) * 4 + 6),
+        zpos: zpos,
+        xpos: Math.floor(this.PLANE_WIDTH * 3 / 4) + xoffset
       })
-      this.mountains.push(mr)
+      mountains.push(mr)
     }
 
     const positions = plane.geometry.attributes.position.array,
       colors = plane.geometry.attributes.color.array
+    mountains.forEach((m, i) => {
+      const idx = m.getDepthIdx() * this.PLANE_WIDTH + m.getXPos() + m.getDepthIdx()
+      for (let j = -m.getRange(); j < m.getRange(); j++) {
+        const nidx = (idx + j) * 3
 
+        const h = Math.abs(simplex.noise2D(m.getZPos() * 0.5,
+          m.getXPos() + j)) * m.height / 2 + m.height / 2
 
-      this.mountains.forEach((m, i) => {
-
-        m.setZPos(m.getZPos() - speed * 0.2)
-        if (Math.floor(m.getZPos()) < this.PLANE_DEPTH) {
-          const idx = Math.floor(m.getZPos()) * this.PLANE_WIDTH + m.getXPos() + Math.floor(m.getZPos())
-
-          for (let j = -m.getRange(); j < m.getRange(); j++) {
-            const nidx = (idx + j) * 3
-            positions[nidx + 1] += m.getHeight(j + m.getRange())
-
-
-          }
-          if (m.getZPos() < 0) {
-            m.setZPos(this.PLANE_DEPTH)
-            m.setRange(randomInt(2, 8))
-            m.setMaxHeight( /*simplex.noise2D(i, time * 0.1) */ mountainHeight)
-            m.setXPos(m.getAnchor() + Math.floor(simplex.noise2D(m.getZPos(), time * speed) * 5))
-          }
-        }
-      })
-
-      for (var i = 0, j = 0; i < colors.length; i++, j += 3) {
-
-        const color = positions[j + 1] > snowHeight ? new THREE.Color(0xffff00) :
-          (positions[j + 1] < waterHeight ? new THREE.Color(0x00f00f) : new THREE.Color(0xff000f))
-        colors[j + 0] = color.r
-        colors[j + 1] = color.g
-        colors[j + 2] = color.b
-      }
-
-      this.planeMesh.geometry.computeVertexNormals()
-      this.planeMesh.geometry.attributes.position.needsUpdate = true
-      this.planeMesh.geometry.attributes.color.needsUpdate = true
-
-
-  }
-
-  updateMountains(time) {
-
-    const speed = conf.speed * 0.5
-    const snowHeight = 5,
-      waterHeight = 2
-
-
-    const mountainHeight = conf.mountainHeight * this.MOUNTAIN_HEIGHT
-
-    const positions = this.planeMesh.geometry.attributes.position.array,
-      colors = this.planeMesh.geometry.attributes.color.array
-
-    this.mountains.forEach((m, i) => {
-
-      m.setZPos(m.getZPos() - speed * 0.2)
-      if (Math.floor(m.getZPos()) < this.PLANE_DEPTH) {
-        const idx = Math.floor(m.getZPos()) * this.PLANE_WIDTH + m.getXPos() + Math.floor(m.getZPos())
-
-        for (let j = -m.getRange(); j < m.getRange(); j++) {
-          const nidx = (idx + j) * 3
-          positions[nidx + 1] += m.getHeight(j + m.getRange())
-
-
-        }
-        if (m.getZPos() < 0) {
-          m.setZPos(this.PLANE_DEPTH)
-          m.setRange(randomInt(2, 8))
-          m.setMaxHeight( /*simplex.noise2D(i, time * 0.1) */ mountainHeight)
-          m.setXPos(m.getAnchor() + Math.floor(simplex.noise2D(m.getZPos(), time * speed) * 5))
-        }
+        positions[nidx + 1] += h // m.getHeight(j + m.getRange())
       }
     })
 
@@ -329,45 +230,86 @@ class Terrain {
       colors[j + 2] = color.b
     }
 
-    this.planeMesh.geometry.computeVertexNormals()
-    this.planeMesh.geometry.attributes.position.needsUpdate = true
-    this.planeMesh.geometry.attributes.color.needsUpdate = true
+    plane.geometry.computeVertexNormals()
+    plane.geometry.attributes.position.needsUpdate = true
+    plane.geometry.attributes.color.needsUpdate = true
+  }
+
+  _yDistortion(z) {
+    return simplex.noise2D(z * conf.yDistortion * 0.1, 0.1) * 1.5
+  }
+
+  _xDistortion(z) {
+    return simplex.noise2D(z * conf.xDistortion * 0.1, 0.1) * 2
   }
 
   updateOrb(delta) {
 
+    const speed = conf.speed * delta * 7
     const pos = this.orb.position
 
-    const x = simplex.noise3D(1, pos.y * 0.1, delta),
-      y = simplex.noise3D(pos.x * 0.1, 1, delta),
-      z = pos.z - delta * 3,
+    const z = pos.z - speed,
+      x = 0, //this._xDistortion(z),
+      y = this._yDistortion(z),
       v = new THREE.Vector3(x * 2, y * 2 + 2, z),
-      vc = new THREE.Vector3(0, 10, z + 20)
+      vc = new THREE.Vector3(0, 3, z + this.CAMERA_ORB_DIST)
 
     pos.copy(v)
     this.orbCamera.position.copy(vc)
     this.orbCamera.lookAt(v)
+  }
+
+  updateTerrain(plane, time) {
+    const speed = conf.speed * 0.6
+
+    const height = this.MOUNTAIN_HEIGHT * conf.mountHeight,
+      terrainHeight = conf.terrainHeight * this.TERRAIN_HEIGHT
+
+    const positions = plane.geometry.attributes.position.array,
+      colors = plane.geometry.attributes.color.array
+
+    for (var i = 0, j = 0; i < positions.length; i++, j += 3) {
+      const depthIdx = Math.floor(i / this.PLANE_WIDTH)
+      positions[j + 1] += simplex.noise3D(i, plane.position.z - depthIdx, time) * 0.01
+    }
+    plane.geometry.attributes.position.needsUpdate = true
+  }
 
 
+  initTerrain(plane, time) {
+    const speed = conf.speed * 0.6
+
+    const height = this.MOUNTAIN_HEIGHT * conf.mountHeight,
+      terrainHeight = conf.terrainHeight * this.TERRAIN_HEIGHT
+
+    const positions = plane.geometry.attributes.position.array,
+      colors = plane.geometry.attributes.color.array
+
+    const data = this.generateHeight(this.PLANE_WIDTH, this.PLANE_DEPTH, plane.position.z, time * 0.1)
+
+    for (var i = 0, j = 0; i < positions.length; i++, j += 3) {
+      const depthIdx = Math.floor(i / this.PLANE_WIDTH)
+      positions[j + 1] = this._yDistortion(plane.position.z - this.PLANE_DEPTH * (depthIdx / this.PLANE_DEPTH))
+    }
+    plane.geometry.attributes.position.needsUpdate = true
   }
 
   update(time, delta) {
-    this.updateTerrain(this.plane1, time)
-    this.updateTerrain(this.plane2, time)
-
-    //this.updateMountains(this.plane1, time)
-    //this.updateMountains(this.plane2, time)
-
     if (this.orb) {
       this.updateOrb(delta)
 
-      if (this.orb.position.z < (this.plane1.position.z - this.PLANE_DEPTH/2)) {
-        console.log("smaller")
-        this.plane1.position.setZ(this.plane1.position.z - this.PLANE_DEPTH*2)
-        const tmpPlane = this.plane1
-        this.plane1 = this.plane2
-        this.plane2 = tmpPlane
+      const firstPlane = this.plane1.position.z > this.plane2.position.z ? this.plane1 : this.plane2,
+        secondPlane = this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
+
+
+      if (this.orb.position.z + this.CAMERA_ORB_DIST < firstPlane.position.z - this.PLANE_DEPTH * 0.5) {
+        firstPlane.position.setZ(secondPlane.position.z - this.PLANE_DEPTH)
+
+        this.initTerrain(firstPlane, time)
+        this.initMountainTerrain(firstPlane, time)
       }
+      //this.updateTerrain(firstPlane, time)
+      //this.updateTerrain(secondPlane, time)
     }
   }
 
@@ -375,12 +317,16 @@ class Terrain {
 
 class Mountain {
   constructor(args) {
+    this.idx = args.depthIdx
     this.height = args.height
     this.zpos = args.zpos
     this.xpos = args.xpos
     this.anchor = args.anchor
     this.heights = []
     this.setRange(args.range)
+  }
+  getDepthIdx() {
+    return this.idx
   }
   getZPos() {
     return this.zpos
