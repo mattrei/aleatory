@@ -1,6 +1,9 @@
 const glslify = require('glslify')
 const createComplex = require('../utils/createComplex')
 
+const geoPieceRing = require('geo-piecering')
+const geoArc = require('geo-arc')
+
 const noise = new(require('noisejs').Noise)(Math.random())
 console.log(noise.perlin2(1, 2))
 
@@ -35,13 +38,16 @@ function terrain(scene, on = false) {
   scene.getScene().add(group)
   group.visible = conf.on
 
-
   scene.getScene().fog = new THREE.FogExp2(0x5fa5d8, 0.0025)
 
   const terrain = new Terrain({
     group: group,
     scene: scene
   })
+
+  scene.getEvents().on(VIS + '::visOn', _ => scene.fadeIn(group, 2))
+  scene.getEvents().on(VIS + '::visOff', _ => scene.fadeOut(group, 2))
+
 
   scene.getEvents().on('tick', t => {
     terrain.update(t.time, t.delta)
@@ -83,6 +89,9 @@ class Terrain {
     this.plane1.position.set(0, 0, -this.PLANE_DEPTH * 0.5)
     this.plane2.position.set(0, 0, -this.PLANE_DEPTH * 1.5)
 
+
+    this.meshes = []
+
     this.initOrb()
 
     this.initTerrain(this.plane1, 1)
@@ -99,7 +108,8 @@ class Terrain {
         const material = new THREE.SpriteMaterial({
           map: texture,
           color: this.ORB_COLOR,
-          fog: true
+          fog: true,
+          transparent: true
         })
 
         const sprite = new THREE.Sprite(material)
@@ -154,7 +164,8 @@ class Terrain {
       shading: THREE.FlatShading,
       side: THREE.DoubleSide,
       wireframe: true,
-      vertexColors: THREE.VertexColors
+      vertexColors: THREE.VertexColors,
+      transparent: true
     })
 
     const plane = new THREE.Mesh(geometry, material)
@@ -185,7 +196,7 @@ class Terrain {
 
     for (var i = 0; i <= this.PLANE_DEPTH; i++) {
       const zpos = plane.position.z - i
-      //const xoffset = Math.floor(simplex.noise2D(zpos * 0.5, 0.1) * 1)
+        //const xoffset = Math.floor(simplex.noise2D(zpos * 0.5, 0.1) * 1)
       const xoffset = Math.floor(this._xDistortion(zpos)) //Math.floor(simplex.noise2D(zpos * 0.5, 0.1) * 1)
 
       const m = new Mountain({
@@ -294,13 +305,76 @@ class Terrain {
     plane.geometry.attributes.position.needsUpdate = true
   }
 
+  addRndMesh() {
+
+    const radius = random(0, 2);
+    const numPieces = Math.floor(random(5, 40));
+    const pieceSize = random(0.25, 0.75);
+
+    const types = [
+      geoArc({
+        y: 0,
+        startRadian: random(-Math.PI, Math.PI),
+        endRadian: random(-Math.PI, Math.PI),
+        innerRadius: radius,
+        outerRadius: radius + random(0.005, 0.15),
+        numBands: 2,
+        numSlices: 90,
+      }),
+      geoPieceRing({
+        y: 0,
+        height: random(0.01, 1.0),
+        radius: random(0.1, 1.5),
+        numPieces: numPieces,
+        quadsPerPiece: 1,
+        pieceSize: (Math.PI * 2) * 1 / numPieces * pieceSize
+      })
+    ]
+
+    const geometry = createComplex(types[1])
+    geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+    const material = new THREE.MeshBasicMaterial({
+      opacity: 1,
+      side: THREE.DoubleSide
+    });
+
+    let mesh = new THREE.Mesh(geometry, material)
+    mesh.position.z = this._secondPlane().position.z
+    mesh.active = true
+    mesh.rotationFactor = random(-0.5, 0.5);
+    this.group.add(mesh)
+    this.meshes.push(mesh)
+  }
+
+  updateMeshes(dt) {
+    this.meshes.forEach((m) => {
+
+      if (m.active) {
+        m.rotation.z += dt * m.rotationFactor
+        m.position.z += dt * conf.speed * 10
+        m.position.y = this._yDistortion(m.position.z)
+        m.position.x = this._xDistortion(m.position.z)
+
+        if (m.position.z > (this.orb.position.z + this.CAMERA_ORB_DIST)) {
+          m.active = false;
+          m.visible = false;
+        }
+      }
+    })
+  }
+  _firstPlane() {
+    return this.plane1.position.z > this.plane2.position.z ? this.plane1 : this.plane2
+  }
+  _secondPlane() {
+    return this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
+  }
+
   update(time, delta) {
     if (this.orb) {
       this.updateOrb(delta)
 
-      const firstPlane = this.plane1.position.z > this.plane2.position.z ? this.plane1 : this.plane2,
-        secondPlane = this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
-
+      const firstPlane = this._firstPlane(),
+        secondPlane = this._secondPlane()
 
       if (this.orb.position.z + this.CAMERA_ORB_DIST < firstPlane.position.z - this.PLANE_DEPTH * 0.5) {
         firstPlane.position.setZ(secondPlane.position.z - this.PLANE_DEPTH)
@@ -308,8 +382,14 @@ class Terrain {
         this.initTerrain(firstPlane, time)
         this.initMountainTerrain(firstPlane, time)
       }
-      //this.updateTerrain(firstPlane, time)
-      //this.updateTerrain(secondPlane, time)
+
+      if (Math.random() > 0.99) {
+        this.addRndMesh()
+      }
+
+      this.updateMeshes(delta)
+        //this.updateTerrain(firstPlane, time)
+        //this.updateTerrain(secondPlane, time)
     }
   }
 

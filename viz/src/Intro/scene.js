@@ -17,29 +17,19 @@ require('../utils/THREE.MeshLine')
 
 const smoothstep = require('smoothstep')
 
-const PARTICLES_AMOUNT = 300000
 
-const FLY_CURVE = 20
-const MAX_POINTS = 500
-const TRIANGLE_GAP = 500
-const NUM_RIBBONS = 25
-const RIBBON_LENGTH = 50
-const RIBBON_GAP = 100
-const RIBBON_START = NUM_RIBBONS * RIBBON_GAP * -1
-const STREET_LENGTH = (RIBBON_LENGTH + RIBBON_GAP) * NUM_RIBBONS
-const STREET_WIDTH = 50
-const PLANE_SIZE = {X: window.innerWidth * 2, Z: STREET_LENGTH}
-
+import street from './street'
 import terrain from './terrain'
 
 class IntroScene extends Scene {
     constructor(args) {
-      super(args, new THREE.Vector3(0,0,50))
+      super(args, new THREE.Vector3(0,0,0))
 
         //this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
 
-        terrain(this, true)
+        street(this, true)
+        terrain(this, false)
 /*
         this.createText()
         //this.background()
