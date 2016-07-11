@@ -161,8 +161,8 @@ var updateMover =  function() {
        }
      }
      positions[i * 3 + 0] = mover.position.x - points.position.x;
-     positions[i * 3 + 1] = mover.position.y - points.position.x;
-     positions[i * 3 + 2] = mover.position.z - points.position.x;
+     positions[i * 3 + 1] = mover.position.y - points.position.y;
+     positions[i * 3 + 2] = mover.position.z - points.position.z;
      opacities[i] = mover.a;
      sizes[i] = mover.size;
    }

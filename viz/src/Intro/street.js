@@ -3,16 +3,20 @@ const random = require('random-float')
 const randomInt = require('random-int')
 const clamp = require('clamp')
 
+const smoothstep = require('smoothstep')
+
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
 const glslify = require('glslify')
 
+require('../utils/THREE.TargetCamera')
+require('../utils/THREE.MeshLine')
 
 const VIS = 'street'
 const conf = {
   on: false,
-  speed: 1,
+  speed: 0.5,
   cars: false
 }
 
@@ -43,47 +47,95 @@ function street(scene, on = false) {
 
 class Street {
   constructor(args) {
-    this.NUM_RIBBONS = 25
-    this.RIBBON_LENGTH = 50
-    this.RIBBON_GAP = 100
-    this.RIBBON_START = this.NUM_RIBBONS * this.RIBBON_GAP * -1
-    this.STREET_LENGTH = (this.RIBBON_LENGTH + this.RIBBON_GAP) * this.NUM_RIBBONS
+
+    this.NUM_POINTS = 100
+    this.POINTS_GAP = 6
+    this.STREET_LENGTH = this.NUM_POINTS * this.POINTS_GAP
     this.STREET_WIDTH = 50
 
+    this.STRIPE_LENGTH = 20
+    this.STRIPE_GAP = this.STRIPE_LENGTH / 3
+    this.NUM_STRIPES = Math.floor(this.STREET_LENGTH / (this.STRIPE_LENGTH + this.STRIPE_GAP))
     this.NUM_CARLIGHTS = 8
 
-    this.left = null
-    this.right = null
+    this.seed = 0
+
+    this.leftGeometry = null
+    this.leftLine = null
+    this.rightGeometry = null
+    this.rightLine = null
     this.middle = []
+
+    this.smoothX = 0;
+		this.smoothY = 0;
+		this.smoothZ = 0;
 
     this.scene = args.scene
     this.group = args.group
 
+    this.orbCamera = new THREE.TargetCamera( 75, window.innerWidth / window.innerHeight, 0.1, 2000 ),
+
+    this.group.add(this.orbCamera)
+    this.orb = this.createOrb()
     this.init()
     this.initCarLights()
   }
 
+  createOrb() {
+    const geometry = new THREE.CubeGeometry(1,1)
+    const material = new THREE.MeshNormalMaterial()
+
+    const mesh = new THREE.Mesh(geometry, material)
+    this.group.add(mesh)
+
+    this.orbCamera.addTarget( {
+                            name: 'chase',
+                            targetObject: mesh,
+                            cameraPosition: new THREE.Vector3( 0, 10, 20 ),
+                            stiffness: 0.3,
+                            fixed: false
+                        } );
+
+    this.orbCamera.setTarget( 'chase' );
+
+    return mesh
+
+  }
+
+
+
   init() {
-    let geom = new THREE.PlaneBufferGeometry(3, (this.RIBBON_LENGTH + this.RIBBON_GAP) * this.NUM_RIBBONS, 2, 2)
-    let mat = new THREE.LineBasicMaterial({
-      color: 0xffffff,
-      linewidth: 5,
-      transparent: true
-    })
-    let mesh = new THREE.Mesh(geom, mat)
-    mesh.rotation.x = Math.PI * 0.5
+    this.leftGeometry = new Float32Array( this.NUM_POINTS * 3 )
+    this.rightGeometry = new Float32Array( this.NUM_POINTS * 3 )
+    for( var j = 0; j < this.leftGeometry.length; j += 3 ) {
+			this.leftGeometry[ j ] = this.leftGeometry[ j + 1 ] = this.leftGeometry[ j + 2 ] = 0
+			this.rightGeometry[ j ] = this.rightGeometry[ j + 1 ] = this.rightGeometry[ j + 2 ] = 0
+		}
 
-    let left = new THREE.Line(new THREE.Geometry(), mat);
-    this.group.add(left)
-    this.left = left
+    this.leftGeometry[ 0 ] = this.leftGeometry[ 3 ] = -this.STREET_WIDTH / 2
+    this.rightGeometry[ 0 ] = this.rightGeometry[ 3 ] = this.STREET_WIDTH / 2
 
-    let right = new THREE.Line(new THREE.Geometry(), mat);
-    this.group.add(right)
-    this.right = right
+    const material = new THREE.MeshLineMaterial({
+      color:new THREE.Color(0xffffff),
+      lineWidth:3 }
+    )
+    let left = new THREE.MeshLine()
+    left.setGeometry(this.leftGeometry)
+    this.leftLine = left
+
+    let right = new THREE.MeshLine();
+    right.setGeometry(this.rightGeometry)
+    this.rightLine = right
+
+    const leftMesh = new THREE.Mesh( left.geometry, material );
+    const rightMesh = new THREE.Mesh( right.geometry, material );
+
+    this.group.add(leftMesh)
+    this.group.add(rightMesh)
 
     let middle = []
-    for (let i = 1; i < this.NUM_RIBBONS + 1; i++) {
-      let geom = new THREE.PlaneGeometry(5, this.RIBBON_LENGTH, 2, 2)
+    for (let i = 1; i < this.NUM_STRIPES + 1; i++) {
+      let geom = new THREE.PlaneGeometry(5, this.STRIPE_LENGTH, 2, 2)
       let mat = new THREE.MeshBasicMaterial({
         color: 0xffffff,
         side: THREE.DoubleSide,
@@ -93,12 +145,11 @@ class Street {
       let mesh = new THREE.Mesh(geom, mat)
       mesh.rotation.x = Math.PI * 0.5
 
-      mesh.position.z = (this.RIBBON_GAP + this.RIBBON_LENGTH) * i * -1
+      mesh.position.z = -i * (this.STRIPE_LENGTH + this.STRIPE_GAP)
 
       this.group.add(mesh)
       this.middle.push(mesh)
     }
-
   }
 
   _addCarLights(material) {
@@ -155,9 +206,7 @@ class Street {
 
   }
 
-  _streetDistortion(z, time) {
-    return simplex.noise2D(z * 0.0002, time * 1)
-  }
+
 
   updateCars(time, dt) {
 
@@ -170,20 +219,18 @@ class Street {
       l.forEach((s, j) => {
         s.visible = conf.on
 
-        let pos = s.position
+        s.position.z += conf.speed
+        let zpos = s.position.z
+        const xoffset = this._xDistortion(zpos, time)
 
-        let z = pos.z + conf.speed * 8 * l._speed
-          //let r = Math.sin((t.time + z * 0.2) * 0.02)
-        const r = this._streetDistortion(z, time)
-        let x = r * 15 + (j * 15) - this.STREET_WIDTH / 2,
-          y = r * 8
+        let x = xoffset - this.STREET_WIDTH / 4,
+          y = 0
 
-
-        if (z > 0) {
-          z = this.STREET_LENGTH * -1
-          z -= zoffset
+        if (zpos > 0) {
+          zpos = this.STREET_LENGTH * -1
+          zpos -= zoffset
         }
-        s.position.set(x, y, z)
+        s.position.set(x, y, zpos)
       })
     })
 
@@ -194,65 +241,96 @@ class Street {
 
         s.visible = conf.on
 
-        let pos = s.position
+        s.position.z -= conf.speed
+        let zpos = s.position.z
+        const xoffset = this._xDistortion(zpos, time)
 
-        let z = pos.z - conf.speed * 8
-          //let r = Math.sin((t.time + z * 0.2) * 0.02)
-        const r = this._streetDistortion(z, time)
+        let x = xoffset + this.STREET_WIDTH / 4,
+          y = 0
 
-
-        let x = r * 15 + (j * 15) + this.STREET_WIDTH / 2,
-          y = r * 8
-
-
-        if (z < -this.STREET_LENGTH) {
-          z = 0
-          z += zoffset
+        if (zpos < -this.STREET_LENGTH) {
+          zpos = 0
+          zpos += zoffset
         }
-        s.position.set(x, y, z)
+        s.position.set(x, y, zpos)
       })
 
     })
   }
 
+  _xDistortion(z, time) {
+
+    //const factor = Math.sqrt(z/this.NUM_STRIPES * (this.STRIPE_LENGTH + this.STRIPE_GAP), 2)
+
+    return simplex.noise2D(z * 0.002, time * conf.speed) * 50
+  }
+
+  _yDistortion(z, time) {
+
+
+    return simplex.noise2D(z * 0.005, time * 1) * 0.1
+  }
+
   updateStreet(time, delta) {
-    const pos_left = [],
-      pos_right = [],
-      pos_middle = []
+    const speed = conf.speed
+    const smoothCoef = 0.05
+
+    for( var j = 3, i=3; j < this.leftGeometry.length; i++, j += 3 ) {
+
+      const zpos = -i * this.POINTS_GAP
+
+      let xpos = this._xDistortion(zpos, time)
+
+      const factor = Math.sqrt(j / this.leftGeometry.length, 2) //(this.STRIPE_LENGTH + this.STREET_GAP)/this.STREET_LENGTH
+      //xpos *= factor
+
+      this.leftGeometry[ j ] = xpos - this.STREET_WIDTH * 0.5
+			this.leftGeometry[ j + 1 ] += 0//this._yDistortion(j, time)
+			this.leftGeometry[ j + 2 ] = zpos //this.leftGeometry[ j + 5 ] //* speed;
+
+
+      this.rightGeometry[ j ] = xpos + this.STREET_WIDTH * 0.5
+			this.rightGeometry[ j + 1 ] += 0//this._yDistortion(j, time)
+			this.rightGeometry[ j + 2 ] = zpos
+		}
+
+    const max = this.leftGeometry[ 3 * 5 ],
+      min = this.leftGeometry[ 0 ]
+
+    this.leftLine.setGeometry( this.leftGeometry)
+    this.rightLine.setGeometry( this.rightGeometry)
+
 
     this.middle.forEach((m, i) => {
 
-      m.position.z += conf.speed * 8
+        m.position.z += conf.speed
+        const zpos = m.position.z
+        let xpos = this._xDistortion(zpos, time)
 
-      const r = this._streetDistortion(m.position.z, time)
+        const factor = i/this.middle.length
+        xpos *= factor
 
-      m.position.x = r * 15
-      m.position.y = r * 8
-      m.rotation.z = r * 0.05
+        m.position.x = xpos
+        m.rotation.z = xpos / 20 * 0.5
 
-
-      if (m.position.z > 0) { //this.camera.position.z) {
-        m.position.z = (this.NUM_RIBBONS * (this.RIBBON_GAP + this.RIBBON_LENGTH) * -1)
-      }
-
-      pos_middle.push(new THREE.Vector3(r * 15, r * 8, m.position.z))
-      pos_left.push(new THREE.Vector3((r * 15) - this.STREET_WIDTH, r * 8, m.position.z))
-      pos_right.push(new THREE.Vector3((r * 15) + this.STREET_WIDTH, r * 8, m.position.z))
+        if (m.position.z > 0) {//this.camera.position.z) {
+            //m.position.z = -this.STREET_LENGTH - (i+1) * (this.STRIPE_LENGTH + this.STRIPE_GAP)
+        }
     })
 
-    pos_middle.sort((a, b) => a.z - b.z)
-    pos_left.sort((a, b) => a.z - b.z)
-    pos_right.sort((a, b) => a.z - b.z)
+  }
+  updateOrb(time, dt) {
+    const r = this._streetDistortion(this.orb.position.z, time)
 
-    this.left.geometry.vertices = pos_left
-    this.left.geometry.verticesNeedUpdate = true
-
-    this.right.geometry.vertices = pos_right
-    this.right.geometry.verticesNeedUpdate = true
+    this.orb.position.x = r * 15
+    this.orb.position.y = r * 8
   }
 
   update(time, dt) {
+
+    //this.orbCamera.update();
     this.updateStreet(time, dt)
+    //this.updateOrb(time, dt)
     if (conf.cars && this.frontLights) this.updateCars(time, dt)
   }
 

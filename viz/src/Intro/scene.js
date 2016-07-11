@@ -23,13 +23,13 @@ import terrain from './terrain'
 
 class IntroScene extends Scene {
     constructor(args) {
-      super(args, new THREE.Vector3(0,0,0))
+      super(args, new THREE.Vector3(0,0,10))
 
         //this.scene.fog = new THREE.FogExp2( 0x000000, 0.0009 );
 
 
         street(this, true)
-        terrain(this, false)
+        //terrain(this, false)
 /*
         this.createText()
         //this.background()
