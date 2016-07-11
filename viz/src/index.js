@@ -9,7 +9,8 @@ const WAGNER = require('@superguigui/wagner')
 const average = require('analyser-frequency-average')
 const audioAnalyser = require('web-audio-analyser')
 
-import OSC from 'osc/dist/osc-browser.js'
+//import OSC from 'osc/dist/osc-browser'
+const OSC = null
 import Events from 'minivents'
 import Stats from 'stats-js'
 import dat from 'dat-gui'
@@ -54,9 +55,8 @@ class Main {
     this.manager = new THREE.LoadingManager()
     this.loader = new THREE.TextureLoader(this.manager)
 
-    this.oscPort = new OSC.WebSocketPort({
-      url: OSC_URL
-    });
+    if (OSC) this.oscPort = new OSC.WebSocketPort({url: OSC_URL})
+    
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: true,
@@ -112,8 +112,7 @@ class Main {
     this.scenes.current.play()
   }
 
-  init() {
-
+  _initOSC() {
     this.oscPort.on("message", (oscMsg) => {
       if (oscMsg.address === '/scene') {
         let n = oscMsg.args[0]
@@ -160,6 +159,12 @@ class Main {
       }
     })
     this.oscPort.open()
+  }
+
+  init() {
+
+    if (this.oscPort) this._initOSC()
+    
 
     navigator.webkitGetUserMedia({
       audio: true,
@@ -242,7 +247,7 @@ class Main {
 
 
 
-import Test from './Test_Particles'
+//import Test from './Test_Particles'
 domready(() => {
 
   const main = new Main()

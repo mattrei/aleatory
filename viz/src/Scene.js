@@ -54,7 +54,9 @@ class Scene {
         this.demo = args.demo
         this.run = false
         this.events = new Events()
+
         this.analyser = args.analyser
+
         this.gui = args.gui
         this.renderer = args.renderer
         this.composer = args.composer
@@ -68,14 +70,11 @@ class Scene {
 
         this.addFX(this.gui)
 
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000)
-
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.maxDistance = 300000;
-        this.camera.position.set(cam.x, cam.y, cam.z)
-
-
-
+        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000000)
+        this.camera.lookAt(new THREE.Vector3())
+        this.camera.position.set(0, 1, -3)
+        this.controls = new OrbitControls(this.camera)
+        //this.camera.position.set(cam.x, cam.y, cam.z)
 
         this.scene = new THREE.Scene()
 
@@ -189,7 +188,7 @@ class Scene {
     this.fx.boxBlur.pass = new BoxBlurPass(3, 3)
 
     f.add(this.fx.rgbsplit, 'active').name('RGBSplit')
-    this.fx.rgbsplit.pass = new RGBSplit()
+    this.fx.rgbsplit.pass = new RGBSplit({})
 
     f.add(this.fx.vignette, 'active').name('Vignette')
     this.fx.vignette.pass = new VignettePass(2, 1)
@@ -210,6 +209,10 @@ class Scene {
 
   getScene() {
     return this.scene
+  }
+
+  getRenderer() {
+    return this.renderer
   }
 
   update(t)
@@ -307,6 +310,12 @@ class Scene {
     if (!this.analyser) return random(min,max)
 
     return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
+  }
+
+  getAudioTexture() {
+    if (!this.analyser) return null
+
+    return this.analyser.waveform() // return an unit8array
   }
 
   fadeIn(group, duration) {
