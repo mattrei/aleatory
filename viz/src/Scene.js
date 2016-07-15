@@ -312,10 +312,29 @@ class Scene {
     return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
   }
 
+  getAnalyser() {
+    return this.analyser
+  }
+
   getAudioTexture() {
     if (!this.analyser) return null
 
-    return this.analyser.waveform() // return an unit8array
+    const wave = this.analyser.waveform() // return an unit8array
+    // length = 1024
+    const data = new Uint8Array(wave.length * 3)
+    for (var i = 0; i < wave.length; i++) {
+     //data[i] = (wave[i] - 128) / 128
+     data[i*3] = wave[i] - 128
+     data[i*3+1] = wave[i] - 128
+     data[i*3+2] = wave[i] - 128
+    }
+
+
+    const t = new THREE.DataTexture( data, 32, 32, THREE.RGBFormat );
+    t.type = THREE.UnsignedByteType;
+    t.needsUpdate = true;
+
+    return t
   }
 
   fadeIn(group, duration) {

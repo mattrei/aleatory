@@ -17,14 +17,16 @@ const smoothstep = require('smoothstep')
 import street from './street'
 import terrain from './terrain'
 import particles from './particles'
+import wombs from './wombs'
 
 class IntroScene extends Scene {
     constructor(args) {
       super(args, new THREE.Vector3(0,0,10))
 
-        //street(this, true)
+        street(this, true)
         //terrain(this, false)
-        particles(this, true)
+        //particles(this, true)
+        //wombs(this, true)
     }
 
     tick(time, delta) {

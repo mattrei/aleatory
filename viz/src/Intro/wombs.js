@@ -10,14 +10,14 @@ const glslify = require('glslify')
 
 import GPUComputationRenderer from '../utils/GPUComputationRenderer'
 
-const VIS = 'particles'
+const VIS = 'wombs'
 const conf = {
 }
 
-const WIDTH = 256
+const WIDTH = 50
 const NUM_PARTICLES = WIDTH * WIDTH
 
-function particles(scene, on = false) {
+function wombs(scene, on = false) {
 
   const group = new THREE.Group()
   conf.on = on
@@ -139,10 +139,11 @@ class Particles {
     for ( let k = 0, kl = posArray.length; k < kl; k += 4 ) {
 
       let x, y, z
-      y = z = 0
-      x = k / 4 / NUM_PARTICLES
+      x = y = z = 0
       let vx, vy, vz
-      vx = vy = vz = 0 //random(1, 3)
+      vx = random(-1, 1)
+      vy = random(-1, 1)
+      vz = random(-1, 1)
 
 
       // Fill in texture values
@@ -179,6 +180,8 @@ class Particles {
   }
 }
 
+export default wombs
+
 const computeShaderPosition = glslify(`
 
   #pragma glslify: snoise3 = require('glsl-noise/simplex/3d')
@@ -193,9 +196,14 @@ const computeShaderPosition = glslify(`
         vec3 vel = tmpVel.xyz;
 
 
-        //float noise = snoise3(pos);
-
         pos += vel * delta * 0.1;
+
+
+        float distance = length(pos);
+        if (distance > 1.0) {
+          pos = vec3(0.,0.,0.);
+        }
+
         gl_FragColor = vec4( pos, 1.0 );
       }
 `, { inline: true })
@@ -221,7 +229,11 @@ const computeShaderVelocity = glslify(`
 
         //float noise = snoise4(vec4(pos, time * 0.001));
         //float noise = snoise3(pos);
-        vec3 acceleration = curlNoise(pos);
+        //vec3 acceleration = curlNoise(pos);
+
+
+
+        float acceleration = 1.;
 
         vel += delta * acceleration * 0.1;
         gl_FragColor = vec4( vel, 1.0 );
@@ -240,6 +252,7 @@ const particleVertexShader = glslify(`
       void main() {
         vec4 posTemp = texture2D( texturePosition, uv );
         vec3 pos = posTemp.xyz;
+
         //vec4 velTemp = texture2D( textureVelocity, uv );
         //vec3 vel = velTemp.xyz;
 
@@ -265,15 +278,15 @@ const particleFragmentShader = glslify(`
         float f = length( gl_PointCoord - vec2( 0.5, 0.5 ) );
         f = 1.0;
 
-        float audio = texture2D( textureAudio , vec2( 0. , 0.0 ) ).r;
+        //float audio = texture2D( textureAudio , vec2( 0. , 0.0 ) ).r;
         //float audio = analyse(textureAudio, vUv.x);
         //audio += 1.0;
-        gl_FragColor = vec4(vec3(audio*5.), 1.0);
+        gl_FragColor = vec4(vec3(1.), 1.0);
       }
 
 `, { inline: true })
 
-export default particles
+
 
 /*
 define(function(require, exports, module) {

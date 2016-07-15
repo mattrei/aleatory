@@ -8,6 +8,7 @@ const WAGNER = require('@superguigui/wagner')
 
 const average = require('analyser-frequency-average')
 const audioAnalyser = require('web-audio-analyser')
+const glAudioAnalyser = require('gl-audio-analyser')
 
 //import OSC from 'osc/dist/osc-browser'
 const OSC = null
@@ -44,6 +45,8 @@ class Main {
     this.analyser = null
     this.video = null
 
+
+
     this.scenes = {
       s1: null,
       current: null
@@ -71,6 +74,7 @@ class Main {
 
     this.renderer.gammaInput = true
     this.renderer.gammaOutput = true
+
 
     //const container = document.getElementById('container');
     document.body.appendChild(this.renderer.domElement)
@@ -170,10 +174,13 @@ class Main {
       audio: true,
       video: true
     }, stream => {
+      
       this.analyser = audioAnalyser(stream, {
           stereo: false,
           audible: false
         })
+
+      //this.analyser = glAudioAnalyser(this.renderer.getContext(),stream)
         /*
      this.video	= document.createElement('video')
      this.video.width	= 512

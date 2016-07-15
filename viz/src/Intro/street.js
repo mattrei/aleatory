@@ -70,6 +70,9 @@ class Street {
 		this.smoothY = 0;
 		this.smoothZ = 0;
 
+    this.cube = null
+    this.spline = null
+
     this.scene = args.scene
     this.group = args.group
 
@@ -86,7 +89,7 @@ class Street {
     const material = new THREE.MeshNormalMaterial()
 
     const mesh = new THREE.Mesh(geometry, material)
-    this.group.add(mesh)
+    //this.group.add(mesh)
 
     this.orbCamera.addTarget( {
                             name: 'chase',
@@ -105,8 +108,53 @@ class Street {
 
 
   init() {
-    this.leftGeometry = new Float32Array( this.NUM_POINTS * 3 )
-    this.rightGeometry = new Float32Array( this.NUM_POINTS * 3 )
+
+    const points = [
+      new THREE.Vector3(0, 0, -20),
+      new THREE.Vector3(10, 0, -10),
+      new THREE.Vector3(20, 0, -5),
+      new THREE.Vector3(5, 0, 0),
+      new THREE.Vector3(0, 0, 10),
+    ]
+
+    var spline = new THREE.CatmullRomCurve3(points)
+    spline.type = 'catmullrom';
+    spline.closed = true;
+
+
+    const subdivisions = 10
+
+
+    var geometrySpline = new THREE.Geometry();
+        for ( var i = 0; i < points.length * subdivisions; i ++ ) {
+          var index = i / ( points.length * subdivisions );
+          var position = spline.getPoint( index );
+          geometrySpline.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
+        }
+
+        geometrySpline.computeLineDistances();
+
+        var object = new THREE.Line( geometrySpline, new THREE.LineDashedMaterial( 
+          { color: 0xffffff, linewidth: 30, dashSize: 1, gapSize: 0.5 } ) );
+
+        
+
+        this.group.add(object)
+
+    this.spline = spline
+
+    console.log(spline)
+    console.log(spline.getPoint(0.5))
+    console.log(spline.getPoint(1.1))
+
+    this.cube = new THREE.Mesh(new THREE.BoxGeometry(1,1,1), new THREE.MeshNormalMaterial())
+    this.group.add(this.cube)
+
+    this.group.add(new THREE.AxisHelper())
+
+
+    this.leftGeometry = new THREE.Geometry()
+    this.rightGeometry = new THREE.Geometry()
     for( var j = 0; j < this.leftGeometry.length; j += 3 ) {
 			this.leftGeometry[ j ] = this.leftGeometry[ j + 1 ] = this.leftGeometry[ j + 2 ] = 0
 			this.rightGeometry[ j ] = this.rightGeometry[ j + 1 ] = this.rightGeometry[ j + 2 ] = 0
@@ -130,26 +178,7 @@ class Street {
     const leftMesh = new THREE.Mesh( left.geometry, material );
     const rightMesh = new THREE.Mesh( right.geometry, material );
 
-    this.group.add(leftMesh)
-    this.group.add(rightMesh)
-
-    let middle = []
-    for (let i = 1; i < this.NUM_STRIPES + 1; i++) {
-      let geom = new THREE.PlaneGeometry(5, this.STRIPE_LENGTH, 2, 2)
-      let mat = new THREE.MeshBasicMaterial({
-        color: 0xffffff,
-        side: THREE.DoubleSide,
-        transparent: true
-      })
-
-      let mesh = new THREE.Mesh(geom, mat)
-      mesh.rotation.x = Math.PI * 0.5
-
-      mesh.position.z = -i * (this.STRIPE_LENGTH + this.STRIPE_GAP)
-
-      this.group.add(mesh)
-      this.middle.push(mesh)
-    }
+    
   }
 
   _addCarLights(material) {
@@ -328,8 +357,24 @@ class Street {
 
   update(time, dt) {
 
+    var t = (time * conf.speed % this.spline.getLength()) / this.spline.getLength()
+    var tn = ((time + 5) * conf.speed % this.spline.getLength()) / this.spline.getLength()
+
+    const p = this.spline.getPointAt(t)
+
+    //console.log(t)
+    //this.cube.position.copy(p)
+    //this.cube.lookAt( this.spline.getPointAt( tn) );
+
+    const camera = this.scene.getCamera()
+    camera.position.copy(p)
+    camera.position.y = 0.1
+    camera.lookAt( this.spline.getPointAt( tn) );
+    //
+
+
     //this.orbCamera.update();
-    this.updateStreet(time, dt)
+    //this.updateStreet(time, dt)
     //this.updateOrb(time, dt)
     if (conf.cars && this.frontLights) this.updateCars(time, dt)
   }
