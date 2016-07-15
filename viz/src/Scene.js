@@ -57,6 +57,8 @@ class Scene {
 
         this.analyser = args.analyser
 
+        this._createAudioTexture()
+
         this.gui = args.gui
         this.renderer = args.renderer
         this.composer = args.composer
@@ -306,6 +308,20 @@ class Scene {
     }
   }
 
+  _createAudioTexture() {
+    let size = 12;
+    this.audioData = new Float32Array(size * size *3);
+    this.volume = 1;
+
+    for (let i = 0,  l = this.audioData.length; i < l; i += 3) {
+        this.audioData[i] =0.0;
+        this.audioData[i+1] =0.0;
+        this.audioData[i+2] =0.0;
+    }
+    this.textureAudio = new THREE.DataTexture(this.audioData, size, size, THREE.RGBFormat, THREE.FloatType);
+    this.textureAudio.minFilter = this.textureAudio.maxFilter = THREE.NearestFilter;
+  }
+
   getFreq(min, max) {
     if (!this.analyser) return random(min,max)
 
@@ -317,24 +333,25 @@ class Scene {
   }
 
   getAudioTexture() {
-    if (!this.analyser) return null
 
-    const wave = this.analyser.waveform() // return an unit8array
-    // length = 1024
-    const data = new Uint8Array(wave.length * 3)
-    for (var i = 0; i < wave.length; i++) {
-     //data[i] = (wave[i] - 128) / 128
-     data[i*3] = wave[i] - 128
-     data[i*3+1] = wave[i] - 128
-     data[i*3+2] = wave[i] - 128
+    const freq = this.analyser.frequencies();
+    let _acuteAverage = 0;
+    let _volume = 0;
+    for (let i = 0; i < freq.length; i++) {
+        this.audioData[i] = freq[i]/256.;
+        _volume += freq[i]/256.
+        if(i> 174 - 5) {
+           _acuteAverage += freq[i]/256.;
+        }
     }
+    this.volume = _volume/freq.length;
 
+    this.textureAudio.needsUpdate = true
+    return this.textureAudio
+  }
 
-    const t = new THREE.DataTexture( data, 32, 32, THREE.RGBFormat );
-    t.type = THREE.UnsignedByteType;
-    t.needsUpdate = true;
-
-    return t
+  getVolume() {
+    return this.volume
   }
 
   fadeIn(group, duration) {
