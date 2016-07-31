@@ -2,7 +2,6 @@ require('babel-polyfill')
 global.THREE = require('three')
 
 const domready = require('domready')
-const createLoop = require('canvas-loop')
 
 const WAGNER = require('@superguigui/wagner')
 
@@ -17,17 +16,14 @@ import Stats from 'stats-js'
 import dat from 'dat-gui'
 
 // 6 scenes
-import IntroScene from './Intro/scene'
-import ExecutedScene from './Executed/scene'
+import IntroScene from './Intro'
+//import ExecutedScene from './Executed'
 //import RefugeesScene from './RefugeesScene'
-import DronesScene from './Drones/scene'
-import WienerLinienScene from './WienerLinien/scene'
+//import DronesScene from './Drones'
+//import WienerLinienScene from './WienerLinien'
 //import OceanScene from './OceanScene'
-import OutroScene from './Outro/scene'
+//import OutroScene from './Outro'
 // 7scene ThisbeautifulWorld
-
-// load fonts
-require('./fonts/oswald_regular.typeface.js')
 
 // TODO: use rhizome?
 const OSC_URL = "ws://localhost:8081"
@@ -54,7 +50,6 @@ class Main {
 
     this.clock = new THREE.Clock()
     this.clock.start()
-    this.time = 0
     this.manager = new THREE.LoadingManager()
     this.loader = new THREE.TextureLoader(this.manager)
 
@@ -238,13 +233,9 @@ class Main {
   update() {
     this.stats.begin()
 
-    const dt = this.clock.getDelta()
-    this.time += dt
+    const delta = this.clock.getDelta()
 
-    this.events.emit("update", {
-      time: this.time,
-      delta: dt
-    })
+    this.events.emit("update", delta)
 
 
     this.stats.end()

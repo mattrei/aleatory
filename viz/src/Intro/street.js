@@ -10,7 +10,6 @@ const Tween = require('tween-chain')
 
 const glslify = require('glslify')
 
-require('../utils/THREE.TargetCamera')
 require('../utils/THREE.MeshLine')
 
 const VIS = 'street'
@@ -76,9 +75,6 @@ class Street {
     this.scene = args.scene
     this.group = args.group
 
-    this.orbCamera = new THREE.TargetCamera( 75, window.innerWidth / window.innerHeight, 0.1, 2000 ),
-
-    this.group.add(this.orbCamera)
     this.orb = this.createOrb()
     this.init()
     this.initCarLights()
@@ -91,15 +87,6 @@ class Street {
     const mesh = new THREE.Mesh(geometry, material)
     //this.group.add(mesh)
 
-    this.orbCamera.addTarget( {
-                            name: 'chase',
-                            targetObject: mesh,
-                            cameraPosition: new THREE.Vector3( 0, 10, 20 ),
-                            stiffness: 0.3,
-                            fixed: false
-                        } );
-
-    this.orbCamera.setTarget( 'chase' );
 
     return mesh
 
@@ -373,7 +360,6 @@ class Street {
     //
 
 
-    //this.orbCamera.update();
     //this.updateStreet(time, dt)
     //this.updateOrb(time, dt)
     if (conf.cars && this.frontLights) this.updateCars(time, dt)

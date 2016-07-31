@@ -12,47 +12,28 @@ import GPUComputationRenderer from '../utils/GPUComputationRenderer'
 
 const VIS = 'particles'
 const conf = {
+  on: true,
   timeScale: 1
 }
 
 const WIDTH = 256
 const NUM_PARTICLES = WIDTH * WIDTH
 
-function particles(scene, on = false) {
 
-  const group = new THREE.Group()
-  conf.on = on
-  group.visible = conf.on
-  scene.getScene().add(group)
-
-
-  scene.getScene().add(new THREE.AmbientLight(0xffffff))
-
-  scene.getEvents().on(VIS + '::visOn', _ => scene.fadeIn(group, 2))
-  scene.getEvents().on(VIS + '::visOff', _ => scene.fadeOut(group, 2))
-
-  const particles = new Particles({
-    group: group,
-    scene: scene
-  })
-
-  scene.getEvents().on('tick', t => {
-    particles.update(t.time, t.delta)
-  })
-
-  scene.addVis(VIS, conf)
-}
-
-class Particles {
-  constructor(args) {
-    this.scene = args.scene
-    this.group = args.group
+export default class Particles extends THREE.Object3D {
+  constructor(scene) {
+    super()
+    this.scene = scene
 
     this.ready = false
     this.tick = 0
 
     this.initParticles()
     this.initShader()
+  }
+
+  getConf() {
+    return conf
   }
 
   initParticles() {
@@ -105,7 +86,7 @@ class Particles {
           particles.matrixAutoUpdate = false;
           particles.updateMatrix();
 
-      this.group.add( particles );
+      this.add( particles )
 
       const tgeom = new THREE.PlaneBufferGeometry(5, 20, 32)
       const tmat = new THREE.MeshNormalMaterial({wireframe: true})
@@ -172,7 +153,7 @@ class Particles {
     }
   }
 
-  update(time, dt) {
+  update(dt) {
 
     const delta = dt * conf.timeScale
 
@@ -242,7 +223,7 @@ const computeShaderVelocity = glslify(`
 
         vec3 audio = texture2D(tAudio, uv ).rbg;
 
-        vel += delta * acceleration * 0.1 * audio.r;
+        vel += delta * acceleration * 0.1 * (audio.r * 2.);
         gl_FragColor = vec4( vel, 1.0 );
       }
 `, { inline: true })
@@ -295,7 +276,7 @@ const particleFragmentShader = glslify(`
 
 `, { inline: true })
 
-export default particles
+
 
 /*
 define(function(require, exports, module) {

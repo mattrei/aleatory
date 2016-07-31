@@ -1,9 +1,12 @@
 global.THREE = require('three')
+const Leap = require('leapjs')
+
 const OrbitControls = require('three-orbit-controls')(THREE)
 import Events from 'minivents'
 const average = require('analyser-frequency-average')
 const random = require('random-float')
 const tweenr = require('tweenr')()
+require('./utils/leap/THREE.LeapFlyControls')
 
 class Scene {
 
@@ -75,8 +78,13 @@ class Scene {
         this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000000)
         this.camera.lookAt(new THREE.Vector3())
         this.camera.position.set(0, 1, -3)
-        this.controls = new OrbitControls(this.camera)
+        this.orbitControls = new OrbitControls(this.camera)
         //this.camera.position.set(cam.x, cam.y, cam.z)
+
+        const leap = new Leap.Controller()
+        leap.connect()
+        this.flyControls = new THREE.LeapFlyControls(this.camera, leap)
+
 
         this.scene = new THREE.Scene()
 
@@ -217,7 +225,7 @@ class Scene {
     return this.renderer
   }
 
-  update(t)
+  update(delta)
   {
 
     if (!this.run) { return }
@@ -230,10 +238,12 @@ class Scene {
     }
 
     // call tick for listeners
-    this.events.emit('tick', t)
+    this.events.emit('tick', delta)
 
     // tick this scene
-    this.tick(t.time, t.delta)
+    this.tick(delta)
+
+    if (this.leapControls) {this.leapControls.update(delta)}
 
     if (this.fx.active) {
       this.composer.reset()
