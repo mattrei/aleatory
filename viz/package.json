@@ -64,6 +64,7 @@
     "glsl-noise": "0.0.0",
     "glsl-pi": "^1.0.0",
     "glsl-random": "0.0.5",
+    "glsl-tri-noise-3d": "git+https://github.com/cabbibo/glsl-tri-noise-3d.git",
     "glslify": "^5.0.0",
     "hex-rgb": "^1.0.0",
     "index-of-array": "^1.0.0",
