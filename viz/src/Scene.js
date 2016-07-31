@@ -10,7 +10,7 @@ require('./utils/leap/THREE.LeapFlyControls')
 
 class Scene {
 
-  constructor(args, cam) {
+  constructor(args) {
       this.fx = {
         active: false,
         bloom: {
@@ -75,18 +75,30 @@ class Scene {
 
         this.addFX(this.gui)
 
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 10000000)
+        this.camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10000000)
+
+        this.camera.position.z = -1
+
         this.camera.lookAt(new THREE.Vector3())
-        this.camera.position.set(0, 1, -3)
+        
+
+        
+        //this.camera.position.set(0, 1, -3)
+        
         this.orbitControls = new OrbitControls(this.camera)
         //this.camera.position.set(cam.x, cam.y, cam.z)
 
         const leap = new Leap.Controller()
         leap.connect()
         this.flyControls = new THREE.LeapFlyControls(this.camera, leap)
+        this.flyControls.rollSpeed        = .0005;
+        this.flyControls.lookSpeed        = .0018;
+        this.flyControls.movementSpeed    = .00010;
 
 
         this.scene = new THREE.Scene()
+
+        
 
         // shows elements in the scene
         args.events.on('on', _ => this.onVisOn(_))
@@ -105,6 +117,15 @@ class Scene {
 
         // requestAnimationFrame
         args.events.on('update', _ => this.update(_))
+
+        this._addHelpers()
+  }
+
+  _addHelpers() {
+    const cameraHelper = new THREE.CameraHelper( this.camera )
+        this.scene.add( cameraHelper )
+        const axisHelper = new THREE.AxisHelper( 1 );
+        this.scene.add( axisHelper )
   }
 
   getTextCanvas() {
@@ -243,7 +264,7 @@ class Scene {
     // tick this scene
     this.tick(delta)
 
-    if (this.leapControls) {this.leapControls.update(delta)}
+    if (this.flyControls) {this.flyControls.update(delta)}
 
     if (this.fx.active) {
       this.composer.reset()
