@@ -34,7 +34,7 @@ function soundscape(scene, on = false) {
   group.visible = conf.on
   scene.getScene().add(group)
 
-  scene.getLoader().load('/assets/Outro/particle.png', texture => {
+  scene.getLoader().load('/dist/assets/Outro/particle.png', texture => {
 
     const ss = new Soundscape({
       group: group,

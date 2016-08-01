@@ -81,8 +81,8 @@ class WienerLinien extends Scene {
     //this.spirals()
 
     stations(this, false)
-    jet(this, false)
-    tunnel(this, true)
+    //jet(this, false)
+    //tunnel(this, true)
 
     //this.metro()
   }

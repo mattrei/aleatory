@@ -56,7 +56,7 @@ class Main {
     this.loader = new THREE.TextureLoader(this.manager)
 
     if (OSC) this.oscPort = new OSC.WebSocketPort({url: OSC_URL})
-    
+
     this.renderer = new THREE.WebGLRenderer({
       alpha: true,
       antialias: true,
@@ -164,7 +164,7 @@ class Main {
   init() {
 
     if (this.oscPort) this._initOSC()
-    
+
 
     navigator.webkitGetUserMedia({
       audio: true,
@@ -203,8 +203,8 @@ class Main {
       }
 
 
-      this.scenes.s1 = new IntroScene(args)
-      //this.scenes.s1 = new WienerLinienScene(args)
+      //this.scenes.s1 = new IntroScene(args)
+      this.scenes.s1 = new WienerLinienScene(args)
 
       //this.scenes.s1 = new ExecutedScene(args)
       //this.scenes.s1 = new RefugeesScene(args)
