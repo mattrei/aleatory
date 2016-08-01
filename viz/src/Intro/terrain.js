@@ -18,7 +18,7 @@ const Tween = require('tween-chain')
 
 import Color from 'color'
 
-require('../geometries/ConvexGeometry')
+//require('../utils/geometries/ConvexGeometry')
 
 const VIS = 'terrain'
 
