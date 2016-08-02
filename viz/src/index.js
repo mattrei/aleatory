@@ -306,7 +306,6 @@ export default class Main extends THREE.WebGLRenderer {
       //this.scenes.s1 = new OceanScene(args)
       //this.scenes.s1 = new OutroScene(args)
 
-      console.log("setting scene")
       this.setScene(DEF_SCENE)
 
       window.addEventListener('resize', () => this.onResize(), false)

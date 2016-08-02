@@ -148,14 +148,11 @@ default class AScene extends THREE.Scene {
         }
     }
 
-
     setVisPar(conf) {
         this.currentVis.setConf(conf)
     }
 
-
     setVis(v) {
-        console.log("set vis " + v)
         if (this.currentVis) {
             this.currentVis.stop()
             this.removeGUI(this.currentVis)
@@ -196,7 +193,6 @@ default class AScene extends THREE.Scene {
     keyPressed(key) {
         const v = this.vis[key]
         if (v === this.currentVis) {
-            console.log("clearing")
             this.clearVis()
         } else if (v) {
             this.setVis(v)

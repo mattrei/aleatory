@@ -149,7 +149,7 @@ export default class Particles extends AObject {
   update(dt) {
     if (!super.update(dt)) return
 
-    const delta = dt * conf.timeScale
+    const delta = dt * this.conf.timeScale
 
     this.tick += dt
     if (this.tick < 0) this.tick = 0
