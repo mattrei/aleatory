@@ -49,6 +49,13 @@ export default class Main extends THREE.WebGLRenderer {
     this.gammaOutput = true
     document.body.appendChild(this.domElement)
 
+
+  this.stats = new Stats()
+    this.stats.domElement.style.position = 'absolute'
+    document.body.appendChild(this.stats.domElement)
+    this.gui = new dat.GUI()
+    this.events = new Events()
+
     this.currentScene = null
 
       this.fx = {
@@ -91,11 +98,9 @@ export default class Main extends THREE.WebGLRenderer {
         },
       }
 
-    this.stats = new Stats()
-    this.stats.domElement.style.position = 'absolute'
-    document.body.appendChild(this.stats.domElement)
-    this.gui = new dat.GUI()
-    this.events = new Events()
+      this.addFX()
+
+    
     // adds fx to the scene
     this.events.on('fx', (data) => this.onFX(data))
     this.events.on('scene', (s) => this.setScene(s))
@@ -132,7 +137,7 @@ export default class Main extends THREE.WebGLRenderer {
     
   }
 
-  addFX(gui) {
+  addFX() {
 
     const MultiPassBloomPass = require('@superguigui/wagner/src/passes/bloom/MultiPassBloomPass')
     const BoxBlurPass = require('@superguigui/wagner/src/passes/box-blur/BoxBlurPass')

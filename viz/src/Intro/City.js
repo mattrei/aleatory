@@ -181,8 +181,13 @@ var center = new THREE.Vector3();
 
 
       var geometry = new THREE.BoxGeometry( 1, 1, 1 );
-      var material = new THREE.MeshNormalMaterial();
+      var material = new THREE.MeshNormalMaterial({
+          wireframe: this.conf.wireframe,
+          wireframeLinewidth: 1,
+            });
       //new THREE.MeshLambertMaterial( { color: 0x808080 } );
+
+      super.on('wireframe', d => material.wireframe = d)
 
       var nx = NUM_BUILDINGS;
       var n = nx * nx;
@@ -229,42 +234,35 @@ var center = new THREE.Vector3();
       const create = (segments) => {
         var planeMaterial = new THREE.ShaderMaterial({
             uniforms: {
-                resolution: {
-                    type: "v2",
-                    value: new THREE.Vector2(window.innerWidth, window.innerHeight)
-                },
+                textureAudio: { value: null },
                 time: {
-                    type: "f",
                     value: 0.1
                 },
                 speed: {
-                    type: "f",
                     value: 1
                 },
                 height: {
-                    type: "f",
                     value: 2
                 },
                 noise_elevation: {
-                    type: "f",
                     value: 1.0
                 },
             },
             transparent: true,
             fragmentShader: floorFragmentShader,
             vertexShader: floorVertexShader,
-            wireframe: false,
-            wireframeLinewidth: 2,
+            wireframe: this.conf.wireframe,
+            wireframeLinewidth: 1,
         });
 
         const s = NUM_BUILDINGS*BUILDING_SIZE
 
         const geometry = new THREE.PlaneBufferGeometry(s, s, NUM_SEGMENTS, NUM_SEGMENTS)
         
-        const mesh = new THREE.Mesh(geometry, planeMaterial);
+        mesh = new THREE.Mesh(geometry, planeMaterial);
 
         mesh.rotation.set(-Math.PI * 0.5, 0, 0)
-        mesh.position.y = -50//-window.innerHeight * 0.15
+        mesh.position.y = -1
 
         this.add(mesh)
       }
@@ -276,18 +274,12 @@ var center = new THREE.Vector3();
           group.remove(mesh)
           create(d)
         })
-/*
-        this.scene.events.on(VIS +'::wireframe', d => mesh.material.wireframe = d)
-
-        this.scene.events.on(VIS +'::segments', d => {
-          group.remove(mesh)
-          create(d)
-        })
-        */
     
   }
 
   update(dt) {
+
+    if (!super.update(dt)) return
 
     if (!this.ready) return
 
@@ -300,8 +292,12 @@ var center = new THREE.Vector3();
 
 
     if (this.floor) {
+
+      const audioTexture =  this.scene.getAudioTexture()
+      this.floor.material.uniforms.textureAudio.value = audioTexture
+
       this.floor.material.uniforms.time.value = t.time * 0.2
-      this.floor.material.uniforms.speed.value = 1
+      this.floor.material.uniforms.speed.value = 4
       this.floor.material.uniforms.height.value = 1
     }
   }
@@ -315,7 +311,7 @@ const floorVertexShader = glslify(`
 
   varying vec2 vUv;
   varying float vNoise;
-varying float vY;
+  varying float vY;
 
             // varying vec3  v_line_color;
 
@@ -325,6 +321,7 @@ varying float vY;
             //uniform float valley_elevation;
             uniform float noise_elevation;
 
+            uniform sampler2D textureAudio;
 
             void main()
             {
@@ -340,8 +337,11 @@ varying float vY;
                 float z = (height * sin(((time * 0.5 * speed) - (distance * freq)) * PI));
 
 
+                vec3 audio = texture2D(textureAudio, uv ).rbg;
+
               // Sinus
                 displacement = displacement + (sin(position.x / 2. - PI / 2.));
+                displacement += audio.r;
 
                 vec3 newPosition = vec3(position.x,position.y, displacement+z);
 
@@ -435,3 +435,105 @@ const auroraFragmentShader = glslify(`
       }
 
 `, { inline: true })
+
+
+/*
+
+    buildings() {
+
+      const VIS = 'buildings'
+      let conf = {on:false, speed: 1}
+      const group = new THREE.Group()
+      group.visible = conf.on
+      this.scene.add(group)
+
+
+      const canvas  = document.createElement( 'canvas' ),
+          context = canvas.getContext( '2d' );
+      const smCanvas  = document.createElement( 'canvas' ),
+            smContext = smCanvas.getContext( '2d' )
+      smCanvas.width  = 32
+
+      canvas.width  = 512
+      canvas.height = 1024
+      let texture   = new THREE.Texture( canvas )
+      texture.anisotropy  = this.renderer.getMaxAnisotropy()
+
+      this.events.on('tick', t => {
+          const freq = super.getFreq(40, 60)
+          const height = 64 + freq * 64
+          smCanvas.height = height
+
+          smContext.fillStyle = '#ffffff';
+          smContext.fillRect( 0, 0, 32, height );
+           // draw the window rows - with a small noise to simulate light variations in each room
+          for( var y = 2; y < height; y += 2 ){
+              for( var x = 0; x < 32; x += 2 ){
+                  var value   = Math.floor( x % 6 );
+                  smContext.fillStyle = 'rgb(' + [value, value, value].join( ',' )  + ')';
+                  smContext.fillRect( x, y, 2, 1 );
+              }
+          }
+
+        context.imageSmoothingEnabled = false
+        context.drawImage( smCanvas, 0, 0, canvas.width, canvas.height );
+
+        texture.needsUpdate = true
+      })
+
+      const meshes = []
+
+      const SIZE = {x:80, y: 400, z:80}
+
+
+        for( var i = 0; i < NUM_RIBBONS; i ++ ){
+
+            let building = new THREE.Object3D()
+
+            let geometry = new THREE.CubeGeometry( 1, 1, 1 ),
+               windowPoints = THREE.GeometryUtils.randomPointsInGeometry(geometry, random(5, 10))
+            geometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
+
+
+            var material = new THREE.MeshLambertMaterial({
+              map: texture,
+              vertexColors : THREE.VertexColors,
+              color: 0x3d5c5c, fog:false, wireframe: false,
+               transparent: true})
+          //var material  = new THREE.MeshNormalMaterial()
+
+            var mesh = new THREE.Mesh( geometry, material );
+
+            // put a random scale
+                const sx = random(SIZE.x, SIZE.x*2),
+                      sy = random(SIZE.y, SIZE.y*2),
+                      sz = sx
+
+               building.scale.set(sx,sy, sz)
+
+
+              // put a random position
+              //const leftRight = randomInt(0,1) ? -1 : 1
+              //building.position.x = STREET_WIDTH * 3 * leftRight
+              building.position.z   = -1 * random(0, STREET_LENGTH)
+              //building.rotation.z = Math.PI * 0.05 * leftRight
+              //mesh.position.z   = 200
+
+              // put a random rotation
+              //building.rotation.y   = random(0, Math.PI*2)
+
+            let windowGeometry = new THREE.Geometry();
+
+            windowPoints.forEach(p => {
+              windowGeometry.vertices.push( p );
+            })
+            windowGeometry.applyMatrix( new THREE.Matrix4().makeTranslation( 0, 0.5, 0 ) );
+
+            building.add(mesh)
+
+            meshes.push(building)
+            group.add(building)
+
+        }
+
+*/

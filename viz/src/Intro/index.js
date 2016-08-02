@@ -19,24 +19,26 @@ export default class IntroScene extends AScene {
 
 
    		this.particles = new Particles('PARTICLES', {
-          on: true,
+          on: false,
           timeScale: 1
             }, this)
-    	this.add(this.particles)
+    	this.addGUIFolder(this.particles)
     	
         this.street = new Street('STREET', {
   on: false,
   speed: 0.5,
   cars: true
 }, this)
-        this.add(this.street)
+        this.addGUIFolder(this.street)
         
 
         this.city = new City('CITY', {
   on:true,
   wireframe: true
 }, this)
+        this.addGUIFolder(this.city)
         this.add(this.city)
+        this.addGUIProps(this.city)
         
 
         this.terrain = new Terrain('TERRAIN', {
@@ -47,16 +49,16 @@ export default class IntroScene extends AScene {
   yDistortion: 0.5,
   xDistortion: 0.5
 }, this)
-        this.add(this.terrain)
+        this.addGUIFolder(this.terrain)
         
     }
 
     update(delta) {
         super.update(delta)
-    	//this.particles.update(delta)
-        //this.street.update(delta)
+    	this.particles.update(delta)
+        this.street.update(delta)
         this.city.update(delta)
-        //this.terrain.update(delta)
+        this.terrain.update(delta)
     }
 
 

@@ -329,12 +329,14 @@ export default class Terrain extends AObject {
     return this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
   }
 
-  update(delta) {
+  update(dt) {
+
+    if (!super.update(dt)) return
 
     if (!this.ready) return
 
     if (this.orb) {
-      this.updateOrb(delta)
+      this.updateOrb(dt)
 
       const firstPlane = this._firstPlane(),
         secondPlane = this._secondPlane()
@@ -350,7 +352,7 @@ export default class Terrain extends AObject {
         this.addRndMesh()
       }
 
-      this.updateMeshes(delta)
+      this.updateMeshes(dt)
         //this.updateTerrain(firstPlane, time)
         //this.updateTerrain(secondPlane, time)
     }

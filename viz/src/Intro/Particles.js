@@ -143,7 +143,7 @@ export default class Particles extends AObject {
   }
 
   update(dt) {
-    super.update(dt)
+    if (!super.update(dt)) return
 
     const delta = dt * conf.timeScale
 

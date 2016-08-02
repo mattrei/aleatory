@@ -186,6 +186,8 @@ export default class Street extends AObject {
 
   update(dt) {
 
+    if (!super.update(dt)) return
+
     if (!this.ready) return
 
     this.tick += dt

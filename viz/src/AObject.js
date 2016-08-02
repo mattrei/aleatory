@@ -27,6 +27,6 @@ export default class AObject extends THREE.Object3D {
 	}
 
 	update(delta) {
-
+		return this.conf.on
 	}
 }

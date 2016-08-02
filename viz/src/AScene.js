@@ -86,13 +86,78 @@ export default class AScene extends THREE.Scene {
     this.events.on(VIS+'::visOff', f)
   }
 
-  add(aobject) {
-    super.add(aobject)
+  removeGUIProps(aobject) {
 
-    if (aobject instanceof AObject) this.addVis(aobject.getName(), aobject.getConf())
+    const name = aobject.getName(),
+      parameters = aobject.getConf()
+
+      const vf = this.vis[name]
+
+    /*
+      console.log(parameters)
+      Object.keys(parameters).forEach(p => {
+
+        if (p !== 'on') vf.remove(p)
+      })
+*/
+    vf.open()
+
   }
 
-  addVis(name, parameters) {
+  addGUIProps(aobject) {
+
+    const name = aobject.getName(),
+      parameters = aobject.getConf()
+
+      const vf = this.vis[name]
+    
+      Object.keys(parameters).forEach(p => {
+
+        if (p !== 'on') {
+
+          let vfp = vf.add(parameters, p)
+
+
+            vfp.onChange(val => {
+              if (vfp.property === 'on') {
+                  if (val) {
+                    this.onVisOn(name)
+                  } else {
+                    this.onVisOff(name)
+                  }
+              } else {
+                let prop = vfp.property
+                this.onVisParameters({[name]:{[prop]:val}})
+              }
+            })
+          }
+      })
+
+    vf.open()
+
+  }
+
+  addGUIFolder(aobject) {
+
+    const name = aobject.getName(),
+      parameters = aobject.getConf()
+
+    let vf = this.gui.addFolder(name)
+    this.vis[name] = vf
+          let vfp = vf.add(parameters, 'on')
+
+
+            vfp.onChange(val => {
+                  if (val) {
+                    this.onVisOn(name)
+                  } else {
+                    this.onVisOff(name)
+                  }
+            })
+    vf.open()
+  }
+
+  addFolder2(name, parameters) {
 
     this.vis.push({name: parameters})
 
@@ -233,23 +298,34 @@ export default class AScene extends THREE.Scene {
     return this.volume
   }
 
-  fadeIn(group, duration) {
-    group.visible = true
-    group.traverse(n => {
+  fadeIn(aobject, duration) {
+    this.add(aobject)
+    aobject.visible = true
+    this.addGUIProps(aobject)
+    /*
+    aobject.traverse(n => {
       if (n.material) {
         n.material.opacity = 0
         tweenr.to(n.material, {opacity: 1, duration: duration})
       }
     })
+    */
   }
 
-  fadeOut(group, duration) {
-    group.traverse(n => {
+  fadeOut(aobject, duration) {
+    /*
+    aobject.traverse(n => {
       if (n.material) {
         tweenr.to(n.material, {opacity: 0, duration: 2})
-          .on('complete', () => group.visible = false)
+          .on('complete', () => {*/
+            aobject.visible = false
+            this.removeGUIProps(aobject)
+            this.remove(aobject)
+            /*
+          })
       }
     })
+    */
   }
 
   play() {
