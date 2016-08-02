@@ -109,8 +109,12 @@ export default class AScene extends THREE.Scene {
       parameters = aobject.getConf()
 
       const vf = this.vis[name]
+
+      console.log(parameters)
     
       Object.keys(parameters).forEach(p => {
+
+        if (p === 'data') return
 
         if (p !== 'on') {
 
@@ -155,43 +159,6 @@ export default class AScene extends THREE.Scene {
                     this.onVisOff(name)
                   }
             })
-    vf.open()
-  }
-
-  addFolder2(name, parameters) {
-
-    this.vis.push({name: parameters})
-
-    let vf = this.gui.addFolder(name)
-      Object.keys(parameters).forEach(p => {
-
-        //if (p !== 'data') {
-          // ignore the data parameter
-          // because its no use for dat-gui
-
-          if (p === 'on' && parameters[p]) {
-              this.onVisOn(name)
-          }
-
-          let vfp = vf.add(parameters, p)
-
-
-            vfp.onChange(val => {
-              if (vfp.property === 'on') {
-                  if (val) {
-                    this.onVisOn(name)
-                  } else {
-                    this.onVisOff(name)
-                  }
-              } else {
-                let prop = vfp.property
-                this.onVisParameters({[name]:{[prop]:val}})
-              }
-            })
-
-        //}
-      })
-
     vf.open()
   }
 
@@ -362,6 +329,16 @@ export default class AScene extends THREE.Scene {
   stop() {
     this.clear()
     this.isStopped = true
+  }
+
+  halfAdd(aobject) {
+    this.addGUIFolder(aobject)
+  }
+
+  fullAdd(aobject) {
+    this.addGUIFolder(aobject)
+    this.add(aobject)
+    this.addGUIProps(aobject)
   }
 
 }

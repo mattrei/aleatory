@@ -94,20 +94,9 @@ default class Scheduled extends AObject {
         this.add(dot)
     }
 
+    doNext(meshes, mIdx) {
 
-
-    createScheduled() {
-
-
-        let group = new THREE.Group()
-        this.add(group)
-
-        const meshes = []
-        let mIdx = 0
-
-        let doNext = () => {
-
-            const oldMesh = meshes[mIdx % meshes.length]
+   const oldMesh = meshes[mIdx % meshes.length]
             mIdx += 1
             const newMesh = meshes[mIdx % meshes.length]
 
@@ -124,33 +113,21 @@ default class Scheduled extends AObject {
                 delay: 2,
                 duration: 5
             })
+    }
 
 
-            /*
-    let rt = new TWEEN.Tween(this.camera.rotation).to({
-          x: 0,
-          y: this.camera.rotation.y + Math.PI,
-          z: 0
-      }, 5 * 1000 ).easing(TWEEN.Easing.Linear.None).
-    onComplete(() => {
-      //this.clearScene()
-      this.drawScheduled()
-    })
 
-    let ft = new TWEEN.Tween(this.camera.position).to({
-          x: 0,
-          y: 0,
-          z: this.camera.position.z * -1
-      }, 10 * 1000 ).easing(TWEEN.Easing.Linear.None)
+    createScheduled() {
 
-    rt.chain(ft)
-    rt.start()
-*/
-            //this.drawScheduledText()
 
-        }
+        let group = new THREE.Group()
+        this.add(group)
 
-        super.on('doNext', p => doNext())
+        const meshes = []
+        let mIdx = 0
+
+
+        super.on('doNext', p => this.doNext(meshes, mIdx))
 
         super.on('data', data => {
 

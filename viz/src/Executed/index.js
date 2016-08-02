@@ -13,20 +13,30 @@ default class ExecutedScene extends AScene {
             args)
 
 
+      this.camera.position.z = -1
+      this.camera.lookAt(new THREE.Vector3())
+
+      const executedData = isDemo ? require('./test_data/executed.json') : null
+      const scheduledData = isDemo ? require('./test_data/scheduled.json') : null
+
         this.cage = new Cage('CAGE', {
             cageSpeed: 1,
-            cageOpen: false
+            pictures: false,
+            data: executedData,
+            cageOpen: false,
         }, this)
 
         this.scheduled = new Scheduled('SCHEDULED', {}, this)
-        this.scheduled.setConf({doNext: this.scheduled.doNext})
+        this.scheduled.setConf({
+          doNext: this.scheduled.doNext,
+          data: scheduledData
+        })
     }
 
     init() {
-        super.addGUIFolder(this.cage)
-        super.addGUIFolder(this.scheduled)
-        super.add(this.scheduled)
-        super.addGUIProps(this.scheduled)
+
+      super.fullAdd(this.cage)
+      super.halfAdd(this.scheduled)
     }
 
     update(delta) {
