@@ -9,11 +9,15 @@ const average = require('analyser-frequency-average')
 const audioAnalyser = require('web-audio-analyser')
 const glAudioAnalyser = require('gl-audio-analyser')
 
+import AAudioAnalyser from './AAudioAnalyser'
+
 //import OSC from 'osc/dist/osc-browser'
 const OSC = null
 import Events from 'minivents'
 import Stats from 'stats-js'
 import dat from 'dat-gui'
+
+
 
 // 6 scenes
 import Intro from './Intro'
@@ -29,7 +33,7 @@ import Executed from './Executed'
 const OSC_URL = "ws://localhost:8081"
 
 const DEMO_MODE = true
-const DEF_SCENE = "executed"
+const DEF_SCENE = "intro"
 
 export default class Main extends THREE.WebGLRenderer {
 
@@ -49,6 +53,8 @@ export default class Main extends THREE.WebGLRenderer {
     this.gammaInput = true
     this.gammaOutput = true
     document.body.appendChild(this.domElement)
+
+    document.addEventListener('keydown', (e) => this.keyPressed(e))
 
 
   this.stats = new Stats()
@@ -104,27 +110,20 @@ export default class Main extends THREE.WebGLRenderer {
     
     // adds fx to the scene
     this.events.on('fx', (data) => this.onFX(data))
-    this.events.on('scene', (s) => this.setScene(s))
 
-            // shows elements in the scene
-    this.events.on('on', _ => this.currentScene.onVisOn(_))
-    this.events.on('off', _ => this.currentScene.onVisOff(_))
-    this.events.on('vis', _ => this.currentScene.onVisParameters(_))
+    this.events.on('scene', s => this.setScene(s))
+
+    this.events.on('vis', v => this.currentScene.setVis(v))
+    this.events.on('off', v => this.currentScene.clearVis())
+    this.events.on('par', _ => this.currentScene.setVisPar(_))
 
     this.events.on('intro', (data) => this.currentScene.onIntro(data))
     this.events.on('outro', (data) => this.currentScene.onOutro(data))
     this.events.on('func', _ => this.currentScene.onFunc(_))
     
 
-    this.analyser = null
-    this.video = null
-
-    
-
     this.clock = new THREE.Clock()
     this.clock.start()
-    const manager = new THREE.LoadingManager()
-    this.loader = new THREE.TextureLoader(manager)
 
     if (OSC) this.oscPort = new OSC.WebSocketPort({url: OSC_URL})
     
@@ -136,6 +135,10 @@ export default class Main extends THREE.WebGLRenderer {
     document.body.appendChild(this.canvas)
 
     
+  }
+
+  keyPressed(e) {
+    if (this.currentScene) this.currentScene.keyPressed(e.key)
   }
 
   addFX() {
@@ -208,7 +211,7 @@ export default class Main extends THREE.WebGLRenderer {
     this.currentScene = this.scenes[scene]
 
     if (this.currentScene) {
-      this.currentScene.play()
+      this.currentScene.start()
     }
   }
 
@@ -219,18 +222,18 @@ export default class Main extends THREE.WebGLRenderer {
         console.log("Scene change. " + n)
         this.events.emit("scene", n)
       }
-      if (oscMsg.address === '/on') {
+      if (oscMsg.address === '/vis') {
         let n = oscMsg.args[0]
-        console.log("Show " + n)
-        this.events.emit("on", n)
+        console.log("Vis change. " + n)
+        this.events.emit("vis", n)
       }
       if (oscMsg.address === '/off') {
         let n = oscMsg.args[0]
-        console.log("Hide " + n)
+        console.log("Hide all vis " + n)
         this.events.emit("off", n)
       }
 
-      if (oscMsg.address === '/vis') {
+      if (oscMsg.address === '/opt') {
         let name = oscMsg.args[0],
           prop = oscMsg.args[1],
           val = JSON.parse(oscMsg.args[2])
@@ -271,18 +274,20 @@ export default class Main extends THREE.WebGLRenderer {
       video: true
     }, stream => {
       
-      this.analyser = audioAnalyser(stream, {
+      const analyser = audioAnalyser(stream, {
           stereo: false,
           audible: false
         })
 
+      const aaa = new AAudioAnalyser(analyser)
+      const manager = new THREE.LoadingManager(),
+         loader = new THREE.TextureLoader(manager)
+
+
       const args = {
-        renderer: this,
         composer: this.composer,
         gui: this.gui,
         clock: this.clock,
-        loader: this.loader,
-        analyser: this.analyser,
         // webcam video
         video: this.video,
         // for drawing purposes
@@ -290,16 +295,18 @@ export default class Main extends THREE.WebGLRenderer {
         ctx: this.ctx
       }
 
+      const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10000000)
 
       this.scenes = {}
-      this.scenes.intro = new Intro(this, DEMO_MODE, args)
-      this.scenes.executed = new Executed(this, DEMO_MODE, args)
+      this.scenes.intro = new Intro(this, loader, aaa, camera, DEMO_MODE, args)
+      //this.scenes.executed = new Executed(this, DEMO_MODE, args)
       //this.scenes.s1 = new WienerLinienScene(args)
       //this.scenes.s1 = new RefugeesScene(args)
       //this.scenes.s1 = new DronesScene(args)
       //this.scenes.s1 = new OceanScene(args)
       //this.scenes.s1 = new OutroScene(args)
 
+      console.log("setting scene")
       this.setScene(DEF_SCENE)
 
       window.addEventListener('resize', () => this.onResize(), false)
@@ -354,3 +361,15 @@ domready(() => {
 
   //let demo = new Test()
 })
+
+
+dat.GUI.prototype.removeFolder = function(name) {
+  var folder = this.__folders[name];
+  if (!folder) {
+    return;
+  }
+  folder.close();
+  this.__ul.removeChild(folder.domElement.parentNode);
+  delete this.__folders[name];
+  this.onResize();
+}

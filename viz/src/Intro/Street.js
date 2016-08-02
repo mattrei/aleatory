@@ -17,10 +17,14 @@ const STREET_WIDTH = 1
 const NUM_CARLIGHTS = 40
 
 export default class Street extends AObject {
-  constructor(name, conf, scene) {
-    super(name, conf, scene)
+  constructor(name, conf, renderer, loader, aaa, camera) {
+    super(name, conf)
 
-    this.scene = scene
+    this.renderer = renderer
+    this.loader = loader
+    this.aaa = aaa
+    this.camera = camera
+
 
     this.ready = false
     this.tick = 0
@@ -30,7 +34,6 @@ export default class Street extends AObject {
     this.init()
     this.initCarLights()
 
-    this.scene.fog = new THREE.FogExp2( 0x000000, 0.25 );
     this.add(new THREE.AmbientLight(0xffffff))
   }
 
@@ -46,16 +49,9 @@ export default class Street extends AObject {
 
     const LINE_WIDTH = 10
     
-    const points = [
-      new THREE.Vector3(0, 0, 20),
-      new THREE.Vector3(10, 1, 10),
-      new THREE.Vector3(20, 0, 5),
-      new THREE.Vector3(5, 0.5, 0),
-      new THREE.Vector3(0, 0, 10),
-    ]
+    const points = this._genPoints()
 
-
-    var spline = new THREE.CatmullRomCurve3(this._genPoints())
+    var spline = new THREE.CatmullRomCurve3(points)
     //spline.closed = true
 
     const SUBD = NUM_CARLIGHTS * 2
@@ -128,7 +124,7 @@ export default class Street extends AObject {
 
   initCarLights() {
 
-    this.scene.getLoader().load(
+    this.loader.load(
       '/dist/assets/Intro/cloud.png', (texture) => {
 
         let matFront = new THREE.SpriteMaterial({
@@ -198,7 +194,7 @@ export default class Street extends AObject {
 
     const p = this.spline.getPointAt(t)
 
-    const camera = this.scene.getCamera()
+    const camera = this.camera
     camera.position.copy(p)
     camera.position.y += 0.1
     camera.lookAt( this.spline.getPointAt( tn) )

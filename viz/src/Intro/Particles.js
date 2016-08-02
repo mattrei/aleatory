@@ -17,11 +17,15 @@ const NUM_PARTICLES = WIDTH * WIDTH
 
 
 export default class Particles extends AObject {
-  constructor(name, conf, scene) {
-    super(name, conf, scene)
+  constructor(name, conf, renderer, loader, aaa) {
+    super(name, conf)
 
     this.ready = false
     this.tick = 0
+
+    this.renderer = renderer
+    this.loader = loader
+    this.aaa = aaa
 
     this.initParticles()
     this.initShader()
@@ -29,7 +33,7 @@ export default class Particles extends AObject {
 
   initParticles() {
 
-    this.scene.getLoader().load(
+    this.loader.load(
       '/dist/assets/Intro/lensFlare.png', (texture) => {
 
       const geometry = new THREE.BufferGeometry();
@@ -87,7 +91,7 @@ export default class Particles extends AObject {
   }
 
   initShader() {
-    this.gpuCompute = new GPUComputationRenderer(WIDTH, WIDTH, this.scene.getRenderer())
+    this.gpuCompute = new GPUComputationRenderer(WIDTH, WIDTH, this.renderer)
     const dtPosition = this.gpuCompute.createTexture();
     const dtVelocity = this.gpuCompute.createTexture();
 
@@ -159,7 +163,7 @@ export default class Particles extends AObject {
     this.particleUniforms.texturePosition.value = this.gpuCompute.getCurrentRenderTarget( this.positionVariable ).texture
     this.particleUniforms.textureVelocity.value = this.gpuCompute.getCurrentRenderTarget( this.velocityVariable ).texture
 
-    const audioTexture =  this.scene.getAudioTexture()
+    const audioTexture =  this.aaa.getAudioTexture()
     this.particleUniforms.tAudio.value = audioTexture
     this.velocityUniforms.tAudio.value = audioTexture
     this.particleUniforms.time.value = this.tick
