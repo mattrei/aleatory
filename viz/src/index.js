@@ -205,8 +205,8 @@ class Main {
       }
 
 
-      //this.scenes.s1 = new IntroScene(args)
-      this.scenes.s1 = new WienerLinienScene(args)
+      this.scenes.s1 = new IntroScene(args)
+      //this.scenes.s1 = new WienerLinienScene(args)
 
       //this.scenes.s1 = new ExecutedScene(args)
       //this.scenes.s1 = new RefugeesScene(args)

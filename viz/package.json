@@ -69,6 +69,7 @@
     "hex-rgb": "^1.0.0",
     "index-of-array": "^1.0.0",
     "kindred-shader-formatter": "^1.0.0",
+    "leapjs": "^0.6.4",
     "lerp": "^1.0.3",
     "minivents": "^2.0.1",
     "new-array": "^1.0.0",

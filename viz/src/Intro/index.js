@@ -1,4 +1,4 @@
-import Scene from '../Scene'
+import AScene from '../AScene'
 
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
@@ -7,9 +7,9 @@ const Tween = require('tween-chain')
 import Street from './Street'
 import City from './City'
 import Particles from './Particles'
-import terrain from './terrain'
+import Terrain from './Terrain'
 
-class IntroScene extends Scene {
+export default class IntroScene extends AScene {
     constructor(args) {
       super(args)
 
@@ -18,9 +18,6 @@ class IntroScene extends Scene {
     	super.getEvents().on('PARTICLES::visOn', _ => super.fadeIn(this.particles, 2))
 	    super.getEvents().on('PARTICLES::visOff', _ => super.fadeOut(this.particles, 2))
 	    super.addVis('PARTICLES', this.particles.getConf())
-
-
-
 
         this.street = new Street(this)
         //this.scene.add(this.street)
@@ -35,15 +32,21 @@ class IntroScene extends Scene {
         super.getEvents().on('CITY::visOff', _ => super.fadeOut(this.city, 10))
         super.addVis('CITY', this.city.getConf())
 
+
+        this.terrain = new Terrain(this)
+        //this.scene.add(this.terrain)
+        super.getEvents().on('TERRAIN::visOn', _ => super.fadeIn(this.terrain, 5))
+        super.getEvents().on('TERRAIN::visOff', _ => super.fadeOut(this.terrain, 10))
+        super.addVis('TERRAIN', this.terrain.getConf())
+
     }
 
     tick(delta) {
     	//this.particles.update(delta)
         //this.street.update(delta)
         this.city.update(delta)
+        //this.terrain.update(delta)
     }
 
 
 }
-
-export default IntroScene

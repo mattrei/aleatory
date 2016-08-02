@@ -8,7 +8,8 @@ const random = require('random-float')
 const tweenr = require('tweenr')()
 require('./utils/leap/THREE.LeapFlyControls')
 
-class Scene {
+
+export default class AScene {
 
   constructor(args) {
       this.fx = {
@@ -428,5 +429,3 @@ class Scene {
     }
 
 }
-
-export default Scene

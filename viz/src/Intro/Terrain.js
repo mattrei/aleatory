@@ -5,7 +5,6 @@ const geoPieceRing = require('geo-piecering')
 const geoArc = require('geo-arc')
 
 const noise = new(require('noisejs').Noise)(Math.random())
-console.log(noise.perlin2(1, 2))
 
 const simplex = new(require('simplex-noise'))()
 const smoothstep = require('smoothstep')
@@ -18,9 +17,6 @@ const Tween = require('tween-chain')
 
 import Color from 'color'
 
-//require('../utils/geometries/ConvexGeometry')
-
-const VIS = 'terrain'
 
 const conf = {
   on: false,
@@ -31,39 +27,11 @@ const conf = {
   xDistortion: 0.5
 }
 
-function terrain(scene, on = false) {
-  conf.on = on
+export default class Terrain extends THREE.Object3D {
 
-  const group = new THREE.Group()
-  scene.getScene().add(group)
-  group.visible = conf.on
-
-  scene.getScene().fog = new THREE.FogExp2(0x5fa5d8, 0.0025)
-
-  const terrain = new Terrain({
-    group: group,
-    scene: scene
-  })
-
-  scene.getEvents().on(VIS + '::visOn', _ => scene.fadeIn(group, 2))
-  scene.getEvents().on(VIS + '::visOff', _ => scene.fadeOut(group, 2))
-
-
-  scene.getEvents().on('tick', t => {
-    terrain.update(t.time, t.delta)
-  })
-
-  scene.addVis(VIS, conf)
-
-}
-
-
-class Terrain {
-
-  constructor(args) {
-
-    this.group = args.group
-    this.scene = args.scene
+  constructor(ascene) {
+    super()
+    this.ascene = ascene
 
     this.ORB_COLOR = new THREE.Color(0xff00ff)
 
@@ -78,9 +46,9 @@ class Terrain {
 
     this.orb = null
     this.orbLight = null
-    this.orbCamera = this.scene.getCamera()
+    this.orbCamera = this.ascene.getCamera()
 
-    this.scene.getScene().fog = new THREE.FogExp2(0xefd1b5, 0.01);
+    //this.ascene.getScene().fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
     //this.initPlane()
     this.initLights()
@@ -91,6 +59,7 @@ class Terrain {
 
 
     this.meshes = []
+    this.ready = false
 
     this.initOrb()
 
@@ -101,8 +70,12 @@ class Terrain {
     this.initMountainTerrain(this.plane2, 1)
   }
 
+  getConf() {
+    return conf
+  }
+
   initOrb() {
-    this.scene.getLoader().load(
+    this.ascene.getLoader().load(
       '/dist/assets/Intro/fireflie.png', (texture) => {
 
         const material = new THREE.SpriteMaterial({
@@ -113,13 +86,13 @@ class Terrain {
         })
 
         const sprite = new THREE.Sprite(material)
-        this.group.add(sprite)
+        this.add(sprite)
         this.orb = sprite
         sprite.position.set(0, 3, 0)
 
         const light = new THREE.PointLight(this.ORB_COLOR, 1, 100);
         light.position.copy(sprite.position)
-        this.group.add(light)
+        this.add(light)
         this.orbLight = light
 
         this.orbCamera.position.set(sprite.position.x,
@@ -133,7 +106,7 @@ class Terrain {
     const hlight = new THREE.HemisphereLight(
       new THREE.Color(0xffffff),
       new THREE.Color(0xffffff), 0.8)
-    this.group.add(hlight)
+    this.add(hlight)
 
 
 
@@ -169,7 +142,7 @@ class Terrain {
     })
 
     const plane = new THREE.Mesh(geometry, material)
-    this.group.add(plane)
+    this.add(plane)
     return plane
   }
 
@@ -342,7 +315,7 @@ class Terrain {
     mesh.position.z = this._secondPlane().position.z
     mesh.active = true
     mesh.rotationFactor = random(-0.5, 0.5);
-    this.group.add(mesh)
+    this.add(mesh)
     this.meshes.push(mesh)
   }
 
@@ -369,7 +342,10 @@ class Terrain {
     return this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
   }
 
-  update(time, delta) {
+  update(delta) {
+
+    if (!this.ready) return
+
     if (this.orb) {
       this.updateOrb(delta)
 
@@ -446,5 +422,3 @@ class Mountain {
     return this.heights[i]
   }
 }
-
-export default terrain
