@@ -8,20 +8,17 @@ const smoothstep = require('smoothstep')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
+import AObject from '../AObject'
+
 const glslify = require('glslify')
 
-const conf = {
-  on: false,
-  speed: 0.5,
-  cars: true
-}
 
 const STREET_WIDTH = 1
 const NUM_CARLIGHTS = 40
 
-export default class Street extends THREE.Object3D {
-  constructor(scene) {
-    super()
+export default class Street extends AObject {
+  constructor(name, conf, scene) {
+    super(name, conf, scene)
 
     this.scene = scene
 
@@ -33,13 +30,8 @@ export default class Street extends THREE.Object3D {
     this.init()
     this.initCarLights()
 
-    this.scene.getScene().fog = new THREE.FogExp2( 0x000000, 0.25 );
+    this.scene.fog = new THREE.FogExp2( 0x000000, 0.25 );
     this.add(new THREE.AmbientLight(0xffffff))
-  }
-
-
-  getConf() {
-    return conf
   }
 
   _genPoints() {
@@ -121,7 +113,7 @@ export default class Street extends THREE.Object3D {
         //sprite.position.copy(pos)
         //sprite.position.x -= STREET_WIDTH/8 * j
 
-        sprite.visible = conf.cars
+        sprite.visible = this.conf.cars
 
         this.add(sprite)
         pair.push(sprite)
@@ -199,8 +191,8 @@ export default class Street extends THREE.Object3D {
     this.tick += dt
     const time = this.tick
 
-    const t = (time * conf.speed % this.spline.getLength()) / this.spline.getLength(),
-       tn = ((time + 0.4) * conf.speed % this.spline.getLength()) / this.spline.getLength()
+    const t = (time * this.conf.speed % this.spline.getLength()) / this.spline.getLength(),
+       tn = ((time + 0.4) * this.conf.speed % this.spline.getLength()) / this.spline.getLength()
 
     const p = this.spline.getPointAt(t)
 
@@ -209,7 +201,7 @@ export default class Street extends THREE.Object3D {
     camera.position.y += 0.1
     camera.lookAt( this.spline.getPointAt( tn) )
 
-    if (conf.cars) this.updateCars(dt)
+    if (this.conf.cars) this.updateCars(dt)
   }
 
 }

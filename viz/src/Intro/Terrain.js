@@ -15,23 +15,14 @@ const randomInt = require('random-int')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
+import AObject from '../AObject'
+
 import Color from 'color'
 
+export default class Terrain extends AObject {
 
-const conf = {
-  on: false,
-  speed: 0.5,
-  mountainHeight: 0.5,
-  terrainHeight: 0.5,
-  yDistortion: 0.5,
-  xDistortion: 0.5
-}
-
-export default class Terrain extends THREE.Object3D {
-
-  constructor(ascene) {
-    super()
-    this.ascene = ascene
+  constructor(name, conf, scene) {
+    super(name, conf, scene)
 
     this.ORB_COLOR = new THREE.Color(0xff00ff)
 
@@ -46,7 +37,7 @@ export default class Terrain extends THREE.Object3D {
 
     this.orb = null
     this.orbLight = null
-    this.orbCamera = this.ascene.getCamera()
+    this.orbCamera = this.scene.getCamera()
 
     //this.ascene.getScene().fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
@@ -70,12 +61,8 @@ export default class Terrain extends THREE.Object3D {
     this.initMountainTerrain(this.plane2, 1)
   }
 
-  getConf() {
-    return conf
-  }
-
   initOrb() {
-    this.ascene.getLoader().load(
+    this.scene.getLoader().load(
       '/dist/assets/Intro/fireflie.png', (texture) => {
 
         const material = new THREE.SpriteMaterial({
@@ -161,8 +148,8 @@ export default class Terrain extends THREE.Object3D {
 
 
   initMountainTerrain(plane, time) {
-    const mountainHeight = conf.mountainHeight * this.MOUNTAIN_HEIGHT
-    const speed = conf.speed * 0.5,
+    const mountainHeight = this.conf.mountainHeight * this.MOUNTAIN_HEIGHT
+    const speed = this.conf.speed * 0.5,
       snowHeight = 5,
       waterHeight = 2
     const mountains = []
@@ -174,7 +161,7 @@ export default class Terrain extends THREE.Object3D {
 
       const m = new Mountain({
         depthIdx: i,
-        height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
+        height: this.conf.mountainHeight * this.MOUNTAIN_HEIGHT,
         range: Math.floor(simplex.noise2D(zpos * 0.1, 0.1) * 4 + 6),
         zpos: zpos,
         xpos: Math.floor(this.PLANE_WIDTH * 1 / 4) + xoffset
@@ -183,7 +170,7 @@ export default class Terrain extends THREE.Object3D {
 
       const mr = new Mountain({
         depthIdx: i,
-        height: conf.mountainHeight * this.MOUNTAIN_HEIGHT,
+        height: this.conf.mountainHeight * this.MOUNTAIN_HEIGHT,
         range: Math.floor(simplex.noise2D(zpos * 0.1, 1) * 4 + 6),
         zpos: zpos,
         xpos: Math.floor(this.PLANE_WIDTH * 3 / 4) + xoffset
@@ -220,16 +207,16 @@ export default class Terrain extends THREE.Object3D {
   }
 
   _yDistortion(z) {
-    return simplex.noise2D(z * conf.yDistortion * 0.1, 0.1) * 1.5
+    return simplex.noise2D(z * this.conf.yDistortion * 0.1, 0.1) * 1.5
   }
 
   _xDistortion(z) {
-    return simplex.noise2D(z * conf.xDistortion * 0.1, 0.1) * 2
+    return simplex.noise2D(z * this.conf.xDistortion * 0.1, 0.1) * 2
   }
 
   updateOrb(delta) {
 
-    const speed = conf.speed * delta * 7
+    const speed = this.conf.speed * delta * 7
     const pos = this.orb.position
 
     const z = pos.z - speed,
@@ -244,10 +231,10 @@ export default class Terrain extends THREE.Object3D {
   }
 
   updateTerrain(plane, time) {
-    const speed = conf.speed * 0.6
+    const speed = this.conf.speed * 0.6
 
-    const height = this.MOUNTAIN_HEIGHT * conf.mountHeight,
-      terrainHeight = conf.terrainHeight * this.TERRAIN_HEIGHT
+    const height = this.MOUNTAIN_HEIGHT * this.conf.mountHeight,
+      terrainHeight = this.conf.terrainHeight * this.TERRAIN_HEIGHT
 
     const positions = plane.geometry.attributes.position.array,
       colors = plane.geometry.attributes.color.array
@@ -261,10 +248,10 @@ export default class Terrain extends THREE.Object3D {
 
 
   initTerrain(plane, time) {
-    const speed = conf.speed * 0.6
+    const speed = this.conf.speed * 0.6
 
-    const height = this.MOUNTAIN_HEIGHT * conf.mountHeight,
-      terrainHeight = conf.terrainHeight * this.TERRAIN_HEIGHT
+    const height = this.MOUNTAIN_HEIGHT * this.conf.mountHeight,
+      terrainHeight = this.conf.terrainHeight * this.TERRAIN_HEIGHT
 
     const positions = plane.geometry.attributes.position.array,
       colors = plane.geometry.attributes.color.array

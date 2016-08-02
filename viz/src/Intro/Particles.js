@@ -10,29 +10,21 @@ const glslify = require('glslify')
 
 import GPUComputationRenderer from '../utils/GPUComputationRenderer'
 
-const conf = {
-  on: true,
-  timeScale: 1
-}
+import AObject from '../AObject'
 
 const WIDTH = 128
 const NUM_PARTICLES = WIDTH * WIDTH
 
 
-export default class Particles extends THREE.Object3D {
-  constructor(scene) {
-    super()
-    this.scene = scene
+export default class Particles extends AObject {
+  constructor(name, conf, scene) {
+    super(name, conf, scene)
 
     this.ready = false
     this.tick = 0
 
     this.initParticles()
     this.initShader()
-  }
-
-  getConf() {
-    return conf
   }
 
   initParticles() {
@@ -151,6 +143,7 @@ export default class Particles extends THREE.Object3D {
   }
 
   update(dt) {
+    super.update(dt)
 
     const delta = dt * conf.timeScale
 

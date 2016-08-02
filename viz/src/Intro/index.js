@@ -10,38 +10,49 @@ import Particles from './Particles'
 import Terrain from './Terrain'
 
 export default class IntroScene extends AScene {
-    constructor(args) {
-      super(args)
-
-   		this.particles = new Particles(this)
-    	//this.scene.add(this.particles)
-    	super.getEvents().on('PARTICLES::visOn', _ => super.fadeIn(this.particles, 2))
-	    super.getEvents().on('PARTICLES::visOff', _ => super.fadeOut(this.particles, 2))
-	    super.addVis('PARTICLES', this.particles.getConf())
-
-        this.street = new Street(this)
-        //this.scene.add(this.street)
-        super.getEvents().on('STREET::visOn', _ => super.fadeIn(this.street, 2))
-        super.getEvents().on('STREET::visOff', _ => super.fadeOut(this.street, 2))
-        super.addVis('STREET', this.street.getConf())
+    constructor(renderer, isDemo, args) {
+      super(
+        renderer, 
+        new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10000000), 
+        isDemo, 
+        args)
 
 
-        this.city = new City(this)
-        this.scene.add(this.city)
-        super.getEvents().on('CITY::visOn', _ => super.fadeIn(this.city, 5))
-        super.getEvents().on('CITY::visOff', _ => super.fadeOut(this.city, 10))
-        super.addVis('CITY', this.city.getConf())
+   		this.particles = new Particles('PARTICLES', {
+          on: true,
+          timeScale: 1
+            }, this)
+    	this.add(this.particles)
+    	
+        this.street = new Street('STREET', {
+  on: false,
+  speed: 0.5,
+  cars: true
+}, this)
+        this.add(this.street)
+        
 
+        this.city = new City('CITY', {
+  on:true,
+  wireframe: true
+}, this)
+        this.add(this.city)
+        
 
-        this.terrain = new Terrain(this)
-        //this.scene.add(this.terrain)
-        super.getEvents().on('TERRAIN::visOn', _ => super.fadeIn(this.terrain, 5))
-        super.getEvents().on('TERRAIN::visOff', _ => super.fadeOut(this.terrain, 10))
-        super.addVis('TERRAIN', this.terrain.getConf())
-
+        this.terrain = new Terrain('TERRAIN', {
+  on: false,
+  speed: 0.5,
+  mountainHeight: 0.5,
+  terrainHeight: 0.5,
+  yDistortion: 0.5,
+  xDistortion: 0.5
+}, this)
+        this.add(this.terrain)
+        
     }
 
-    tick(delta) {
+    update(delta) {
+        super.update(delta)
     	//this.particles.update(delta)
         //this.street.update(delta)
         this.city.update(delta)

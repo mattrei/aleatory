@@ -2,7 +2,7 @@
 require('three/examples/js/curves/NURBSSurface')
 require('three/examples/js/utils/GeometryUtils')
 
-
+import AObject from '../AObject'
 const simplex = new(require('simplex-noise'))
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -16,22 +16,18 @@ const glslify = require('glslify')
 require('../utils/THREE.MeshLine')
 
 
-      const BUILDING_SIZE = 5,
+const BUILDING_SIZE = 5,
         BUILDING_HEIGHT = 5,
         NUM_BUILDINGS = 12
 
-const conf = {
-  on:true,
-  wireframe: true
-}
+const NUM_SEGMENTS = 10
 
-const VIS = 'CITY'
 
-export default class City extends THREE.Object3D {
-  constructor(ascene) {
-    super()
+export default class City extends AObject {
+  constructor(name, conf, scene) {
+    super(name, conf, scene)
 
-    this.ascene = ascene
+    this.scene = scene
 
     this.ready = false
     this.tick = 0
@@ -243,11 +239,11 @@ var center = new THREE.Vector3();
                 },
                 speed: {
                     type: "f",
-                    value: conf.speed
+                    value: 1
                 },
                 height: {
                     type: "f",
-                    value: conf.height
+                    value: 2
                 },
                 noise_elevation: {
                     type: "f",
@@ -257,7 +253,7 @@ var center = new THREE.Vector3();
             transparent: true,
             fragmentShader: floorFragmentShader,
             vertexShader: floorVertexShader,
-            wireframe: conf.wireframe,
+            wireframe: false,
             wireframeLinewidth: 2,
         });
 
@@ -273,24 +269,22 @@ var center = new THREE.Vector3();
         this.add(mesh)
       }
 
-      create(conf.segments)
+      create(NUM_SEGMENTS)
 
-      this.events = {}
-        this.events.on(VIS +'::wireframe', d => mesh.material.wireframe = d)
-
-        this.events.on(VIS +'::segments', d => {
+      super.on('wireframe', d => mesh.material.wireframe = d)
+      super.on('segments', d => {
           group.remove(mesh)
           create(d)
         })
+/*
+        this.scene.events.on(VIS +'::wireframe', d => mesh.material.wireframe = d)
 
-        super.addVis(VIS, conf)
-
+        this.scene.events.on(VIS +'::segments', d => {
+          group.remove(mesh)
+          create(d)
+        })
+        */
     
-  }
-
-
-  getConf() {
-    return conf
   }
 
   update(dt) {
