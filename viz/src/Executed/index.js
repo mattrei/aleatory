@@ -12,16 +12,20 @@ export default class ExecutedScene extends AScene {
 
 
    		this.cage = new Cage('CAGE', {
-          on: false
+          cageSpeed: 1, 
+          cageOpen: false
             }, this)
-    	this.addGUIFolder(this.cage)
+    	
     	
     }
 
-    update(delta) {
-      super.update(delta)
-    	this.cage.update(delta)
+    init() {
+      super.addGUIFolder(this.cage)
     }
 
+    update(delta) {
+      if (!super.update(delta)) return
 
+    	this.cage.update(delta)
+    }
 }

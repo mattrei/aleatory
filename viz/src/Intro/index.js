@@ -22,42 +22,51 @@ export default class IntroScene extends AScene {
       this.camera.lookAt(new THREE.Vector3())
 
    		this.particles = new Particles('PARTICLES', {
-          on: false,
           timeScale: 1
             }, this)
-    	this.addGUIFolder(this.particles)
+    	
     	
         this.street = new Street('STREET', {
-  on: false,
   speed: 0.5,
   cars: true
 }, this)
-        this.addGUIFolder(this.street)
+        
         
 
         this.city = new City('CITY', {
-  on:true,
   wireframe: true
 }, this)
-        this.addGUIFolder(this.city)
-        this.add(this.city)
-        this.addGUIProps(this.city)
+        
         
 
         this.terrain = new Terrain('TERRAIN', {
-  on: false,
   speed: 0.5,
   mountainHeight: 0.5,
   terrainHeight: 0.5,
   yDistortion: 0.5,
   xDistortion: 0.5
 }, this)
-        this.addGUIFolder(this.terrain)
+        
         
     }
 
+    init() {
+
+      super.addGUIFolder(this.particles)
+      super.addGUIFolder(this.street)
+      super.addGUIFolder(this.terrain)
+
+      super.addGUIFolder(this.city)
+      super.add(this.city)
+      super.addGUIProps(this.city)
+
+    }
+
     update(delta) {
-        super.update(delta)
+      if (!super.update(delta)) return
+
+
+
     	this.particles.update(delta)
         this.street.update(delta)
         this.city.update(delta)

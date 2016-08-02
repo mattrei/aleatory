@@ -17,6 +17,7 @@ export default class AScene extends THREE.Scene {
 
   constructor(renderer, camera, isDemo, args) {
     super()
+    this.isStopped = false
 
       this.renderer = renderer
       this.camera = camera
@@ -140,9 +141,11 @@ export default class AScene extends THREE.Scene {
     const name = aobject.getName(),
       parameters = aobject.getConf()
 
+    const onPar = {on: false}
+
     let vf = this.gui.addFolder(name)
     this.vis[name] = vf
-          let vfp = vf.add(parameters, 'on')
+          let vfp = vf.add(onPar, 'on')
 
 
             vfp.onChange(val => {
@@ -200,6 +203,8 @@ export default class AScene extends THREE.Scene {
   update(delta)
   {
 
+    if (this.isStopped) return false
+
     // Iterate over all controllers and update if changed via OSC messages
     if (this.gui) {
         for (let i in this.gui.__controllers) {
@@ -207,7 +212,9 @@ export default class AScene extends THREE.Scene {
         }
     }
 
-    if (this.flyControls) {this.flyControls.update(delta)}
+    if (this.flyControls) this.flyControls.update(delta)
+
+    return true
   }
 
   onVisParameters(dict) {
@@ -340,12 +347,21 @@ export default class AScene extends THREE.Scene {
 
   play() {
 
+    this.init()
+
+    this.isStopped = false
+
     let ft = this.gui.addFolder('**=text=**')
     ft.add(this._texts, 'intro')
     ft.add(this, '_doIntro')
     ft.add(this._texts, 'outro')
     ft.add(this, '_doOutro')
     ft.open()
+  }
+
+  stop() {
+    this.clear()
+    this.isStopped = true
   }
 
 }

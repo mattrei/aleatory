@@ -16,8 +16,8 @@ import Stats from 'stats-js'
 import dat from 'dat-gui'
 
 // 6 scenes
-import IntroScene from './Intro'
-//import ExecutedScene from './Executed'
+import Intro from './Intro'
+import Executed from './Executed'
 //import RefugeesScene from './RefugeesScene'
 //import DronesScene from './Drones'
 //import WienerLinienScene from './WienerLinien'
@@ -203,9 +203,13 @@ export default class Main extends THREE.WebGLRenderer {
       this.gui.__controllers[i].remove()
     }
 
+    if (this.currentScene) this.currentScene.stop()
+
     this.currentScene = this.scenes[scene]
 
-    if (this.currentScene) this.currentScene.play()
+    if (this.currentScene) {
+      this.currentScene.play()
+    }
   }
 
   _initOSC() {
@@ -273,9 +277,6 @@ export default class Main extends THREE.WebGLRenderer {
         })
 
       const args = {
-
-        demo: true,
-
         renderer: this,
         composer: this.composer,
         gui: this.gui,
@@ -284,7 +285,6 @@ export default class Main extends THREE.WebGLRenderer {
         analyser: this.analyser,
         // webcam video
         video: this.video,
-
         // for drawing purposes
         canvas: this.canvas,
         ctx: this.ctx
@@ -292,15 +292,11 @@ export default class Main extends THREE.WebGLRenderer {
 
 
       this.scenes = {}
-      this.scenes.intro = new IntroScene(this, DEMO_MODE, args)
-      this.scenes.executed = new ExecutedScene(this, DEMO_MODE, args)
+      this.scenes.intro = new Intro(this, DEMO_MODE, args)
+      this.scenes.executed = new Executed(this, DEMO_MODE, args)
       //this.scenes.s1 = new WienerLinienScene(args)
-
-      
       //this.scenes.s1 = new RefugeesScene(args)
-
       //this.scenes.s1 = new DronesScene(args)
-
       //this.scenes.s1 = new OceanScene(args)
       //this.scenes.s1 = new OutroScene(args)
 
@@ -309,12 +305,7 @@ export default class Main extends THREE.WebGLRenderer {
       window.addEventListener('resize', () => this.onResize(), false)
       this.onResize()
       this.update()
-
-
-
     }, err => console.log(err))
-
-
 
   }
 
