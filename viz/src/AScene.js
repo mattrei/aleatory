@@ -40,9 +40,7 @@ export default class AScene extends THREE.Scene {
         this.video = args.video
         this.canvas = args.canvas
         this.ctx = args.ctx
-
-        this.camera.position.z = -1
-        this.camera.lookAt(new THREE.Vector3())
+        
         this.orbitControls = new OrbitControls(this.camera)
 
         const leap = new Leap.Controller()
@@ -270,6 +268,18 @@ export default class AScene extends THREE.Scene {
     if (!this.analyser) return random(min,max)
 
     return average(this.analyser.analyser, this.analyser.frequencies(), min, max)
+  }
+
+  getLowFreq() {
+    return this.getFreq(20, 400)
+  }
+
+  getMidFreq() {
+    return this.getFreq(400, 1500)
+  }
+
+  getHighFreq() {
+    return this.getFreq(1500, 5000)
   }
 
   getAnalyser() {

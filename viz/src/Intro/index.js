@@ -18,6 +18,9 @@ export default class IntroScene extends AScene {
         args)
 
 
+      this.camera.position.z = -1
+      this.camera.lookAt(new THREE.Vector3())
+
    		this.particles = new Particles('PARTICLES', {
           on: false,
           timeScale: 1
@@ -61,5 +64,9 @@ export default class IntroScene extends AScene {
         this.terrain.update(delta)
     }
 
+
+    background() {
+
+    }
 
 }

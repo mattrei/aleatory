@@ -29,6 +29,7 @@ import IntroScene from './Intro'
 const OSC_URL = "ws://localhost:8081"
 
 const DEMO_MODE = true
+const DEF_SCENE = "executed"
 
 export default class Main extends THREE.WebGLRenderer {
 
@@ -292,9 +293,10 @@ export default class Main extends THREE.WebGLRenderer {
 
       this.scenes = {}
       this.scenes.intro = new IntroScene(this, DEMO_MODE, args)
+      this.scenes.executed = new ExecutedScene(this, DEMO_MODE, args)
       //this.scenes.s1 = new WienerLinienScene(args)
 
-      //this.scenes.s1 = new ExecutedScene(args)
+      
       //this.scenes.s1 = new RefugeesScene(args)
 
       //this.scenes.s1 = new DronesScene(args)
@@ -302,7 +304,7 @@ export default class Main extends THREE.WebGLRenderer {
       //this.scenes.s1 = new OceanScene(args)
       //this.scenes.s1 = new OutroScene(args)
 
-      this.setScene("intro")
+      this.setScene(DEF_SCENE)
 
       window.addEventListener('resize', () => this.onResize(), false)
       this.onResize()
