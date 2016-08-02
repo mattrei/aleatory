@@ -33,6 +33,10 @@ export default class AObject extends THREE.Object3D {
 		return this.conf
 	}
 
+	setConf(conf) {
+		this.conf = conf
+	}
+
 	getName() {
 		return this.name
 	}
