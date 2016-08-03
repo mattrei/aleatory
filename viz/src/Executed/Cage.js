@@ -21,8 +21,13 @@ const E_SPHERE_RADIUS = 3500,
 
 export
 default class Cage extends AObject {
-    constructor(name, conf, scene) {
-        super(name, conf, scene)
+    constructor(name, conf, renderer, loader, aaa, camera) {
+        super(name, conf)
+
+        this.renderer = renderer
+        this.loader = loader
+        this.aaa = aaa
+        this.camera = camera
 
         this.ready = false
         this.tick = 0
@@ -68,7 +73,7 @@ default class Cage extends AObject {
         })
 
         super.tick(dt => {
-            const midFreq = this.scene.getMidFreq()
+            const midFreq = this.aaa.getMidFreq()
             asteroids.forEach(mesh => {
                 mesh.rotation.x += dt * 0.1 * mesh.direction.x * midFreq
                 mesh.rotation.y += dt * 0.5 * mesh.direction.y * midFreq
@@ -179,7 +184,7 @@ default class Cage extends AObject {
         let tick = 0
         super.tick(dt => {
 
-            const freq = this.scene.getMidFreq()
+            const freq = this.aaa.getMidFreq()
 
             tick += dt
             const MIN_DISTANCE = 4 + Math.abs(Math.sin(tick * 0.5)) * 2
@@ -285,66 +290,83 @@ default class Cage extends AObject {
 
     }
 
-  createImages()
-  {
+    createImages() {
 
-    const VIS = 'executed'
-
-
-    let group = new THREE.Group()
-    this.scene.add( group )
-
-    let idx = 0
-    let meshes = [],
-        spherePositions = [],
-        view = 'sphere'
-
-    let doSphere = (dur) => {
-         for ( let i = 0; i < meshes.length; i ++ ) {
-
-          var m = meshes[ i ];
-          var target = spherePositions[ i ];
-           dur = 2
-
-          m.matrixAutoUpdate = true
-
-          tweenr.to(m.position,
-                    { x: target.position.x, y: target.position.y, z: target.position.z,
-                     duration: random(dur, dur * 2) })
-
-          tweenr.to(m.rotation,
-                    { x: target.rotation.x, y: target.rotation.y, z: target.rotation.z,
-                     duration: random(dur, dur * 2) })
-          //.on('update', () => object.updateMatrix())
+        const VIS = 'executed'
 
 
+        let group = new THREE.Group()
+        this.add(group)
+
+        let idx = 0
+        let meshes = [],
+            spherePositions = [],
+            view = 'sphere'
+
+        let doSphere = (dur) => {
+            for (let i = 0; i < meshes.length; i++) {
+
+                var m = meshes[i];
+                var target = spherePositions[i];
+                dur = 2
+
+                m.matrixAutoUpdate = true
+
+                tweenr.to(m.position, {
+                    x: target.position.x,
+                    y: target.position.y,
+                    z: target.position.z,
+                    duration: random(dur, dur * 2)
+                })
+
+                tweenr.to(m.rotation, {
+                    x: target.rotation.x,
+                    y: target.rotation.y,
+                    z: target.rotation.z,
+                    duration: random(dur, dur * 2)
+                })
+                //.on('update', () => object.updateMatrix())
+
+
+            }
         }
-    }
 
-    const LOOKAT_DUR = 2
-    let doLookAt = (m) => {
-      if (!this.camera.target) {
-        this.camera.target = m
-      }
+        const LOOKAT_DUR = 2
+        let doLookAt = (m) => {
+            if (!this.camera.target) {
+                this.camera.target = m
+            }
 
-      let vector = new THREE.Vector3()
-      if (view === 'sphere') {
-        vector.copy( m.position ).multiplyScalar( 1.2 );
-      } else if (view === 'grid') {
-        vector.copy( m.position )
-        vector.z -= 400
-      }
+            let vector = new THREE.Vector3()
+            if (view === 'sphere') {
+                vector.copy(m.position).multiplyScalar(1.2);
+            } else if (view === 'grid') {
+                vector.copy(m.position)
+                vector.z -= 400
+            }
 
 
-    // move to vector
-      tweenr.to(this.camera.position,
-                { x: vector.x, y: vector.y, z: vector.z, duration: LOOKAT_DUR })
-        .on('update', () => { this.camera.lookAt(this.camera.target) })
-        .on('complete', () => { this.camera.lookAt(this.camera.target) })
-      tweenr.to(this.camera.target,
-                { x: m.position.x, y: m.position.y, z: m.position.z, duration: LOOKAT_DUR})
+            // move to vector
+            tweenr.to(this.camera.position, {
+                x: vector.x,
+                y: vector.y,
+                z: vector.z,
+                duration: LOOKAT_DUR
+            })
+                .on('update', () => {
+                    this.camera.lookAt(this.camera.target)
+                })
+                .on('complete', () => {
+                    this.camera.lookAt(this.camera.target)
+                })
+            tweenr.to(this.camera.target, {
+                x: m.position.x,
+                y: m.position.y,
+                z: m.position.z,
+                duration: LOOKAT_DUR
+            })
 
-      /*
+            /*
       let d = m.userData
 
       this.text.name.innerHTML = d.name + " (" + d.age + ")"
@@ -352,147 +374,172 @@ default class Cage extends AObject {
       Velocity(this.text.name, "fadeIn", this.transition/2 )
       Velocity(this.text.date, "fadeIn", this.transition/2 )
       */
-    }
+        }
 
-    let doSmash = () => {
-      let mesh = meshes[idx % meshes.length]
+        let doSmash = () => {
+            let mesh = meshes[idx % meshes.length]
 
-      tweenr.to(mesh.material, {opacity: 0, duration: 2})
-        .on('complete', () => mesh.visible = false)
-/*
+            tweenr.to(mesh.material, {
+                opacity: 0,
+                duration: 2
+            })
+                .on('complete', () => mesh.visible = false)
+            /*
           tweenr.to(v,
             { x: pos.x, y: pos.y, z: pos.z, duration: LOOKAT_DUR })
             .on('update', () => geometry.verticesNeedUpdate = true)
             .on('complete', () => mesh.visible = false)
             */
-    }
+        }
 
-    let doNext = () => {
-      idx++
-      let m = meshes[idx % meshes.length]
-      doLookAt(m)
-    }
+        let doNext = () => {
+            idx++
+            let m = meshes[idx % meshes.length]
+            doLookAt(m)
+        }
 
-    let doRnd = () => {
-      let m = meshes[randomInt(0, meshes.length - 1)]
-      doLookAt(m)
-    }
+        let doRnd = () => {
+            let m = meshes[randomInt(0, meshes.length - 1)]
+            doLookAt(m)
+        }
 
-    this.events.on(VIS + '::doSphere', p => doSphere(2 /*p.duration*/))
-    this.events.on(VIS + '::doRnd', p => doRnd())
-    this.events.on(VIS + '::doNext', p => doNext())
-    this.events.on(VIS + '::doSmash', p => doSmash())
+        this.events.on(VIS + '::doSphere', p => doSphere(2 /*p.duration*/ ))
+        this.events.on(VIS + '::doRnd', p => doRnd())
+        this.events.on(VIS + '::doNext', p => doNext())
+        this.events.on(VIS + '::doSmash', p => doSmash())
 
 
-        let conf = {on: false,
-               doSphere: doSphere,
-               doNext: doNext,
-               doRnd: doRnd,
-               doSmash: doSmash,
-               currentOn:false,
-               currents: 1
-               }
+        let conf = {
+            on: false,
+            doSphere: doSphere,
+            doNext: doNext,
+            doRnd: doRnd,
+            doSmash: doSmash,
+            currentOn: false,
+            currents: 1
+        }
         group.visible = conf.on
 
-    this.events.on(VIS + '::data', data => {
+        this.events.on(VIS + '::data', data => {
 
-        data.forEach((e,i) => {
+            data.forEach((e, i) => {
 
-            this.loader.load(e.img, (texture) => {
+                this.loader.load(e.img, (texture) => {
 
-                texture.minFilter = THREE.LinearFilter
-                let planeGeometry = new THREE.PlaneGeometry(200, 200),
-                   mat = new THREE.ShaderMaterial( {
-                    uniforms: {
-                      resolution: { type: "v2", value: new THREE.Vector2(window.innerWidth,window.innerHeight) },
-                      time: { type: "f", value: 0.1 },
-                      timeInit: { type: "f", value: Math.random() * 1000 },
-                      showCurrent: { type: "f", value: conf.currentOn},
-                      numberCurrents: { type: "f", value: conf.currents},
-                      bgImg: { type: "t", value: texture },
-                      smashAmplitude: { type: "f", value: 0.0 }
-                    },
-                    side: THREE.DoubleSide,
-                    transparent: true,
-                    fragmentShader: pictureFS,
-                    vertexShader: pictureVS
-                } )
+                    texture.minFilter = THREE.LinearFilter
+                    let planeGeometry = new THREE.PlaneGeometry(200, 200),
+                        mat = new THREE.ShaderMaterial({
+                            uniforms: {
+                                resolution: {
+                                    type: "v2",
+                                    value: new THREE.Vector2(window.innerWidth, window.innerHeight)
+                                },
+                                time: {
+                                    type: "f",
+                                    value: 0.1
+                                },
+                                timeInit: {
+                                    type: "f",
+                                    value: Math.random() * 1000
+                                },
+                                showCurrent: {
+                                    type: "f",
+                                    value: conf.currentOn
+                                },
+                                numberCurrents: {
+                                    type: "f",
+                                    value: conf.currents
+                                },
+                                bgImg: {
+                                    type: "t",
+                                    value: texture
+                                },
+                                smashAmplitude: {
+                                    type: "f",
+                                    value: 0.0
+                                }
+                            },
+                            side: THREE.DoubleSide,
+                            transparent: true,
+                            fragmentShader: pictureFS,
+                            vertexShader: pictureVS
+                        })
 
 
-                const tessellateModifier = new THREE.TessellateModifier( 8 )
-                      for ( var i = 0; i < 6; i ++ ) {
-                        tessellateModifier.modify( planeGeometry )
-                      }
-                const explodeModifier = new THREE.ExplodeModifier()
-                explodeModifier.modify( planeGeometry )
+                    const tessellateModifier = new THREE.TessellateModifier(8)
+                    for (var i = 0; i < 6; i++) {
+                        tessellateModifier.modify(planeGeometry)
+                    }
+                    const explodeModifier = new THREE.ExplodeModifier()
+                    explodeModifier.modify(planeGeometry)
 
-                const numFaces = planeGeometry.faces.length;
+                    const numFaces = planeGeometry.faces.length;
 
-                const geometry = new THREE.BufferGeometry().fromGeometry( planeGeometry );
-                const displacement = new Float32Array( numFaces * 3 * 3 );
+                    const geometry = new THREE.BufferGeometry().fromGeometry(planeGeometry);
+                    const displacement = new Float32Array(numFaces * 3 * 3);
 
-                for ( var f = 0; f < numFaces; f ++ ) {
-                  const index = 9 * f;
-                  const d = 10 * ( 0.5 - Math.random() );
-                  for ( var i = 0; i < 3; i ++ ) {
-                    displacement[ index + ( 3 * i )     ] = 10 * ( 0.5 - Math.random() );
-                    displacement[ index + ( 3 * i ) + 1 ] = 10 * ( 0.5 - Math.random() );
-                    displacement[ index + ( 3 * i ) + 2 ] = 10 * ( 0.5 - Math.random() );
-                  }
-                }
-                geometry.addAttribute( 'displacement', new THREE.BufferAttribute( displacement, 3 ) );
+                    for (var f = 0; f < numFaces; f++) {
+                        const index = 9 * f;
+                        const d = 10 * (0.5 - Math.random());
+                        for (var i = 0; i < 3; i++) {
+                            displacement[index + (3 * i)] = 10 * (0.5 - Math.random());
+                            displacement[index + (3 * i) + 1] = 10 * (0.5 - Math.random());
+                            displacement[index + (3 * i) + 2] = 10 * (0.5 - Math.random());
+                        }
+                    }
+                    geometry.addAttribute('displacement', new THREE.BufferAttribute(displacement, 3));
 
-                let mesh = new THREE.Mesh(geometry, mat)
-                mesh.userData = e
+                    let mesh = new THREE.Mesh(geometry, mat)
+                    mesh.userData = e
 
-                group.add(mesh)
-                meshes.push(mesh)
+                    group.add(mesh)
+                    meshes.push(mesh)
+                })
+
             })
 
-          })
 
 
+            var vector = new THREE.Vector3();
 
-          var vector = new THREE.Vector3();
+            // sphere
+            for (var i = 0, l = data.length; i < l; i++) {
 
-          // sphere
-          for ( var i = 0, l = data.length; i < l; i ++ ) {
+                var phi = Math.acos(-1 + (2 * i) / l);
+                var theta = Math.sqrt(l * Math.PI) * phi;
 
-            var phi = Math.acos( -1 + ( 2 * i ) / l );
-            var theta = Math.sqrt( l * Math.PI ) * phi;
+                var object = new THREE.Object3D();
 
-            var object = new THREE.Object3D();
+                object.position.x = SPHERE_SIZE * Math.cos(theta) * Math.sin(phi);
+                object.position.y = SPHERE_SIZE * Math.sin(theta) * Math.sin(phi);
+                object.position.z = SPHERE_SIZE * Math.cos(phi);
 
-            object.position.x = SPHERE_SIZE * Math.cos( theta ) * Math.sin( phi );
-            object.position.y = SPHERE_SIZE * Math.sin( theta ) * Math.sin( phi );
-            object.position.z = SPHERE_SIZE * Math.cos( phi );
+                vector.copy(object.position).multiplyScalar(2);
 
-            vector.copy( object.position ).multiplyScalar( 2 );
+                object.lookAt(vector);
 
-            object.lookAt( vector );
+                spherePositions.push(object);
 
-            spherePositions.push( object );
+            }
+        })
 
-          }
-    })
+        super.on('pictures', _ => group.visible = true)
 
-    super.on('pictures', _ => group.visible = true)
+        super.tick(dt => {
 
-    super.tick(dt => {
+            meshes.forEach(m => m.material.uniforms.time.value = this.tick)
 
-      meshes.forEach(m => m.material.uniforms.time.value = this.tick)
+            let m = meshes[idx % meshes.length]
+            if (m) {
+                m.material.uniforms.smashAmplitude.value = 100.0 * Math.sin(this.tick * 0.5);
+                m.material.uniforms.showCurrent.value = conf.currentOn
+                m.material.uniforms.numberCurrents.value = conf.currents
+            }
 
-      let m = meshes[idx % meshes.length]
-      if (m) {
-        m.material.uniforms.smashAmplitude.value = 100.0 * Math.sin( this.tick * 0.5 );
-        m.material.uniforms.showCurrent.value = conf.currentOn
-        m.material.uniforms.numberCurrents.value = conf.currents
-      }
-
-    })
+        })
 
 
-  }
+    }
 
 
     update(dt) {

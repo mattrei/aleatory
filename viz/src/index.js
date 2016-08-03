@@ -33,8 +33,8 @@ import Executed from './Executed'
 // TODO: use rhizome?
 const OSC_URL = "ws://localhost:8081"
 
-const DEMO_MODE = true
-const DEF_SCENE = "intro"
+global.DEMO_MODE = true
+const DEF_SCENE = "executed"
 
 export
 default class Main extends THREE.WebGLRenderer {
@@ -307,7 +307,7 @@ default class Main extends THREE.WebGLRenderer {
 
             this.scenes = {}
             this.scenes.intro = new Intro(this, loader, aaa, camera, DEMO_MODE, args)
-            //this.scenes.executed = new Executed(this, DEMO_MODE, args)
+            this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), DEMO_MODE, args)
             //this.scenes.s1 = new WienerLinienScene(args)
             //this.scenes.s1 = new RefugeesScene(args)
             //this.scenes.s1 = new DronesScene(args)

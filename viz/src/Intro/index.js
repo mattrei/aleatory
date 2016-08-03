@@ -36,12 +36,13 @@ default class IntroScene extends AScene {
                     yDistortion: 0.5,
                     xDistortion: 0.5
                 }, renderer, loader, aaa, camera)
-            },
-            't')
+            })
 
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
+
+        this.setVis(this.vis.t)
 
         //this.fog = new THREE.FogExp2(0x000000, 0.15);
 

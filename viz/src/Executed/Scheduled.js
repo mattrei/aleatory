@@ -15,8 +15,13 @@ const NUM_PARTICLES = 400000,
 
 export
 default class Scheduled extends AObject {
-    constructor(name, conf, scene) {
-        super(name, conf, scene)
+    constructor(name, conf, renderer, loader, aaa, camera) {
+        super(name, conf)
+
+        this.renderer = renderer
+        this.loader = loader
+        this.aaa = aaa
+        this.camera = camera
 
         this.ready = false
         this.tick = 0
@@ -131,7 +136,7 @@ default class Scheduled extends AObject {
 
         super.on('data', data => {
 
-            this.scene.getLoader().load('/dist/assets/Executed/particle.png', (particleImg) => {
+            this.loader.load('/dist/assets/Executed/particle.png', (particleImg) => {
 
                 data.forEach(s => {
                     this.loader.load(s.img, (texture) => {

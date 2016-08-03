@@ -24,23 +24,24 @@ default class AObject extends THREE.Object3D {
         this.events.on(prop, func)
     }
 
-    setConf(conf) {
+    setAndEmitConf(conf) {
         this.conf = conf
         Object.keys(conf).forEach(prop => {
             this.events.emit(prop, conf[prop])
         })
     }
 
-    tick(func) {
-        this.events.on('tick', func)
-    }
-
     getConf() {
         return this.conf
     }
 
-    setConf(conf) {
-        this.conf = conf
+    addPar(par) {
+        Object.assign(this.conf, par)
+    }
+
+
+    tick(func) {
+        this.events.on('tick', func)
     }
 
     getName() {

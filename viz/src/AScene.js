@@ -15,7 +15,7 @@ import AObject from './AObject'
 export
 default class AScene extends THREE.Scene {
 
-    constructor(renderer, loader, aaa, camera, isDemo, args, vis, def) {
+    constructor(renderer, loader, aaa, camera, isDemo, args, vis) {
         super()
         this.isStopped = false
         this.vis = vis
@@ -23,12 +23,10 @@ default class AScene extends THREE.Scene {
           vis[v].getEvents().on('fog', (f) => this.setFog(f))
         })
 
-        this.aaa = aaa
-
         this.renderer = renderer
+        this.loader = loader
+        this.aaa = aaa
         this.camera = camera
-
-
 
         this._texts = {
             intro: 'intro!',
@@ -58,10 +56,6 @@ default class AScene extends THREE.Scene {
         this.flyControls.movementSpeed = .00010;
 
         this._addHelpers()
-
-
-        this.setVis(vis[def])
-
     }
 
     setFog(fog) {
@@ -166,9 +160,6 @@ default class AScene extends THREE.Scene {
         }
         if (v) {
             this.currentVis = v
-            this.addGUI(this.currentVis)
-            this.add(this.currentVis)
-            this.currentVis.start()
         }
     }
 
@@ -180,6 +171,8 @@ default class AScene extends THREE.Scene {
 
     start() {
 
+        this.addGUI(this.currentVis)
+        this.add(this.currentVis)
         this.currentVis.start()
         this.isStopped = false
 
@@ -192,7 +185,7 @@ default class AScene extends THREE.Scene {
     }
 
     stop() {
-        this.currentVis.stop()
+        this.clearVis()
         this.clear()
         this.isStopped = true
     }
