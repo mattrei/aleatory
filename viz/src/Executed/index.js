@@ -10,13 +10,12 @@ console.log(Scheduled.doNext)
 
 export
 default class ExecutedScene extends AScene {
-    constructor(renderer, loader, aaa, camera, isDemo, args) {
+    constructor(renderer, loader, aaa, camera, args) {
         super(
             renderer,
             loader,
             aaa,
             camera,
-            isDemo,
             args, {
                 c: new Cage('CAGE', {
                     cageSpeed: 1,

@@ -11,13 +11,12 @@ import Terrain from './Terrain'
 
 export
 default class IntroScene extends AScene {
-    constructor(renderer, loader, aaa, camera, isDemo, args) {
+    constructor(renderer, loader, aaa, camera, args) {
         super(
             renderer,
             loader,
             aaa,
             camera,
-            isDemo,
             args, {
                 p: new Particles('PARTICLES', {
                     timeScale: 1

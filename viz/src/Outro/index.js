@@ -1,19 +1,43 @@
 global.THREE = require('three')
-import Scene from '../AScene'
+import AScene from '../AScene'
 
-import soundscape from './soundscape'
-import soundwave from './soundwave'
+import Soundscape from './Soundscape'
+import Soundwave from './Soundwave'
+
 
 //https://github.com/crma16/sound-experiments/blob/master/src/layouts/webgl-background/objects/Wave.js
-class OutroScene extends AScene {
-  constructor(args) {
-    super(args, new THREE.Vector3(0, 30, 0))
+export
+default class OutroScene extends AScene {
+    constructor(renderer, loader, aaa, camera, args) {
+        super(
+            renderer,
+            loader,
+            aaa,
+            camera,
+            args, {
+                s: new Soundscape('SOUNDSCAPE', {
+                    
+                }, renderer, loader, aaa, camera)
+                /*
+                w: new Soundwave('WAVE', {
+                    speed: 0.5,
+                    cars: true
+                }, renderer, loader, aaa, camera),
+                */
+            })
 
-    soundscape(this, true)
-    soundwave(this, false)
-  }
 
-  tick(time, delta) {}
+        this.camera.position.z = -1
+        this.camera.lookAt(new THREE.Vector3())
+
+        this.setVis(this.vis.s)
+
+        //this.fog = new THREE.FogExp2(0x000000, 0.15);
+
+    }
+
+    background() {
+
+    }
+
 }
-
-export default OutroScene

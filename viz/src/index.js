@@ -25,10 +25,8 @@ import Intro from './Intro'
 import Executed from './Executed'
 //import RefugeesScene from './RefugeesScene'
 //import DronesScene from './Drones'
-//import WienerLinienScene from './WienerLinien'
-//import OceanScene from './OceanScene'
-//import OutroScene from './Outro'
-// 7scene ThisbeautifulWorld
+import WienerLinien from './WienerLinien'
+import Outro from './Outro'
 
 // TODO: use rhizome?
 const OSC_URL = "ws://localhost:8081"
@@ -306,13 +304,13 @@ default class Main extends THREE.WebGLRenderer {
             const camera = new THREE.PerspectiveCamera(70, window.innerWidth / window.innerHeight, 0.01, 10000000)
 
             this.scenes = {}
-            this.scenes.intro = new Intro(this, loader, aaa, camera, DEMO_MODE, args)
-            this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), DEMO_MODE, args)
-            //this.scenes.s1 = new WienerLinienScene(args)
+            this.scenes.intro = new Intro(this, loader, aaa, camera, args)
+            this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), args)
+            this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
             //this.scenes.s1 = new RefugeesScene(args)
             //this.scenes.s1 = new DronesScene(args)
             //this.scenes.s1 = new OceanScene(args)
-            //this.scenes.s1 = new OutroScene(args)
+            this.scenes.outro = new Outro(this, loader, aaa, camera.clone(), args)
 
             this.setScene(DEF_SCENE)
 

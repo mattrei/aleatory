@@ -7,6 +7,8 @@ const Color = require('color')
 
 const simplex = new(require('simplex-noise'))
 
+import AObject from '../AObject'
+
 
 const VIS = "tunnel"
 
@@ -14,28 +16,6 @@ const conf = {
   on: false,
   speed: 0.5
 }
-
-function tunnel(scene, on = false) {
-  conf.on = on
-
-  const group = new THREE.Group()
-  scene.getScene().add(group)
-  group.visible = conf.on
-
-
-  const tunnel = new Tunnel({
-    group: group
-  })
-
-  scene.getEvents().on('tick', t => {
-    tunnel.update(t.time)
-  })
-
-  scene.addVis(VIS, conf)
-
-}
-
-export default tunnel
 
 
 class Particle {
@@ -91,7 +71,7 @@ class Particle {
   }
 }
 
-class Tunnel {
+export default class Tunnel extends AObject {
 
   constructor(args) {
 

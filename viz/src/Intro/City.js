@@ -24,10 +24,13 @@ const NUM_SEGMENTS = 10
 
 
 export default class City extends AObject {
-  constructor(name, conf, scene) {
-    super(name, conf, scene)
+  constructor(name, conf, renderer, loader, aaa, camera) {
+    super(name, conf)
 
-    this.scene = scene
+    this.renderer = renderer
+    this.loader = loader
+    this.aaa = aaa
+    this.camera = camera
 
     this.ready = false
     this.tick = 0

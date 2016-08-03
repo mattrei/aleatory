@@ -15,7 +15,7 @@ import AObject from './AObject'
 export
 default class AScene extends THREE.Scene {
 
-    constructor(renderer, loader, aaa, camera, isDemo, args, vis) {
+    constructor(renderer, loader, aaa, camera, args, vis) {
         super()
         this.isStopped = false
         this.vis = vis
@@ -34,7 +34,6 @@ default class AScene extends THREE.Scene {
         }
 
 
-        this.demo = isDemo
         this.events = new Events()
 
         this.gui = args.gui
@@ -71,10 +70,6 @@ default class AScene extends THREE.Scene {
 
     getCamera() {
         return this.camera
-    }
-
-    demo() {
-        return this.demo
     }
 
     removeGUI(aobject) {

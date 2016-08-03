@@ -20,7 +20,7 @@ function soundwave(scene, on = false) {
 
   const SIZE = 2.0
 
-  scene.getLoader().load('/assets/Outro/particle.png', texture => {
+  scene.getLoader().load('/dist/assets/Outro/particle.png', texture => {
     const plane = new THREE.PlaneGeometry(150, 100, 150, 150),
       geometry = new THREE.BufferGeometry()
 
@@ -139,8 +139,8 @@ function xtion() {
       }
 
     },
-    vertexShader: glslify('../glsl/Xtion.vert'),
-    fragmentShader: glslify('../glsl/Xtion.frag'),
+    vertexShader: glslify('./Xtion.vert'),
+    fragmentShader: glslify('./Xtion.frag'),
     blending: THREE.AdditiveBlending,
     depthTest: false,
     depthWrite: false,

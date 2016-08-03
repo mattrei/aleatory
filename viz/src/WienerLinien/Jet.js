@@ -10,6 +10,8 @@ const Tween = require('tween-chain')
 const simplex = new(require('simplex-noise'))
 const smoothstep = require('smoothstep')
 
+import AObject from '../AObject'
+
 // https://github.com/raurir/codedoodl.es/blob/master/doodles/raurir/racing-lines/index.html
 
 const VIS = "jet"
@@ -53,7 +55,7 @@ function jet(scene, on = false) {
   scene.addVis(VIS, conf)
 }
 
-class Jet {
+export default class Jet extends AObject {
   constructor(args) {
     this.EMPTY_SLOT = "empty"
     this.BOTTOM = "bottom"
@@ -171,8 +173,8 @@ class Jet {
           value: conf.speed
         },
       },
-      vertexShader: glslify('./Jet.vert'),
-      fragmentShader: glslify('./Jet.frag'),
+      vertexShader: jetVS,
+      fragmentShader: jetFS,
       transparent: true,
       //fog: true
     })
@@ -363,8 +365,51 @@ function moveCubes(cubes, plane) {
   }
 }
 
-export default jet
 
+const jetVS = glslify(`
+varying vec2 vUv;
+
+void main()
+{
+  vUv = uv;
+  vec4 mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  gl_Position = projectionMatrix * mvPosition;
+}
+
+
+`, { inline: true })
+
+const jetFS = glslify(`
+
+uniform vec3 slowColor;
+uniform vec3 fastColor;
+
+uniform float distanceZ;
+uniform float distanceX;
+uniform float pulse;
+uniform float speed;
+
+varying vec2 vUv;
+
+void main( void ) {
+  vec2 position = abs(-1.0 + 2.0 * vUv);
+
+  float edging = abs((pow(position.y, 5.0) + pow(position.x, 5.0)) / 2.0);
+  float perc = (0.2 * pow(speed + 1.0, 2.0) + edging * 0.8) * distanceZ * distanceX;
+
+  vec3 color = mix(slowColor, fastColor, speed);
+
+/*
+  float red = r * perc + pulse;
+  float green = g * perc + pulse;
+  float blue = b * perc + pulse;
+  */
+
+  gl_FragColor = vec4(color, 1.0);
+}
+
+
+`, { inline: true })
 
 
 /*
