@@ -19,10 +19,11 @@ https://github.com/geommills/esrileaflet3JS/blob/master/scripts/client/src/terra
 import Stations from './Stations'
 import Jet from './Jet'
 import Tunnel from './Tunnel'
-import Metros from './Metros'
+import Topo from './Topo'
 
-export default class WienerLinien extends AScene {
-   constructor(renderer, loader, aaa, camera, args) {
+export
+default class WienerLinien extends AScene {
+    constructor(renderer, loader, aaa, camera, args) {
         super(
             renderer,
             loader,
@@ -30,21 +31,14 @@ export default class WienerLinien extends AScene {
             camera,
             args, {
                 s: new Stations('STATIONS', {
-                    timeScale: 1
                 }, renderer, loader, aaa),
                 j: new Jet('JET', {
-                    speed: 0.5,
-                    cars: true
+                    speed: 0.5
                 }, renderer, loader, aaa, camera),
                 t: new Tunnel('TUNNEL', {
-                    wireframe: true
+                    speed: 0.5
                 }),
-                m: new Metros('METROS', {
-                    speed: 0.5,
-                    mountainHeight: 0.5,
-                    terrainHeight: 0.5,
-                    yDistortion: 0.5,
-                    xDistortion: 0.5
+                m: new Topo('TOPO', {
                 }, renderer, loader, aaa, camera)
             })
 
@@ -53,8 +47,6 @@ export default class WienerLinien extends AScene {
         this.camera.lookAt(new THREE.Vector3())
 
         this.setVis(this.vis.s)
-
+    }
 
 }
-
-export default WienerLinien

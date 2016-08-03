@@ -13,50 +13,19 @@ const smoothstep = require('smoothstep')
 import AObject from '../AObject'
 
 // https://github.com/raurir/codedoodl.es/blob/master/doodles/raurir/racing-lines/index.html
-
-const VIS = "jet"
-
 const COLS = 12,
   ROWS = 30
 
-const conf = {
-  on: true,
-  speed: 0.5
-}
-
-function jet(scene, on = false) {
-
-  conf.on = on
-
-  const group = new THREE.Group()
-  scene.getScene().add(group)
-  group.visible = conf.on
-
-
-  const jet = new Jet({
-    group: group
-  })
-
-  scene.getEvents().on('tick', t => {
-    jet.update(t.time)
-  })
-
-  scene.addVisOn(VIS, _ => {
-    conf.speed = 0.5
-    scene.fadeIn(group, 1)
-  })
-  scene.addVisOff(VIS, _ => {
-    tweenr.to(conf, {
-      speed: -1,
-      duration: 5
-    })
-  })
-
-  scene.addVis(VIS, conf)
-}
 
 export default class Jet extends AObject {
-  constructor(args) {
+    constructor(name, conf, renderer, loader, aaa, camera) {
+    super(name, conf)
+
+    this.renderer = renderer
+    this.loader = loader
+    this.aaa = aaa
+    this.camera = camera
+
     this.EMPTY_SLOT = "empty"
     this.BOTTOM = "bottom"
     this.TOP = "top"
@@ -72,9 +41,6 @@ export default class Jet extends AObject {
 
     this.DEPTH = ROWS * (this.CUBE.depth + this.CUBE.gap)
     this.WIDTH = COLS * (this.CUBE.width + this.CUBE.gap)
-
-
-    this.group = args.group
 
     this.meshes = []
     this.cubes = {
@@ -124,7 +90,7 @@ export default class Jet extends AObject {
 
       this.cubes[yai][zi][xi] = mesh
 
-      this.group.add(mesh)
+      this.add(mesh)
 
       this.meshes.push(mesh)
         /*
