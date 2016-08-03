@@ -4,7 +4,7 @@ import Cage from './Cage'
 import Scheduled from './Scheduled'
 
 const executedData = require('./test_data/executed.json')
-const scheduledData = require('./test_data/scheduled.json') 
+const scheduledData = require('./test_data/scheduled.json')
 
 console.log(Scheduled.doNext)
 
@@ -18,9 +18,10 @@ default class ExecutedScene extends AScene {
             camera,
             args, {
                 c: new Cage('CAGE', {
-                    cageSpeed: 1,
-                    pictures: false,
                     data: executedData,
+                    cage: false,
+                    executed: false,
+                    currentOn: false,
                     cageOpen: false,
                 }, renderer, loader, aaa, camera),
                 s: new Scheduled('SCHEDULED', {
@@ -28,14 +29,21 @@ default class ExecutedScene extends AScene {
                 }, renderer, loader, aaa, camera)
             })
 
-        this.vis.s.addPar({doNext: this.vis.s.doNext})
+        this.vis.c.addPar({
+            doNext: this.vis.c.doNext,
+            doSmash: this.vis.c.doSmash
+        })
+
+        this.vis.s.addPar({
+            doNext: this.vis.s.doNext
+        })
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
 
 
-        this.setVis(this.vis.s)
+        this.setVis(this.vis.c)
     }
 
 }

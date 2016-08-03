@@ -91,10 +91,7 @@ default class AObject extends THREE.Object3D {
         Object.keys(this.conf).forEach((prop, i) => {
             const nr = Number.parseInt(key)
             if (nr == i + 1) {
-                console.log("Emitting " + prop)
-
                 let val = this.conf[prop]
-                console.log(typeof(val))
                 if (typeof(val) === 'boolean') {
                     val = !val
                 } else if (typeof(val) === 'number') {

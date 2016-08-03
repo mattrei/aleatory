@@ -186,11 +186,13 @@ default class AScene extends THREE.Scene {
     }
 
     keyPressed(key, isShift) {
+
         const v = this.vis[key]
         if (v === this.currentVis) {
             this.clearVis()
         } else if (v) {
             this.setVis(v)
+            this.start()
         } else if (this.currentVis) {
           this.currentVis.keyPressed(key, isShift)
         }

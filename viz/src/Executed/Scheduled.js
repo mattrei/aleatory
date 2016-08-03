@@ -10,8 +10,8 @@ const glslify = require('glslify')
 
 const newArray = require('new-array')
 
-const NUM_PARTICLES = 400000,
-    MAX_PARTICLE_DIST = 6000
+const NUM_PARTICLES = 100000,
+    MAX_PARTICLE_DIST = 3000
 
 export
 default class Scheduled extends AObject {
@@ -26,6 +26,8 @@ default class Scheduled extends AObject {
         this.ready = false
         this.tick = 0
 
+        this.meshes = []
+        this.currentIdx = 0
         this.createScheduled()
 
     }
@@ -54,7 +56,6 @@ default class Scheduled extends AObject {
         const particleCount = 50000
 
         let points = THREE.GeometryUtils.randomPointsInGeometry(textGeo, particleCount);
-        console.log(points)
 
         let data = new Float32Array(particleCount * 3);
 
@@ -99,198 +100,182 @@ default class Scheduled extends AObject {
         this.add(dot)
     }
 
-    doNext(meshes, mIdx) {
+    doNext() {
 
-   const oldMesh = meshes[mIdx % meshes.length]
-            mIdx += 1
-            const newMesh = meshes[mIdx % meshes.length]
+        const oldMesh = this.meshes[this.currentIdx % this.meshes.length]
+        this.currentIdx += 1
+        const newMesh = this.meshes[this.currentIdx % this.meshes.length]
 
-            tweenr.to(oldMesh.material, {
-                opacity: 0,
-                duration: 2
+
+        tweenr.to(oldMesh.material, {
+            opacity: 0,
+            duration: 2
+        })
+            .on('complete', _ => {
+                oldMesh.visible = false
+                newMesh.visible = true
             })
-                .on('complete', _ => {
-                    oldMesh.visible = false
-                    newMesh.visible = true
-                })
-            tweenr.to(newMesh.material, {
-                opacity: 1,
-                delay: 2,
-                duration: 5
-            })
+        tweenr.to(newMesh.material, {
+            opacity: 1,
+            delay: 2,
+            duration: 5
+        })
     }
 
+    _getPixel(imgData, x, y) {
+        let r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+        r = imgData.data[offset];
+        g = imgData.data[offset + 1];
+        b = imgData.data[offset + 2];
+        a = imgData.data[offset + 3];
+
+        return Math.floor((r + g + b) / 256)
+    }
+
+    _getImgData(pic) {
+
+        return new Promise(function(resolve, reject) {
+
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            var image = new Image();
+            image.src = pic;
+            image.onload = function() {
+
+                canvas.width = image.width;
+                canvas.height = image.height;
+                context.drawImage(image, 0, 0);
+                var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                resolve(imgData)
+            }
+
+        })
+
+    }
+
+    loadData(data, particle) {
+
+        data.forEach(s => {
+            this.loader.load(s.img, (texture) => {
+                texture.minFilter = THREE.LinearFilter
+
+                this._getImgData(s.img).then((imgData => {
+
+                    const particleMaterial = new THREE.ShaderMaterial({
+
+                        uniforms: {
+                            color: {
+                                value: new THREE.Color(0xffffff)
+                            },
+                            texture: {
+                                value: particle
+                            },
+                            fog: {
+                                value: 1.0
+                            }
+                        },
+                        vertexShader: scheduledVS,
+                        fragmentShader: scheduledFS,
+                        blending: THREE.AdditiveBlending,
+                        depthTest: false,
+                        transparent: true
+                    });
+
+                    const geometry = new THREE.BufferGeometry();
+
+                    const positions = new Float32Array(NUM_PARTICLES * 3),
+                        colors = new Float32Array(NUM_PARTICLES * 3),
+                        sizes = new Float32Array(NUM_PARTICLES);
+
+                    var color = new THREE.Color();
+
+                    let imageScale = 25,
+                        zSpread = 200
+
+
+                    for (let i = 0, i3 = 0; i < NUM_PARTICLES; i++, i3 += 3) {
+
+                        let position = new THREE.Vector3(
+                            random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+                            random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
+                            random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
+                        );
+
+                        let color = new THREE.Color(0xffffff)
+                        let size = 10
+
+                        var gotIt = false;
+
+                        // Randomly select a pixel
+                        const x = Math.round(imgData.width * Math.random()),
+                            y = Math.round(imgData.height * Math.random()),
+                            bw = this._getPixel(imgData, x, y)
+
+                        // Read color from pixel
+                        if (bw > 1) {
+                            // If black, get position
+
+                            position = new THREE.Vector3(
+                                (imgData.width / 2 - x) * imageScale, 
+                                (y - imgData.height / 2) * imageScale,
+                                Math.random() * zSpread * 2 - Math.random() * zSpread
+                            )
+
+                            color = new THREE.Color(0xff00ff)
+                            size = 20
+                        }
+                        // Position
+                        positions[i3 + 0] = position.x;
+                        positions[i3 + 1] = position.y;
+                        positions[i3 + 2] = position.z;
+
+                        // Color
+                        colors[i3 + 0] = color.r;
+                        colors[i3 + 1] = color.g;
+                        colors[i3 + 2] = color.b;
+
+                        // Size
+                        sizes[i] = 20
+                    }
+
+                    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+                    geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
+                    geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+                    let points = new THREE.Points(geometry, particleMaterial);
+                    points.visible = false
+                    this.add(points)
+
+                    this.meshes.push(points)
+
+                    super.tick(dt => {
+                        points.rotation.x = -dt * 0.02;
+                        points.rotation.y = -dt * 0.02;
+                        points.rotation.z = Math.PI - dt * 0.004;
+                    })
+
+                }))
+            })
+
+        })
+
+    }
 
 
     createScheduled() {
 
 
-        let group = new THREE.Group()
-        this.add(group)
+        super.on('doNext', p => this.doNext())
 
-        const meshes = []
-        let mIdx = 0
+        this.loader.load('/dist/assets/Executed/particle.png', texture => {
 
+            super.on('data', data => this.loadData(data, texture))
 
-        super.on('doNext', p => this.doNext(meshes, mIdx))
-
-        super.on('data', data => {
-
-            this.loader.load('/dist/assets/Executed/particle.png', (particleImg) => {
-
-                data.forEach(s => {
-                    this.loader.load(s.img, (texture) => {
-                        texture.minFilter = THREE.LinearFilter
-
-                        let getPixel = (imgData, x, y) => {
-                            var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
-                            r = imgData.data[offset];
-                            g = imgData.data[offset + 1];
-                            b = imgData.data[offset + 2];
-                            a = imgData.data[offset + 3];
-
-                            let avg = (r + g + b) / 3
-
-                            return Math.floor(avg / (256 / 3))
-
-                        }
-
-
-
-                        let getImgData = (pic) => {
-
-
-                            return new Promise(function(fulfill, reject) {
-
-                                var canvas = document.createElement("canvas");
-                                var context = canvas.getContext("2d");
-                                var image = new Image();
-                                image.src = pic;
-                                image.onload = function() {
-
-                                    canvas.width = image.width;
-                                    canvas.height = image.height;
-                                    context.drawImage(image, 0, 0);
-                                    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-                                    fulfill(imgData)
-                                }
-
-                            })
-
-                        }
-
-
-                        getImgData(s.img).then((imgData => {
-                            console.log("creating particles")
-
-                            //this.scheduled.push({img: texture, imgData: imgData})
-
-                            //var particleShader = THREE.ParticleShader;
-                            //var particleUniforms = THREE.UniformsUtils.clone(particleShader.uniforms);
-                            //particleUniforms.texture.value = particleImg;
-                            //particleUniforms.fog.value = 1;
-
-
-                            var particleMaterial = new THREE.ShaderMaterial({
-
-                                uniforms: {
-                                    color: {
-                                        type: "c",
-                                        value: new THREE.Color(0xffffff)
-                                    },
-                                    texture: {
-                                        type: "t",
-                                        value: particleImg
-                                    },
-                                    fog: {
-                                        type: "f",
-                                        value: 1.0
-                                    }
-                                },
-                                vertexShader: scheduledVS,
-                                fragmentShader: scheduledFS,
-                                blending: THREE.AdditiveBlending,
-                                depthTest: false,
-                                transparent: true
-                            });
-
-                            let geometry = new THREE.BufferGeometry();
-
-                            var positions = new Float32Array(NUM_PARTICLES * 3);
-                            var colors = new Float32Array(NUM_PARTICLES * 3);
-                            var sizes = new Float32Array(NUM_PARTICLES);
-
-                            var color = new THREE.Color();
-
-                            let imageScale = 25,
-                                zSpread = 200
-
-
-                            for (var i = 0, i3 = 0; i < NUM_PARTICLES; i++, i3 += 3) {
-
-                                var position = new THREE.Vector3(
-                                    random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
-                                    random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST),
-                                    random(-MAX_PARTICLE_DIST, MAX_PARTICLE_DIST)
-                                );
-
-                                var gotIt = false;
-
-                                // Randomly select a pixel
-                                var x = Math.round(imgData.width * Math.random());
-                                var y = Math.round(imgData.height * Math.random());
-                                var bw = getPixel(imgData, x, y);
-
-                                // Read color from pixel
-                                if (bw == 1) {
-                                    // If black, get position
-
-                                    position = new THREE.Vector3(
-                                        (imgData.width / 2 - x) * imageScale, (y - imgData.height / 2) * imageScale,
-                                        Math.random() * zSpread * 2 - Math.random() * zSpread
-                                    );
-                                }
-                                // Position
-                                positions[i3 + 0] = position.x;
-                                positions[i3 + 1] = position.y;
-                                positions[i3 + 2] = position.z;
-
-                                // Color
-                                color.setRGB(1, 1, 1);
-                                colors[i3 + 0] = color.r;
-                                colors[i3 + 1] = color.g;
-                                colors[i3 + 2] = color.b;
-
-                                // Size
-                                sizes[i] = 20;
-
-                            }
-
-                            geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-                            geometry.addAttribute('customColor', new THREE.BufferAttribute(colors, 3));
-                            geometry.addAttribute('size', new THREE.BufferAttribute(sizes, 1));
-
-                            let points = new THREE.Points(geometry, particleMaterial);
-                            points.visible = conf.on
-                            //this.scene.add(points)
-                            group.add(points)
-
-                            meshes.push(points)
-
-                            super.tick(dt => {
-                                points.rotation.x = -dt * 0.002;
-                                points.rotation.y = -dt * 0.002;
-                                points.rotation.z = Math.PI - dt * 0.004;
-                            })
-
-                        }))
-                    })
-
-                })
-
-            })
-
+            if (this.conf.data) {
+                this.loadData(this.conf.data, texture)
+            }
         })
+
 
 
     }

@@ -25,7 +25,7 @@ import Intro from './Intro'
 import Executed from './Executed'
 //import RefugeesScene from './RefugeesScene'
 //import DronesScene from './Drones'
-import WienerLinien from './WienerLinien'
+//import WienerLinien from './WienerLinien'
 import Outro from './Outro'
 
 // TODO: use rhizome?
@@ -306,7 +306,7 @@ default class Main extends THREE.WebGLRenderer {
             this.scenes = {}
             this.scenes.intro = new Intro(this, loader, aaa, camera, args)
             this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), args)
-            this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
+            //this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
             //this.scenes.s1 = new RefugeesScene(args)
             //this.scenes.s1 = new DronesScene(args)
             //this.scenes.s1 = new OceanScene(args)
