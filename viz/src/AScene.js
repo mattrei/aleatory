@@ -19,6 +19,9 @@ default class AScene extends THREE.Scene {
         super()
         this.isStopped = false
         this.vis = vis
+        Object.keys(vis).forEach(v => {
+          vis[v].getEvents().on('fog', (f) => this.setFog(f))
+        })
 
         this.aaa = aaa
 
@@ -59,6 +62,10 @@ default class AScene extends THREE.Scene {
 
         this.setVis(vis[def])
 
+    }
+
+    setFog(fog) {
+      this.fog = fog
     }
 
     _addHelpers() {
@@ -190,14 +197,14 @@ default class AScene extends THREE.Scene {
         this.isStopped = true
     }
 
-    keyPressed(key) {
+    keyPressed(key, isShift) {
         const v = this.vis[key]
         if (v === this.currentVis) {
             this.clearVis()
         } else if (v) {
             this.setVis(v)
         } else if (this.currentVis) {
-            this.currentVis.keyPressed(key)
+          this.currentVis.keyPressed(key, isShift)
         }
     }
 

@@ -12,6 +12,14 @@ default class AObject extends THREE.Object3D {
         this.isStopped = true
     }
 
+    sceneFog(fog) {
+    	this.events.emit('fog', fog)
+    }
+
+    getEvents() {
+    	return this.events
+    }
+
     on(prop, func) {
         this.events.on(prop, func)
     }
@@ -78,7 +86,7 @@ default class AObject extends THREE.Object3D {
         this.events.emit(prop, value)
     }
 
-    keyPressed(key) {
+    keyPressed(key, isShift) {
         Object.keys(this.conf).forEach((prop, i) => {
             const nr = Number.parseInt(key)
             if (nr == i + 1) {
@@ -89,7 +97,7 @@ default class AObject extends THREE.Object3D {
                 if (typeof(val) === 'boolean') {
                     val = !val
                 } else if (typeof(val) === 'number') {
-                    val += 0.1
+                	isShift ? val -= 0.1 : val += 0.1
                 }
 
                 this.propChanged(prop, val)

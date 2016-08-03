@@ -21,8 +21,13 @@ import Color from 'color'
 
 export default class Terrain extends AObject {
 
-  constructor(name, conf, scene) {
-    super(name, conf, scene)
+  constructor(name, conf, renderer, loader, aaa, camera) {
+    super(name, conf)
+
+    this.renderer = renderer
+    this.loader = loader
+    this.aaa = aaa
+    this.camera = camera
 
     this.ORB_COLOR = new THREE.Color(0xff00ff)
 
@@ -37,7 +42,7 @@ export default class Terrain extends AObject {
 
     this.orb = null
     this.orbLight = null
-    this.orbCamera = this.scene.getCamera()
+    this.orbCamera = camera
 
     //this.ascene.getScene().fog = new THREE.FogExp2(0xefd1b5, 0.01);
 
@@ -62,7 +67,7 @@ export default class Terrain extends AObject {
   }
 
   initOrb() {
-    this.scene.getLoader().load(
+    this.loader.load(
       '/dist/assets/Intro/fireflie.png', (texture) => {
 
         const material = new THREE.SpriteMaterial({

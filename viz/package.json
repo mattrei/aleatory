@@ -68,6 +68,7 @@
     "glslify": "^5.0.0",
     "hex-rgb": "^1.0.0",
     "index-of-array": "^1.0.0",
+    "keycode": "^2.1.4",
     "kindred-shader-formatter": "^1.0.0",
     "leapjs": "^0.6.4",
     "lerp": "^1.0.3",
