@@ -10,6 +10,7 @@ import Mare from './Mare'
 
 
 import headlines_data from './test_data/headlines.json'
+import refugees_data from './test_data/refugees.json'
 
 
 export
@@ -25,8 +26,7 @@ default class RefugeesScene extends AScene {
                     data: headlines_data
                 }, renderer, loader, aaa),
                 r: new Refugees('REFUGEES', {
-                    speed: 0.5,
-                    cars: true
+                    data: refugees_data
                 }, renderer, loader, aaa, camera),
                 m: new City('MARE', {
                     wireframe: true
