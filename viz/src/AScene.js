@@ -110,7 +110,9 @@ default class AScene extends THREE.Scene {
 
         if (this.isStopped) return 
 
-        if (this.currentVis) this.currentVis.update(delta)
+        if (this.currentVis) {
+            this.currentVis.update(delta)
+        }
 
         // Iterate over all controllers and update if changed via OSC messages
         if (this.gui) {

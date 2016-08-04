@@ -282,7 +282,7 @@ var center = new THREE.Vector3();
 
   update(dt) {
 
-    if (!super.update(dt)) return
+    super.update(dt)
 
     if (!this.ready) return
 

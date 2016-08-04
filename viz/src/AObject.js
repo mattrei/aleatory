@@ -80,7 +80,6 @@ default class AObject extends THREE.Object3D {
 
     update(delta) {
         if (!this.isStopped) this.events.emit('tick', delta)
-        return !this.isStopped
     }
 
     propChanged(prop, value) {

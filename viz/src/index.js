@@ -59,6 +59,7 @@ default class Main extends THREE.WebGLRenderer {
 
         this.stats = new Stats()
         this.stats.domElement.style.position = 'absolute'
+        this.stats.domElement.style.top = 0
         document.body.appendChild(this.stats.domElement)
         this.gui = new dat.GUI()
         this.events = new Events()
@@ -129,6 +130,12 @@ default class Main extends THREE.WebGLRenderer {
             url: OSC_URL
         })
 
+        const debug = document.createElement('div')
+        debug.id = "debug"
+        debug.style.position = 'absolute'
+        debug.style.top = 0
+        document.body.appendChild(debug)
+        
 
         this.composer = new WAGNER.Composer(this)
         this.canvas = document.createElement('canvas');
@@ -288,6 +295,7 @@ default class Main extends THREE.WebGLRenderer {
             const aaa = new AAudioAnalyser(analyser)
             const manager = new THREE.LoadingManager(),
                 loader = new THREE.TextureLoader(manager)
+                
 
 
             const args = {

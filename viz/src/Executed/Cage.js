@@ -16,6 +16,9 @@ const randomSphere = require('gl-vec3/random')
 const randomSpherical = require('random-spherical/object')(null, THREE.Vector3)
 
 
+const createTextGeometry = require('three-bmfont-text')
+const loadFont = require('load-bmfont')
+
 const E_SPHERE_RADIUS = 3500,
     E_SM_SPHERE_RADIUS = 3000,
     EXECUTEDS_RADIUS = 5,
@@ -35,12 +38,15 @@ default class Cage extends AObject {
         this.ready = false
         this.tick = 0
 
+        this.add(new THREE.AmbientLight(0xffffff))
+
         //this.createAsteroids()
         this.createCage()
 
         this.spherePositions = []
         this.meshes = []
         this.currentIdx = 0
+        this.targetPosition = new THREE.Vector3()
         this.createExecutedSphere()
     }
 
@@ -301,30 +307,31 @@ default class Cage extends AObject {
     }
 
     doLookAt(m) {
-        console.log("looking at")
-        if (!this.camera.target) {
-            this.camera.target = m
+
+        if (this.targetPosition.length() == 0) {
+            this.targetPosition = m.position.clone()
         }
 
+        const dur = this.targetPosition.distanceTo(m.position) * LOOKAT_DUR
+
+
         const vector = new THREE.Vector3()
-        vector.copy(m.position).multiplyScalar(3);
+        vector.copy(m.position).multiplyScalar(2)
 
-
-        this.camera.matrixAutoUpdate = true
         tweenr.to(this.camera.position, {
             x: vector.x,
             y: vector.y,
             z: vector.z,
             duration: LOOKAT_DUR
         }).on('update', () => {
-                this.camera.lookAt(this.camera.target)
-            })
-            .on('complete', () => {
-                this.camera.lookAt(this.camera.target)
-            })
+            this.camera.lookAt(this.targetPosition)
+        }).on('complete', () => {
+            this.camera.lookAt(this.targetPosition)
+            this.showText(m)
+        })
 
 
-        tweenr.to(this.camera.target, {
+        tweenr.to(this.targetPosition, {
             x: m.position.x,
             y: m.position.y,
             z: m.position.z,
@@ -343,20 +350,23 @@ default class Cage extends AObject {
 
     showText(m) {
         const e = m.userDAta
-            var textGeo = new THREE.TextGeometry( "My Text", {
-        font: this.oswaldFont,
-        size: 10,
-        height: 50,
-        curveSegments: 12,
-        bevelThickness: 2,
-        bevelSize: 5,
-        bevelEnabled: true
+        var textGeo = new THREE.TextGeometry("My Text", {
+            font: this.oswaldFont,
+            size: 10,
+            height: 50,
+            curveSegments: 12,
+            bevelThickness: 2,
+            bevelSize: 5,
+            bevelEnabled: true
 
-    } );
+        });
+        textGeo.center()
 
-    var textMaterial = new THREE.MeshNormalMaterial( { color: 0xff0000 } );
+        var textMaterial = new THREE.MeshNormalMaterial({});
 
-    var mesh = new THREE.Mesh( textGeo, textMaterial );
+        var mesh = new THREE.Mesh(textGeo, textMaterial);
+
+        this.add(mesh)
 
     }
 
@@ -492,7 +502,6 @@ default class Cage extends AObject {
     }
 
     doSphere(dur) {
-        console.log("doing sphere")
         for (let i = 0; i < this.meshes.length; i++) {
 
             const m = this.meshes[i];
@@ -506,7 +515,7 @@ default class Cage extends AObject {
                 z: target.position.z,
                 duration: random(dur, dur * 2)
             })
-            console.log(target.position)
+            //console.log(target.position)
 
             tweenr.to(m.rotation, {
                 x: target.rotation.x,
@@ -541,18 +550,61 @@ default class Cage extends AObject {
         super.on('data', data => this.loadData(data, group))
 
 
-        this.fontLoader.load('/dist/fonts/oswald_regular.typeface.json'), font => {
+        /*
+        this.fontLoader.load('/dist/fonts/gentilis_regular.typeface.json'), font => {
             this.oswaldFont = font
+            console.log("Font loaded")
         }
+        */
+
+        loadFont('/dist/fnt/Lato-Regular-64.fnt', (err, font) => {
+            // create a geometry of packed bitmap glyphs, 
+            // word wrapped to 300px and right-aligned
+
+            
+            const geometry = createTextGeometry({
+                width: 300,
+                align: 'right',
+                font: font,
+                text: "Hi all"
+            })
+            console.log(geometry.computeBoundingSphere())
+
+            // change text and other options as desired
+            // the options sepcified in constructor will
+            // be used as defaults
+            //geometry.update('Lorem ipsum\nDolor sit amet.')
+
+            // the texture atlas containing our glyphs
+            this.loader.load('/dist/fnt/lato.png', texture => {
+
+                console.log("bitmap loaded")
+                /*
+                var material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    transparent: true,
+                    color: 0xaaffff
+                })
+                */
+                const material = new THREE.MeshNormalMaterial()
+
+                // now do something with our mesh!
+                var mesh = new THREE.Mesh(geometry, material)
+                mesh.scale.x = 10
+                this.add(mesh)
+                console.log(mesh.position)
+            })
+        })
+
     }
 
     update(dt) {
 
-        if (!super.update(dt)) return
-
-        if (!this.ready) return
+        super.update(dt)
 
         this.tick += dt
+
+        //this.camera.position.copy(this.cameraPosition)
 
         this.meshes.forEach(m => m.material.uniforms.time.value = this.tick)
 
