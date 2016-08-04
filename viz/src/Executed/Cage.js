@@ -341,6 +341,29 @@ default class Cage extends AObject {
       */
     }
 
+    showText(m) {
+        const e = m.userDAta
+            var textGeo = new THREE.TextGeometry( "My Text", {
+        font: this.oswaldFont,
+        size: 10,
+        height: 50,
+        curveSegments: 12,
+        bevelThickness: 2,
+        bevelSize: 5,
+        bevelEnabled: true
+
+    } );
+
+    var textMaterial = new THREE.MeshNormalMaterial( { color: 0xff0000 } );
+
+    var mesh = new THREE.Mesh( textGeo, textMaterial );
+
+    }
+
+    hideText() {
+
+    }
+
     doSmash() {
         const mesh = this.meshes[this.currentIdx % this.meshes.length]
 
@@ -516,6 +539,11 @@ default class Cage extends AObject {
 
         if (this.conf.data) this.loadData(this.conf.data, group)
         super.on('data', data => this.loadData(data, group))
+
+
+        this.fontLoader.load('/dist/fonts/oswald_regular.typeface.json'), font => {
+            this.oswaldFont = font
+        }
     }
 
     update(dt) {

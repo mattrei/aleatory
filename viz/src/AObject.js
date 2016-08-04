@@ -9,6 +9,7 @@ default class AObject extends THREE.Object3D {
         this.events = new Events()
         this.name = name
         this.conf = conf
+        this.fontLoader = new THREE.FontLoader()
         this.isStopped = true
     }
 
