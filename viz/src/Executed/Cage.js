@@ -18,6 +18,7 @@ const randomSpherical = require('random-spherical/object')(null, THREE.Vector3)
 
 const createTextGeometry = require('three-bmfont-text')
 const loadFont = require('load-bmfont')
+const createSDF = require('three-bmfont-text/shaders/sdf')
 
 const E_SPHERE_RADIUS = 3500,
     E_SM_SPHERE_RADIUS = 3000,
@@ -561,38 +562,63 @@ default class Cage extends AObject {
             // create a geometry of packed bitmap glyphs, 
             // word wrapped to 300px and right-aligned
 
-            
+
             const geometry = createTextGeometry({
-                width: 300,
-                align: 'right',
+                //width: 300,
+                align: 'center',
                 font: font,
                 text: "Hi all"
             })
-            console.log(geometry.computeBoundingSphere())
+            console.log(geometry)
 
-            // change text and other options as desired
-            // the options sepcified in constructor will
-            // be used as defaults
-            //geometry.update('Lorem ipsum\nDolor sit amet.')
+            //geometry.update({text:'Lorem ipsum\nDolor sit amet.}')
 
-            // the texture atlas containing our glyphs
             this.loader.load('/dist/fnt/lato.png', texture => {
 
-                console.log("bitmap loaded")
-                /*
-                var material = new THREE.MeshBasicMaterial({
-                    map: texture,
+                var material = new THREE.RawShaderMaterial({
+                    vertexShader: glslify('./font.vert'),
+                    fragmentShader: glslify('./font.frag'),
+                    uniforms: {
+                        animate: {
+                            value: 1
+                        },
+                        iGlobalTime: {
+                            value: 0
+                        },
+                        map: {
+                            value: texture
+                        },
+                        color: {
+                            value: new THREE.Color('#000')
+                        }
+                    },
                     transparent: true,
-                    color: 0xaaffff
+                    side: THREE.DoubleSide,
+                    depthTest: false
                 })
+
+                /*
+                var material = new THREE.RawShaderMaterial(createSDF({
+                    map: texture,
+                    side: THREE.DoubleSide,
+                    transparent: true,
+                    color: 'rgb(230, 230, 230)'
+                }))
                 */
-                const material = new THREE.MeshNormalMaterial()
+
+                var layout = geometry.layout
+                var text = new THREE.Mesh(geometry, material)
+                text.position.x = -layout.width / 2
+                text.position.y = layout.height * 1.035
+
+                var textAnchor = new THREE.Object3D()
+                textAnchor.scale.multiplyScalar(-0.005)
+                textAnchor.add(text)
 
                 // now do something with our mesh!
-                var mesh = new THREE.Mesh(geometry, material)
-                mesh.scale.x = 10
-                this.add(mesh)
-                console.log(mesh.position)
+
+                this.add(textAnchor)
+
             })
         })
 
