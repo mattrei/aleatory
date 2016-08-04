@@ -569,7 +569,6 @@ default class Cage extends AObject {
                 font: font,
                 text: "Hi all"
             })
-            console.log(geometry)
 
             //geometry.update({text:'Lorem ipsum\nDolor sit amet.}')
 
@@ -589,7 +588,7 @@ default class Cage extends AObject {
                             value: texture
                         },
                         color: {
-                            value: new THREE.Color('#000')
+                            value: new THREE.Color('#fff')
                         }
                     },
                     transparent: true,
@@ -618,6 +617,12 @@ default class Cage extends AObject {
                 // now do something with our mesh!
 
                 this.add(textAnchor)
+                let time = 1
+                super.tick(dt => {
+                    time += dt
+                        material.uniforms.iGlobalTime.value = time
+                        //material.uniforms.animate.value = time / duration
+                })
 
             })
         })
