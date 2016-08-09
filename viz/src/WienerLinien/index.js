@@ -42,7 +42,7 @@ default class WienerLinien extends AScene {
                 }, renderer, loader, aaa, camera),
                 n: new Topo('NETWORK', {
                 }, renderer, loader, aaa, camera),
-                m: new Topo('METRO', {
+                m: new Metro('METRO', {
                 }, renderer, loader, aaa, camera)
             })
 
@@ -52,7 +52,7 @@ default class WienerLinien extends AScene {
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.n)
+        this.setVis(this.vis.m)
     }
 
 }
