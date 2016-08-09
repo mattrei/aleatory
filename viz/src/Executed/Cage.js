@@ -550,19 +550,7 @@ default class Cage extends AObject {
         if (this.conf.data) this.loadData(this.conf.data, group)
         super.on('data', data => this.loadData(data, group))
 
-
-        /*
-        this.fontLoader.load('/dist/fonts/gentilis_regular.typeface.json'), font => {
-            this.oswaldFont = font
-            console.log("Font loaded")
-        }
-        */
-
         loadFont('/dist/fnt/Lato-Regular-64.fnt', (err, font) => {
-            // create a geometry of packed bitmap glyphs, 
-            // word wrapped to 300px and right-aligned
-
-
             const geometry = createTextGeometry({
                 //width: 300,
                 align: 'center',
@@ -571,9 +559,9 @@ default class Cage extends AObject {
             })
 
             //geometry.update({text:'Lorem ipsum\nDolor sit amet.}')
-
             this.loader.load('/dist/fnt/lato.png', texture => {
 
+/*
                 var material = new THREE.RawShaderMaterial({
                     vertexShader: glslify('./font.vert'),
                     fragmentShader: glslify('./font.frag'),
@@ -595,15 +583,14 @@ default class Cage extends AObject {
                     side: THREE.DoubleSide,
                     depthTest: false
                 })
+*/
 
-                /*
-                var material = new THREE.RawShaderMaterial(createSDF({
+                const material = new THREE.RawShaderMaterial(createSDF({
                     map: texture,
                     side: THREE.DoubleSide,
                     transparent: true,
                     color: 'rgb(230, 230, 230)'
                 }))
-                */
 
                 var layout = geometry.layout
                 var text = new THREE.Mesh(geometry, material)
@@ -614,15 +601,15 @@ default class Cage extends AObject {
                 textAnchor.scale.multiplyScalar(-0.005)
                 textAnchor.add(text)
 
-                // now do something with our mesh!
-
                 this.add(textAnchor)
                 let time = 1
+                /*
                 super.tick(dt => {
                     time += dt
                         material.uniforms.iGlobalTime.value = time
                         //material.uniforms.animate.value = time / duration
                 })
+*/
 
             })
         })

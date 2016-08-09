@@ -50,9 +50,7 @@ export default class Street extends AObject {
     const LINE_WIDTH = 10
     
     const points = this._genPoints()
-
-    var spline = new THREE.CatmullRomCurve3(points)
-    //spline.closed = true
+    this.spline = new THREE.CatmullRomCurve3(points)
 
     const SUBD = NUM_CARLIGHTS * 2
 
@@ -63,7 +61,7 @@ export default class Street extends AObject {
 
         for ( var i = 0; i < points.length * SUBD; i ++ ) {
           var index = i / ( points.length * SUBD );
-          var position = spline.getPoint( index );
+          var position = this.spline.getPoint( index );
           
           middlegeom.vertices[ i ] = new THREE.Vector3( position.x, position.y, position.z );
           
@@ -87,8 +85,6 @@ export default class Street extends AObject {
 
         this.add(left)
         this.add(right)
-
-    this.spline = spline    
   }
 
   _addCarLights(material) {

@@ -10,6 +10,8 @@ const simplex = new(require('simplex-noise'))
 import AObject from '../AObject'
 
 
+const NUM = 20000
+const DEPTH = 200
 
 export
 default class Tunnel extends AObject {
@@ -22,11 +24,9 @@ default class Tunnel extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.NUM = 20000
-        this.DEPTH = -400
-        this.mesh = null
-        this.particles = []
+        this.time = 1
 
+        this.particles = []
 
         this.init()
         this.initParticles()
@@ -34,12 +34,12 @@ default class Tunnel extends AObject {
 
     init() {
 
-        var positions = new Float32Array(this.NUM * 3);
-        var colors = new Float32Array(this.NUM * 3);
-        var opacities = new Float32Array(this.NUM);
-        var sizes = new Float32Array(this.NUM);
+        var positions = new Float32Array(NUM * 3);
+        var colors = new Float32Array(NUM * 3);
+        var opacities = new Float32Array(NUM);
+        var sizes = new Float32Array(NUM);
 
-        for (var i = 0; i < this.NUM; i++) {
+        for (var i = 0; i < NUM; i++) {
             //var mover = new Mover();
             var h = randomInt(60, 210)
             var s = randomInt(30, 90)
@@ -59,11 +59,9 @@ default class Tunnel extends AObject {
         const material = new THREE.ShaderMaterial({
             uniforms: {
                 color: {
-                    type: 'c',
                     value: new THREE.Color(0xffffff)
                 },
                 texture: {
-                    type: 't',
                     value: this.createTexture()
                 }
             },
@@ -85,32 +83,44 @@ default class Tunnel extends AObject {
 
     }
 
+    _genPoints() {
+        const FACTOR = 200
+        const points = []
+        for (let i = 0; i < 1000; i++) {
+            points.push(new THREE.Vector3(random(-1, 1)*FACTOR, random(-1, 1)*FACTOR, i * DEPTH/2))
+        }
+        return points
+    }
+
     initParticles() {
+
+        const points = this._genPoints()
+        this.spline = new THREE.CatmullRomCurve3(points)
+        console.log(this.spline.getLength())
+
         this.particles.forEach(p => {
             const rad = random(0, Math.PI * 2)
-            const range = Math.log(randomInt(2, 128)) / Math.log(128) * 40 + 20
+            const range = Math.log(randomInt(2, 128)) / Math.log(128) * 10 + 20
             const x = Math.cos(rad) * range,
                 y = Math.sin(rad) * range;
 
-            const vector = new THREE.Vector3(x, y, random(0, this.DEPTH))
+            const vector = new THREE.Vector3(x, y, random(0, DEPTH))
 
             p.setPosition(vector)
 
-            const accel = new THREE.Vector3(0, 0, random(0, 2))
+            const accel = new THREE.Vector3(0, 0, random(0, -2))
             p.setAcceleration(accel)
 
             p.setAlpha(0)
             p.setSize(random(2, 4))
-
-
         })
     }
 
-    updateParticles(time) {
+    updateParticles() {
 
         //const vel = new THREE.Vector3(0,0, conf.speed)
 
-        let numParticles = Math.pow(conf.speed, 1.8) * this.NUM
+        let numParticles = Math.pow(this.conf.speed, 1.8) * NUM
         this.particles.forEach(p => {
             if (numParticles-- > 0) {
                 p.setActive(true)
@@ -126,14 +136,8 @@ default class Tunnel extends AObject {
 
                 const pos = p.getPosition()
 
-                const noiseX = 0,
-                    noiseY = 0
-                    //const noiseX = simplex.noise2D(pos.z*0.01, time * 0.01) * 0.5,
-                    //  noiseY = simplex.noise2D(pos.z*0.01, time * 0.01) * 0.5
-                    //const noiseY = simplex.noise2D(pos.z*0.01, (time + 10) * 0.01)
 
-                const vel = new THREE.Vector3(noiseX, noiseY, conf.speed * 3)
-
+                const vel = new THREE.Vector3(0, 0, -this.conf.speed * 3)
 
                 p.setVelocity(vel)
                 p.updateVelocity()
@@ -143,8 +147,8 @@ default class Tunnel extends AObject {
                     p.setAlpha(p.getAlpha() + 0.01)
                 }
 
-                if (pos.z > 0) {
-                    pos.z = this.DEPTH
+                if (pos.z < 0) {
+                    pos.z = DEPTH
                     p.setAlpha(0)
                     p.setActive(false)
                 }
@@ -152,26 +156,37 @@ default class Tunnel extends AObject {
         })
     }
 
-    update(time) {
+    update(dt) {
 
-        this.updateParticles(time)
+        super.update(dt)
+        this.time += dt
+
+        if (this.spline) this.updateParticles()
 
         const positions = this.mesh.geometry.attributes.position.array,
             opacities = this.mesh.geometry.attributes.vertexOpacity.array,
             sizes = this.mesh.geometry.attributes.size.array
 
+
+
         this.particles.forEach((p, i) => {
 
             const pos = p.getPosition()
 
-            positions[i * 3 + 0] = pos.x;
-            positions[i * 3 + 1] = pos.y;
-            positions[i * 3 + 2] = pos.z;
+            const t = ((Math.abs(pos.z) + this.time  * 50 * this.conf.speed) % this.spline.getLength()) / this.spline.getLength()
+            const splinePos = this.spline.getPointAt(t)
+
+            positions[i * 3 + 0] = pos.x + (splinePos.x * (pos.z/DEPTH))
+            positions[i * 3 + 1] = pos.y + (splinePos.y * (pos.z/DEPTH))
+            positions[i * 3 + 2] = pos.z
 
             opacities[i] = p.getAlpha()
             sizes[i] = p.getSize()
         })
 
+        const t = ((1 + this.time  * 50 * this.conf.speed) % this.spline.getLength()) / this.spline.getLength()
+        const splinePos = this.spline.getPointAt(t)
+        this.camera.lookAt(splinePos)
 
         this.mesh.geometry.attributes.position.needsUpdate = true
         this.mesh.geometry.attributes.vertexOpacity.needsUpdate = true

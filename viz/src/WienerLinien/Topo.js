@@ -49,15 +49,12 @@ class Line {
         this.uniforms = {
 
             c: {
-                type: "f",
                 value: 0.5
             },
             p: {
-                type: "f",
                 value: 1.0
             },
             color: {
-                type: "c",
                 value: this.lineColor
             }
 
@@ -443,30 +440,13 @@ default class Topo extends AObject {
         this.lines = []
         this.randomMetro = null
 
-        this.startStats();
-        this.startGUI();
-
-        this.renderer = null;
-        this.camera = null;
-        this.scene = null;
-        this.sceneStation = null;
-        this.composer = null
-        this.counter = 0;
-        this.clock = new THREE.Clock();
-
-        this.createRender();
-        this.createScene();
-
-        this.createStars(120).forEach(m => this.scene.add(m))
-        this.createAsteroids(100).forEach(m => this.scene.add(m))
-
-        this.onResize();
-        this.update();
+//        this.createStars(120).forEach(m => this.scene.add(m))
+        //this.createAsteroids(100).forEach(m => this.scene.add(m))
 
         this.idx = 0
-
     }
 
+/*
     createAsteroids(count, app) {
         const geometries = newArray(6).map(asteroidGeom)
         const material = new THREE.MeshBasicMaterial({
@@ -529,31 +509,7 @@ default class Topo extends AObject {
         })
         return meshes
     }
-
-
-    startStats() {
-        this.stats = new Stats();
-        this.stats.domElement.style.position = 'absolute';
-        document.body.appendChild(this.stats.domElement);
-    }
-
-    createRender() {
-        this.renderer = new THREE.WebGLRenderer({
-            antialias: true,
-            clearColor: 0
-        });
-        this.renderer.autoClear = false
-        document.body.appendChild(this.renderer.domElement)
-    }
-
-    createScene() {
-        this.camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 100000);
-        this.camera.position.set(0, 45, 640);
-        this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-        this.controls.maxDistance = 3000;
-
-        this.scene = new THREE.Scene();
-    }
+    */
 
     updateTrainData() {
         console.log("updtaing")
@@ -725,19 +681,6 @@ default class Topo extends AObject {
         setInterval(this.updateTrainData, 10000)
     }
 
-    startGUI() {
-        var gui = new dat.GUI()
-        gui.add(this, 'colorize')
-        gui.add(this, 'morphScale')
-        gui.add(this, 'morphChaos')
-        gui.add(this, 'morphOrdered')
-        gui.add(this, 'allMode')
-        gui.add(this, 'metroMode')
-        gui.add(this, 'clearScene')
-        gui.add(this, 'postProcessing')
-        gui.add(this, 'followRandomTrain')
-        gui.add(this, 'unfollowRandomTrain')
-    }
     followRandomTrain() {
 
         //this.randomMetro = this.lines[Math.floor(Math.random() * this.lines.length)]
@@ -749,33 +692,12 @@ default class Topo extends AObject {
         this.camera.position.set(0, 45, 640)
         this.update()
     }
-    update() {
-        this.stats.begin();
-        TWEEN.update()
-
+    update(dt) {
         if (this.randomMetro) {
             this.randomMetro.updateFollowTrain(this.camera)
         }
-
-        if (this.postProcessing) {
-            this.composer.render()
-        } else {
-            this.renderer.render(this.scene, this.camera);
-        }
-        //this.renderer.render(this.sceneStation, this.camera);
-
-        this.stats.end()
-        requestAnimationFrame(this.update.bind(this));
     }
 
-    onResize() {
-        this.renderer.setSize(window.innerWidth, window.innerHeight);
-        this.camera.aspect = window.innerWidth / window.innerHeight;
-        this.camera.updateProjectionMatrix();
-
-        this.effectFXAA.uniforms['resolution'].value.set(1 / window.innerWidth, 1 / window.innerHeight);
-        this.composer.reset();
-    }
 }
 
 
