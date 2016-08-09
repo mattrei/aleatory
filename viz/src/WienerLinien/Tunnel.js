@@ -96,7 +96,6 @@ default class Tunnel extends AObject {
 
         const points = this._genPoints()
         this.spline = new THREE.CatmullRomCurve3(points)
-        console.log(this.spline.getLength())
 
         this.particles.forEach(p => {
             const rad = random(0, Math.PI * 2)

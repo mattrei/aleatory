@@ -20,6 +20,7 @@ import Stations from './Stations'
 //import Jet from './Jet'
 import Tunnel from './Tunnel'
 import Topo from './Topo'
+import Metro from './Metro'
 
 export
 default class WienerLinien extends AScene {
@@ -39,32 +40,19 @@ default class WienerLinien extends AScene {
                 t: new Tunnel('TUNNEL', {
                     speed: 0.5
                 }, renderer, loader, aaa, camera),
-                m: new Topo('TOPO', {}, renderer, loader, aaa, camera)
+                n: new Topo('NETWORK', {
+                }, renderer, loader, aaa, camera),
+                m: new Topo('METRO', {
+                }, renderer, loader, aaa, camera)
             })
 
-
-        /*
-    startGUI() {
-        var gui = new dat.GUI()
-        gui.add(this, 'colorize')
-        gui.add(this, 'morphScale')
-        gui.add(this, 'morphChaos')
-        gui.add(this, 'morphOrdered')
-        gui.add(this, 'allMode')
-        gui.add(this, 'metroMode')
-        gui.add(this, 'clearScene')
-        gui.add(this, 'postProcessing')
-        gui.add(this, 'followRandomTrain')
-        gui.add(this, 'unfollowRandomTrain')
-    }
-    */
         this.vis.m.addPar({})
 
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.t)
+        this.setVis(this.vis.n)
     }
 
 }
