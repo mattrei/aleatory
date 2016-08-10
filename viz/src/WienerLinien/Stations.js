@@ -1,4 +1,3 @@
-
 const random = require('random-float')
 const randomInt = require('random-int')
 const glslify = require('glslify')
@@ -23,7 +22,13 @@ import AObject from '../AObject'
 const MAX = 100
 const VISIBLE_HS = 5
 
-
+const COLORS = {
+    u1: Color("#D8232A"),
+    u2: Color("#009949"),
+    u3: Color("#F27830"),
+    u4: Color("#945E98"),
+    u6: Color("#774F38")
+}
 
 export
 default class Tunnel extends AObject {
@@ -133,26 +138,15 @@ default class Tunnel extends AObject {
         const ribbons = []
 
         //https://color.adobe.com/Wiener-Linien-color-theme-7623513/edit/?copy=true&base=2&rule=Custom&selected=4&name=Copy%20of%20Wiener%20Linien&mode=rgb&rgbvalues=0.847059,0.137255,0.164706,0.509804,0.721569,0.839216,0.580392,0.368627,0.596078,0,0.6,0.286275,0.94902,0.470588,0.188235&swatchOrder=0,1,2,3,4
-        ribbons.push(new Ribbon({
-            color: Color("#D8232A"),
-            group: group
-        }))
-        ribbons.push(new Ribbon({
-            color: Color("#009949"),
-            group: group
-        }))
-        ribbons.push(new Ribbon({
-            color: Color("#F27830"),
-            group: group
-        }))
-        ribbons.push(new Ribbon({
-            color: Color("#945E98"),
-            group: group
-        }))
-        ribbons.push(new Ribbon({
-            color: Color("#774F38"),
-            group: group
-        }))
+        ribbons.push(new Ribbon(COLORS.u1))
+        ribbons.push(new Ribbon(COLORS.u2))
+        ribbons.push(new Ribbon(COLORS.u3))
+        ribbons.push(new Ribbon(COLORS.u4))
+        ribbons.push(new Ribbon(COLORS.u6))
+
+        ribbons.forEach(r => {
+            group.add(r)
+        })
 
 
         super.tick(dt => {
@@ -218,8 +212,9 @@ default class Tunnel extends AObject {
 
 const RIBBON_SPEED = 1
 
-class Ribbon {
-    constructor(props) {
+class Ribbon extends THREE.Object3D {
+    constructor(color) {
+        super()
 
         this.LINE_LENGTH = 50
 
@@ -231,6 +226,9 @@ class Ribbon {
 
         this.rotateCoef = randomInt(0, 1) == 0 ? -1 : 1
         this.seed = randomInt(1, 100)
+    }
+
+    init() {
 
         this.geometry = new Float32Array(this.LINE_LENGTH * 3)
         this.geometryClone = new Float32Array(this.LINE_LENGTH * 3)
@@ -251,13 +249,13 @@ class Ribbon {
         this.material = new THREE.MeshLineMaterial({
             useMap: false,
             opacity: 1,
-            color: new THREE.Color(props.color.hexString()),
+            color: new THREE.Color(color.hexString()),
             lineWidth: 10,
             transparent: true
         })
         this.materialClone = new THREE.MeshLineMaterial({
             useMap: false,
-            color: new THREE.Color(props.color.lighten(0.4).hexString()),
+            color: new THREE.Color(color.lighten(0.4).hexString()),
             lineWidth: 6,
             opacity: 0.8,
             transparent: true
@@ -267,8 +265,9 @@ class Ribbon {
         this.meshClone = new THREE.Mesh(this.lineClone.geometry, this.materialClone);
 
 
-        props.group.add(this.mesh)
-        props.group.add(this.meshClone)
+        this.add(this.mesh)
+        this.add(this.meshClone)
+
     }
 
     update(dt) {

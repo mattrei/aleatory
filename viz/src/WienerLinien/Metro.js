@@ -2,6 +2,8 @@ const Tweenr = new(require('tweenr'))
 
 import AObject from '../AObject'
 
+
+const Color = require('color')
 const newArray = require('new-array')
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -12,7 +14,7 @@ const simplex = new(require('simplex-noise'))()
 
 const glslify = require('glslify')
 
-const SCALE_Z = 0.05
+const SCALE_Z = 0.1
 const SCALE = 20
 
 const UP = new THREE.Vector3(0, 1, 0);
@@ -23,6 +25,14 @@ const SPEED = 1
 // CENTER of Vienna
 const CENTER_LAT = 48.2
 const CENTER_LNG = 16.3667
+
+const COLORS = {
+    u1: Color("#D8232A"),
+    u2: Color("#945E98"),
+    u3: Color("#F27830"),
+    u4: Color("#009949"),
+    u6: Color("#774F38")
+}
 
 class MetroLine extends THREE.Object3D {
     constructor(topo, lineColor) {
@@ -99,7 +109,7 @@ class MetroLine extends THREE.Object3D {
 */
 
         const SUBD = 20
-        const NUM_PARTICLES = 20
+        const NUM_PARTICLES = 30
 
         const NUM = points.length * SUBD * NUM_PARTICLES
 
@@ -108,35 +118,39 @@ class MetroLine extends THREE.Object3D {
         var opacities = new Float32Array(NUM);
         var sizes = new Float32Array(NUM);
 
-        const hsl = this.lineColor.getHSL()
-        console.log(hsl)
-
         for (var j = 0; j < points.length * SUBD; j++) {
             const index = j / (points.length * SUBD)
             const position = this.spline.getPoint(index)
 
 
             for (var k = 0; k < NUM_PARTICLES; k++) {
-                const i = j*NUM_PARTICLES + k
+                const i = j * NUM_PARTICLES + k
+
+                const newColor = this.lineColor.clone()
+                    .lighten(random(0.0, 0.5))
+                    .darken(random(0.0, 0.5))
+                    //.alpha(random(0, 0.2))
+                    .saturate(random(0.0, 0.5))
+                    .desaturate(random(0.0, 0.5))
 
 
+                var h = 100 //randomInt(hsl.h-10, hsl.h+10)
+                var s = 60 //randomInt(hsl.s-10, hsl.s + 10)
+                    //var color = new THREE.Color('hsl(' + h + ', ' + s + '%, 50%)')
 
-
-                var h = randomInt(hsl.h-10, hsl.h+10)
-                var s = randomInt(hsl.s-10, hsl.s + 10)
-                var color = new THREE.Color('hsl(' + h + ', ' + s + '%, 50%)')
+                const color = new THREE.Color(newColor.hexString())
 
                 color.toArray(colors, i * 3)
 
                 opacities[i] = 1
-                sizes[i] = 2       
+                sizes[i] = 2
 
 
                 const rad = random(0, Math.PI * 2)
                 const range = 0.05
                 const y = Math.cos(rad) * range,
                     z = Math.sin(rad) * range,
-                    x = random(-0.1, 0.1)
+                    x = random(-0.05, 0.05)
 
 
                 positions[i * 3 + 0] = position.x + x
@@ -295,7 +309,6 @@ default class Metro extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.lines = []
         this.randomMetro = null
         this.idx = 0
 
@@ -307,34 +320,40 @@ default class Metro extends AObject {
     metroLines() {
 
         const topo = JSON.parse(U_TOPO)
-        this.lines.push(new MetroLine(
+
+        const group = new THREE.Group()
+        this.add(group)
+
+        const metros = []
+
+        metros.push(new MetroLine(
             topo.u1,
-            new THREE.Color(0xff0000)
+            COLORS.u1
         ))
-        this.lines.push(new MetroLine(
+        metros.push(new MetroLine(
             topo.u2,
-            new THREE.Color(0x00f000)
+            COLORS.u2
         ))
-        this.lines.push(new MetroLine(
+        metros.push(new MetroLine(
             topo.u3,
-            new THREE.Color(0x00ffff)
+            COLORS.u3
         ))
-        const u4 = new MetroLine(
+        metros.push(new MetroLine(
             topo.u4,
-            new THREE.Color(0x00ff00)
-        )
-        const u6 = new MetroLine(
+            COLORS.u4
+        ))
+        metros.push(new MetroLine(
             topo.u6,
-            new THREE.Color(0x00fff0)
-        )
+            COLORS.u6
+        ))
 
-        u4.setData(JSON.parse(U4H[this.idx]))
+        //u4.setData(JSON.parse(U4H[this.idx]))
 
-        this.u4 = u4
-        this.add(u4)
-        this.add(u6)
+        metros.forEach(m => {
+            group.add(m)
+        })
 
-        setInterval(_ => this.updateTrainData(), 10000)
+        //setInterval(_ => this.updateTrainData(), 10000)
     }
 
     followRandomTrain() {
