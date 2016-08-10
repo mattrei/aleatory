@@ -6,6 +6,8 @@ const Tween = require('tween-chain')
 
 const glslify = require('glslify')
 
+import AObject from '../AObject'
+
 
 const MAX_PARTICLES = 1000 * 300000 // has 2mio pixels
 const MAX_PARTICLE_DIST = 50
@@ -39,21 +41,22 @@ default class Map extends AObject {
 
     _getImgData(pic) {
 
-        return new Promise(function(fulfill, reject) {
+        return new Promise((fulfill, reject) => {
 
             var canvas = document.createElement("canvas");
             var context = canvas.getContext("2d");
             var image = new Image();
             image.src = pic;
-            image.onload = function() {
+            image.onload = () => {
                 canvas.width = image.width;
                 canvas.height = image.height;
                 context.drawImage(image, 0, 0);
-                var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                const imgData = context.getImageData(0, 0, canvas.width, canvas.height);
                 fulfill(imgData)
             }
 
         })
+    }
 
         _addAttributes(geometry, imgData) {
 
@@ -176,7 +179,7 @@ default class Map extends AObject {
                                     value: new THREE.Vector2(-180.0, 90.0)
                                 },
                             },
-                            vertexShader: mapVS
+                            vertexShader: mapVS,
                             fragmentShader: mapFS,
                             blending: THREE.AdditiveBlending,
                             transparent: true,

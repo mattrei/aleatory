@@ -1,9 +1,7 @@
 import AScene from '../AScene'
 
-import Headlines from './Headlines'
-import Refugees from './Refugees'
-import Mare from './Mare'
-
+import Map from './Map'
+import Globe from './Globe'
 
 export
 default class DronesScene extends AScene {
@@ -14,9 +12,9 @@ default class DronesScene extends AScene {
             aaa,
             camera,
             args, {
-                m: new Refugees('REFUGEES', {
+                m: new Map('MAP', {
                 }, renderer, loader, aaa, camera),
-                g: new Globe('MAP', {
+                g: new Globe('GLOBE', {
                 }, renderer, loader, aaa),
             })
 
@@ -24,7 +22,7 @@ default class DronesScene extends AScene {
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.m)
+        this.setVis(this.vis.g)
     }
 
     background() {

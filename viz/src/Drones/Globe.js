@@ -10,6 +10,8 @@ const GLOBE_RADIUS = 200
 const RING_SEGMENTS = 64
 
 
+import AObject from '../AObject'
+
 export
 default class Globe extends AObject {
     constructor(name, conf, renderer, loader, aaa, camera) {
@@ -22,6 +24,101 @@ default class Globe extends AObject {
 
         this.ready = false
         this.tick = 0
+
+        this.init()
+    }
+
+    init() {
+
+        const radius = 1,
+            tilt = 0.41,
+            cloudsScale = 1.005,
+            atmoScale = 1.2,
+            moonScale = 0.23
+
+        const textureLoader = this.loader
+
+        const dirLight = new THREE.DirectionalLight(0xffffff);
+        dirLight.position.set(-1, 0, 1).normalize();
+        this.add(dirLight)
+
+        var materialNormalMap = new THREE.MeshPhongMaterial({
+
+            specular: 0x333333,
+            shininess: 15,
+            map: textureLoader.load("/dist/assets/Drones/earth4096.jpg"),
+            specularMap: textureLoader.load("/dist/assets/Drones/earth_specularmap4096.png"),
+            normalMap: textureLoader.load("/dist/assets/Drones/earth_normalmap4096.jpg"),
+            normalScale: new THREE.Vector2(0.85, 0.85),
+            bumpMap: textureLoader.load("/dist/assets/Drones/earth_bumpmap4096.jpg"),
+            bumpScale: new THREE.Vector2(0.05, 0.05)
+
+        });
+
+        // planet
+        const geometry = new THREE.SphereGeometry(radius, 100, 50);
+
+        const meshPlanet = new THREE.Mesh(geometry, materialNormalMap);
+        meshPlanet.rotation.y = 0;
+        meshPlanet.rotation.z = tilt;
+        this.add(meshPlanet);
+
+        // clouds
+        const materialClouds = new THREE.MeshPhongMaterial({
+
+            alphaMap: textureLoader.load("/dist/assets/Drones/clouds4096.jpg"),
+            transparent: true,
+        });
+
+        const meshClouds = new THREE.Mesh(geometry, materialClouds);
+        meshClouds.scale.set(cloudsScale, cloudsScale, cloudsScale);
+        meshClouds.rotation.z = tilt;
+        this.add(meshClouds);
+
+        super.tick(dt => meshClouds.rotation.y += 0.015 * dt)
+
+        // atmosphere
+        const atmoMaterial = new THREE.ShaderMaterial({
+
+            uniforms: {
+                glowIntensity: {
+                    value: 1
+                },
+                redIntensity: {
+                    value: 0
+                },
+                distort: {
+                    value: 0
+                },
+                time: {
+                    value: 0
+                }
+            },
+            fragmentShader: glslify('./Atmosphere.frag'),
+            vertexShader: glslify('./Atmosphere.vert'),
+            side: THREE.BackSide,
+            blending: THREE.AdditiveBlending,
+            transparent: true
+
+        });
+
+        const atmoMesh = new THREE.Mesh(geometry, atmoMaterial)
+        atmoMesh.scale.set(atmoScale, atmoScale, atmoScale)
+        this.add(atmoMesh)
+
+
+        // moon
+        const materialMoon = new THREE.MeshPhongMaterial({
+
+            map: textureLoader.load("/dist/assets/Drones/moon1024.jpg"),
+
+        });
+
+        const meshMoon = new THREE.Mesh(geometry, materialMoon);
+        meshMoon.position.set(radius * 5, 0, 0);
+        meshMoon.scale.set(moonScale, moonScale, moonScale);
+        this.add(meshMoon);
+
     }
 }
 
@@ -449,8 +546,8 @@ class Satellite extends THREE.Object3D {
                     value: this.particleSprite
                 },
             },
-            vertexShader: glslify('./glsl/Drones/Satellite.vert'),
-            fragmentShader: glslify('./glsl/Drones/Satellite.frag'),
+            vertexShader: glslify('./Satellite.vert'),
+            fragmentShader: glslify('./Satellite.frag'),
             depthTest: false,
             transparent: true,
             blending: THREE.AdditiveBlending,

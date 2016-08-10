@@ -316,7 +316,7 @@ default class Main extends THREE.WebGLRenderer {
             this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), args)
             this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
             //this.scenes.s1 = new RefugeesScene(args)
-            this.scenes.drones = new DronesScene(this, loader, aaa, camera.clones(), args)
+            this.scenes.drones = new DronesScene(this, loader, aaa, camera.clone(), args)
             this.scenes.outro = new Outro(this, loader, aaa, camera.clone(), args)
 
             this.setScene(DEF_SCENE)
