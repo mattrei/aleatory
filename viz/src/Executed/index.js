@@ -6,8 +6,6 @@ import Scheduled from './Scheduled'
 const executedData = require('./test_data/executed.json')
 const scheduledData = require('./test_data/scheduled.json')
 
-console.log(Scheduled.doNext)
-
 export
 default class ExecutedScene extends AScene {
     constructor(renderer, loader, aaa, camera, args) {

@@ -1,5 +1,3 @@
-const MAX = 100
-const VISIBLE_HS = 5
 
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -9,19 +7,21 @@ const Color = require('color')
 const simplex = new(require('simplex-noise'))
 const smoothstep = require('smoothstep')
 
+const createTextGeometry = require('three-bmfont-text')
+const loadFont = require('load-bmfont')
+const createSDF = require('three-bmfont-text/shaders/sdf')
+
 require('../utils/THREE.MeshLine')
 
 const HALTESTELLEN = require('./test_data/WienerLinienHaltestellen.json'),
     HALTESTELLEN_KEYS = Object.keys(HALTESTELLEN),
     HALTESTELLEN_LENGTH = HALTESTELLEN_KEYS.length
 
-const VIS = 'stations'
-const conf = {
-    on: true,
-    ribbonSpeed: 0.5
-}
 
 import AObject from '../AObject'
+
+const MAX = 100
+const VISIBLE_HS = 5
 
 
 
@@ -36,35 +36,63 @@ default class Tunnel extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        background()
-        ribbons()
-        names()
-
+        this.background()
+        this.ribbons()
+        this.names()
     }
 
+    _getRandHaltestelle() {
+        return HALTESTELLEN[HALTESTELLEN_KEYS[
+            randomInt(0, HALTESTELLEN_LENGTH - 1)]]['NAME']
+    }
 
     names() {
 
+        const group = new THREE.Group()
+        this.add(group)
         const meshes = []
 
-        for (let i = 0; i < MAX; i++) {
-            let shapes = THREE.FontUtils.generateShapes(_randHaltestelle(), {
-                font: "oswald",
-                weight: "normal",
-                size: 25
-            });
-            let geom = new THREE.ShapeGeometry(shapes);
-            let mat = new THREE.MeshNormalMaterial();
-            let mesh = new THREE.Mesh(geom, mat);
-            geom.center()
 
-            mesh._velocity = random(0.8, 1.9)
-            mesh.position.set(random(-100, 100), random(-100, 100), -500)
+        loadFont('/dist/fnt/Lato-Regular-64.fnt', (err, font) => {
+            this.loader.load('/dist/fnt/lato.png', texture => {
 
-            mesh.visible = false
-            group.add(mesh)
-            meshes.push(mesh)
-        }
+                for (let i = 0; i < MAX; i++) {
+
+                    const geometry = createTextGeometry({
+                        //width: 300,
+                        align: 'center',
+                        font: font,
+                        text: this._getRandHaltestelle()
+                    })
+
+                    const material = new THREE.RawShaderMaterial(createSDF({
+                        map: texture,
+                        side: THREE.DoubleSide,
+                        transparent: true,
+                        color: 'rgb(230, 230, 230)'
+                    }))
+
+                    const text = new THREE.Mesh(geometry, material)
+                    text.position.x = -geometry.layout.width / 2
+                    text.position.y = geometry.layout.height * 1.035
+
+                    var mesh = new THREE.Object3D()
+                    mesh.scale.multiplyScalar(-0.005)
+                    mesh.add(text)
+
+                    this.add(mesh)
+
+
+                    mesh._velocity = random(0.8, 1.9)
+                    mesh.position.set(random(-100, 100), random(-100, 100), -500)
+
+                    mesh.visible = false
+                    group.add(mesh)
+                    meshes.push(mesh)
+
+                }
+            })
+        })
 
         meshes.slice(0, 1).forEach(m => m.visible = true)
 
@@ -72,13 +100,13 @@ default class Tunnel extends AObject {
 
         const [hh, wh] = [window.innerHeight / 4, window.innerWidth / 4]
 
-        scene.getEvents().on('tick', t => {
+        super.tick(dt => {
 
             meshes.forEach((m, i) => {
                 if (m.visible) {
 
                     m.scale.x = m.scale.y = smoothstep(0, 1, 1 - m.position.z / -500)
-                    m.position.z += t.delta + m._velocity
+                    m.position.z += dt + m._velocity
 
                     if (m.position.z > 0) {
                         m.visible = false
@@ -98,6 +126,9 @@ default class Tunnel extends AObject {
 
 
     ribbons() {
+
+        const group = new THREE.Group()
+        this.add(group)
 
         const ribbons = []
 
@@ -123,118 +154,13 @@ default class Tunnel extends AObject {
             group: group
         }))
 
-        scene.getEvents().on('tick', t => {
 
-
+        super.tick(dt => {
             ribbons.forEach(r => {
-                r.update(t.time)
+                r.update(dt)
             })
         })
     }
-
-    spirals() {
-
-        const VIS = 'spirals'
-        const conf = {
-            on: false
-        }
-
-        const group = new THREE.Group()
-        this.scene.add(group)
-        group.visible = conf.on
-
-        let geo = new Float32Array(100 * 3);
-
-        var sz = 2,
-            cxy = 100,
-            cz = cxy * sz;
-        var hxy = Math.PI / cxy,
-            hz = Math.PI / cz;
-        var r = 130;
-
-
-        for (var i = 0; i < geo.length; i += 3) {
-            //geo[ j ] = geo[ j + 1 ] = geo[ j + 2 ] = Math.random() * 100;
-
-            var lxy = i * hxy;
-            var lz = i * hz;
-            var rxy = r * 2 / Math.cosh(lz);
-            var x = rxy * Math.cos(lxy);
-            var y = rxy * Math.sin(lxy);
-            var z = -r * 5 * Math.tanh(lz);
-            //geo[i] =
-
-            geo[i] = x
-            geo[i + 1] = y
-            geo[i + 2] = z
-        }
-
-        const _create = (i, color) => {
-
-            var line = new THREE.MeshLine()
-            line.setGeometry(geo);
-
-            let material = new THREE.MeshLineMaterial({
-                color: new THREE.Color(color),
-                lineWidth: 4,
-                transparent: true
-            });
-
-            var mesh = new THREE.Mesh(line.geometry, material); // this syntax could definitely be improved!
-            mesh.origGeo = geo
-            mesh.geo = new Float32Array(geo)
-            mesh.line = line
-
-            mesh.position.z = i * 80
-
-            return mesh
-        }
-
-        const meshes = []
-
-        meshes.push(_create(0, 'red'))
-        meshes.push(_create(1, 'purple'))
-        meshes.push(_create(2, 'orange'))
-        meshes.push(_create(3, 'green'))
-        meshes.push(_create(4, 'brown'))
-
-        meshes.forEach(m => group.add(m))
-
-        this.events.on('tick', t => {
-
-            const low = scene.getFreq(40, 100)
-            const high = scene.getFreq(4400, 4500)
-            meshes.forEach((m, idx) => {
-                m.rotation.z -= 0.05
-
-                for (let i = 0; i < m.geo.length; i += 3) {
-                    //geo[ i ] += Math.sin((avg + i) * 0.02) * 1
-                    //geo[i] =  geo[i] * simplex.noise2D(geo[i], Math.sin(t.t)) * (20 * avg)
-                    //geo[i] += Math.sin(t.t + idx + i * 0.5) * (avg * 20)
-                    m.geo[i] = m.origGeo[i] + Math.sin(t.time + idx + i * 0.5) * (low * 20) * (high * 10)
-                }
-
-                m.line.setGeometry(m.geo)
-
-            })
-        })
-
-        this.events.on(VIS + '::visOn', _ => {
-            group.visible = true
-            /*
-        meshes.forEach(m => {
-
-          m.material.opacity = 0
-          tweenr.to(m.material, {opacity: 1, duration: 2})
-        })
-        */
-        })
-        this.events.on(VIS + '::visOff', _ => group.visible = false)
-
-
-        scene.addVis(VIS, conf)
-    }
-
 
 
     background() {
@@ -252,46 +178,33 @@ default class Tunnel extends AObject {
             side: THREE.BackSide,
             uniforms: {
                 topColor: {
-                    type: "c",
                     value: new THREE.Color(top)
                 },
                 middleColor: {
-                    type: "c",
                     value: new THREE.Color(middle)
                 },
                 bottomColor: {
-                    type: "c",
                     value: new THREE.Color(bottom)
                 },
-
                 endTopColor: {
-                    type: "c",
                     value: new THREE.Color(top)
                 },
                 endMiddleColor: {
-                    type: "c",
                     value: new THREE.Color(middle)
                 },
                 endBottomColor: {
-                    type: "c",
                     value: new THREE.Color(bottom)
                 },
-
                 lightMixColor: {
-                    type: "c",
                     value: new THREE.Color(lightMix)
                 },
-
                 mixFactor: {
-                    type: "f",
                     value: 0
                 },
                 offset: {
-                    type: "f",
                     value: 0
                 },
                 exponent: {
-                    type: "f",
                     value: 0.8
                 }
             },
@@ -299,25 +212,18 @@ default class Tunnel extends AObject {
         });
 
         const sky = new THREE.Mesh(skyGeo, skyMat);
-        group.add(sky);
-    }
-
-    update(dt) {
-
+        this.add(sky);
     }
 }
 
-
-function _randHaltestelle() {
-    return HALTESTELLEN[HALTESTELLEN_KEYS[
-        randomInt(0, HALTESTELLEN_LENGTH - 1)]]['NAME']
-}
-
+const RIBBON_SPEED = 1
 
 class Ribbon {
     constructor(props) {
 
         this.LINE_LENGTH = 50
+
+        this.time = 1
 
         this.smoothX = 0
         this.smoothY = 0
@@ -365,12 +271,14 @@ class Ribbon {
         props.group.add(this.meshClone)
     }
 
-    update(time) {
+    update(dt) {
 
-        const speed = conf.ribbonSpeed + 0.8
+        const speed = RIBBON_SPEED + 0.8
         const rotateSpeed = 1.1 * this.rotateCoef
         const smoothCoef = 0.05
 
+
+        this.time += dt
 
         //const low = scene.getFreq(40, 100)
         //const high = scene.getFreq(4400, 4500)
@@ -387,9 +295,9 @@ class Ribbon {
 
 
         this.seed += 0.001
-        const nx = simplex.noise2D(this.seed, time * 0.1),
-            ny = simplex.noise2D(this.seed + 10, time * 0.1),
-            nz = simplex.noise2D(this.seed + 100, time * 0.1)
+        const nx = simplex.noise2D(this.seed, this.time * 0.1),
+            ny = simplex.noise2D(this.seed + 10, this.time * 0.1),
+            nz = simplex.noise2D(this.seed + 100, this.time * 0.1)
 
         const globalX = nx * window.innerWidth * 0.25,
             globalY = ny * window.innerHeight * 0.25,
@@ -404,9 +312,9 @@ class Ribbon {
         this.geometry[this.geometry.length - 2] = this.smoothY
         this.geometry[this.geometry.length - 1] = this.smoothZ
 
-        this.geometryClone[this.geometryClone.length - 3] = this.smoothX + Math.sin(time * rotateSpeed * 3) * 10;
-        this.geometryClone[this.geometryClone.length - 2] = this.smoothY + Math.cos(time * rotateSpeed * 3) * 10;
-        this.geometryClone[this.geometryClone.length - 1] = this.smoothZ + Math.sin(time * rotateSpeed * 3) * 10;
+        this.geometryClone[this.geometryClone.length - 3] = this.smoothX + Math.sin(this.time * rotateSpeed * 3) * 10;
+        this.geometryClone[this.geometryClone.length - 2] = this.smoothY + Math.cos(this.time * rotateSpeed * 3) * 10;
+        this.geometryClone[this.geometryClone.length - 1] = this.smoothZ + Math.sin(this.time * rotateSpeed * 3) * 10;
 
 
         this.line.setGeometry(this.geometry, (p) => {
