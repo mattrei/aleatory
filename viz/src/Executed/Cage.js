@@ -596,14 +596,14 @@ default class Cage extends AObject {
                     depthTest: false
                 })
 
-                /*
-                var material = new THREE.RawShaderMaterial(createSDF({
+                
+                material = new THREE.RawShaderMaterial(createSDF({
                     map: texture,
                     side: THREE.DoubleSide,
                     transparent: true,
                     color: 'rgb(230, 230, 230)'
                 }))
-                */
+                
 
                 var layout = geometry.layout
                 var text = new THREE.Mesh(geometry, material)
@@ -620,7 +620,7 @@ default class Cage extends AObject {
                 let time = 1
                 super.tick(dt => {
                     time += dt
-                        material.uniforms.iGlobalTime.value = time
+                    //material.uniforms.iGlobalTime.value = time
                         //material.uniforms.animate.value = time / duration
                 })
 
