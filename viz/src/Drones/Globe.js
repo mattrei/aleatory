@@ -12,6 +12,9 @@ const RING_SEGMENTS = 64
 
 import AObject from '../AObject'
 
+// satellite
+// https://github.com/ykob/sketch-threejs
+
 export
 default class Globe extends AObject {
     constructor(name, conf, renderer, loader, aaa, camera) {
