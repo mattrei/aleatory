@@ -14,22 +14,17 @@ default class DronesScene extends AScene {
             aaa,
             camera,
             args, {
-                g: new Globe('HEADLINES', {
-                    data: headlines_data
-                }, renderer, loader, aaa),
-                r: new Refugees('REFUGEES', {
-                    data: refugees_data
+                m: new Refugees('REFUGEES', {
                 }, renderer, loader, aaa, camera),
-                m: new City('MARE', {
-                    wireframe: true
-                })
+                g: new Globe('MAP', {
+                }, renderer, loader, aaa),
             })
 
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.t)
+        this.setVis(this.vis.m)
     }
 
     background() {

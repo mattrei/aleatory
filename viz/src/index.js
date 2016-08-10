@@ -25,14 +25,14 @@ import Intro from './Intro'
 import Executed from './Executed'
 import WienerLinien from './WienerLinien'
 //import RefugeesScene from './RefugeesScene'
-//import DronesScene from './Drones'
+import DronesScene from './Drones'
 import Outro from './Outro'
 
 // TODO: use rhizome?
 const OSC_URL = "ws://localhost:8081"
 
 global.DEMO_MODE = true
-const DEF_SCENE = "wl"
+const DEF_SCENE = "drones"
 
 export
 default class Main extends THREE.WebGLRenderer {
@@ -316,8 +316,7 @@ default class Main extends THREE.WebGLRenderer {
             this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), args)
             this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
             //this.scenes.s1 = new RefugeesScene(args)
-            //this.scenes.s1 = new DronesScene(args)
-            //this.scenes.s1 = new OceanScene(args)
+            this.scenes.drones = new DronesScene(this, loader, aaa, camera.clones(), args)
             this.scenes.outro = new Outro(this, loader, aaa, camera.clone(), args)
 
             this.setScene(DEF_SCENE)
