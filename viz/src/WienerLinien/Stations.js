@@ -10,7 +10,7 @@ const createTextGeometry = require('three-bmfont-text')
 const loadFont = require('load-bmfont')
 const createSDF = require('three-bmfont-text/shaders/sdf')
 
-require('../utils/THREE.MeshLine')
+//require('../utils/THREE.MeshLine')
 
 const HALTESTELLEN = require('./test_data/WienerLinienHaltestellen.json'),
     HALTESTELLEN_KEYS = Object.keys(HALTESTELLEN),

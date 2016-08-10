@@ -52,7 +52,7 @@ default class WienerLinien extends AScene {
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.m)
+        this.setVis(this.vis.n)
     }
 
 }

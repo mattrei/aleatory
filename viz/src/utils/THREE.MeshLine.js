@@ -165,6 +165,7 @@ THREE.MeshLineMaterial = function ( parameters ) {
 'uniform float near;',
 'uniform float far;',
 'uniform float sizeAttenuation;',
+'uniform float time;',
 '',
 'varying vec2 vUV;',
 'varying vec4 vColor;',
@@ -185,6 +186,8 @@ THREE.MeshLineMaterial = function ( parameters ) {
 '',
 '    vColor = vec4( color, opacity );',
 '    vUV = uv;',
+'    vUV.x = cos( time + vUV.x );',
+'    vUV.x = smoothstep( 0., 1., vUV.x );',
 '',
 '    mat4 m = projectionMatrix * modelViewMatrix;',
 '    vec4 finalPosition = m * vec4( position, 1.0 );',
@@ -286,7 +289,8 @@ THREE.MeshLineMaterial = function ( parameters ) {
 			near: { type: 'f', value: this.near },
 			far: { type: 'f', value: this.far },
 			dashArray: { type: 'v2', value: new THREE.Vector2( this.dashArray[ 0 ], this.dashArray[ 1 ] ) },
-			useDash: { type: 'f', value: this.useDash }
+			useDash: { type: 'f', value: this.useDash },
+			time: { type: 'f', value: 1 },
 		},
 		vertexShader: vertexShaderSource.join( '\r\n' ),
 		fragmentShader: fragmentShaderSource.join( '\r\n' )
