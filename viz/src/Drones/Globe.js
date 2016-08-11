@@ -196,8 +196,8 @@ default class Globe extends AObject {
                     value: 0
                 },
                 uColor: {
-                  value: new THREE.Color().setHSL(204, 67, 55)
-                } 
+                    value: new THREE.Color().setHSL(204, 67, 55)
+                }
             },
             fragmentShader: glslify('./Atmosphere.frag'),
             vertexShader: glslify('./Atmosphere.vert'),
@@ -386,15 +386,82 @@ class Drone extends THREE.Object3D {
                     value: this.particleSprite
                 },
             },
-            vertexShader: glslify('./Satellite.vert'),
-            fragmentShader: glslify('./Satellite.frag'),
+            vertexShader: this._VS(),
+            fragmentShader: this._FS(),
             depthTest: true,
             transparent: true,
             blending: THREE.AdditiveBlending,
         });
 
         this.init()
-        
+
+    }
+
+    _FS() {
+        return glslify(`
+        varying float lifeLeft;
+
+uniform sampler2D sprite;
+
+void main() {
+  vec3 color = vec3(0., 0.650, 0.4);
+  vec4 tex = texture2D( sprite, gl_PointCoord );
+  float alpha = lifeLeft * .25;
+
+  gl_FragColor = vec4( color.rgb * tex.a, alpha * tex.a );
+
+}
+`, { inline: true })
+    }
+
+    _VS() {
+        return glslify(`
+        #pragma glslify: pnoise = require(glsl-noise/periodic/3d.glsl)
+
+uniform float time;
+
+attribute vec3 velocity;
+attribute float startTime;
+attribute float size;
+attribute float life;
+
+varying float lifeLeft;
+
+// Thanks to Spite for this function
+float turbulence( vec3 p ) {
+  float t = -.5;
+  for (float f = 1.0 ; f <= 10.0 ; f++ ){
+      float power = pow( 2.0, f );
+      t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
+  }
+  return t;
+}
+
+void main() {
+  vec3 newPosition;
+  vec3 vel;
+
+  float elapsedTime = time - startTime;
+  float timeOnLife = elapsedTime / life;
+
+  lifeLeft = 1.0 - timeOnLife;
+
+  float scale = 3.0;
+  gl_PointSize = ( scale * size ) * lifeLeft;
+
+  float turb = turbulence( vec3( velocity.x * elapsedTime, velocity.y * elapsedTime, velocity.z * elapsedTime ) );
+  float noise = pnoise( velocity * timeOnLife, vec3( 1000.0 ) );
+  float displacement = 10. * noise + (30. * timeOnLife * turb);
+
+  newPosition = position + velocity * displacement;
+
+  if( gl_PointSize < .05 ) {
+    lifeLeft = 0.;
+  }
+
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+}
+`, { inline: true })
     }
 
     init() {
@@ -450,7 +517,7 @@ class Drone extends THREE.Object3D {
         this.tick += dt * 0.1
 
         const t = this.tick,
-         s = 1
+            s = 1
 
         this.pos.x = Math.cos(t) * this.xRadius;
         this.pos.y = Math.sin(t * this.verticalSpeed) * (this.yRadius + s);
