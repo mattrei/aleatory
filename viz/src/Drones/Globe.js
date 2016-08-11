@@ -43,6 +43,7 @@ default class Globe extends AObject {
         this.ready = false
         this.tick = 0
 
+        
         this.init()
         this.initSun()
         this.initDrones()
@@ -126,8 +127,8 @@ default class Globe extends AObject {
 
     initDrones() {
 
-        const drone = new Drone(this.loader, RADIUS * 1.3)
-
+        //const drone = new Drone(this.loader, RADIUS * 1.3)
+        const drone = new FireDrone(this.loader, RADIUS * 1.3)
 
         this.add(drone)
 
@@ -199,8 +200,8 @@ default class Globe extends AObject {
                     value: new THREE.Color().setHSL(204, 67, 55)
                 }
             },
-            fragmentShader: glslify('./Atmosphere.frag'),
-            vertexShader: glslify('./Atmosphere.vert'),
+            fragmentShader: this._FS(),
+            vertexShader: this._VS(),
             side: THREE.BackSide,
             blending: THREE.AdditiveBlending,
             transparent: true
@@ -229,6 +230,49 @@ default class Globe extends AObject {
 
         super.tick(dt => pivotMoon.rotation.y += 0.05 * dt)
 
+    }
+
+    _FS() {
+        return glslify(`
+uniform float glowIntensity;
+        uniform float redIntensity;
+        uniform vec3 uColor;
+        varying vec3 vNormal;
+
+
+        void main() {
+          float intensity = pow( 0.8 - dot( vNormal, vec3( 0, 0, 1.0 ) ), glowIntensity * 5. );
+          vec3 color = uColor;
+          gl_FragColor = vec4( color, 1.0 ) * intensity ;
+        }
+
+            `, {inline: true})
+    }
+
+    _VS() {
+        return glslify(`
+#pragma glslify: snoise3 = require('glsl-noise/simplex/3d')
+
+
+uniform float distort;
+uniform float time;
+
+        varying vec3 vNormal;
+        void main() {
+
+        float radius = 1.0;
+
+float updateTime = time / 10.0;
+        float noise = snoise3(vec3(position / 400.1 + updateTime * 5.0));
+        vec3 newPosition = position * (noise * pow(distort, 2.0) + radius);
+
+
+
+          vNormal = normalize( normalMatrix * normal );
+          gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
+        }
+
+            `, {inline: true})
     }
 
     initSun() {
@@ -343,6 +387,201 @@ default class Globe extends AObject {
 
 */
 
+import Force3 from '../utils/Force3'
+import Points from '../utils/Points'
+import Mover from '../utils/Mover'
+import ForcePointLight from '../utils/ForcePointLight'
+
+const NUM_PARTICLES = 400
+
+class FireDrone extends THREE.Object3D {
+
+    constructor(loader, radius) {
+        super()
+
+        this.loader = loader
+
+        this.radius = radius
+        this.xRadius = radius * 1.4
+        this.yRadius = radius * 2
+        this.zRadius = radius * 1.9
+
+        this.last_time_activate = Date.now()
+        this.gravity = new THREE.Vector3(0, 0.01, 0)
+
+        this.tick = 0
+
+        this.init()
+    }
+
+    init() {
+
+        const points = new Points()
+        const light = new ForcePointLight(0xff6600, 1)
+
+        const movers = []
+
+        this.positions = new Float32Array(NUM_PARTICLES * 3)
+        this.colors = new Float32Array(NUM_PARTICLES * 3)
+        this.opacities = new Float32Array(NUM_PARTICLES)
+        this.sizes = new Float32Array(NUM_PARTICLES)
+            
+
+        for (var i = 0; i < NUM_PARTICLES; i++) {
+            var mover = new Mover();
+            var h = randomInt(0, 45);
+            var s = randomInt(60, 90);
+            var color = new THREE.Color('hsl(' + h + ', ' + s + '%, 50%)');
+
+            mover.init(new THREE.Vector3(random(-this.radius, this.radius), 0, 0));
+            movers.push(mover);
+
+            this.positions[i * 3 + 0] = mover.position.x;
+            this.positions[i * 3 + 1] = mover.position.y;
+            this.positions[i * 3 + 2] = mover.position.z;
+            color.toArray(this.colors, i * 3);
+            this.opacities[i] = mover.a;
+            this.sizes[i] = mover.size;
+        }
+
+
+        points.init({
+            parent: this,
+            vs: glslify('../utils/Points.vert'),
+            fs: glslify('../utils/Points.frag'),
+            positions: this.positions,
+            colors: this.colors,
+            opacities: this.opacities,
+            sizes: this.sizes,
+            texture: this.loader.load('/dist/assets/Drones/satelliteparticle.png'), //createTexture(),
+            blending: THREE.AdditiveBlending
+        })
+
+        this.add(light)
+
+        this.points = points
+        this.light = light
+        this.movers = movers
+    }
+
+    activateMover() {
+        var count = 0;
+        var now = Date.now();
+        if (now - this.last_time_activate > 4) {
+            for (var i = 0; i < this.movers.length; i++) {
+                var mover = this.movers[i];
+                if (mover.is_active) continue;
+                var rad1 = THREE.Math.degToRad(Math.log(randomInt(0, 256)) / Math.log(256) * 260);
+                var rad2 = THREE.Math.degToRad(randomInt(0, 360));
+
+                var range = (1 - Math.log(randomInt(32, 256)) / Math.log(256)) * 12;
+                range = random(0.01, 0.1)
+
+                var vector = new THREE.Vector3()
+
+                var force = this._getSpherical(rad1, rad2, range);
+
+                vector.add(this.points.position);
+                mover.activate();
+                mover.init(vector);
+                mover.applyForce(force);
+                mover.a = random(0.6, 1)
+                //mover.size = Math.pow(12 - range, 2) * randomInt(1, 2) / 10;
+                mover.size = random(0.1, 0.4)
+
+                count++;
+                if (count >= 6) break;
+            }
+            this.last_time_activate = Date.now();
+        }
+    };
+
+    _getSpherical(rad1, rad2, r) {
+        var x = Math.cos(rad1) * Math.cos(rad2) * r;
+        var z = Math.cos(rad1) * Math.sin(rad2) * r;
+        var y = Math.sin(rad1) * r;
+        return new THREE.Vector3(x, y, z);
+    }
+
+    updateMover() {
+        const gravity = new THREE.Vector3()
+            .subVectors(this.points.position, new THREE.Vector3())
+            .normalize()
+
+        for (var i = 0; i < this.movers.length; i++) {
+            var mover = this.movers[i];
+            if (mover.is_active) {
+                mover.time++;
+                mover.applyForce(this.gravity);
+                mover.applyDrag(0.01);
+                mover.updateVelocity();
+                mover.updatePosition();
+                mover.position.sub(this.points.position);
+                if (mover.time > 50) {
+                    mover.size -= 0.07;
+                    mover.a -= 0.2;
+                }
+                if (mover.a <= 0) {
+                    mover.init(new THREE.Vector3(0, 0, 0));
+                    mover.time = 0;
+                    mover.a = 0.0;
+                    mover.inactivate();
+                }
+            }
+            this.positions[i * 3 + 0] = mover.position.x - this.points.position.x;
+            this.positions[i * 3 + 1] = mover.position.y - this.points.position.y;
+            this.positions[i * 3 + 2] = mover.position.z - this.points.position.z;
+            this.opacities[i] = mover.a;
+            this.sizes[i] = mover.size;
+        }
+        this.points.updatePoints();
+    };
+
+
+
+    movePoints(dt) {
+
+        const t = 1 * this.tick
+        const s = 0.07 * 1//freq;
+
+        const x = Math.cos(t) * this.xRadius,
+            y = Math.sin(t * 0.8) * (this.yRadius + s),
+            z = Math.sin(t) * this.zRadius;
+
+        this.points.anchor.x = x;
+        this.points.anchor.y = y;
+        this.points.anchor.z = z;
+
+        this.light.force.anchor.x = x
+        this.light.force.anchor.y = y
+        this.light.force.anchor.z = z
+
+        this.points.position.set(x,y,z)
+        this.light.position.set(x,y,z)
+    }
+
+    update(dt) {
+        this.tick += dt
+
+        this.points.applyDrag(0.6);
+
+        this.points.updateVelocity();
+        this.points.updatePosition();
+
+        this.light.force.applyDrag(0.2);
+        this.light.force.updateVelocity();
+        this.light.updatePosition();
+
+
+        this.activateMover();
+        this.updateMover();
+        this.movePoints(dt, 2)    
+
+        
+    }
+
+}
+
 
 const MAX_PARTICLES = 10000
 
@@ -411,7 +650,9 @@ void main() {
   gl_FragColor = vec4( color.rgb * tex.a, alpha * tex.a );
 
 }
-`, { inline: true })
+`, {
+            inline: true
+        })
     }
 
     _VS() {
@@ -461,7 +702,9 @@ void main() {
 
   gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
 }
-`, { inline: true })
+`, {
+            inline: true
+        })
     }
 
     init() {

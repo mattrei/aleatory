@@ -24,7 +24,7 @@ class Points extends Force3 {
     this.geometry.addAttribute('vertexOpacity', new THREE.BufferAttribute(param.opacities, 1));
     this.geometry.addAttribute('size', new THREE.BufferAttribute(param.sizes, 1));
     this.obj = new THREE.Points(this.geometry, this.material);
-    param.scene.add(this.obj);
+    param.parent.add(this.obj);
     this.position = this.obj.position;
   };
   updatePoints() {
