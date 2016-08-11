@@ -2,6 +2,7 @@ import AScene from '../AScene'
 
 import Map from './Map'
 import Globe from './Globe'
+import Countries from './Countries'
 
 export
 default class DronesScene extends AScene {
@@ -18,7 +19,7 @@ default class DronesScene extends AScene {
                     ring: false
                 }, renderer, loader, aaa, camera),
                 g: new Globe('GLOBE', {}, renderer, loader, aaa),
-                c: new Globe('COUNTRIES', {}, renderer, loader, aaa),
+                c: new Countries('COUNTRIES', {}, renderer, loader, aaa),
             })
 
         this.loader = loader
@@ -28,6 +29,6 @@ default class DronesScene extends AScene {
 
         super.setBackground('/dist/assets/Drones/milkyway_bg.jpg')
 
-        this.setVis(this.vis.m)
+        this.setVis(this.vis.c)
     }
 }
