@@ -19,7 +19,7 @@ default class DronesScene extends AScene {
             })
 
 
-        this.camera.position.z = -1
+        this.camera.position.z = 2
         this.camera.lookAt(new THREE.Vector3())
 
         this.setVis(this.vis.g)

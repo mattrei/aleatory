@@ -354,3 +354,111 @@ uniform float uTime;
 `, {
         inline: true
     })
+
+
+    /*
+
+function createRingGeomtry(radius) {
+
+    const positions = new Float32Array(RING_SEGMENTS * 3)
+
+    for (let i = 0; i < positions.length; i += 3) {
+
+        const x = radius * Math.cos(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2),
+            z = radius * Math.sin(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2)
+
+        positions[i] = x
+        positions[i + 1] = 0
+        positions[i + 2] = z
+    }
+    return positions
+}
+
+const createRing = (radius, scene) => {
+
+    let color = new THREE.Color()
+
+
+
+    color.setHSL((180 + Math.random() * 40) / 360, 1.0, 0.5)
+
+
+    const ringMaterial = new THREE.MeshLineMaterial({
+        useMap: false,
+        color: color.clone(),
+        lineWidth: randomInt(2, 5),
+        blending: THREE.AdditiveBlending,
+        depthTest: true,
+        depthWrite: false,
+        transparent: true,
+    })
+
+    let offset = randomInt(0, 50)
+
+    const ring = new THREE.MeshLine()
+    ring.setGeometry(createRingGeomtry(radius))
+
+    // Remove center vertex
+    //ringGeometry.vertices.shift();
+    let ringMesh = new THREE.Mesh(ring.geometry, ringMaterial)
+    ringMesh._radius = radius
+    ringMesh._offset = offset
+    ringMesh._opacity = 1
+    ringMesh.position.set(0, 0, 0)
+    ringMesh.rotation.set(0, 0, random(-Math.PI / 8, Math.PI / 8))
+    group.add(ringMesh)
+
+
+    let randTheta = random(0, Math.PI / 4),
+        finalRadius = Math.cos(randTheta) * GLOBE_RADIUS + 10
+
+    tweenr.to(ringMesh, {
+        ease: 'expoOut',
+        _radius: finalRadius,
+        _offset: 0,
+        duration: 2
+    })
+        .on('update', _ => {
+
+            const s = ringMesh._radius / radius
+            ringMesh.scale.set(s, s, s)
+        })
+
+    tweenr.to(ringMesh.position, {
+        x: 0,
+        y: randTheta * GLOBE_RADIUS,
+        z: 0,
+        duration: 2
+    })
+    tweenr.to(ringMesh.rotation, {
+        x: 0,
+        y: 0,
+        z: random(-Math.PI / 16, Math.PI / 16),
+        duration: 2
+    })
+    tweenr.to(ringMesh, {
+        ease: 'expoIn',
+        _opacity: 0,
+        duration: 5
+    })
+        .on('complete', _ => group.remove(ringMesh))
+
+
+    scene.events.on('tick', t => {
+        const freq = scene.getFreq(100, 400)
+        let hsl = color.getHSL()
+        hsl.l *= freq
+
+
+        //ringMaterial.color.setHSL(hsl.h, hsl.s, hsl.l)
+        //ringMaterial.needsUpdate = true
+        ringMaterial.uniforms.color.value.r = color.r
+        ringMaterial.uniforms.color.value.g = color.g
+        ringMaterial.uniforms.color.value.b = color.b
+        ringMaterial.uniforms.opacity.value = ringMesh._opacity
+    })
+
+    return ringMesh
+}
+
+*/
