@@ -58,183 +58,283 @@ default class Map extends AObject {
         })
     }
 
-        _addAttributes(geometry, imgData) {
+    _addAttributes(geometry, imgData) {
 
-            const imgSize = imgData.width * imgData.height
-            console.log("Image pixels: " + imgData.width * imgData.height)
+        const imgSize = imgData.width * imgData.height
+        console.log("Image pixels: " + imgData.width * imgData.height)
 
-            let PARTICLES_AMOUNT = MAX_PARTICLES
-            if (MAX_PARTICLES > imgSize) {
-                PARTICLES_AMOUNT = imgSize
+        // get number of pixels
+        let numParticles = 0
+        for (let i = 0; i < imgSize; i++) {
+
+            let x = i % imgData.width,
+                y = i / imgData.width | 0,
+                pixel = this._getPixel(imgData, x, y)
+            if (pixel.r !== 0 && pixel.g !== 0 && pixel.b !== 0) {
+                // pixel is not black
+                numParticles++
             }
 
-            // get number of pixels
-            let numParticles = 0
-            for (let i = 0; i < imgSize; i++) {
+        }
+        const PARTICLES_AMOUNT = numParticles
+        console.log("Using pixels: " + PARTICLES_AMOUNT)
 
-                let x = i % imgData.width,
-                    y = i / imgData.width | 0,
-                    pixel = _getPixel(imgData, x, y)
-                if (pixel.r !== 0 && pixel.g !== 0 && pixel.b !== 0) {
-                    // pixel is not black
-                    numParticles++
-                }
-
-            }
-            PARTICLES_AMOUNT = numParticles
-
-            var positions = new Float32Array(PARTICLES_AMOUNT * 3);
-            var colors = new Float32Array(PARTICLES_AMOUNT * 3);
-            // displacement values
-            var extras = new Float32Array(PARTICLES_AMOUNT * 3);
-            var puv = new Float32Array(PARTICLES_AMOUNT * 2);
+        var positions = new Float32Array(PARTICLES_AMOUNT * 3);
+        var colors = new Float32Array(PARTICLES_AMOUNT * 3);
+        // displacement values
+        var extras = new Float32Array(PARTICLES_AMOUNT * 3);
+        var puv = new Float32Array(PARTICLES_AMOUNT * 2);
 
 
-            let total = imgData.width * imgData.height,
-                step = Math.floor(total / PARTICLES_AMOUNT)
+        let total = imgData.width * imgData.height,
+            step = Math.floor(total / PARTICLES_AMOUNT)
 
-            for (var i = 0, i2 = 0, i3 = 0, ipx = 0; i < PARTICLES_AMOUNT; i++, i2 += 2, i3 += 3, ipx += step) {
+        for (var i = 0, i2 = 0, i3 = 0, ipx = 0; i < PARTICLES_AMOUNT; i++, i2 += 2, i3 += 3, ipx += step) {
 
-                let x = ipx % imgData.width,
-                    y = ipx / imgData.width | 0,
-                    pixel = _getPixel(imgData, x, y)
+            let x = ipx % imgData.width,
+                y = ipx / imgData.width | 0,
+                pixel = this._getPixel(imgData, x, y)
 
-                //if (pixel.r === 1 && pixel.g === 1 && pixel.b === 1) {
+            //if (pixel.r === 1 && pixel.g === 1 && pixel.b === 1) {
 
-                if (pixel.r !== 0) {
-                    let position = new THREE.Vector3(
-                        //(x - imgData.width / 2) * IMG_SCALE,
-                        //(imgData.height / 2 - y) * IMG_SCALE,
-                        //0)
-                        x, y, 0)
+            if (pixel.r !== 0) {
+                let position = new THREE.Vector3(
+                    x / imgData.width,
+                    y / imgData.height,
+                    0)
 
 
-                    // UV from 0 to 1
-                    puv[i2 + 0] = position.x / imgData.width;
-                    puv[i2 + 1] = position.y / imgData.height;
+                // UV from 0 to 1
+                puv[i2 + 0] = position.x / imgData.width;
+                puv[i2 + 1] = position.y / imgData.height;
 
-                    // Position
-                    positions[i3 + 0] = position.x;
-                    positions[i3 + 1] = position.y;
-                    positions[i3 + 2] = position.z;
+                // Position
+                positions[i3 + 0] = position.x;
+                positions[i3 + 1] = position.y;
+                positions[i3 + 2] = position.z;
 
-                    // Extras
-                    extras[i3 + 0] = random(1, 200)
-                    extras[i3 + 1] = random(1, 200)
-                    extras[i3 + 2] = random(1, 200)
+                // Extras
+                extras[i3 + 0] = random(1, 200)
+                extras[i3 + 1] = random(1, 200)
+                extras[i3 + 2] = random(1, 200)
 
-                    // Color
-                    let color = new THREE.Color().setHSL(simplex.noise2D(position.x, position.y) * 0.5, 0.8, 0.1)
-                    colors[i3 + 0] = color.r
-                    colors[i3 + 1] = color.g
-                    colors[i3 + 2] = color.b
-                }
-
+                // Color
+                const color = new THREE.Color().setHSL(simplex.noise2D(position.x, position.y) * 0.5, 0.8, 0.1)
+                color.toArray(colors, i3)
             }
 
-            geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-            geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-            geometry.addAttribute('extra', new THREE.BufferAttribute(extras, 3));
-            //http://stackoverflow.com/questions/15697898/why-particle-system-with-shader-doesnt-work-three-js
-            geometry.addAttribute('puv', new THREE.BufferAttribute(puv, 2));
-
         }
 
-        init() {
+        geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+        geometry.addAttribute('extra', new THREE.BufferAttribute(extras, 3));
+        //http://stackoverflow.com/questions/15697898/why-particle-system-with-shader-doesnt-work-three-js
+        geometry.addAttribute('puv', new THREE.BufferAttribute(puv, 2));
 
-            this.loader.load('/dist/assets/Drones/earth_political_alpha.png', (texture) => {
-                this.loader.load('/dist/assets/nova_particle.png', (particleTexture) => {
-                    const bgImg = texture.image.src
+    }
 
-                    this._getImgData(bgImg).then(imgData => {
+    init() {
 
-                        const geometry = new THREE.BufferGeometry()
-                        this._addAttributes(geometry, imgData)
+        const img = '/dist/assets/Drones/earth_political_alpha.png'
 
-                        const material = new THREE.ShaderMaterial({
 
-                            uniforms: {
-                                uTime: {
-                                    value: 0
-                                },
-                                uTimeInit: {
-                                    value: randomInt(0, 100)
-                                },
-                                uAnimationSphere: {
-                                    value: conf.sphere
-                                },
-                                uAnimationFlat: {
-                                    value: conf.flat
-                                },
-                                bgImg: {
-                                    value: bgImg
-                                },
-                                uSphereRadius: {
-                                    value: 1000
-                                },
-                                uMatrightBottom: {
-                                    value: new THREE.Vector2(180.0, -90.0)
-                                },
-                                uMatleftTop: {
-                                    value: new THREE.Vector2(-180.0, 90.0)
-                                },
-                            },
-                            vertexShader: mapVS,
-                            fragmentShader: mapFS,
-                            blending: THREE.AdditiveBlending,
-                            transparent: true,
-                            depthWrite: true,
-                            depthTest: false,
-                        });
 
-                        const particles = new THREE.Points(geometry, material)
-                        this.add(particles)
+        this._getImgData(img).then(imgData => {
 
-                        super.tick(dt => material.uniforms.uTime.value += dt * 0.2)
-                        //material.uniforms.uAnimation.value = conf.animation
-                    })
-                })
-            })
-        }
+            const geometry = new THREE.BufferGeometry()
+            this._addAttributes(geometry, imgData)
 
-        doFlat() {
+            const material = new THREE.ShaderMaterial({
 
-            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
-                value: 1,
-                duration: 2
-            })
-            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
-                value: 0,
-                duration: 2
-            })
-        }
+                uniforms: {
+                    uTime: {
+                        value: 0
+                    },
+                    uTimeInit: {
+                        value: randomInt(0, 100)
+                    },
+                    uAnimationSphere: {
+                        value: this.conf.sphere
+                    },
+                    uAnimationFlat: {
+                        value: this.conf.flat
+                    },
+                    bgImg: {
+                        value: this.loader.load(img)
+                    },
+                    uSphereRadius: {
+                        value: 1
+                    },
+                    uMatrightBottom: {
+                        value: new THREE.Vector2(180.0, -90.0)
+                    },
+                    uMatleftTop: {
+                        value: new THREE.Vector2(-180.0, 90.0)
+                    },
+                },
+                vertexShader: mapVS,
+                fragmentShader: mapFS,
+                blending: THREE.AdditiveBlending,
+                transparent: true,
+                depthWrite: true,
+                depthTest: false,
+            });
 
-        doSphere() {
+            const particles = new THREE.Points(geometry, material)
+            this.add(particles)
 
-            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
-                value: 1,
-                duration: 2
-            })
-            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
-                value: 0,
-                duration: 2
-            })
-        }
+            particles.position.set(0, 0, 0)
 
-        doChaos() {
-            tweenr.to(mesh.material.uniforms.uAnimationSphere, {
-                value: 0,
-                duration: 2
-            })
-            tweenr.to(mesh.material.uniforms.uAnimationFlat, {
-                value: 0,
-                duration: 2
-            })
-        }
+            super.tick(dt => material.uniforms.uTime.value += dt * 0.2)
+
+
+            super.on('flat', v => material.uniforms.uAnimationFlat.value = v)
+            super.on('sphere', v => material.uniforms.uAnimationSphere.value = v)
+        })
+    }
+
+    doFlat() {
+
+        tweenr.to(mesh.material.uniforms.uAnimationFlat, {
+            value: 1,
+            duration: 2
+        })
+        tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+            value: 0,
+            duration: 2
+        })
+    }
+
+    doSphere() {
+
+        tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+            value: 1,
+            duration: 2
+        })
+        tweenr.to(mesh.material.uniforms.uAnimationFlat, {
+            value: 0,
+            duration: 2
+        })
+    }
+
+    doChaos() {
+        tweenr.to(mesh.material.uniforms.uAnimationSphere, {
+            value: 0,
+            duration: 2
+        })
+        tweenr.to(mesh.material.uniforms.uAnimationFlat, {
+            value: 0,
+            duration: 2
+        })
     }
 
 
-    const mapVS = glslify(`
+    createRingGeomtry(radius) {
+
+        const positions = new Float32Array(RING_SEGMENTS * 3)
+
+        for (let i = 0; i < positions.length; i += 3) {
+
+            const x = radius * Math.cos(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2),
+                z = radius * Math.sin(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2)
+
+            positions[i] = x
+            positions[i + 1] = 0
+            positions[i + 2] = z
+        }
+        return positions
+    }
+
+    _createRing(radius, scene) {
+
+        let color = new THREE.Color()
+
+
+
+        color.setHSL((180 + Math.random() * 40) / 360, 1.0, 0.5)
+
+
+        const ringMaterial = new THREE.MeshLineMaterial({
+            useMap: false,
+            color: color.clone(),
+            lineWidth: randomInt(2, 5),
+            blending: THREE.AdditiveBlending,
+            depthTest: true,
+            depthWrite: false,
+            transparent: true,
+        })
+
+        let offset = randomInt(0, 50)
+
+        const ring = new THREE.MeshLine()
+        ring.setGeometry(createRingGeomtry(radius))
+
+        // Remove center vertex
+        //ringGeometry.vertices.shift();
+        let ringMesh = new THREE.Mesh(ring.geometry, ringMaterial)
+        ringMesh._radius = radius
+        ringMesh._offset = offset
+        ringMesh._opacity = 1
+        ringMesh.position.set(0, 0, 0)
+        ringMesh.rotation.set(0, 0, random(-Math.PI / 8, Math.PI / 8))
+        group.add(ringMesh)
+
+
+        let randTheta = random(0, Math.PI / 4),
+            finalRadius = Math.cos(randTheta) * GLOBE_RADIUS + 10
+
+        tweenr.to(ringMesh, {
+            ease: 'expoOut',
+            _radius: finalRadius,
+            _offset: 0,
+            duration: 2
+        })
+            .on('update', _ => {
+
+                const s = ringMesh._radius / radius
+                ringMesh.scale.set(s, s, s)
+            })
+
+        tweenr.to(ringMesh.position, {
+            x: 0,
+            y: randTheta * GLOBE_RADIUS,
+            z: 0,
+            duration: 2
+        })
+        tweenr.to(ringMesh.rotation, {
+            x: 0,
+            y: 0,
+            z: random(-Math.PI / 16, Math.PI / 16),
+            duration: 2
+        })
+        tweenr.to(ringMesh, {
+            ease: 'expoIn',
+            _opacity: 0,
+            duration: 5
+        })
+            .on('complete', _ => group.remove(ringMesh))
+
+
+        scene.events.on('tick', t => {
+            const freq = scene.getFreq(100, 400)
+            let hsl = color.getHSL()
+            hsl.l *= freq
+
+
+            //ringMaterial.color.setHSL(hsl.h, hsl.s, hsl.l)
+            //ringMaterial.needsUpdate = true
+            ringMaterial.uniforms.color.value.r = color.r
+            ringMaterial.uniforms.color.value.g = color.g
+            ringMaterial.uniforms.color.value.b = color.b
+            ringMaterial.uniforms.opacity.value = ringMesh._opacity
+        })
+
+        return ringMesh
+    }
+}
+
+
+const mapVS = glslify(`
     #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
 #pragma glslify: PI = require(glsl-pi)
 #pragma glslify: ease = require(glsl-easings/quadratic-in)
@@ -323,16 +423,19 @@ vec3 chaosPosition(vec3 pos) {
           vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
 
         gl_Position = projectionMatrix * mvPosition;
-       gl_PointSize = 25.0;
+       
+       float size = 20.0;
+        //gl_PointSize = size * ( 300.0 / length( mvPosition.xyz ) );
+        gl_PointSize = size;
       }
 
 
 `, {
-        inline: true
-    })
+    inline: true
+})
 
 
-    const mapFS = glslify(`
+const mapFS = glslify(`
 
 varying vec2 vUv;
 varying vec3 vColor;
@@ -352,113 +455,5 @@ uniform float uTime;
         }
 
 `, {
-        inline: true
-    })
-
-
-    /*
-
-function createRingGeomtry(radius) {
-
-    const positions = new Float32Array(RING_SEGMENTS * 3)
-
-    for (let i = 0; i < positions.length; i += 3) {
-
-        const x = radius * Math.cos(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2),
-            z = radius * Math.sin(i / (RING_SEGMENTS * 3 - 3) * Math.PI * 2)
-
-        positions[i] = x
-        positions[i + 1] = 0
-        positions[i + 2] = z
-    }
-    return positions
-}
-
-const createRing = (radius, scene) => {
-
-    let color = new THREE.Color()
-
-
-
-    color.setHSL((180 + Math.random() * 40) / 360, 1.0, 0.5)
-
-
-    const ringMaterial = new THREE.MeshLineMaterial({
-        useMap: false,
-        color: color.clone(),
-        lineWidth: randomInt(2, 5),
-        blending: THREE.AdditiveBlending,
-        depthTest: true,
-        depthWrite: false,
-        transparent: true,
-    })
-
-    let offset = randomInt(0, 50)
-
-    const ring = new THREE.MeshLine()
-    ring.setGeometry(createRingGeomtry(radius))
-
-    // Remove center vertex
-    //ringGeometry.vertices.shift();
-    let ringMesh = new THREE.Mesh(ring.geometry, ringMaterial)
-    ringMesh._radius = radius
-    ringMesh._offset = offset
-    ringMesh._opacity = 1
-    ringMesh.position.set(0, 0, 0)
-    ringMesh.rotation.set(0, 0, random(-Math.PI / 8, Math.PI / 8))
-    group.add(ringMesh)
-
-
-    let randTheta = random(0, Math.PI / 4),
-        finalRadius = Math.cos(randTheta) * GLOBE_RADIUS + 10
-
-    tweenr.to(ringMesh, {
-        ease: 'expoOut',
-        _radius: finalRadius,
-        _offset: 0,
-        duration: 2
-    })
-        .on('update', _ => {
-
-            const s = ringMesh._radius / radius
-            ringMesh.scale.set(s, s, s)
-        })
-
-    tweenr.to(ringMesh.position, {
-        x: 0,
-        y: randTheta * GLOBE_RADIUS,
-        z: 0,
-        duration: 2
-    })
-    tweenr.to(ringMesh.rotation, {
-        x: 0,
-        y: 0,
-        z: random(-Math.PI / 16, Math.PI / 16),
-        duration: 2
-    })
-    tweenr.to(ringMesh, {
-        ease: 'expoIn',
-        _opacity: 0,
-        duration: 5
-    })
-        .on('complete', _ => group.remove(ringMesh))
-
-
-    scene.events.on('tick', t => {
-        const freq = scene.getFreq(100, 400)
-        let hsl = color.getHSL()
-        hsl.l *= freq
-
-
-        //ringMaterial.color.setHSL(hsl.h, hsl.s, hsl.l)
-        //ringMaterial.needsUpdate = true
-        ringMaterial.uniforms.color.value.r = color.r
-        ringMaterial.uniforms.color.value.g = color.g
-        ringMaterial.uniforms.color.value.b = color.b
-        ringMaterial.uniforms.opacity.value = ringMesh._opacity
-    })
-
-    return ringMesh
-}
-
-*/
+    inline: true
+})

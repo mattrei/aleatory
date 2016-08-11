@@ -43,7 +43,7 @@ default class Globe extends AObject {
         this.ready = false
         this.tick = 0
 
-        
+
         this.init()
         this.initSun()
         this.initDrones()
@@ -246,7 +246,9 @@ uniform float glowIntensity;
           gl_FragColor = vec4( color, 1.0 ) * intensity ;
         }
 
-            `, {inline: true})
+            `, {
+            inline: true
+        })
     }
 
     _VS() {
@@ -272,7 +274,9 @@ float updateTime = time / 10.0;
           gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
         }
 
-            `, {inline: true})
+            `, {
+            inline: true
+        })
     }
 
     initSun() {
@@ -425,7 +429,7 @@ class FireDrone extends THREE.Object3D {
         this.colors = new Float32Array(NUM_PARTICLES * 3)
         this.opacities = new Float32Array(NUM_PARTICLES)
         this.sizes = new Float32Array(NUM_PARTICLES)
-            
+
 
         for (var i = 0; i < NUM_PARTICLES; i++) {
             var mover = new Mover();
@@ -542,7 +546,7 @@ class FireDrone extends THREE.Object3D {
     movePoints(dt) {
 
         const t = 1 * this.tick
-        const s = 0.07 * 1//freq;
+        const s = 0.07 * 1 //freq;
 
         const x = Math.cos(t) * this.xRadius,
             y = Math.sin(t * 0.8) * (this.yRadius + s),
@@ -556,8 +560,8 @@ class FireDrone extends THREE.Object3D {
         this.light.force.anchor.y = y
         this.light.force.anchor.z = z
 
-        this.points.position.set(x,y,z)
-        this.light.position.set(x,y,z)
+        this.points.position.set(x, y, z)
+        this.light.position.set(x, y, z)
     }
 
     update(dt) {
@@ -575,9 +579,9 @@ class FireDrone extends THREE.Object3D {
 
         this.activateMover();
         this.updateMover();
-        this.movePoints(dt, 2)    
+        this.movePoints(dt, 2)
 
-        
+
     }
 
 }
