@@ -1,0 +1,1747 @@
+tidn,buyercod,sellercod,odat,odai,onum,onai,ldat,term,desig2,wcat,desc,coprod,nrdel,nrdelai,delyears,buyer,seller,status,tivunit,tivorder,tivdel
+58981,CZR,AST,2015,,20,,0,N/A,Pandur-2,AV,APC,L,,,,Czech Republic,Austria,N,0.27,5.4,0
+34255,POR,AST,2005,,158,,2015,LIC,Pandur-2,AV,APC,L,158,X,2007-2015,Portugal,Austria,N,0.27,42.66,42.66
+52254,POR,AST,2005,,30,,2015,LIC,Pandur-2,AV,IFV,L,30,X,2009-2015,Portugal,Austria,N,1.02,30.6,30.6
+56510,VEN,AST,2014,,24,,2015,N/A,DA40,AC,Light aircraft,L,24,X,2014-2015,Venezuela,Austria,N,0.15,3.6,3.6
+57838,VEN,AST,2014,,6,,2015,N/A,DA42,AC,Light aircraft,L,6,,2014-2015,Venezuela,Austria,N,0.35,2.1,2.1
+35939,INS,AUS,2013,,4,,2015,AID,C-130H Hercules,AC,Transport aircraft,L,4,X,2013-2015,Indonesia,Australia,R,18.48,73.92,73.92
+55681,INS,AUS,2015,X,5,,0,N/A,C-130H Hercules,AC,Transport aircraft,L,,,,Indonesia,Australia,S,11.2,56,0
+56850,JAM,AUS,2013,,12,,0,N/A,Bushmaster,AV,APC,L,6,X,2015,Jamaica,Australia,N,0.2,2.4,1.2
+52073,NET,AUS,2015,,12,,0,N/A,Bushmaster,AV,APC,L,,,,Netherlands,Australia,N,0.2,2.4,0
+56684,NZ,AUS,2013,,0,,0,N/A,Penguin-2,MI,Anti-ship missile,L,20,X,2014-2015,New Zealand,Australia,S,0.3,0,6
+57744,OMA,AUS,2014,,2,,0,N/A,HSSV-72,SH,Transport ship,,,,,Oman,Australia,N,0,0,0
+58527,PHI,AUS,2015,,2,,2015,AID,Balikpapan,SH,Landing craft,L,2,,2015,Philippines,Australia,S,3.2,6.4,6.4
+58528,PHI,AUS,2015,X,3,,0,N/A,Balikpapan,SH,Landing craft,L,,,,Philippines,Australia,S,3.2,9.6,0
+58353,TON,AUS,2014,,1,,2015,N/A,Forgacs 30m,SH,Landing craft,,1,,2015,Tonga,Australia,N,5.4,5.4,5.4
+51511,USA,AUS,2009,,11,X,0,LIC,JHSV,SH,Transport ship,L,5,X,2013-2015,United States,Australia,N,30,330,150
+59260,DEN,BAS,2015,X,1,,2015,N/A,BN-2 Islander,AC,Light transport ac,L,1,,2015,Denmark,Bahamas,S,0.24,0.24,0.24
+58865,SAU,BEL,2014,,,,0,N/A,CT-CV 105mm,OT,Tank turret,L,,,,Saudi Arabia,Belgium,N,0,0,0
+58866,SAU,BEL,2014,,,,0,N/A,MCT,OT,IFV turret,,,,,Saudi Arabia,Belgium,N,0,0,0
+58761,LYA,BLR,2014,,4,,2015,N/A,Mi-24P/Mi-35P,AC,Combat helicopter,L,4,,2015,Libya,Belarus,S,3.6,14.4,14.4
+56196,SUD,BLR,2012,,12,X,0,N/A,Su-24/Fencer,AC,Bomber aircraft,L,4,,2013,Sudan,Belarus,S,14,168,56
+53169,AFG,BRA,2013,,20,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Afghanistan,Brazil,N,4.4,88,0
+37914,COL,BRA,2010,X,12,X,0,N/A,KC-390,AC,Transport aircraft,L,,,,Colombia,Brazil,N,0,0,0
+57208,GHA,BRA,2015,,5,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Ghana,Brazil,N,4.4,22,0
+59423,GHA,BRA,2015,X,4,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Ghana,Brazil,N,4.4,17.6,0
+53751,HON,BRA,2015,X,2,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Honduras,Brazil,N,4.4,8.8,0
+22691,IND,BRA,2008,,3,,0,N/A,ERJ-145,AC,Transport aircraft,L,,,,India,Brazil,N,13,39,0
+54211,INS,BRA,2012,,36,X,2015,N/A,ASTROS-2,AR,Self-propelled MRL,L,36,X,2014-2015,Indonesia,Brazil,N,0.95,34.2,34.2
+55628,INS,BRA,2012,X,2,X,2015,N/A,ASTROS AV-UCF,GR,Fire control radar,L,2,X,2014-2015,Indonesia,Brazil,N,2.5,5,5
+54697,INS,BRA,2012,,8,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,4,X,2015,Indonesia,Brazil,N,4.4,35.2,17.6
+51594,LEB,BRA,2015,,6,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Lebanon,Brazil,N,4.4,26.4,0
+58327,LEB,BRA,2014,,10,,0,N/A,VBTP Guarani,AV,APC,L,,,,Lebanon,Brazil,N,0.35,3.5,0
+58758,MLI,BRA,2015,,6,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Mali,Brazil,N,4.4,26.4,0
+50808,PAK,BRA,2008,,100,,0,N/A,MAR-1,MI,ARM,L,45,X,2013-2015,Pakistan,Brazil,N,0.25,25,11.25
+56013,SEN,BRA,2013,,3,,0,N/A,EMB-314 Super Tucano,AC,Trainer/combat ac,L,,,,Senegal,Brazil,N,4.4,13.2,0
+34808,UK,BRA,2015,X,5,,0,N/A,Phenom-100,AC,Light transport ac,L,,,,United Kingdom,Brazil,N,0,0,0
+53765,URU,BRA,2013,X,25,,0,AID,M-41 Bulldog,AV,Light tank,L,,,,Uruguay,Brazil,S,0.44,11,0
+58424,MAL,BRU,2014,X,4,,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Malaysia,Brunei,S,2.9,11.6,0
+54926,IRQ,BUL,2012,X,500,,0,N/A,MT-LB,AV,APC,L,,,,Iraq,Bulgaria,R,0.1452,72.6,0
+50763,XXX,BUL,2015,X,1,X,0,N/A,Mi-24D/Mi-25,AC,Combat helicopter,L,,,,Unknown country,Bulgaria,R,5.445,5.445,0
+54306,AFG,CAN,2013,,20,,0,N/A,PT6,EN,Turboprop,L,,,,Afghanistan,Canada,N,0.6,12,0
+51919,ARG,CAN,2011,X,34,X,0,N/A,PT6,EN,Turboprop,L,,,,Argentina,Canada,N,0.6,20.4,0
+59057,AUS,CAN,2015,X,49,X,0,N/A,PT6,EN,Turboprop,L,,,,Australia,Canada,N,0.6,29.4,0
+57428,BRA,CAN,2014,,6,,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Brazil,Canada,N,1,6,0
+57622,EGY,CAN,2014,,16,,2015,N/A,PW100,EN,Turboprop/turboshaft,L,16,X,2015,Egypt,Canada,N,1,16,16
+58958,EGY,CAN,2015,,8,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Egypt,Canada,N,1,8,0
+59585,EQU,CAN,2015,X,4,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Equatorial Guinea,Canada,N,1,4,0
+58440,FRG,CAN,2014,,7,,2015,CIV,A-4M Skyhawk-2,AC,FGA aircraft,L,7,,2015,Germany (FRG),Canada,S,4,28,28
+59493,FRG,CAN,2015,X,3,X,0,N/A,PT6,EN,Turboprop,L,,,,Germany (FRG),Canada,N,0.6,1.8,0
+58346,GHA,CAN,2015,,9,X,0,N/A,PT6,EN,Turboprop,L,,,,Ghana,Canada,N,0.6,5.4,0
+58347,GHA,CAN,2014,,2,,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Ghana,Canada,N,1,2,0
+58060,HON,CAN,2014,X,2,,0,N/A,PT6,EN,Turboprop,L,,,,Honduras,Canada,N,0.6,1.2,0
+54782,IND,CAN,2011,X,2,,2015,N/A,Global Express,AC,AGS aircraft,L,2,,2015,India,Canada,N,40,80,80
+53521,IND,CAN,2012,,75,X,2015,N/A,PT6,EN,Turboprop,L,75,X,2013-2015,India,Canada,N,0.6,45,45
+58534,IND,CAN,2015,X,38,X,0,N/A,PT6,EN,Turboprop,L,,,,India,Canada,N,0.6,22.8,0
+58675,IND,CAN,2015,X,112,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,India,Canada,N,1,112,0
+55091,INS,CAN,2012,,8,X,0,N/A,PT6,EN,Turboprop,L,4,X,2015,Indonesia,Canada,N,0.6,4.8,2.4
+54204,INS,CAN,2012,,18,X,2015,N/A,PW100,EN,Turboprop/turboshaft,L,18,X,2012-2015,Indonesia,Canada,N,1,18,18
+51130,ITA,CAN,2009,,8,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Italy,Canada,N,1,8,0
+58954,JOR,CAN,2015,,9,X,0,N/A,PT6,EN,Turboprop,L,,,,Jordan,Canada,N,0.6,5.4,0
+59394,JOR,CAN,2015,,4,,0,N/A,PT6,EN,Turboprop,L,,,,Jordan,Canada,N,0.6,2.4,0
+58599,LEB,CAN,2015,X,6,,0,N/A,PT6,EN,Turboprop,L,,,,Lebanon,Canada,N,0.6,3.6,0
+58988,LYA,CAN,2015,X,8,X,0,N/A,Typhoon,AV,APC,,,,,Libya,Canada,N,0.25,2,0
+56825,MAL,CAN,2013,X,5,X,0,N/A,PT6,EN,Turboprop,L,,,,Malaysia,Canada,N,0.6,3,0
+55978,MEX,CAN,2014,,12,X,0,N/A,PT6,EN,Turboprop,L,9,X,2015,Mexico,Canada,N,0.6,7.2,5.4
+58290,MEX,CAN,2014,,6,X,0,N/A,PT6,EN,Turboprop,L,,,,Mexico,Canada,N,0.6,3.6,0
+58895,MEX,CAN,2014,,36,X,0,N/A,PT6,EN,Turboprop,L,,,,Mexico,Canada,N,0.6,21.6,0
+55389,MEX,CAN,2014,X,4,X,2015,N/A,PW100,EN,Turboprop/turboshaft,L,4,X,2015,Mexico,Canada,N,1,4,4
+57931,MEX,CAN,2014,,4,,2015,N/A,PW100,EN,Turboprop/turboshaft,L,4,X,2015,Mexico,Canada,N,1,4,4
+58792,MLI,CAN,2015,,6,,0,N/A,PT6,EN,Turboprop,L,,,,Mali,Canada,N,0.6,3.6,0
+58471,NIG,CAN,2014,,20,X,2015,N/A,LAPV,AV,APC,,20,X,2015,Nigeria,Canada,N,0.14,2.8,2.8
+57129,NZ,CAN,2014,,11,X,2015,N/A,PT6,EN,Turboprop,L,11,X,2014-2015,New Zealand,Canada,N,0.6,6.6,6.6
+54786,OMA,CAN,2012,,16,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,14,X,2013-2015,Oman,Canada,N,1,16,14
+59026,PAK,CAN,2014,X,1,,2015,N/A,Challenger-604,AC,Light transport ac,L,1,,2015,Pakistan,Canada,N,18,18,18
+58342,PER,CAN,2014,,32,,0,N/A,Piranha-3,AV,APC,L,,,,Peru,Canada,N,0.29,9.28,0
+54622,PER,CAN,2012,,20,X,0,N/A,PT6,EN,Turboprop,L,12,X,2014-2015,Peru,Canada,N,0.6,12,7.2
+58141,PHI,CAN,2014,,6,X,2015,N/A,PW100,EN,Turboprop/turboshaft,L,6,X,2015,Philippines,Canada,N,1,6,6
+53932,POL,CAN,2011,,12,X,0,N/A,PT6,EN,Turboprop,L,6,X,2014-2015,Poland,Canada,N,0.6,7.2,3.6
+55072,QAT,CAN,2012,,24,,0,N/A,PT6,EN,Turboprop,L,18,X,2014-2015,Qatar,Canada,N,0.6,14.4,10.8
+50697,SAU,CAN,2009,,724,,2015,N/A,Piranha,AV,APC,L,724,X,2011-2015,Saudi Arabia,Canada,N,0.26,188.24,188.24
+53566,SAU,CAN,2011,,155,,2015,N/A,Piranha,AV,APC,L,155,X,2014-2015,Saudi Arabia,Canada,N,0.26,40.3,40.3
+31644,SAU,CAN,2014,,,,0,N/A,Piranha-5,AV,APC,L,,,,Saudi Arabia,Canada,N,0,0,0
+54806,SAU,CAN,2012,,55,X,0,N/A,PT6,EN,Turboprop,L,34,X,2014-2015,Saudi Arabia,Canada,N,0.6,33,20.4
+59466,SAU,CAN,2015,,8,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Saudi Arabia,Canada,N,1,8,0
+56014,SEN,CAN,2013,,3,X,0,N/A,PT6,EN,Turboprop,L,,,,Senegal,Canada,N,0.6,1.8,0
+55100,TUR,CAN,2013,X,15,X,0,N/A,PT6,EN,Turboprop,L,,,,Turkey,Canada,N,0.6,9,0
+58749,TUR,CAN,2015,X,15,X,0,N/A,PT6,EN,Turboprop,L,,,,Turkey,Canada,N,0.6,9,0
+37758,TUR,CAN,2005,,16,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,4,X,2013,Turkey,Canada,N,1,16,4
+50583,UAE,CAN,2008,,10,X,2015,PRIV,DHC-6 Twin Otter,AC,Transport aircraft,L,10,X,2013-2015,UAE,Canada,N,2.5,25,25
+56378,UAE,CAN,2012,X,2,,0,N/A,Global Express,AC,Transport aircraft,L,,,,UAE,Canada,N,30,60,0
+59358,UAE,CAN,2015,,2,,0,N/A,Global Express,AC,Transport aircraft,L,,,,UAE,Canada,N,25,50,0
+56436,UAE,CAN,2012,,4,X,0,N/A,PT6,EN,Turboprop,L,,,,UAE,Canada,N,0.6,2.4,0
+58259,UAE,CAN,2014,,24,X,0,N/A,PT6,EN,Turboprop,L,7,X,2015,UAE,Canada,N,0.6,14.4,4.2
+58029,UK,CAN,2015,X,10,X,0,N/A,PT6,EN,Turboprop,L,,,,United Kingdom,Canada,N,0.6,6,0
+37593,USA,CAN,1996,,748,X,0,N/A,PT6,EN,Turboprop,L,739,X,1999-2015,United States,Canada,N,0.6,448.8,443.4
+59259,USA,CAN,2014,X,4,X,2015,N/A,PT6,EN,Turboprop,L,4,X,2015,United States,Canada,N,0.6,2.4,2.4
+58811,UZB,CAN,2014,X,8,X,0,N/A,PW100,EN,Turboprop/turboshaft,L,4,X,2015,Uzbekistan,Canada,N,1,8,4
+57693,VN,CAN,2014,,6,,2015,N/A,PW100,EN,Turboprop/turboshaft,L,6,,2014-2015,Viet Nam,Canada,N,1,6,6
+57988,XXX,CAN,2014,,480,X,0,N/A,Cougar,AV,APC,,60,X,2014-2015,Unknown country,Canada,N,0.14,67.2,8.4
+58902,XXX,CAN,2014,,2,,0,N/A,PW100,EN,Turboprop/turboshaft,L,,,,Unknown country,Canada,N,1,2,0
+55802,ALG,CHI,2012,X,50,X,0,N/A,C-802/CSS-N-8,MI,Anti-ship missile,L,15,X,2015,Algeria,China,N,1,50,15
+54877,ALG,CHI,2012,X,3,,0,N/A,F-22,SH,Frigate,L,1,,2015,Algeria,China,N,237,711,237
+59212,ALG,CHI,2012,X,50,X,0,N/A,FM-90,MI,SAM,L,15,X,2015,Algeria,China,N,0.15,7.5,2.25
+56771,ANG,CHI,2013,,45,X,2015,N/A,BF6,EN,Diesel engine,L,45,X,2015,Angola,China,N,0.02,0.9,0.9
+34993,BAN,CHI,2014,X,9,X,0,N/A,BT-6/PT-6,AC,Trainer aircraft,L,,,,Bangladesh,China,N,0.19,1.71,0
+53596,BAN,CHI,2011,X,30,X,2015,N/A,C-704,MI,Anti-ship missile,L,30,X,2012-2015,Bangladesh,China,N,0.6,18,18
+58658,BAN,CHI,2012,,15,X,2015,N/A,C-802/CSS-N-8,MI,Anti-ship missile,L,15,X,2015,Bangladesh,China,N,1,15,15
+58657,BAN,CHI,2012,,50,X,2015,N/A,HHQ-10,MI,SAM,,50,X,2015,Bangladesh,China,N,0.14,7,7
+57940,BAN,CHI,2013,,9,,2015,N/A,K-8 Karakorum-8,AC,Trainer/combat ac,L,9,,2014-2015,Bangladesh,China,N,3.5,31.5,31.5
+58665,BAN,CHI,2014,,2,,0,LIC,LPC-1,SH,Corvette,L,,,,Bangladesh,China,N,64,128,0
+34988,BAN,CHI,2013,X,2,X,0,N/A,Type-035G/Ming,SH,Submarine,L,,,,Bangladesh,China,R,0,0,0
+33513,BAN,CHI,2012,,2,X,2015,N/A,Type-056,SH,Frigate,,2,,2015,Bangladesh,China,N,156,312,312
+52987,BAN,CHI,2009,X,300,X,0,ASS,Type-59G,AV,Tank,L,255,X,2010-2015,Bangladesh,China,N,2.33,699,594.15
+58869,DJI,CHI,2014,X,5,X,2015,N/A,WMA-301 Assaulter,AV,AFSV,L,5,X,2015,Djibouti,China,N,1.3,6.5,6.5
+53634,GHA,CHI,2014,,4,,2015,N/A,AS365/AS565 Panther,AC,Helicopter,L,4,,2015,Ghana,China,N,3.25,13,13
+54199,INS,CHI,2013,X,24,X,0,N/A,AK-630 30mm,AD,Naval gun,L,8,X,2013-2014,Indonesia,China,N,1,24,8
+51515,INS,CHI,2011,X,500,X,0,ASS,C-705,MI,Anti-ship missile,L,31,X,2014-2015,Indonesia,China,N,0.9,450,27.9
+51514,INS,CHI,2011,,100,X,0,LIC,C-802/CSS-N-8,MI,Anti-ship missile,L,40,X,2012-2015,Indonesia,China,N,1,100,40
+54201,INS,CHI,2009,X,24,X,0,N/A,Type-360 Seagull,GR,Air search radar,L,8,X,2011-2014,Indonesia,China,N,5,120,40
+38405,IRA,CHI,2004,X,0,,0,LIC,C-801/CSS-N-4,MI,Anti-ship missile,L,50,X,2006-2015,Iran,China,N,0.9,0,45
+33933,IRA,CHI,1998,X,0,,0,LIC,FL-6,MI,Anti-ship missile,L,260,X,1999-2015,Iran,China,N,0.31,0,80.6
+38517,IRA,CHI,2005,X,0,,0,LIC,QW-11,MI,Portable SAM,L,650,X,2006-2015,Iran,China,N,0.08,0,52
+35554,IRA,CHI,2002,X,0,,0,LIC,TL-10/FL-8,MI,Anti-ship missile,L,165,X,2004-2015,Iran,China,N,0.28,0,46.2
+59350,IRQ,CHI,2014,X,20,X,2015,N/A,AR-1,MI,ASM,,20,X,2015,Iraq,China,N,0.05,1,1
+59239,IRQ,CHI,2014,X,4,X,2015,N/A,CH-4,AC,UAV/UCAV,L,4,X,2015,Iraq,China,N,4,16,16
+59351,IRQ,CHI,2014,X,20,X,2015,N/A,FT-9,MI,Guided bomb,L,20,X,2015,Iraq,China,N,0.01,0.2,0.2
+57943,KEN,CHI,2012,,5,,2015,N/A,AS365/AS565 Panther,AC,Helicopter,L,5,,2014-2015,Kenya,China,N,3.25,16.25,16.25
+56638,MYA,CHI,2010,X,2,X,2015,LIC,Aung Zeya,SH,Frigate,L,2,,2014-2015,Myanmar,China,N,234,468,468
+52027,MYA,CHI,2009,,50,X,0,ASS,K-8 Karakorum-8,AC,Trainer/combat ac,L,18,X,2011-2015,Myanmar,China,N,3.5,175,63
+55989,MYA,CHI,2010,X,100,X,2015,N/A,WMA-301 Assaulter,AV,AFSV,L,100,X,2012-2015,Myanmar,China,N,1.3,130,130
+56990,NIG,CHI,2013,X,120,X,2015,N/A,CS/VP3,AV,APC,L,120,X,2014-2015,Nigeria,China,N,0.2,24,24
+54659,NIG,CHI,2012,,2,,2015,N/A,P18N,SH,OPV,L,2,,2014-2015,Nigeria,China,N,36,72,72
+59467,NIG,CHI,2014,,1,,2015,N/A,Type-62,SH,Patrol craft,,1,,2015,Nigeria,China,N,10,10,10
+58056,PAK,CHI,2013,X,2,,0,LIC,Azmat,SH,FAC,L,,,,Pakistan,China,N,65,130,0
+52239,PAK,CHI,2008,X,100,X,0,N/A,C-802/CSS-N-8,MI,Anti-ship missile,L,40,X,2012-2015,Pakistan,China,N,1,100,40
+58199,PAK,CHI,2013,X,30,X,0,N/A,C-802/CSS-N-8,MI,Anti-ship missile,L,,,,Pakistan,China,N,1,30,0
+58845,PAK,CHI,2015,X,80,X,0,N/A,C-802/CSS-N-8,MI,Anti-ship missile,L,,,,Pakistan,China,N,1,80,0
+54409,PAK,CHI,2010,X,50,X,0,N/A,CM-400AKG,MI,Anti-ship missile,L,40,X,2012-2015,Pakistan,China,N,1.25,62.5,50
+58756,PAK,CHI,2015,,6,,0,LIC,CSTC OPV,SH,OPV,,,,,Pakistan,China,N,0,0,0
+33149,PAK,CHI,2013,X,10,X,0,N/A,FM-90,AD,SAM system,L,7,X,2014-2015,Pakistan,China,N,16,160,112
+58725,PAK,CHI,2013,X,400,X,0,N/A,FM-90,MI,SAM,L,275,X,2014-2015,Pakistan,China,N,0.15,60,41.25
+58198,PAK,CHI,2014,,8,,0,N/A,IBIS-150,GR,Air search radar,,,,,Pakistan,China,N,0,0,0
+56941,PAK,CHI,2011,X,50,X,0,LIC,JF-17 Thunder/FC-1,AC,FGA aircraft,L,16,,2015,Pakistan,China,N,17.5,875,280
+56942,PAK,CHI,2012,X,50,X,0,LIC,JF-17 Thunder/FC-1,AC,FGA aircraft,L,,,,Pakistan,China,N,17.5,875,0
+58585,PAK,CHI,2011,X,100,X,0,N/A,LD-10,MI,ARM,L,50,X,2014-2015,Pakistan,China,N,0.2,20,10
+54410,PAK,CHI,2008,X,750,X,0,N/A,LS-3,MI,Guided bomb,L,425,X,2010-2015,Pakistan,China,N,0.02,15,8.5
+52238,PAK,CHI,2008,X,1000,X,0,N/A,LS-6-500,MI,Guided bomb,L,425,X,2010-2015,Pakistan,China,N,0.02,20,8.5
+54411,PAK,CHI,2008,X,750,X,0,N/A,LT-2,MI,Guided bomb,L,400,X,2010-2015,Pakistan,China,N,0.02,15,8
+57259,PAK,CHI,2014,,150,X,0,N/A,LY-80,MI,SAM,L,,,,Pakistan,China,N,0,0,0
+58197,PAK,CHI,2014,,3,,0,N/A,LY-80,AD,SAM system,L,,,,Pakistan,China,N,0,0,0
+34601,PAK,CHI,2006,X,800,X,0,N/A,PL-12/SD-10,MI,BVRAAM,L,375,X,2010-2015,Pakistan,China,N,0.4,320,150
+39643,PAK,CHI,2006,X,1000,X,0,N/A,PL-5E,MI,SRAAM,L,560,X,2009-2015,Pakistan,China,N,0.11,110,61.6
+22925,PAK,CHI,1993,X,0,,0,LIC,QW-1 Vanguard,MI,Portable SAM,L,1950,X,1994-2015,Pakistan,China,N,0.07,0,136.5
+19637,PAK,CHI,1989,,0,,0,LIC,Red Arrow-8,MI,Anti-tank missile,L,22850,X,1990-2015,Pakistan,China,N,0.01,0,228.5
+58844,PAK,CHI,2015,X,100,X,0,N/A,SET-65E 533mm,MI,ASW torpedo,L,,,,Pakistan,China,N,1,100,0
+52292,PAK,CHI,2015,X,8,X,0,LIC,Type-041/Yuan,SH,Submarine,L,,,,Pakistan,China,N,300,2400,0
+34289,PAK,CHI,1998,X,500,X,0,LIC,Type-90-2/MBT-2000,AV,Tank,L,358,X,2001-2015,Pakistan,China,N,3.81,1905,1363.98
+52240,PAK,CHI,2008,X,150,X,0,N/A,WMD-7,GR,Aircraft EO system,L,65,X,2009-2015,Pakistan,China,N,1,150,65
+58624,PAK,CHI,2014,X,3,X,2015,N/A,WZ-10,AC,Combat helicopter,L,3,X,2015,Pakistan,China,N,12,36,36
+58843,PAK,CHI,2014,X,100,X,0,N/A,Yu-4 533mm,MI,AS torpedo,,,,,Pakistan,China,N,0,0,0
+56980,PER,CHI,2013,,27,,2015,N/A,Type-90 122mm,AR,Self-propelled MRL,L,27,,2015,Peru,China,N,0.48,12.96,12.96
+59476,SAU,CHI,2014,X,2,X,2015,N/A,CH-4,AC,UAV/UCAV,L,2,X,2015,Saudi Arabia,China,N,4,8,8
+57926,SUD,CHI,2008,X,50,X,2015,ASS,Type-59D,AV,Tank,L,50,X,2010-2015,Sudan,China,N,2.25,112.5,112.5
+40182,SUD,CHI,2003,X,50,X,2015,ASS,WZ-551/Type-92,AV,IFV,L,50,X,2006-2015,Sudan,China,N,0.9,45,45
+58629,TAN,CHI,2014,,2,,2015,N/A,Type-037-1/Haiqing,SH,Patrol craft,L,2,,2015,Tanzania,China,S,10,20,20
+54918,THA,CHI,2012,X,0,,0,N/A,WS-2 400mm,MI,Guided rocket/SSM,L,,,,Thailand,China,N,0,0,0
+59301,TRI,CHI,2015,,1,,2015,N/A,Type-718/Haijing,SH,OPV,,1,,2015,Trinidad and Tobago,China,S,16,16,16
+53070,VEN,CHI,2012,X,8,,0,N/A,AS565S Panther,AC,ASW helicopter,L,,,,Venezuela,China,N,9.5,76,0
+51558,VEN,CHI,2014,X,9,,0,N/A,K-8 Karakorum-8,AC,Trainer/combat ac,L,,,,Venezuela,China,N,3.5,31.5,0
+57839,VEN,CHI,2014,X,24,,0,N/A,L-15,AC,Trainer/combat ac,L,,,,Venezuela,China,N,7.6,182.4,0
+56890,VEN,CHI,2012,,18,X,2015,N/A,SM-4 81mm,AR,Self-propelled mortar,L,18,X,2014-2015,Venezuela,China,N,0.3,5.4,5.4
+56725,VEN,CHI,2012,X,18,X,2015,N/A,SR-5,AR,Self-propelled MRL,L,18,X,2014-2015,Venezuela,China,N,0.95,17.1,17.1
+57691,VEN,CHI,2012,,40,X,2015,N/A,Type-07P/VN-1,AV,IFV,,40,X,2014-2015,Venezuela,China,N,1.3,52,52
+55761,VEN,CHI,2012,,121,X,2015,N/A,VN-4,AV,APV/APC,,121,X,2013-2015,Venezuela,China,N,0.16,19.36,19.36
+57517,VEN,CHI,2012,X,25,X,2015,N/A,ZBD-05/VN-18,AV,IFV,L,25,X,2015,Venezuela,China,N,1.25,31.25,31.25
+57692,VEN,CHI,2012,,25,X,2015,N/A,ZTD-05/VN-16,AV,Light tank,L,25,X,2015,Venezuela,China,N,2.25,56.25,56.25
+56415,ZAM,CHI,2014,X,6,,0,N/A,L-15,AC,Trainer/combat ac,L,1,,2015,Zambia,China,N,7.6,45.6,7.6
+58653,BAN,CZR,2012,,3,,2015,N/A,L-410 Turbolet,AC,Light transport ac,L,3,,2015,Bangladesh,Czech Republic,N,2.75,8.25,8.25
+58388,IRQ,CZR,2014,X,280,X,0,N/A,BMP-1,AV,IFV,L,45,X,2015,Iraq,Czech Republic,S,0.36,100.8,16.2
+51385,IRQ,CZR,2014,X,11,,0,N/A,L-159A ALCA,AC,FGA aircraft,L,2,X,2015,Iraq,Czech Republic,N,10,110,20
+55444,IRQ,CZR,2014,X,1,,0,N/A,L-159B,AC,Trainer/combat ac,L,,,,Iraq,Czech Republic,S,0,0,0
+58389,IRQ,CZR,2014,X,50,X,0,N/A,T-72M1,AV,Tank,L,24,X,2014-2015,Iraq,Czech Republic,S,1.04,52,24.96
+59256,MEX,CZR,2014,,2,,2015,N/A,Z-143L,AC,Light aircraft,L,2,X,2015,Mexico,Czech Republic,N,0.17,0.34,0.34
+57867,NAT,CZR,2014,,2,,0,N/A,VERA-E,GR,Air search system,L,,,,NATO**,Czech Republic,N,15,30,0
+58405,NIG,CZR,2014,X,12,X,2015,N/A,BMP-1,AV,IFV,L,12,X,2014-2015,Nigeria,Czech Republic,S,0.36,4.32,4.32
+58426,NIG,CZR,2014,X,6,X,2015,N/A,RM-70 122mm,AR,Self-propelled MRL,L,6,X,2015,Nigeria,Czech Republic,S,0.3,1.8,1.8
+58390,NIG,CZR,2014,X,4,X,2015,N/A,T-72M1,AV,Tank,L,4,X,2015,Nigeria,Czech Republic,S,1.04,4.16,4.16
+56839,USA,CZR,2014,,21,,0,N/A,L-159A ALCA,AC,FGA aircraft,L,8,X,2015,United States,Czech Republic,S,4,84,32
+35418,VN,CZR,2011,X,4,,0,N/A,VERA-E,GR,Air search system,L,2,X,2014-2015,Viet Nam,Czech Republic,N,15,60,30
+55513,ALG,DEN,2012,,2,,0,N/A,Scanter-6000,GR,Air/sea search radar,L,1,,2014,Algeria,Denmark,N,4.75,9.5,4.75
+54486,COL,DEN,2011,X,2,,0,N/A,SCANTER-2001,GR,Sea search radar,L,1,,2014,Colombia,Denmark,N,1,2,1
+58803,FRA,DEN,2007,,20,,0,N/A,SCANTER-2001,GR,Sea search radar,L,4,,2012-2015,France,Denmark,N,1,20,4
+56318,INS,DEN,2013,,1,,2015,N/A,Scanter-4100,GR,Air/sea search radar,L,1,X,2015,Indonesia,Denmark,N,4.75,4.75,4.75
+54787,OMA,DEN,2012,X,4,,0,N/A,Terma-9000,GR,MP aircraft radar,,3,X,2015,Oman,Denmark,N,2.5,10,7.5
+58081,POR,DEN,2014,,4,,0,N/A,Stanflex-300,SH,Patrol craft,L,,,,Portugal,Denmark,S,8,32,0
+35801,UAE,DEN,2004,,6,,0,N/A,SCANTER-2001,GR,Sea search radar,L,4,,2011-2015,UAE,Denmark,N,1,6,4
+58084,LYA,EGY,2014,,5,X,2015,AID,MiG-21MF,AC,Fighter aircraft,L,5,X,2015,Libya,Egypt,S,4.48,22.4,22.4
+59203,IRQ,EST,2015,X,12,,2015,AID,M-43 120mm,AR,Mortar,L,12,,2015,Iraq,Estonia,S,0.02,0.24,0.24
+54487,COL,FIN,2011,X,4,,0,N/A,W-12,EN,Diesel engine,L,2,,2014,Colombia,Finland,N,2,8,4
+56922,IRE,FIN,2010,,4,,2015,N/A,W-16,EN,Diesel engine,L,4,,2014-2015,Ireland,Finland,N,2,8,8
+55243,POL,FIN,2013,,185,,0,LIC,AMV,AV,APC,L,45,X,2014-2015,Poland,Finland,N,0.29,53.65,13.05
+56932,POL,FIN,2013,,122,,0,LIC,AMV-IFV,AV,IFV,L,,,,Poland,Finland,N,1.04,126.88,0
+58838,POR,FIN,2015,X,4,,0,N/A,W-12,EN,Diesel engine,L,,,,Portugal,Finland,N,2,8,0
+30830,SA,FIN,2013,,238,,0,LIC,AMV-IFV,AV,IFV,L,,,,South Africa,Finland,N,1.04,247.52,0
+54582,UAE,FIN,2015,X,40,,0,N/A,AMV,AV,APC,L,,,,UAE,Finland,N,0.29,11.6,0
+50882,UAE,FIN,2009,,6,,2015,N/A,NEMO 120mm,AR,Mortar turret,L,6,X,2013-2015,UAE,Finland,N,0.6,3.6,3.6
+53168,ALG,FRA,2012,,3,,0,N/A,AQS-13F,GR,ASW sonar,L,,,,Algeria,France,N,1.5,4.5,0
+59279,ARG,FRA,2014,X,5,X,2015,N/A,Ground Observer-80,GR,Ground surv radar,,5,X,2015,Argentina,France,N,0.75,3.75,3.75
+59023,ARG,FRA,2013,X,1,,2015,N/A,Vigile-200,GR,SIGINT system,,1,,2015,Argentina,France,N,7.5,7.5,7.5
+58885,AUS,FRA,2015,,2,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Australia,France,N,10,20,0
+57112,AUS,FRA,2011,,24,,0,N/A,FLASH,GR,ASW sonar,L,15,X,2013-2015,Australia,France,N,1.9,45.6,28.5
+35785,AUS,FRA,2003,,300,X,0,LIC,MU90 IMPACT,MI,ASW torpedo,L,220,X,2008-2015,Australia,France,N,0.5,150,110
+34228,AUS,FRA,2006,,34,,0,LIC,NH-90 TTH,AC,Transport helicopter,L,26,X,2011-2015,Australia,France,N,7,238,182
+36022,AUS,FRA,2005,,17,,0,N/A,Vampyr,GR,Air search system,L,11,X,2011-2015,Australia,France,N,2,34,22
+52402,AUS,FRA,2009,X,2,,2015,N/A,Vampyr,GR,Air search system,L,2,,2014-2015,Australia,France,N,2,4,4
+53597,BAN,FRA,2011,X,6,X,0,N/A,PA6,EN,Diesel engine,L,,,,Bangladesh,France,N,2,12,0
+58656,BAN,FRA,2012,,4,,2015,N/A,PA6,EN,Diesel engine,L,4,X,2015,Bangladesh,France,N,2,8,8
+55578,BEL,FRA,2001,X,4,,2015,N/A,FLASH,GR,ASW sonar,L,4,,2013-2015,Belgium,France,N,1.9,7.6,7.6
+56433,BEL,FRA,2013,,2,,2015,N/A,PRDS,SH,Patrol craft,L,2,,2014-2015,Belgium,France,N,18.45,36.9,36.9
+55896,BHU,FRA,2015,,2,,0,N/A,EC-130,AC,Light helicopter,L,1,,2015,Bhutan,France,N,0.95,1.9,0.95
+56531,BOL,FRA,2013,,6,,0,N/A,AS-532 Cougar/AS-332,AC,Transport helicopter,L,3,X,2014-2015,Bolivia,France,N,7.25,43.5,21.75
+51173,BOL,FRA,2015,,4,,0,N/A,Ground Master-60,GR,Air search radar,L,,,,Bolivia,France,N,9,36,0
+53404,BRA,FRA,2011,X,30,X,0,LIC,AM-39 Exocet,MI,Anti-ship missile,L,,,,Brazil,France,N,0.9,27,0
+50338,BRA,FRA,2008,,48,,0,LIC,EC725 Super Cougar,AC,Transport helicopter,L,22,X,2010-2015,Brazil,France,N,7.5,360,165
+58642,BRA,FRA,2015,,1,,2015,N/A,Foudre,SH,AALS,L,1,,2015,Brazil,France,S,40,40,40
+50988,BRA,FRA,2009,,4,,0,LIC,P-400,SH,Patrol craft,L,1,X,2015,Brazil,France,N,20,80,20
+50989,BRA,FRA,2013,X,5,,0,LIC,P-400,SH,Patrol craft,L,,,,Brazil,France,N,20,100,0
+34224,BRA,FRA,2009,,4,,0,LIC,Scorpene,SH,Submarine,L,,,,Brazil,France,N,299.2,1196.8,0
+36301,BRA,FRA,2009,,1,,0,LIC,SNBR,SH,Nuclear submarine,L,,,,Brazil,France,N,1000,1000,0
+59221,CAM,FRA,2015,,15,,2015,AID,ACMAT APC,AV,APC,L,15,X,2015,Cameroon,France,N,0.16,2.4,2.4
+56548,CHE,FRA,2012,X,2,,0,N/A,CAPTAS VDS,GR,ASW sonar,,,,,Chile,France,N,10,20,0
+54537,CHE,FRA,2011,,4,X,0,N/A,Ground Master-400,GR,Air search radar,L,3,X,2013-2015,Chile,France,N,13,52,39
+21082,CHI,FRA,1988,,0,X,0,LIC,AS365/AS565 Panther,AC,Helicopter,L,407,X,1992-2015,China,France,N,3.25,0,1322.75
+38033,CHI,FRA,1980,X,0,,0,LIC,AS565S Panther,AC,ASW helicopter,L,44,X,1989-2015,China,France,N,9.5,0,418
+33146,CHI,FRA,1978,X,0,,0,LIC,Crotale,AD,SAM system,L,47,X,1992-2015,China,France,N,15,0,705
+37965,CHI,FRA,2000,X,124,X,0,LIC,PA6,EN,Diesel engine,L,90,X,2005-2015,China,France,N,2,248,180
+57824,CHI,FRA,2010,X,60,X,0,LIC,PA6,EN,Diesel engine,L,46,X,2013-2015,China,France,N,2,120,92
+36418,CHI,FRA,2005,X,26,X,0,LIC,PC-2.5,EN,Diesel engine,L,14,,2007-2012,China,France,N,3.5,91,49
+18149,CHI,FRA,1978,X,0,,0,LIC,R-440 Crotale,MI,SAM,L,2250,X,1990-2015,China,France,N,0.11,0,247.5
+7493,CHI,FRA,1981,X,0,,0,LIC,SA-321 Super Frelon,AC,Transport helicopter,L,54,X,2001-2015,China,France,N,8.85,0,477.9
+24524,CHI,FRA,1986,X,,X,0,LIC,Sea Tiger,GR,Air/sea search radar,L,26,X,1987-2006,China,France,N,4.75,0,123.5
+59551,COL,FRA,2015,,1,,2015,N/A,ATR-42,AC,Transport aircraft,L,1,,2015,Colombia,France,S,3.8,3.8,3.8
+59075,CZR,FRA,2015,,42,,0,LIC,TITUS,AV,APC,,,,,Czech Republic,France,N,0,0,0
+57113,DEN,FRA,2012,,9,,0,N/A,FLASH,GR,ASW sonar,L,,,,Denmark,France,N,1.9,17.1,0
+53782,ECU,FRA,2010,,9,,2015,N/A,AS-350/AS-550 Fennec,AC,Light helicopter,L,9,X,2011-2015,Ecuador,France,N,0.9,8.1,8.1
+58759,EGY,FRA,2015,,500,X,0,N/A,AASM,MI,ASM,L,,,,Egypt,France,N,0.2,100,0
+58804,EGY,FRA,2015,,25,X,2015,N/A,ASTER-15 SAAM,MI,SAM,L,25,X,2015,Egypt,France,N,0.3,7.5,7.5
+59264,EGY,FRA,2015,,4,,0,N/A,EDAR,SH,Landing craft,L,,,,Egypt,France,N,0,0,0
+58086,EGY,FRA,2015,,1,,2015,N/A,FREMM,SH,Frigate,L,1,,2015,Egypt,France,N,479.75,479.75,479.75
+57172,EGY,FRA,2014,,4,,0,LIC,Gowind-2500,SH,Frigate,L,,,,Egypt,France,N,0,0,0
+57412,EGY,FRA,2015,,,,0,N/A,MICA,MI,BVRAAM,L,,,,Egypt,France,N,0.4,0,0
+59415,EGY,FRA,2015,,150,X,0,N/A,MICA,MI,BVRAAM,L,25,X,2015,Egypt,France,N,0.4,60,10
+58949,EGY,FRA,2015,,2,,0,N/A,Mistral,SH,AALS,L,,,,Egypt,France,N,350,700,0
+57411,EGY,FRA,2014,X,30,X,0,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,,,,Egypt,France,N,1.1,33,0
+58805,EGY,FRA,2015,,15,X,2015,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,15,X,2015,Egypt,France,N,1.1,16.5,16.5
+31374,EGY,FRA,2006,X,3,,2015,N/A,MRR-3D,GR,Air search radar,L,3,,2013-2015,Egypt,France,N,10,30,30
+55961,EGY,FRA,2010,X,1,,2015,N/A,MRR-3D,GR,Air search radar,L,1,,2015,Egypt,France,N,10,10,10
+58328,EGY,FRA,2015,,24,,0,N/A,Rafale,AC,FGA aircraft,L,3,,2015,Egypt,France,N,55,1320,165
+58757,EGY,FRA,2015,,,,0,N/A,TALIOS,GR,Targeting pod,,,,,Egypt,France,N,0,0,0
+31554,EST,FRA,2009,,2,,2015,N/A,Ground Master-400,GR,Air search radar,L,2,,2013-2015,Estonia,France,N,13,26,26
+59433,EST,FRA,2014,X,48,X,0,N/A,Mistral,MI,Portable SAM,L,24,X,2015,Estonia,France,N,0.1,4.8,2.4
+59225,ETH,FRA,2015,,12,,0,AID,ACMAT APC,AV,APC,L,,,,Ethiopia,France,N,0.16,1.92,0
+51088,FIN,FRA,2009,,12,,2015,N/A,Ground Master-400,GR,Air search radar,L,12,X,2013-2015,Finland,France,N,13,156,156
+52867,FRG,FRA,2010,,6,,2015,LIC,Ground Master-400,GR,Air search radar,L,6,X,2013-2015,Germany (FRG),France,N,13,78,78
+37701,FRG,FRA,2013,,18,X,0,N/A,Ocean Master,GR,MP aircraft radar,L,,,,Germany (FRG),France,N,2.5,45,0
+58268,GAB,FRA,2014,,12,,2015,PEAC,Aravis,AV,APC,L,12,X,2015,Gabon,France,N,0.23,2.76,2.76
+58027,GAB,FRA,2014,,1,,0,N/A,OPV-50,SH,OPV,,,,,Gabon,France,N,0,0,0
+58028,GAB,FRA,2014,,1,,0,N/A,P-400,SH,Patrol craft,L,,,,Gabon,France,R,13.2,13.2,0
+59019,GEO,FRA,2015,,,,0,N/A,Crotale-NG,AD,SAM system,L,,,,Georgia,France,N,10,0,0
+58726,GEO,FRA,2015,,,,0,N/A,Ground Master-200,GR,Air search radar,L,,,,Georgia,France,N,9,0,0
+59020,GEO,FRA,2015,,,,0,N/A,VT-1,MI,SAM,L,,,,Georgia,France,N,0.15,0,0
+39700,GRE,FRA,2008,X,60,X,0,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,40,X,2010-2013,Greece,France,N,1.1,66,44
+31030,GRE,FRA,2003,,20,,0,LIC,NH-90 TTH,AC,Transport helicopter,L,17,X,2011-2015,Greece,France,N,7,140,119
+57848,HUN,FRA,2014,,,,0,N/A,Mistral,MI,Portable SAM,L,,,,Hungary,France,N,0.1,0,0
+58589,IND,FRA,2015,X,2,,0,N/A,A-330,AC,Transport aircraft,L,,,,India,France,N,115,230,0
+32122,IND,FRA,2009,,19,,0,LIC,GS-100,GR,Air search radar,L,18,X,2010-2015,India,France,N,7.5,142.5,135
+51129,IND,FRA,2012,,493,,0,OFFS,MICA,MI,BVRAAM,L,95,X,2014-2015,India,France,N,0.4,197.2,38
+21042,IND,FRA,1979,X,22250,X,0,LIC,MILAN,MI,Anti-tank missile,L,20800,X,1984-2015,India,France,N,0.01,222.5,208
+39377,IND,FRA,2011,,49,X,0,LIC,Mirage-2000-5,AC,FGA aircraft,L,2,X,2015,India,France,N,31,1519,62
+40319,IND,FRA,2004,X,28,X,0,LIC,PA6,EN,Diesel engine,L,20,X,2007-2015,India,France,N,2,56,40
+59492,IND,FRA,2012,,12,,0,N/A,PA6,EN,Diesel engine,L,2,,2015,India,France,N,2,24,4
+58668,IND,FRA,2015,X,36,,0,N/A,Rafale,AC,FGA aircraft,L,,,,India,France,N,55,1980,0
+56386,IND,FRA,2013,,20,,0,LIC,SA-315B Lama,AC,Light helicopter,L,10,X,2015,India,France,N,0.75,15,7.5
+32031,IND,FRA,2005,,6,,0,LIC,Scorpene,SH,Submarine,L,,,,India,France,N,299.2,1795.2,0
+30906,IND,FRA,2005,,36,,0,N/A,SM-39 Exocet,MI,Anti-ship missile,L,,,,India,France,N,0.9,32.4,0
+53992,INS,FRA,2012,X,6,X,0,N/A,AS-350/AS-550 Fennec,AC,Light helicopter,L,1,X,2014,Indonesia,France,N,0.9,5.4,0.9
+58034,INS,FRA,2012,,6,,0,N/A,AS-355/AS-555 Fennec,AC,Light helicopter,L,,,,Indonesia,France,N,1.3,7.8,0
+27366,INS,FRA,1997,,10,X,0,LIC,AS-532 Cougar/AS-332,AC,Transport helicopter,L,8,X,2001-2015,Indonesia,France,N,7.25,72.5,58
+53993,INS,FRA,2014,,11,,0,ASS,AS565S Panther,AC,ASW helicopter,L,,,,Indonesia,France,N,9.5,104.5,0
+55372,INS,FRA,2012,,37,,0,N/A,CAESAR 155mm,AR,Self-propelled gun,,19,X,2014-2015,Indonesia,France,N,1.06,39.22,20.14
+52766,INS,FRA,2012,,6,,0,N/A,EC725 Super Cougar,AC,Transport helicopter,L,,,,Indonesia,France,N,7.5,45,0
+58134,INS,FRA,2014,,5,,0,N/A,Ground Master-200,GR,Air search radar,L,,,,Indonesia,France,N,9,45,0
+55629,INS,FRA,2012,X,40,X,0,N/A,MICA,MI,BVRAAM,L,,,,Indonesia,France,N,0.4,16,0
+56971,INS,FRA,2012,X,136,X,0,N/A,Mistral,MI,Portable SAM,L,114,X,2013-2015,Indonesia,France,N,0.1,13.6,11.4
+55630,INS,FRA,2012,X,30,,0,N/A,MM-40 Exocet,MI,Anti-ship missile,L,,,,Indonesia,France,N,1,30,0
+52953,INS,FRA,2011,,100,X,2015,LIC,Sherpa,AV,APV,L,100,X,2011-2015,Indonesia,France,N,0.22,22,22
+55213,INS,FRA,2013,,2,,0,N/A,TSM-2633 Spherion-B,GR,ASW sonar,L,,,,Indonesia,France,N,5,10,0
+36137,ITA,FRA,2005,X,4,,2015,N/A,CAPTAS TAS,GR,ASW sonar,,4,X,2013-2015,Italy,France,N,10,40,40
+36133,ITA,FRA,2000,X,12,X,0,N/A,UMS-4110,GR,ASW sonar,L,7,X,2007-2015,Italy,France,N,10,120,70
+57051,IVO,FRA,2013,X,3,,0,N/A,RPB-33,SH,Patrol craft,L,2,,2014-2015,Cote d'Ivoire,France,N,5.5,16.5,11
+20849,JAP,FRA,1989,,0,,0,LIC,MO-120-RT 120mm,AR,Mortar,L,450,X,1990-2015,Japan,France,N,0.1,0,45
+58790,JOR,FRA,2014,,2,X,0,N/A,I-Master,GR,AGS/MP radar,,1,,2014,Jordan,France,N,2.5,5,2.5
+54763,KAZ,FRA,2012,X,20,,0,ASS,EC725 Super Cougar,AC,Transport helicopter,L,,,,Kazakhstan,France,N,7.5,150,0
+57626,KAZ,FRA,2014,,20,,0,LIC,Ground Master-400,GR,Air search radar,L,1,,2014,Kazakhstan,France,N,13,260,13
+57872,KOS,FRA,2015,,214,,0,LIC,EC155,AC,Helicopter,L,,,,South Korea,France,N,0,0,0
+55836,KOS,FRA,2013,,8,,0,N/A,FLASH,GR,ASW sonar,L,,,,South Korea,France,N,1.9,15.2,0
+58764,KUW,FRA,2015,,24,,0,N/A,EC725 Super Cougar,AC,Transport helicopter,L,,,,Kuwait,France,N,7.5,180,0
+59295,KUW,FRA,2015,,120,,0,N/A,Sherpa,AV,APV,L,,,,Kuwait,France,N,0.22,26.4,0
+59570,LAO,FRA,2014,X,2,X,2015,N/A,AS365/AS565 Panther,AC,Helicopter,L,2,,2015,Laos,France,N,3.25,6.5,6.5
+58090,LEB,FRA,2015,X,,,0,N/A,AS-532 Cougar/AS-332,AC,Transport helicopter,L,,,,Lebanon,France,S,2.9,0,0
+58092,LEB,FRA,2015,X,24,,0,N/A,CAESAR 155mm,AR,Self-propelled gun,,,,,Lebanon,France,N,1.06,25.44,0
+58093,LEB,FRA,2014,X,,,0,N/A,COBRA,GR,Arty locating radar,L,,,,Lebanon,France,N,10,0,0
+57466,LEB,FRA,2014,X,3,,0,N/A,Combattante-4,SH,FAC,L,,,,Lebanon,France,N,0,0,0
+58591,LEB,FRA,2014,,46,,2015,N/A,MILAN,MI,Anti-tank missile,L,46,,2015,Lebanon,France,N,0.01,0.46,0.46
+57826,LEB,FRA,2015,,,,0,N/A,Mistral,MI,Portable SAM,L,,,,Lebanon,France,N,0.1,0,0
+57471,LEB,FRA,2014,,7,X,0,N/A,SA-342 Gazelle,AC,Light helicopter,L,,,,Lebanon,France,S,0.32,2.24,0
+57468,LEB,FRA,2015,X,100,,0,N/A,Sherpa,AV,APV,L,,,,Lebanon,France,N,0.22,22,0
+57469,LEB,FRA,2014,,30,,0,N/A,VAB-VTT,AV,APC,L,,,,Lebanon,France,S,0.1,3,0
+58091,LEB,FRA,2015,X,100,,0,N/A,VAB-VTT,AV,APC,L,,,,Lebanon,France,N,0.25,25,0
+59231,LEB,FRA,2015,X,6,,0,N/A,VBL,AV,APV,L,,,,Lebanon,France,N,0.12,0.72,0
+56663,LIT,FRA,2013,,3,,2015,N/A,AS365/AS565 Panther,AC,Helicopter,L,3,,2015,Lithuania,France,N,3.25,9.75,9.75
+55348,MAL,FRA,2011,X,8,,0,N/A,2R2M 120MM,AR,Mortar,L,,,,Malaysia,France,N,0.1,0.8,0
+57363,MAL,FRA,2014,,6,,0,N/A,CAPTAS TAS,GR,ASW sonar,,,,,Malaysia,France,N,10,60,0
+54253,MAL,FRA,2014,,6,,0,LIC,Gowind-2500,SH,Frigate,L,,,,Malaysia,France,N,0,0,0
+59095,MAL,FRA,2015,,,,0,N/A,Ground Master-200,GR,Air search radar,L,,,,Malaysia,France,N,9,0,0
+58542,MAL,FRA,2015,X,,,0,N/A,MICA,MI,BVRAAM,L,,,,Malaysia,France,N,0.4,0,0
+57844,MEX,FRA,2014,,10,,0,N/A,AS565M Panther,AC,Helicopter,L,,,,Mexico,France,N,5,50,0
+58287,MEX,FRA,2014,,2,,0,N/A,EC725 Super Cougar,AC,Transport helicopter,L,,,,Mexico,France,N,7.5,15,0
+57071,MOR,FRA,2013,,2,,0,N/A,Helios-2,SA,Recce satellite,L,,,,Morocco,France,N,0,0,0
+58918,MOR,FRA,2015,,1,,0,N/A,LCT 50m,SH,Landing craft,,,,,Morocco,France,N,0,0,0
+56329,MOZ,FRA,2013,,3,,0,N/A,HSI-32,SH,Patrol craft,L,,,,Mozambique,France,N,0,0,0
+59446,MOZ,FRA,2015,,3,,0,N/A,HSI-32,SH,Patrol craft,L,,,,Mozambique,France,N,0,0,0
+56330,MOZ,FRA,2013,,3,,0,N/A,Ocean Eagle-43,SH,Patrol craft,L,,,,Mozambique,France,N,0,0,0
+37700,NET,FRA,2000,,13,,2015,N/A,ENR,GR,MP aircraft radar,L,13,X,2010-2015,Netherlands,France,N,3.5,45.5,45.5
+52989,NET,FRA,2000,X,24,X,2015,N/A,RTM-332,EN,Turboshaft,L,24,X,2010-2015,Netherlands,France,N,0.9,21.6,21.6
+37696,NOR,FRA,2002,,6,,0,N/A,FLASH,GR,ASW sonar,L,,,,Norway,France,N,1.9,11.4,0
+37703,NOR,FRA,2001,,14,,0,N/A,Ocean Master,GR,MP aircraft radar,L,6,X,2011-2015,Norway,France,N,2.5,35,15
+51929,PAK,FRA,2007,,2,,0,N/A,MESMA,EN,AIP engine,L,,,,Pakistan,France,N,2.5,5,0
+52352,PER,FRA,2014,,1,,0,OFFS,Astrosat-300,SA,Recce satellite,,,,,Peru,France,N,0,0,0
+54948,PHI,FRA,2012,X,4,,0,N/A,AS-350/AS-550 Fennec,AC,Light helicopter,L,,,,Philippines,France,N,0.9,3.6,0
+32806,POL,FRA,2015,,8,,0,LIC,EC725,AC,ASW helicopter,L,,,,Poland,France,N,0,0,0
+34519,POL,FRA,2015,,42,X,0,LIC,EC725 Super Cougar,AC,Transport helicopter,L,,,,Poland,France,N,7.5,315,0
+58785,QAT,FRA,2015,,300,,0,N/A,AASM,MI,ASM,L,,,,Qatar,France,N,0.2,60,0
+58783,QAT,FRA,2015,,60,,0,N/A,AM-39 Exocet,MI,Anti-ship missile,L,,,,Qatar,France,N,0.9,54,0
+58787,QAT,FRA,2015,,160,,0,N/A,Meteor,MI,BVRAAM,L,,,,Qatar,France,N,0,0,0
+58786,QAT,FRA,2015,,300,,0,N/A,MICA,MI,BVRAAM,L,,,,Qatar,France,N,0.4,120,0
+58416,QAT,FRA,2012,,,,0,N/A,MILAN,MI,Anti-tank missile,L,,,,Qatar,France,N,0.01,0,0
+52489,QAT,FRA,2015,,24,,0,N/A,Rafale,AC,FGA aircraft,L,,,,Qatar,France,N,55,1320,0
+58784,QAT,FRA,2015,,140,,0,N/A,Storm Shadow/SCALP,MI,ASM,L,,,,Qatar,France,N,1.4,196,0
+58394,ROM,FRA,2012,,16,,2015,PEAC,VAP,AV,APV,L,16,,2013-2015,Romania,France,N,0.12,1.92,1.92
+54540,SAU,FRA,2011,,73,X,2015,N/A,Aravis,AV,APC,L,73,X,2013-2015,Saudi Arabia,France,N,0.23,16.79,16.79
+54542,SAU,FRA,2012,,191,,0,N/A,Aravis,AV,APC,L,100,X,2015,Saudi Arabia,France,N,0.23,43.93,23
+55235,SAU,FRA,2011,,32,,2015,ASS,CAESAR 155mm,AR,Self-propelled gun,,32,X,2013-2015,Saudi Arabia,France,N,1.06,33.92,33.92
+59029,SAU,FRA,2015,,10,X,0,N/A,FLASH,GR,ASW sonar,L,,,,Saudi Arabia,France,N,1.9,19,0
+55203,SAU,FRA,2011,,20,,2015,N/A,Ground Master-60,GR,Air search radar,L,20,X,2013-2015,Saudi Arabia,France,N,9,180,180
+55200,SAU,FRA,2011,,800,X,2015,N/A,Mistral,MI,Portable SAM,L,800,X,2013-2015,Saudi Arabia,France,N,0.1,80,80
+56253,SAU,FRA,2013,,130,X,0,N/A,Mistral,MI,Portable SAM,L,,,,Saudi Arabia,France,N,0.1,13,0
+53227,SAU,FRA,2011,,49,X,2015,N/A,MPCV,AD,Mobile AD system,L,49,X,2013-2015,Saudi Arabia,France,N,0.63,30.87,30.87
+58324,SEN,FRA,2014,X,1,,0,N/A,OPV-190,SH,Patrol craft,,,,,Senegal,France,N,0,0,0
+56054,SEN,FRA,2013,,1,,2015,N/A,OPV-45,SH,Patrol craft,L,1,,2015,Senegal,France,N,10.25,10.25,10.25
+59201,SEN,FRA,2014,X,4,,2015,N/A,TB-30 Epsilon,AC,Trainer aircraft,L,4,,2015,Senegal,France,S,0.208,0.832,0.832
+56335,SIN,FRA,2013,,200,X,0,N/A,ASTER-30,MI,SAM,L,,,,Singapore,France,N,1,200,0
+58647,SIN,FRA,2014,X,40,X,2015,N/A,HIGUARD,AV,APC,L,40,X,2014-2015,Singapore,France,N,0.3,12,12
+59139,SIN,FRA,2013,X,150,X,0,N/A,MICA,MI,BVRAAM,L,,,,Singapore,France,N,0.4,60,0
+56624,SIN,FRA,2013,,2,X,0,N/A,SAMP/T,AD,ABM/SAM system,L,,,,Singapore,France,N,55,110,0
+59138,SIN,FRA,2013,,8,,0,N/A,VL-MICA-M,NW,Naval SAM system,L,,,,Singapore,France,N,0,0,0
+59222,SOM,FRA,2015,,13,,0,AID,ACMAT APC,AV,APC,L,,,,Somalia,France,N,0.16,2.08,0
+24327,SPA,FRA,2003,,24,,0,LIC,EC-665 Tiger,AC,Combat helicopter,L,9,X,2007-2015,Spain,France,N,11.5,276,103.5
+31073,SPA,FRA,2005,,22,,0,LIC,NH-90 TTH,AC,Transport helicopter,L,2,X,2014-2015,Spain,France,N,7,154,14
+37697,SWE,FRA,2001,X,5,,0,N/A,FLASH,GR,ASW sonar,L,,,,Sweden,France,N,1.9,9.5,0
+28423,SWE,FRA,2001,,13,,0,LIC,NH-90 TTH,AC,Transport helicopter,L,11,X,2011-2015,Sweden,France,N,7,91,77
+36683,THA,FRA,2012,,4,,2015,N/A,EC725 Super Cougar,AC,Transport helicopter,L,4,,2015,Thailand,France,N,7.5,30,30
+58007,THA,FRA,2014,,2,,0,N/A,EC725 Super Cougar,AC,Transport helicopter,L,,,,Thailand,France,N,7.5,15,0
+59224,TUN,FRA,2015,,4,,0,AID,ACMAT APC,AV,APC,L,,,,Tunisia,France,N,0.16,0.64,0
+30431,TUR,FRA,2002,,15,,0,N/A,Ocean Master,GR,MP aircraft radar,L,9,X,2013-2014,Turkey,France,N,2.5,37.5,22.5
+15239,UAE,FRA,2003,,4,,2015,LIC,Baynunah,SH,Corvette,L,4,,2011-2015,UAE,France,N,104.25,417,417
+32379,UAE,FRA,2005,,2,,0,LIC,Baynunah,SH,Corvette,L,,,,UAE,France,N,104.25,208.5,0
+56160,UAE,FRA,2013,,17,,0,N/A,Ground Master-200,GR,Air search radar,L,5,X,2015,UAE,France,N,9,153,45
+56161,UAE,FRA,2015,,2,,0,N/A,Helios-2,SA,Recce satellite,L,,,,UAE,France,N,0,0,0
+21271,UAE,FRA,2006,,150,,0,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,91,X,2010-2015,UAE,France,N,1.1,165,100.1
+59223,UGA,FRA,2015,,17,,0,AID,ACMAT APC,AV,APC,L,,,,Uganda,France,N,0.16,2.72,0
+52821,UKR,FRA,2010,X,0,,0,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,,,,Ukraine,France,N,1.1,0,0
+37694,USA,FRA,2002,,298,X,0,LIC,FLASH,GR,ASW sonar,L,217,X,2006-2015,United States,France,N,1.9,566.2,412.3
+36387,USA,FRA,1996,X,44,,0,LIC,PC-2.5,EN,Diesel engine,L,36,,2006-2014,United States,France,N,3.5,154,126
+58002,UZB,FRA,2013,,8,X,0,N/A,AS-532 Cougar/AS-332,AC,Transport helicopter,L,,,,Uzbekistan,France,N,7.25,58,0
+58001,UZB,FRA,2014,X,6,X,0,N/A,AS-550C2 Fennec,AC,Combat helicopter,L,,,,Uzbekistan,France,N,3,18,0
+56332,VN,FRA,2013,X,40,,0,N/A,MICA,MI,BVRAAM,L,,,,Viet Nam,France,N,0.4,16,0
+58350,VN,FRA,2013,X,25,X,0,N/A,MM-40-3 Exocet,MI,Anti-ship MI/SSM,L,,,,Viet Nam,France,N,1.1,27.5,0
+58349,VN,FRA,2013,X,2,,0,N/A,VL-MICA-M,NW,Naval SAM system,L,,,,Viet Nam,France,N,0,0,0
+59248,ALB,FRG,2014,,2,,2015,N/A,EC145,AC,Light helicopter,,2,X,2015,Albania,Germany (FRG),N,3.25,6.5,6.5
+39715,ALG,FRG,2012,,2,,0,N/A,MEKO-A200,SH,Frigate,,,,,Algeria,Germany (FRG),N,240.5,481,0
+55803,ALG,FRG,2012,X,12,X,0,N/A,MTU-4000,EN,Diesel engine,L,4,X,2015,Algeria,Germany (FRG),N,2,24,8
+54310,ALG,FRG,2014,X,926,,0,ASS,Tpz-1 Fuchs,AV,APC,L,150,X,2014-2015,Algeria,Germany (FRG),N,0.35,324.1,52.5
+59027,AUS,FRG,2014,,15,,0,N/A,EC135,AC,Light helicopter,L,1,X,2015,Australia,Germany (FRG),N,2.25,33.75,2.25
+53279,AUS,FRG,2007,X,4,,2015,N/A,MAN-3240,EN,Diesel engine,L,4,,2014-2015,Australia,Germany (FRG),N,3.5,14,14
+36118,BEL,FRG,2001,,4,,2015,N/A,NF-90 NFH,AC,ASW helicopter,L,4,,2013-2015,Belgium,Germany (FRG),N,12.6,50.4,50.4
+59345,BEL,FRG,2003,,28,X,0,N/A,TP400-D6,EN,Turboprop,,,,,Belgium,Germany (FRG),N,3,84,0
+59401,BRA,FRG,2012,,2,X,2015,N/A,Fieldguard,GR,Fire control radar,L,2,X,2015,Brazil,Germany (FRG),N,4.76,9.52,9.52
+32106,BRA,FRG,2013,,34,,2015,N/A,Gepard,AD,SPAAG,L,34,X,2013-2015,Brazil,Germany (FRG),S,3.6,122.4,122.4
+51969,BRA,FRG,2010,,16,,0,N/A,MTU-396,EN,Diesel engine,L,,,,Brazil,Germany (FRG),N,0.2,3.2,0
+51954,CAN,FRG,2013,X,2,,0,LIC,Berlin,SH,Support ship,L,,,,Canada,Germany (FRG),N,0,0,0
+54354,CAN,FRG,2011,,18,,0,LIC,Wisent,AV,AEV/ARV,L,11,X,2014-2015,Canada,Germany (FRG),N,2.25,40.5,24.75
+35562,CHI,FRG,1981,X,0,X,0,LIC,BF8L,EN,Diesel engine,L,4500,X,1982-2015,China,Germany (FRG),N,0.06,0,270
+53579,CHI,FRG,2008,X,8,X,2015,LIC,MTU-1163,EN,Diesel engine,L,8,,2013-2015,China,Germany (FRG),N,2,16,16
+58986,CHI,FRG,2010,X,20,X,0,LIC,MTU-956,EN,Diesel engine,L,6,X,2014-2015,China,Germany (FRG),N,1.2,24,7.2
+58620,COL,FRG,2014,,1,,2015,POLI,ATR-42,AC,Transport aircraft,L,1,,2015,Colombia,Germany (FRG),S,3.8,3.8,3.8
+55164,COL,FRG,2011,,1,,0,LIC,OPV-80,SH,OPV,L,,,,Colombia,Germany (FRG),N,36,36,0
+59618,COL,FRG,2015,X,2,,0,N/A,S10-VT,NA,Light aircraft,L,,,,Colombia,Germany (FRG),N,0,0,0
+36289,COL,FRG,2012,,2,,2015,N/A,Type-206A,SH,Submarine,L,2,,2015,Colombia,Germany (FRG),R,36.3,72.6,72.6
+56938,CRO,FRG,2014,,12,,0,N/A,PzH-2000 155mm,AR,Self-propelled gun,L,6,X,2015,Croatia,Germany (FRG),S,1.8,21.6,10.8
+20614,EGY,FRG,1978,,0,,0,LIC,Fahd,AV,APC,L,1280,X,1986-2015,Egypt,Germany (FRG),N,0.2,0,256
+58800,EGY,FRG,2015,,4,,2015,N/A,MTU-4000,EN,Diesel engine,L,4,,2015,Egypt,Germany (FRG),N,2,8,8
+36743,EGY,FRG,2006,,12,,2015,N/A,MTU-595,EN,Diesel engine,L,12,X,2013-2015,Egypt,Germany (FRG),N,2,24,24
+55962,EGY,FRG,2010,X,4,,2015,N/A,MTU-595,EN,Diesel engine,L,4,,2015,Egypt,Germany (FRG),N,2,8,8
+51322,EGY,FRG,2012,X,2,,0,N/A,Type-209/1400,SH,Submarine,L,,,,Egypt,Germany (FRG),N,170,340,0
+58510,EGY,FRG,2014,X,2,,0,N/A,Type-209/1400,SH,Submarine,L,,,,Egypt,Germany (FRG),N,170,340,0
+51820,FIN,FRG,2006,,3,,0,N/A,SQS-12,GR,MCM sonar,L,2,,2012-2013,Finland,Germany (FRG),N,7.5,22.5,15
+55568,FRA,FRG,2005,X,40,X,0,N/A,MTU-4000,EN,Diesel engine,L,8,,2012-2015,France,Germany (FRG),N,2,80,16
+58269,GAB,FRG,2014,,12,,2015,PEAC,OM-924,EN,Diesel engine,L,12,,2015,Gabon,Germany (FRG),N,0.02,0.24,0.24
+39576,GRE,FRG,2003,,8,,2015,N/A,MTU-595,EN,Diesel engine,L,8,X,2010-2015,Greece,Germany (FRG),N,2,16,16
+53079,GRE,FRG,2008,X,8,,0,N/A,MTU-595,EN,Diesel engine,L,,,,Greece,Germany (FRG),N,2,16,0
+35219,GRE,FRG,2003,X,70,X,2015,N/A,RIM-116A RAM,MI,SAM,L,70,X,2010-2015,Greece,Germany (FRG),N,0.14,9.8,9.8
+28097,GRE,FRG,2000,,3,,2015,LIC,Type-214,SH,Submarine,L,3,X,2010-2015,Greece,Germany (FRG),N,275,825,825
+33532,GRE,FRG,2002,,1,,0,LIC,Type-214,SH,Submarine,L,,,,Greece,Germany (FRG),N,275,275,0
+56559,IND,FRG,2014,X,16,X,0,LIC,ACTAS,GR,ASW sonar,L,,,,India,Germany (FRG),N,0,0,0
+55040,IND,FRG,2011,X,4,X,2015,N/A,BR-710,EN,Turbofan,L,4,X,2015,India,Germany (FRG),N,2.5,10,10
+55037,IND,FRG,2014,,14,,0,LIC,Do-228,AC,Light transport ac,L,10,X,2014-2015,India,Germany (FRG),N,2.25,31.5,22.5
+51848,IND,FRG,2012,X,14,,0,LIC,Do-228MP,AC,MP aircraft,L,12,X,2013-2015,India,Germany (FRG),N,3.3,46.2,39.6
+58013,IND,FRG,2015,,12,,0,LIC,Do-228MP,AC,MP aircraft,L,,,,India,Germany (FRG),N,3.3,39.6,0
+35948,IND,FRG,2005,,24,,0,N/A,MAN V6,EN,Diesel engine,L,,,,India,Germany (FRG),N,0.17,4.08,0
+32771,IND,FRG,1979,X,22250,X,0,LIC,MILAN,MI,Anti-tank missile,L,20800,X,1984-2015,India,Germany (FRG),N,0.01,222.5,208
+34739,IND,FRG,2010,X,124,X,0,N/A,MTU-838,EN,Diesel engine,L,,,,India,Germany (FRG),N,0.25,31,0
+59373,IND,FRG,2015,X,100,,0,N/A,MTU-881,EN,Diesel engine,L,,,,India,Germany (FRG),N,0.18,18,0
+58422,INS,FRG,2012,,2,,2015,N/A,BPz-2,AV,ARV,L,2,X,2015,Indonesia,Germany (FRG),S,0.56,1.12,1.12
+58421,INS,FRG,2012,,3,,0,N/A,BrPz-1 Biber,AV,ABL,L,1,,2015,Indonesia,Germany (FRG),S,0.4,1.2,0.4
+55374,INS,FRG,2012,,3,,0,N/A,Buffel,AV,ARV,L,2,X,2015,Indonesia,Germany (FRG),R,1.485,4.455,2.97
+57942,INS,FRG,2013,X,12,,0,N/A,EC135,AC,Light helicopter,L,,,,Indonesia,Germany (FRG),N,2.25,27,0
+54208,INS,FRG,2012,,61,,0,N/A,Leopard-2A4,AV,Tank,L,,,,Indonesia,Germany (FRG),R,2.64,161.04,0
+55838,INS,FRG,2012,,42,,2015,N/A,Leopard-2A4,AV,Tank,L,42,X,2013-2015,Indonesia,Germany (FRG),S,1.6,67.2,67.2
+54200,INS,FRG,2009,X,72,X,0,N/A,MAN V12,EN,Diesel engine,L,24,X,2011-2014,Indonesia,Germany (FRG),N,0.4,28.8,9.6
+58423,INS,FRG,2012,,3,,0,N/A,PiPz-1,AV,AEV,L,,,,Indonesia,Germany (FRG),S,0.7,2.1,0
+58036,IRQ,FRG,2013,,90,X,2015,N/A,AIM-9L/M Sidewinder,MI,SRAAM,L,90,X,2015,Iraq,Germany (FRG),R,0.0726,6.534,6.534
+58139,IRQ,FRG,2014,,15,,2015,N/A,Dingo-2,AV,APC,L,15,,2014-2015,Iraq,Germany (FRG),S,0.1,1.5,1.5
+59431,IRQ,FRG,2015,,5,,0,N/A,Dingo-2,AV,APC,L,,,,Iraq,Germany (FRG),S,0.1,0.5,0
+57806,IRQ,FRG,2014,,1000,,2015,N/A,MILAN,MI,Anti-tank missile,L,1000,X,2014-2015,Iraq,Germany (FRG),S,0.004,4,4
+59430,IRQ,FRG,2015,,200,,0,N/A,MILAN,MI,Anti-tank missile,L,,,,Iraq,Germany (FRG),S,0.004,0.8,0
+31150,ISR,FRG,2006,,2,,2015,AID,Dolphin/Type-800,SH,Submarine,L,2,,2014-2015,Israel,Germany (FRG),N,300,600,600
+51361,ISR,FRG,2012,,1,,0,AID,Dolphin/Type-800,SH,Submarine,L,,,,Israel,Germany (FRG),N,300,300,0
+34387,ISR,FRG,2015,,4,,0,LIC,MEKO PC-IN,SH,Frigate,,,,,Israel,Germany (FRG),N,0,0,0
+35533,ISR,FRG,2000,X,790,X,0,N/A,MTU-883,EN,Diesel engine,L,685,X,2002-2015,Israel,Germany (FRG),N,0.25,197.5,171.25
+54950,ITA,FRG,2012,,4,X,0,N/A,BR-710,EN,Turbofan,L,,,,Italy,Germany (FRG),N,2.5,10,0
+35813,ITA,FRG,2008,,2,,0,LIC,Type-212,SH,Submarine,L,1,X,2015,Italy,Germany (FRG),N,275,550,275
+36551,JAP,FRG,2009,,15,X,2015,N/A,EC135,AC,Light helicopter,L,15,X,2009-2015,Japan,Germany (FRG),N,2.25,33.75,33.75
+52545,KAZ,FRG,2010,,12,X,0,ASS,EC145,AC,Light helicopter,,8,X,2011-2015,Kazakhstan,Germany (FRG),N,3.25,39,26
+36389,KOS,FRG,2005,X,36,X,2015,N/A,MTU-1163,EN,Diesel engine,L,36,X,2008-2015,South Korea,Germany (FRG),N,2,72,72
+37834,KOS,FRG,1998,X,1306,X,0,N/A,MTU-881,EN,Diesel engine,L,910,X,1999-2015,South Korea,Germany (FRG),N,0.18,235.08,163.8
+52387,KOS,FRG,2012,,100,X,2015,N/A,MTU-883,EN,Diesel engine,L,100,X,2014-2015,South Korea,Germany (FRG),N,0.25,25,25
+34229,KOS,FRG,2013,,177,X,0,N/A,Taurus KEPD-350,MI,ASM,L,,,,South Korea,Germany (FRG),N,1.4,247.8,0
+40165,KOS,FRG,2008,,6,,0,LIC,Type-214,SH,Submarine,L,1,,2014,South Korea,Germany (FRG),N,275,1650,275
+25017,KUW,FRG,2015,,12,,0,N/A,Tpz-1 Fuchs,AV,APC,L,,,,Kuwait,Germany (FRG),N,0.35,4.2,0
+58303,LEB,FRG,2014,,24,X,0,N/A,OM-366,EN,Diesel engine,,,,,Lebanon,Germany (FRG),N,0.04,0.96,0
+59478,LIT,FRG,2015,,84,,0,N/A,Boxer,AV,IFV,,,,,Lithuania,Germany (FRG),N,0,0,0
+58291,LIT,FRG,2015,,4,,0,N/A,Boxer-MRAV,AV,APC,L,,,,Lithuania,Germany (FRG),N,0,0,0
+59165,LIT,FRG,2015,,6,,0,N/A,BPz-2,AV,ARV,L,,,,Lithuania,Germany (FRG),R,0.924,5.544,0
+59166,LIT,FRG,2015,,26,,0,N/A,M-113,AV,APC,L,,,,Lithuania,Germany (FRG),R,0.165,4.29,0
+58626,LIT,FRG,2015,,18,,0,N/A,PzH-2000 155mm,AR,Self-propelled gun,L,,,,Lithuania,Germany (FRG),R,2.97,53.46,0
+59346,LUX,FRG,2003,,4,,0,N/A,TP400-D6,EN,Turboprop,,,,,Luxembourg,Germany (FRG),N,3,12,0
+52244,MAL,FRG,2010,,257,X,0,N/A,BFM-2015,EN,Diesel engine,L,32,X,2014-2015,Malaysia,Germany (FRG),N,0.1,25.7,3.2
+59347,MAL,FRG,2005,,16,X,0,N/A,TP400-D6,EN,Turboprop,,4,X,2015,Malaysia,Germany (FRG),N,3,48,12
+57841,MEX,FRG,2014,,25,,2015,N/A,G-120TP,AC,Trainer aircraft,L,25,,2015,Mexico,Germany (FRG),N,0.4,10,10
+58997,MYA,FRG,2014,X,20,,2015,N/A,G-120TP,AC,Trainer aircraft,L,20,X,2015,Myanmar,Germany (FRG),N,0.4,8,8
+59092,NET,FRG,2015,X,18,,0,LEAS,Leopard-2A6,AV,Tank,L,,,,Netherlands,Germany (FRG),S,2,36,0
+40156,NET,FRG,2006,X,200,X,0,ASS,MTU-199,EN,Diesel engine,L,83,X,2013-2015,Netherlands,Germany (FRG),N,0.13,26,10.79
+54660,NIG,FRG,2012,,4,,2015,N/A,MTU-4000,EN,Diesel engine,L,4,,2014-2015,Nigeria,Germany (FRG),N,2,8,8
+58928,NOR,FRG,2015,,6,,0,N/A,Wisent,AV,AEV/ARV,L,,,,Norway,Germany (FRG),N,2.25,13.5,0
+38850,POL,FRG,2013,,18,,0,N/A,BPz-2,AV,ARV,L,9,X,2015,Poland,Germany (FRG),S,0.56,10.08,5.04
+56939,POL,FRG,2013,,105,,2015,N/A,Leopard-2A5,AV,Tank,L,105,X,2014-2015,Poland,Germany (FRG),S,1.8,189,189
+56721,POL,FRG,2013,,35,X,2015,N/A,M-113,AV,APC,L,35,,2015,Poland,Germany (FRG),S,0.1,3.5,3.5
+29833,POL,FRG,2001,,1,,0,LIC,MEKO-A100,SH,OPV,,,,,Poland,Germany (FRG),N,0,0,0
+59578,POL,FRG,2014,X,24,X,0,N/A,MTU-6R-106,EN,Diesel engine,L,,,,Poland,Germany (FRG),N,0.06,1.44,0
+56542,POL,FRG,2014,X,120,X,0,N/A,MTU-881,EN,Diesel engine,L,,,,Poland,Germany (FRG),N,0.18,21.6,0
+57968,QAT,FRG,2014,X,13,,0,N/A,Dingo-2,AV,APC,L,,,,Qatar,Germany (FRG),N,0.25,3.25,0
+57969,QAT,FRG,2014,X,30,,0,N/A,Fennek MPC,AV,APV,L,,,,Qatar,Germany (FRG),N,0,0,0
+30359,QAT,FRG,2013,,62,,0,N/A,Leopard-2A6,AV,Tank,L,10,X,2015,Qatar,Germany (FRG),N,5,310,50
+56027,QAT,FRG,2013,,24,,0,N/A,PzH-2000 155mm,AR,Self-propelled gun,L,3,X,2015,Qatar,Germany (FRG),N,4.5,108,13.5
+59173,QAT,FRG,2013,,6,X,0,N/A,Wisent,AV,AEV/ARV,L,,,,Qatar,Germany (FRG),N,2.25,13.5,0
+50185,SAU,FRG,2014,,33,X,0,N/A,FPB-41,SH,Patrol craft,L,,,,Saudi Arabia,Germany (FRG),N,16.4,541.2,0
+55805,SAU,FRG,2012,,191,X,2015,N/A,OM-924,EN,Diesel engine,L,191,X,2014-2015,Saudi Arabia,Germany (FRG),N,0.02,3.82,3.82
+56806,SIN,FRG,2013,,16,,0,N/A,MTU-4000,EN,Diesel engine,L,,,,Singapore,Germany (FRG),N,2,32,0
+31951,SIN,FRG,2013,,2,,0,N/A,Type-218,SH,Submarine,L,,,,Singapore,Germany (FRG),N,0,0,0
+35484,SPA,FRG,2005,,40,,0,LIC,DM2A4 Seehecht,MI,AS/ASW torpedo,L,,,,Spain,Germany (FRG),N,1.8,72,0
+30769,SPA,FRG,2009,,700,,0,LIC,IRIS-T,MI,SRAAM,L,575,X,2011-2015,Spain,Germany (FRG),N,0.2,140,115
+58126,SPA,FRG,2015,,40,X,2015,N/A,MIM-104C PAC-2,MI,SAM,L,40,X,2015,Spain,Germany (FRG),S,0.4,16,16
+38397,SPA,FRG,2004,X,12,,0,LIC,MTU-396,EN,Diesel engine,L,,,,Spain,Germany (FRG),N,0.2,2.4,0
+58125,SPA,FRG,2015,,2,,2015,N/A,Patriot,AD,SAM system,L,2,,2015,Spain,Germany (FRG),S,18.8,37.6,37.6
+55680,SWE,FRG,2013,,0,,0,LIC,IRIS-T,MI,SRAAM,L,,,,Sweden,Germany (FRG),N,0.2,0,0
+37704,SWE,FRG,2001,,5,,0,LIC,NH-90 NFH,AC,ASW helicopter,L,1,,2015,Sweden,Germany (FRG),N,14.5,72.5,14.5
+57115,THA,FRG,2013,,2,,0,N/A,ACTAS,GR,ASW sonar,L,,,,Thailand,Germany (FRG),N,0,0,0
+59459,THA,FRG,2015,X,1,,0,N/A,ACTAS,GR,ASW sonar,L,,,,Thailand,Germany (FRG),N,0,0,0
+59460,THA,FRG,2013,,1,,0,N/A,ASO-712,GR,ASW sonar,,,,,Thailand,Germany (FRG),N,0,0,0
+59461,THA,FRG,2015,X,1,,0,N/A,ASO-712,GR,ASW sonar,,,,,Thailand,Germany (FRG),N,0,0,0
+56252,THA,FRG,2013,,6,,2015,N/A,EC145,AC,Light helicopter,,6,,2015,Thailand,Germany (FRG),N,3.25,19.5,19.5
+57908,THA,FRG,2014,,5,,0,N/A,EC145,AC,Light helicopter,,,,,Thailand,Germany (FRG),N,3.25,16.25,0
+58233,THA,FRG,2014,,9,,0,N/A,EC145,AC,Light helicopter,,,,,Thailand,Germany (FRG),N,3.25,29.25,0
+58512,THA,FRG,2015,,6,,0,VIP,EC145,AC,Light helicopter,,,,,Thailand,Germany (FRG),N,3.25,19.5,0
+53682,THA,FRG,2011,,142,X,0,N/A,MTU-6R-106,EN,Diesel engine,L,127,X,2012-2015,Thailand,Germany (FRG),N,0.06,8.52,7.62
+59354,TRK,FRG,2014,,12,,0,N/A,MTU-4000,EN,Diesel engine,L,2,X,2015,Turkmenistan,Germany (FRG),N,2,24,4
+56292,TUR,FRG,2015,,2,X,0,N/A,MAN-3240,EN,Diesel engine,L,,,,Turkey,Germany (FRG),N,3.5,7,0
+50857,TUR,FRG,2008,,70,X,0,N/A,MTU-881,EN,Diesel engine,L,22,X,2013-2015,Turkey,Germany (FRG),N,0.18,12.6,3.96
+53066,TUR,FRG,2013,X,250,X,0,N/A,MTU-883,EN,Diesel engine,L,,,,Turkey,Germany (FRG),N,0.25,62.5,0
+59344,TUR,FRG,2003,,40,X,0,N/A,TP400-D6,EN,Turboprop,,12,X,2014-2015,Turkey,Germany (FRG),N,3,120,36
+31802,TUR,FRG,2011,,6,,0,LIC,Type-214,SH,Submarine,L,,,,Turkey,Germany (FRG),N,275,1650,0
+59410,UAE,FRG,2015,,4,,0,N/A,BR-710,EN,Turbofan,L,,,,UAE,Germany (FRG),N,2.5,10,0
+55922,UAE,FRG,2009,,24,X,2015,N/A,MTU-2000,EN,Diesel engine,L,24,X,2013-2015,UAE,Germany (FRG),N,0.35,8.4,8.4
+35982,UAE,FRG,2003,X,24,X,0,N/A,MTU-595,EN,Diesel engine,L,16,,2011-2015,UAE,Germany (FRG),N,2,48,32
+57970,UAE,FRG,2014,,4,,0,N/A,Wisent,AV,AEV/ARV,L,,,,UAE,Germany (FRG),N,2.25,9,0
+57738,UK,FRG,2015,X,23,,0,N/A,G-120TP,AC,Trainer aircraft,L,,,,United Kingdom,Germany (FRG),N,0.4,9.2,0
+52256,UK,FRG,2015,,245,X,0,N/A,Lance MTS,OT,IFV turret,L,,,,United Kingdom,Germany (FRG),N,0.7,171.5,0
+57937,UK,FRG,2014,,589,X,0,N/A,MTU-199,EN,Diesel engine,L,,,,United Kingdom,Germany (FRG),N,0.13,76.57,0
+56889,UK,FRG,2013,X,52,X,0,N/A,MTU-4000,EN,Diesel engine,L,,,,United Kingdom,Germany (FRG),N,2,104,0
+59200,UK,FRG,2015,,48,,0,N/A,MTU-4000,EN,Diesel engine,L,,,,United Kingdom,Germany (FRG),N,2,96,0
+35963,USA,FRG,2006,,346,X,2015,LIC,EC145,AC,Light helicopter,,346,X,2006-2015,United States,Germany (FRG),N,3.25,1124.5,1124.5
+57961,USA,FRG,2014,,100,X,0,LIC,EC145,AC,Light helicopter,,25,X,2015,United States,Germany (FRG),N,3.25,325,81.25
+58998,USA,FRG,2015,,6,,0,PRIV,G-120TP,AC,Trainer aircraft,L,,,,United States,Germany (FRG),N,0.4,2.4,0
+55206,USA,FRG,2003,X,16,X,0,N/A,MTU-1163,EN,Diesel engine,L,10,,2008-2015,United States,Germany (FRG),N,2,32,20
+31092,USA,FRG,2004,,21,X,0,N/A,TRS-3D,GR,Air/sea search radar,L,10,X,2006-2015,United States,Germany (FRG),N,10,210,100
+56532,VEN,FRG,2013,,8,X,0,N/A,Do-228,AC,Light transport ac,L,2,X,2014,Venezuela,Germany (FRG),N,2.25,18,4.5
+51055,VEN,FRG,2006,X,32,,0,N/A,MTU-1163,EN,Diesel engine,L,28,,2009-2012,Venezuela,Germany (FRG),N,2,64,56
+59574,CAN,GRE,2015,,1,,0,N/A,Asterix,SH,Cargo ship,,,,,Canada,Greece,S,30,30,0
+59349,AFG,IND,2015,,4,,2015,AID,Mi-24D/Mi-25,AC,Combat helicopter,L,4,,2015,Afghanistan,India,S,3.3,13.2,13.2
+56126,AFG,IND,2012,X,3,,2015,N/A,SA-315B Lama,AC,Light helicopter,L,3,,2015,Afghanistan,India,N,0.75,2.25,2.25
+56635,MYA,IND,2013,,3,,2015,N/A,HMS-X,GR,ASW sonar,L,3,X,2015,Myanmar,India,N,5,15,15
+56636,MYA,IND,2013,,3,,0,N/A,LW-04,GR,Air search radar,L,,,,Myanmar,India,N,6,18,0
+59218,SEY,IND,2015,,1,,0,AID,Do-228MP,AC,MP aircraft,L,,,,Seychelles,India,N,3.3,3.3,0
+59220,SEY,IND,2015,,1,,0,N/A,EL/M-2022,GR,MP aircraft radar,L,,,,Seychelles,India,N,2.5,2.5,0
+58148,SRI,IND,2013,X,2,,0,N/A,Naidu,SH,Patrol craft,L,,,,Sri Lanka,India,N,17.55,35.1,0
+50868,SUR,IND,2009,X,3,,2015,N/A,SA-316B Alouette-3,AC,Light helicopter,L,3,,2015,Suriname,India,N,0.9,2.7,2.7
+55172,XXX,IND,2012,,2,,0,N/A,Pipavav 100m,SH,OPV,L,,,,Unknown country,India,N,0,0,0
+30335,PHI,INS,2014,,2,,0,N/A,C-212,AC,Transport aircraft,L,1,X,2015,Philippines,Indonesia,N,3.8,7.6,3.8
+31876,PHI,INS,2014,,2,,0,N/A,LPD-122m,SH,AALS,L,,,,Philippines,Indonesia,N,86.15,172.3,0
+56230,SEN,INS,2013,X,2,X,0,N/A,CN-235,AC,Transport aircraft,L,,,,Senegal,Indonesia,N,8.2,16.4,0
+59207,ANG,ISR,2015,,4,,0,N/A,Super Dvora,SH,Patrol craft,L,,,,Angola,Israel,N,5.25,21,0
+54366,AZB,ISR,2011,X,1,X,0,N/A,Barak-8,AD,SAM system,L,,,,Azerbaijan,Israel,N,25,25,0
+54547,AZB,ISR,2011,X,75,X,0,N/A,Barak-8,MI,SAM,L,,,,Azerbaijan,Israel,N,0.9,67.5,0
+54363,AZB,ISR,2011,X,2,X,0,N/A,EL/M-2080 Green Pine,GR,Air search radar,L,,,,Azerbaijan,Israel,N,17.5,35,0
+54346,AZB,ISR,2014,X,0,,0,N/A,EL/M-2288 AD-STAR,GR,Air search radar,L,,,,Azerbaijan,Israel,N,13,0,0
+56701,AZB,ISR,2013,,0,,0,N/A,LAHAT,MI,Anti-tank missile,L,,,,Azerbaijan,Israel,N,0.04,0,0
+56470,AZB,ISR,2013,,6,,0,ASS,OPV-62,SH,FAC,,1,,2015,Azerbaijan,Israel,N,62.5,375,62.5
+56469,AZB,ISR,2013,X,6,,2015,ASS,Shaldag,SH,FAC,,6,X,2014-2015,Azerbaijan,Israel,N,8,48,48
+57601,AZB,ISR,2013,X,250,X,0,N/A,Spike-NLOS,MI,SSM/ASM,L,80,X,2014-2015,Azerbaijan,Israel,N,0.15,37.5,12
+56261,BRA,ISR,2014,X,3,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Brazil,Israel,N,10,30,0
+58359,BRA,ISR,2014,X,4,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Brazil,Israel,N,10,40,0
+58939,BRA,ISR,2015,,3,,0,N/A,EL/M-2022,GR,MP aircraft radar,L,,,,Brazil,Israel,N,2.5,7.5,0
+58077,BRA,ISR,2009,,12,,0,N/A,EL/M-2032,GR,Combat ac radar,L,3,X,2015,Brazil,Israel,N,2,24,6
+59252,BRA,ISR,2013,,150,,2015,N/A,Lizard,MI,Guided bomb,L,150,X,2014-2015,Brazil,Israel,N,0.02,3,3
+33396,BRA,ISR,2002,X,200,X,2015,N/A,Python-4,MI,BVRAAM,L,200,X,2010-2015,Brazil,Israel,N,0.17,34,34
+58358,BRA,ISR,2006,,10,,2015,N/A,RecceLite,GR,Aircraft recce system,L,10,X,2014-2015,Brazil,Israel,N,4,40,40
+51099,BRA,ISR,2010,X,216,X,0,LIC,UT-25/UT-30,OT,IFV turret,L,10,X,2014,Brazil,Israel,N,0.6,129.6,6
+58970,CAN,ISR,2015,,10,,0,LIC,EL/M-2084,GR,Air search radar,L,,,,Canada,Israel,N,12.5,125,0
+58974,COL,ISR,2013,X,2,,2015,N/A,EL/I-3120 CMM,GR,SIGINT system,L,2,X,2014-2015,Colombia,Israel,N,7.5,15,15
+55648,COL,ISR,2010,X,70,X,2015,N/A,Spike-ER,MI,Anti-tank missile,L,70,X,2014-2015,Colombia,Israel,N,0.06,4.2,4.2
+57717,COL,ISR,2010,,110,X,2015,N/A,Spike-NLOS,MI,SSM/ASM,L,110,X,2014-2015,Colombia,Israel,N,0.15,16.5,16.5
+51253,FRG,ISR,2013,X,0,,0,N/A,Harop,MI,SSM,L,,,,Germany (FRG),Israel,N,0.6,0,0
+54163,FRG,ISR,2015,X,3,X,0,LEAS,Heron-TP/Eitan,AC,UCAV/UAV,L,,,,Germany (FRG),Israel,N,0,0,0
+50942,FRG,ISR,2009,X,3000,X,0,LIC,Spike-MR/LR,MI,Anti-tank missile,L,2120,X,2010-2015,Germany (FRG),Israel,N,0.03,90,63.6
+55692,IND,ISR,2014,X,262,X,0,N/A,Barak-1,MI,SAM,L,,,,India,Israel,N,0.25,65.5,0
+36891,IND,ISR,2009,,1500,X,0,LIC,Barak-8,MI,SAM,L,,,,India,Israel,N,0.9,1350,0
+39777,IND,ISR,2009,,18,X,0,LIC,Barak-8,AD,SAM system,L,,,,India,Israel,N,25,450,0
+51236,IND,ISR,2009,,1000,X,0,LIC,Barak-8ER,MI,SAM,L,,,,India,Israel,N,1,1000,0
+57950,IND,ISR,2013,X,4,,0,N/A,Barak-8 VLS,NW,Naval SAM system,,,,,India,Israel,N,15,60,0
+57951,IND,ISR,2009,X,5,,0,N/A,Barak-8 VLS,NW,Naval SAM system,,2,,2014-2015,India,Israel,N,15,75,30
+39241,IND,ISR,2008,X,750,X,0,N/A,Derby,MI,BVRAAM,L,75,X,2015,India,Israel,N,0.4,300,30
+59383,IND,ISR,2007,X,20,X,0,N/A,EL/M-2032,GR,Combat ac radar,L,5,X,2015,India,Israel,N,2,40,10
+51643,IND,ISR,2009,X,140,X,0,N/A,EL/M-2052,GR,Combat ac radar,L,,,,India,Israel,N,3,420,0
+54852,IND,ISR,2012,,61,X,0,N/A,EL/M-2052,GR,Combat ac radar,L,,,,India,Israel,N,3,183,0
+50119,IND,ISR,2014,X,2,,0,N/A,EL/M-2075 Phalcon,GR,AEW&C system,L,,,,India,Israel,N,50,100,0
+39553,IND,ISR,2008,,4,,0,N/A,EL/M-2083 APR,GR,Air search radar,L,1,X,2015,India,Israel,N,15,60,15
+55039,IND,ISR,2009,,23,X,2015,LIC,EL/M-2084,GR,Air search radar,L,23,X,2011-2015,India,Israel,N,12.5,287.5,287.5
+54469,IND,ISR,2014,X,8,X,0,N/A,EL/M-2221 STGR,GR,Fire control radar,L,,,,India,Israel,N,4.75,38,0
+55586,IND,ISR,2009,X,6,,0,N/A,EL/M-2221 STGR,GR,Fire control radar,L,4,,2014-2015,India,Israel,N,4.75,28.5,19
+40233,IND,ISR,2006,,4,,0,N/A,EL/M-2248 MF-STAR,GR,Multifuntion radar,L,2,,2014-2015,India,Israel,N,30,120,60
+54470,IND,ISR,2013,X,4,,0,N/A,EL/M-2248 MF-STAR,GR,Multifuntion radar,L,,,,India,Israel,N,30,120,0
+56009,IND,ISR,2014,X,15,X,0,N/A,Heron,AC,UAV,L,,,,India,Israel,N,3,45,0
+59198,IND,ISR,2015,,10,,0,N/A,Heron-TP/Eitan,AC,UCAV/UAV,L,,,,India,Israel,N,10,100,0
+40194,IND,ISR,2007,,0,,0,N/A,Litening,GR,Aircraft EO system,L,,,,India,Israel,N,1,0,0
+54524,IND,ISR,2007,X,0,,0,N/A,Litening,GR,Aircraft EO system,L,,,,India,Israel,N,1,0,0
+55682,IND,ISR,2015,X,164,X,0,N/A,Litening,GR,Aircraft EO system,L,20,X,2015,India,Israel,N,1,164,20
+55041,IND,ISR,2011,,2,,2015,N/A,MARS2,GR,AGS/SIGINT system,L,2,,2015,India,Israel,N,15,30,30
+54968,IND,ISR,2012,,500,,2015,N/A,NG-LGB,MI,Guided bomb,L,500,X,2014-2015,India,Israel,N,0.02,10,10
+39240,IND,ISR,2008,,750,X,0,N/A,Python-5,MI,BVRAAM,L,75,X,2015,India,Israel,N,0.25,187.5,18.75
+58052,IND,ISR,2014,X,8356,,0,N/A,Spike-ER,MI,Anti-tank missile,L,,,,India,Israel,N,0.06,501.36,0
+32354,IND,ISR,2008,,18,,0,LIC,SPYDER-MR,AD,SAM system,L,2,X,2015,India,Israel,N,35,630,70
+54652,ITA,ISR,2012,,2,,0,N/A,EL/W-2085,GR,AEW&C system,L,,,,Italy,Israel,N,35,70,0
+54881,ITA,ISR,2012,,1,,0,N/A,Ofeq,SA,Recce satellite,L,,,,Italy,Israel,N,0,0,0
+32274,ITA,ISR,2010,,750,X,2015,N/A,Spike-ER,MI,Anti-tank missile,L,750,X,2013-2015,Italy,Israel,N,0.06,45,45
+38255,ITA,ISR,2009,,990,,0,LIC,Spike-MR/LR,MI,Anti-tank missile,L,740,X,2009-2015,Italy,Israel,N,0.03,29.7,22.2
+58966,JOR,ISR,2014,X,16,X,2015,N/A,AH-1S Cobra,AC,Combat helicopter,L,16,X,2015,Jordan,Israel,S,1.712,27.392,27.392
+50819,KOS,ISR,2009,,60,X,0,N/A,EL/M-2032,GR,Combat ac radar,L,40,X,2013-2015,South Korea,Israel,N,2,120,80
+58343,KOS,ISR,2015,X,3,,0,N/A,Heron,AC,UAV,L,,,,South Korea,Israel,N,3,9,0
+56954,KOS,ISR,2013,,60,X,0,N/A,Spike-NLOS,MI,SSM/ASM,L,,,,South Korea,Israel,N,0.15,9,0
+59414,LIT,ISR,2013,,5,X,2015,N/A,CARDOM 120mm,AR,Mortar,L,5,X,2015,Lithuania,Israel,N,0.05,0.25,0.25
+59479,LIT,ISR,2015,,84,,0,N/A,UT-25/UT-30,OT,IFV turret,L,,,,Lithuania,Israel,N,0.6,50.4,0
+59278,MEX,ISR,2015,X,2,X,0,N/A,Dominator-2,AC,UAV,L,1,X,2015,Mexico,Israel,N,4,8,4
+59206,MYA,ISR,2015,X,6,,0,N/A,Super Dvora,SH,Patrol craft,L,,,,Myanmar,Israel,N,5.25,31.5,0
+55925,PHI,ISR,2014,X,12,,0,N/A,EL/M-2032,GR,Combat ac radar,L,2,X,2015,Philippines,Israel,N,2,24,4
+59590,PHI,ISR,2015,,3,,0,N/A,EL/M-2288 AD-STAR,GR,Air search radar,L,,,,Philippines,Israel,N,13,39,0
+56883,PHI,ISR,2014,,28,,2015,N/A,M-113,AV,APC,L,28,,2015,Philippines,Israel,R,0.165,4.62,4.62
+57871,PHI,ISR,2014,,4,,2015,N/A,UT-25/UT-30,OT,IFV turret,L,4,X,2015,Philippines,Israel,N,0.6,2.4,2.4
+52241,POL,ISR,2014,X,24,,0,LIC,ATMOS-2000 155mm,AR,Self-propelled gun,,,,,Poland,Israel,N,1.19,28.56,0
+51836,POL,ISR,2015,,1000,,0,LIC,Spike-MR/LR,MI,Anti-tank missile,L,,,,Poland,Israel,N,0.03,30,0
+17785,POR,ISR,2006,,33,X,2015,N/A,CARDOM 120mm,AR,Mortar,L,33,X,2008-2015,Portugal,Israel,N,0.05,1.65,1.65
+37432,SWI,ISR,2015,,6,,0,N/A,Hermes-900,AC,UAV,L,,,,Switzerland,Israel,N,3,18,0
+55701,THA,ISR,2012,,6,X,2015,N/A,ATMOS-2000 155mm,AR,Self-propelled gun,L,6,X,2014-2015,Thailand,Israel,N,1.25,7.5,7.5
+58969,THA,ISR,2015,,6,X,0,N/A,ATMOS-2000 155mm,AR,Self-propelled gun,L,,,,Thailand,Israel,N,1.25,7.5,0
+52818,TUR,ISR,2009,,468,,2015,LIC,Navigator,AV,APC,L,468,X,2010-2015,Turkey,Israel,N,0.17,79.56,79.56
+22548,UK,ISR,2005,,54,X,0,LIC,Hermes-450,AC,UAV,L,35,X,2012-2015,United Kingdom,Israel,N,2,108,70
+55809,USA,ISR,2012,,3,,0,LIC,EL/M-2022,GR,MP aircraft radar,L,,,,United States,Israel,N,2.5,7.5,0
+52522,USA,ISR,2010,,250,X,0,LIC,Litening,GR,Aircraft EO system,L,145,X,2011-2015,United States,Israel,N,1,250,145
+57348,VN,ISR,2010,X,20,,2015,N/A,EXTRA,MI,Guided rocket/SSM,L,20,X,2014-2015,Viet Nam,Israel,N,0.15,3,3
+59386,XXX,ISR,2012,,2,X,2015,N/A,EL/M-2083 APR,GR,Air search radar,L,2,X,2015,Unknown country,Israel,N,15,30,30
+59159,XXX,ISR,2015,,2,,0,N/A,Hermes-900,AC,UAV,L,,,,Unknown country,Israel,N,3,6,0
+58460,XXX,ISR,2014,X,95,X,2015,N/A,RAM,AV,APV,L,95,X,2015,Unknown country,Israel,N,0.12,11.4,11.4
+58586,XXX,ISR,2014,,,,0,N/A,SPICE,MI,Guided bomb,L,,,,Unknown country,Israel,N,0.02,0,0
+58593,XXX,ISR,2015,,4,,0,N/A,Super Dvora,SH,Patrol craft,L,,,,Unknown country,Israel,N,5.25,21,0
+54937,ALG,ITA,2012,X,2,X,0,N/A,127/64LW,NW,Naval gun,L,,,,Algeria,Italy,N,7,14,0
+58023,ALG,ITA,2014,,1,,0,N/A,Gaeta,SH,MCM ship,L,,,,Algeria,Italy,N,47.5,47.5,0
+59553,ANG,ITA,2015,,6,,0,N/A,A-109K,AC,Light helicopter,L,,,,Angola,Italy,N,1.6,9.6,0
+58355,AST,ITA,2014,,1,,0,N/A,RAT-31DL,GR,Air search radar,L,,,,Austria,Italy,N,12.5,12.5,0
+30181,AUS,ITA,2012,,10,,0,N/A,C-27J Spartan,AC,Transport aircraft,L,5,X,2015,Australia,Italy,N,16,160,80
+57550,BAN,ITA,2014,,2,,2015,N/A,AW139,AC,Helicopter,L,2,,2015,Bangladesh,Italy,N,6,12,12
+58609,BAN,ITA,2015,,4,,0,N/A,Minerva,SH,OPV,,,,,Bangladesh,Italy,R,0,0,0
+59241,BF,ITA,2014,X,1,,2015,N/A,AW139,AC,Helicopter,L,1,X,2015,Burkina Faso,Italy,N,6,6,6
+53248,BRA,ITA,2011,,11,,0,N/A,Grifo,GR,Combat ac radar,L,6,X,2014-2015,Brazil,Italy,N,1,11,6
+34595,BRA,ITA,2004,,43,X,0,LIC,SCP-01 Scipio,GR,Combat ac radar,L,20,X,2013-2015,Brazil,Italy,N,2,86,40
+56936,BRA,ITA,2014,X,36,X,0,N/A,Skyward,GR,Aircraft IRST,L,,,,Brazil,Italy,N,0,0,0
+34222,BRA,ITA,2009,,2044,X,0,LIC,VBTP Guarani,AV,APC,L,184,X,2012-2015,Brazil,Italy,N,0.35,715.4,64.4
+59217,CHE,ITA,2015,,7,,0,N/A,P-68,AC,Light transport ac,L,,,,Chile,Italy,N,0.35,2.45,0
+57132,COL,ITA,2011,X,1,,0,N/A,Compact 76mm,NW,Naval gun,L,,,,Colombia,Italy,N,2.5,2.5,0
+36740,EGY,ITA,2006,X,3,,2015,N/A,Super Rapid 76mm,NW,Naval gun,L,3,,2013-2015,Egypt,Italy,N,2.75,8.25,8.25
+51484,EGY,ITA,2011,,1,,2015,N/A,Super Rapid 76mm,NW,Naval gun,L,1,,2015,Egypt,Italy,N,2.75,2.75,2.75
+58038,EGY,ITA,2014,,4,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Egypt,Italy,N,2.75,11,0
+58799,EGY,ITA,2015,,1,,2015,N/A,Super Rapid 76mm,NW,Naval gun,L,1,,2015,Egypt,Italy,N,2.75,2.75,2.75
+39536,FIN,ITA,2006,,3,,0,LIC,Gaeta,SH,MCM ship,L,2,,2012-2013,Finland,Italy,N,47.5,142.5,95
+35402,FIN,ITA,2001,,10,X,2015,LIC,NH-90 TTH,AC,Transport helicopter,L,10,X,2009-2015,Finland,Italy,N,7,70,70
+39458,FRA,ITA,2006,,7,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,2,,2012-2015,France,Italy,N,2.75,19.25,5.5
+39459,FRA,ITA,2009,X,3,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,France,Italy,N,2.75,8.25,0
+39596,FRG,ITA,2007,,5,,0,N/A,127/64LW,NW,Naval gun,L,1,,2012,Germany (FRG),Italy,N,7,35,7
+53076,GRE,ITA,2008,X,2,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Greece,Italy,N,2.75,5.5,0
+57066,IND,ITA,2014,X,13,,0,N/A,127/64LW,NW,Naval gun,L,,,,India,Italy,N,7,91,0
+35488,IND,ITA,2014,X,98,,0,LIC,Black Shark,MI,AS/ASW torpedo,L,,,,India,Italy,N,1.8,176.4,0
+54384,IND,ITA,2011,X,1,,0,N/A,RAN-40L,GR,Air search radar,L,,,,India,Italy,N,12.5,12.5,0
+38816,IND,ITA,2003,X,4,X,0,N/A,Super Rapid 76mm,NW,Naval gun,L,2,,2014-2015,India,Italy,N,2.75,11,5.5
+54385,IND,ITA,2010,X,4,X,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,India,Italy,N,2.75,11,0
+55585,IND,ITA,2009,X,3,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,2,,2014-2015,India,Italy,N,2.75,8.25,5.5
+56921,IND,ITA,2011,X,2,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,India,Italy,N,2.75,5.5,0
+55212,INS,ITA,2012,X,2,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Indonesia,Italy,N,2.75,5.5,0
+56923,IRE,ITA,2010,X,2,,2015,N/A,Super Rapid 76mm,NW,Naval gun,L,2,,2014-2015,Ireland,Italy,N,2.75,5.5,5.5
+2478,IRQ,ITA,1981,,2,,0,N/A,Assad,SH,Corvette,L,,,,Iraq,Italy,N,85,170,0
+31751,ISR,ITA,2012,,30,,0,OFFS,M-346,AC,Trainer/combat ac,L,22,X,2014-2015,Israel,Italy,N,8.5,255,187
+57328,JOR,ITA,2014,,141,,0,AID,Centauro,AV,AFSV,L,24,X,2014,Jordan,Italy,S,0.9,126.9,21.6
+58723,KUW,ITA,2015,X,28,,0,N/A,Typhoon Block-20,AC,FGA aircraft,L,,,,Kuwait,Italy,N,57.5,1610,0
+58325,LEB,ITA,2014,,25,,0,N/A,LMV,AV,APV,L,,,,Lebanon,Italy,N,0.15,3.75,0
+53304,MAL,ITA,2014,X,12,,0,N/A,TMX,GR,Fire control radar,L,,,,Malaysia,Italy,N,4.5,54,0
+59024,MTA,ITA,2015,,1,,0,N/A,AW139,AC,Helicopter,L,,,,Malta,Italy,N,6,6,0
+28827,NET,ITA,2000,,12,,2015,LIC,NH-90 NFH,AC,ASW helicopter,L,12,X,2010-2015,Netherlands,Italy,N,13.3,159.6,159.6
+35521,NET,ITA,2004,X,8,,2015,LIC,NH-90 TTH,AC,Transport helicopter,L,8,X,2013-2015,Netherlands,Italy,N,7,56,56
+32801,NOR,ITA,2001,,6,,0,LIC,NH-90 NFH,AC,ASW helicopter,L,,,,Norway,Italy,N,15.1,90.6,0
+30242,NOR,ITA,2001,,8,,0,LIC,NH-90 TTH,AC,Transport helicopter,L,5,X,2011-2015,Norway,Italy,N,7,56,35
+54942,OMA,ITA,2012,,4,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,2,X,2015,Oman,Italy,N,2.75,11,5.5
+53362,PER,ITA,2013,,2,,2015,N/A,C-27J Spartan,AC,Transport aircraft,L,2,,2015,Peru,Italy,N,16,32,32
+57268,PER,ITA,2014,,2,,0,N/A,C-27J Spartan,AC,Transport aircraft,L,1,,2015,Peru,Italy,N,16,32,16
+56714,PHI,ITA,2013,,8,,2015,N/A,A-109K,AC,Light helicopter,L,8,,2015,Philippines,Italy,N,1.6,12.8,12.8
+57269,PHI,ITA,2014,,2,,2015,N/A,A-109K,AC,Light helicopter,L,2,,2015,Philippines,Italy,N,1.6,3.2,3.2
+30916,POL,ITA,2014,,8,,0,N/A,M-346,AC,Trainer/combat ac,L,,,,Poland,Italy,N,8.5,68,0
+30823,POL,ITA,2003,X,3,,2015,AID,RAT-31DL,GR,Air search radar,L,3,X,2015,Poland,Italy,N,12.5,37.5,37.5
+38910,POL,ITA,2001,X,1,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Poland,Italy,N,2.75,2.75,0
+57243,QAT,ITA,2014,,,,0,N/A,Kronos,GR,Air search radar,L,,,,Qatar,Italy,N,10,0,0
+34236,ROM,ITA,2007,,7,,2015,N/A,C-27J Spartan,AC,Transport aircraft,L,7,,2010-2015,Romania,Italy,N,16,112,112
+59137,SIN,ITA,2013,,8,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Singapore,Italy,N,2.75,22,0
+38151,SLK,ITA,2014,,2,,0,N/A,C-27J Spartan,AC,Transport aircraft,L,,,,Slovakia,Italy,N,16,32,0
+51789,SWE,ITA,2014,,60,X,0,N/A,Skyward,GR,Aircraft IRST,L,,,,Sweden,Italy,N,0,0,0
+51566,TAI,ITA,2014,,6,,0,LIC,Gaeta,SH,MCM ship,L,,,,Taiwan (ROC),Italy,N,57.5,345,0
+58182,TAI,ITA,2011,X,12,X,0,N/A,Super Rapid 76mm,NW,Naval gun,L,1,,2014,Taiwan (ROC),Italy,N,2.75,33,2.75
+59240,THA,ITA,2015,,8,,0,N/A,AW139,AC,Helicopter,L,,,,Thailand,Italy,N,6,48,0
+54295,THA,ITA,2011,,2,,0,N/A,Kronos,GR,Air search radar,L,1,X,2015,Thailand,Italy,N,10,20,10
+57960,THA,ITA,2014,,1,,0,N/A,P-180 Avanti,AC,Light transport ac,L,,,,Thailand,Italy,N,3.5,3.5,0
+59436,THA,ITA,2015,X,1,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Thailand,Italy,N,2.75,2.75,0
+56315,TRK,ITA,2012,,8,,2015,N/A,Compact 40L70,NW,Naval gun,L,8,X,2013-2015,Turkmenistan,Italy,N,2.5,20,20
+59353,TRK,ITA,2014,X,25,X,0,N/A,Marte-2,MI,Anti-ship missile,L,5,X,2015,Turkmenistan,Italy,N,0.5,12.5,2.5
+31882,TUR,ITA,2008,X,50,,0,LIC,A-129C Mangusta,AC,Combat helicopter,L,,,,Turkey,Italy,N,9.9,495,0
+52318,TUR,ITA,2010,,9,,2015,ASS,A-129C Mangusta,AC,Combat helicopter,L,9,X,2014-2015,Turkey,Italy,N,9.9,89.1,89.1
+30432,TUR,ITA,2005,,6,,0,LIC,ATR-72MP,AC,ASW aircraft,L,,,,Turkey,Italy,N,27.5,165,0
+38300,TUR,ITA,2007,,16,,2015,N/A,Compact 40L70,NW,Naval gun,L,16,X,2011-2015,Turkey,Italy,N,2.5,40,40
+23403,TUR,ITA,2009,,1,,0,LIC,Göktürk,SA,Recce satellite,L,,,,Turkey,Italy,N,50,50,0
+58561,UAE,ITA,2015,,9,X,0,N/A,AW139,AC,Helicopter,L,4,X,2015,UAE,Italy,N,6,54,24
+50883,UAE,ITA,2009,,100,X,2015,N/A,Marte-2,MI,Anti-ship missile,L,100,X,2013-2015,UAE,Italy,N,0.5,50,50
+34602,UAE,ITA,2004,,6,,0,N/A,Orion RTN-25X,GR,Fire control radar,L,4,,2011-2015,UAE,Italy,N,2.5,15,10
+55923,UAE,ITA,2012,,2,,0,N/A,P-180MPA,AC,MP aircraft,L,,,,UAE,Italy,N,0,0,0
+37217,UAE,ITA,2003,X,6,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,4,,2012-2015,UAE,Italy,N,2.75,16.5,11
+52823,UKR,ITA,2010,X,50,X,0,N/A,A244 324mm,MI,ASW torpedo,L,,,,Ukraine,Italy,N,0.25,12.5,0
+52822,UKR,ITA,2010,X,4,X,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Ukraine,Italy,N,2.75,11,0
+50194,VEN,ITA,2006,X,8,,0,N/A,Compact 76mm,NW,Naval gun,L,7,,2009-2012,Venezuela,Italy,N,2.5,20,17.5
+56333,VN,ITA,2013,X,2,,0,N/A,Super Rapid 76mm,NW,Naval gun,L,,,,Viet Nam,Italy,N,2.75,5.5,0
+59145,XXX,ITA,2015,,2,,0,N/A,C-27J Spartan,AC,Transport aircraft,L,,,,Unknown country,Italy,N,19,38,0
+58738,ZAM,ITA,2014,,6,,0,N/A,SF-260TP,AC,Trainer aircraft,L,,,,Zambia,Italy,N,0.52,3.12,0
+58385,LEB,JOR,2014,,34,X,2015,AID,M-109A1 155mm,AR,Self-propelled gun,L,34,X,2015,Lebanon,Jordan,S,0.44,14.96,14.96
+39549,LEB,JOR,2014,X,30,,2015,AID,M-113,AV,APC,L,30,,2015,Lebanon,Jordan,S,0.1,3,3
+55640,COL,KOS,2012,,16,X,2015,N/A,C-STAR,MI,Anti-ship missile,L,16,X,2015,Colombia,South Korea,N,1.1,17.6,17.6
+55863,COL,KOS,2013,,2,,2015,N/A,STX-250t,SH,Patrol craft,L,2,,2015,Colombia,South Korea,N,10.75,21.5,21.5
+56569,COL,KOS,2013,X,14,X,0,LIC,STX-250t,SH,Patrol craft,L,1,,2015,Colombia,South Korea,N,10.75,150.5,10.75
+52108,IND,KOS,2015,X,100,,0,LIC,K-9 Thunder 155mm,AR,Self-propelled gun,L,,,,India,South Korea,N,4.32,432,0
+58392,INS,KOS,2012,,80,X,2015,N/A,Chiron,MI,Portable SAM,L,80,X,2013-2015,Indonesia,South Korea,N,0.1,8,8
+55746,INS,KOS,2010,X,50,X,0,LIC,KFX,AC,FGA aircraft,L,,,,Indonesia,South Korea,N,0,0,0
+39066,INS,KOS,2012,,3,,0,LIC,Type-209/1200,SH,Submarine,L,,,,Indonesia,South Korea,N,99.52,298.56,0
+50921,IRQ,KOS,2013,,24,,0,N/A,T-50 Golden Eagle,AC,Trainer/combat ac,L,,,,Iraq,South Korea,N,17.8,427.2,0
+30249,MAL,KOS,2011,,2,,0,LIC,Gagah Samudera,SH,OPV/Training ship,L,,,,Malaysia,South Korea,N,40,80,0
+56521,MAL,KOS,2014,,6,,0,LIC,MSC,SH,Frigate,,,,,Malaysia,South Korea,N,0,0,0
+52283,NOR,KOS,2013,,1,,0,N/A,DSME LSV,SH,Oiler/supply ship,,,,,Norway,South Korea,N,0,0,0
+53481,PER,KOS,2012,,20,,0,LIC,KT-1 Woong Bee,AC,Trainer aircraft,L,12,X,2014-2015,Peru,South Korea,N,1.65,33,19.8
+54821,PER,KOS,2012,,2,,0,LIC,LPD-122m,SH,AALS,L,,,,Peru,South Korea,N,86.15,172.3,0
+55817,PER,KOS,2013,,5,,0,ASS,STX-500t,SH,Patrol craft,L,,,,Peru,South Korea,N,0,0,0
+33881,PHI,KOS,2014,,12,,0,N/A,FA-50,AC,FGA aircraft,L,2,X,2015,Philippines,South Korea,N,16.45,197.4,32.9
+56543,POL,KOS,2014,,120,,0,LIC,K-9,AR,SPG chassis,L,,,,Poland,South Korea,N,0,0,0
+33571,THA,KOS,2013,,1,,0,N/A,DW-3000,SH,Frigate,,,,,Thailand,South Korea,N,0,0,0
+59439,THA,KOS,2015,X,1,,0,N/A,DW-3000,SH,Frigate,,,,,Thailand,South Korea,N,0,0,0
+34493,THA,KOS,2015,,4,,0,N/A,T-50 Golden Eagle,AC,Trainer/combat ac,L,,,,Thailand,South Korea,N,17.8,71.2,0
+50728,TUR,KOS,2008,X,70,X,0,N/A,K-10,AV,ALV,L,22,X,2013-2015,Turkey,South Korea,N,0.57,39.9,12.54
+58750,TUR,KOS,2015,X,15,,0,N/A,KT-1 Woong Bee,AC,Trainer aircraft,L,,,,Turkey,South Korea,N,1.65,24.75,0
+35106,UK,KOS,2012,,4,,0,LIC,MARS Tanker,SH,Oiler,L,,,,United Kingdom,South Korea,N,125,500,0
+36880,IND,KYR,2011,X,14,X,0,N/A,SET-65E 533mm,MI,ASW torpedo,L,,,,India,Kyrgyzstan,N,1,14,0
+59424,PAK,MTA,2015,,1,,2015,N/A,ATR-72,AC,Transport aircraft,L,1,,2015,Pakistan,Malta,S,5.2,5.2,5.2
+53705,BRA,MUL,2014,X,56,X,0,N/A,V2500,EN,Turbofan,L,,,,Brazil,(multiple sellers),N,0,0,0
+57205,QAT,MUL,2014,X,10,,0,N/A,NH-90 NFH,AC,ASW helicopter,L,,,,Qatar,(multiple sellers),N,15.1,151,0
+54988,QAT,MUL,2014,X,12,,0,N/A,NH-90 TTH,AC,Transport helicopter,L,,,,Qatar,(multiple sellers),N,7,84,0
+56182,ALG,NET,2013,,3,,0,N/A,SMART,GR,Air search radar,L,1,,2015,Algeria,Netherlands,N,12.5,37.5,12.5
+57462,BAS,NET,2014,,1,,0,N/A,Stan Lander-5612,SH,Landing craft,L,,,,Bahamas,Netherlands,N,14,14,0
+57463,BAS,NET,2014,,4,,0,N/A,Stan Patrol-3007,SH,Patrol craft,,2,X,2015,Bahamas,Netherlands,N,6,24,12
+57461,BAS,NET,2014,,4,,2015,N/A,Stan Patrol-4207,SH,Patrol craft,L,4,,2014-2015,Bahamas,Netherlands,N,9.8,39.2,39.2
+39603,CAN,NET,2007,,80,,2015,N/A,Leopard-2A4,AV,Tank,L,80,X,2008-2015,Canada,Netherlands,S,1.6,128,128
+51883,CAN,NET,2009,,13,,0,N/A,SMART,GR,Air search radar,L,7,X,2014-2015,Canada,Netherlands,N,12.5,162.5,87.5
+57736,ECU,NET,2014,,2,,0,LIC,Stan Patrol-5009,SH,Patrol craft,L,,,,Ecuador,Netherlands,N,10,20,0
+36735,EGY,NET,2006,X,3,,2015,N/A,Scout,GR,Sea search radar,L,3,,2013-2015,Egypt,Netherlands,N,1,3,3
+55960,EGY,NET,2010,X,1,,2015,N/A,Scout,GR,Sea search radar,L,1,,2015,Egypt,Netherlands,N,1,1,1
+58751,EGY,NET,2014,,4,,0,N/A,SMART,GR,Air search radar,L,,,,Egypt,Netherlands,N,12.5,50,0
+31373,EGY,NET,2006,X,3,,2015,N/A,STING,GR,Fire control radar,L,3,,2013-2015,Egypt,Netherlands,N,4.75,14.25,14.25
+55959,EGY,NET,2010,X,1,,2015,N/A,STING,GR,Fire control radar,L,1,,2015,Egypt,Netherlands,N,4.75,4.75,4.75
+58145,EST,NET,2014,,2,,2015,N/A,BPz-2,AV,ARV,L,2,X,2015,Estonia,Netherlands,S,0.56,1.12,1.12
+58146,EST,NET,2014,,2,,2015,N/A,BrPz-1 Biber,AV,ABL,L,2,X,2015,Estonia,Netherlands,S,0.4,0.8,0.8
+57851,EST,NET,2014,,44,,0,N/A,CV-9035,AV,IFV,L,1,X,2015,Estonia,Netherlands,N,1.8,79.2,1.8
+58147,EST,NET,2014,,2,,2015,N/A,PiPz-1,AV,AEV,L,2,X,2015,Estonia,Netherlands,S,0.7,1.4,1.4
+52220,EST,NET,2010,,81,,2015,N/A,XA-180,AV,APC,L,81,X,2010-2015,Estonia,Netherlands,S,0.12,9.72,9.72
+56634,FIN,NET,2014,,100,,0,N/A,Leopard-2A6,AV,Tank,L,20,X,2015,Finland,Netherlands,S,2,200,40
+55596,FRA,NET,2010,X,3,,0,N/A,SMART,GR,Air search radar,L,2,,2012-2015,France,Netherlands,N,12.5,37.5,25
+59456,FRG,NET,2014,,1,,2015,N/A,Flycatcher Mk-2,GR,Fire control radar,L,1,,2015,Germany (FRG),Netherlands,N,6,6,6
+31957,FRG,NET,2015,X,16,,0,AID,Leopard-2A6,AV,Tank,L,,,,Germany (FRG),Netherlands,S,2,32,0
+34148,GRE,NET,2000,,15,,2015,N/A,MIRADOR,GR,EO search/fire control,L,15,X,2005-2015,Greece,Netherlands,N,2.5,37.5,37.5
+53077,GRE,NET,2008,X,2,,0,N/A,MIRADOR,GR,EO search/fire control,L,,,,Greece,Netherlands,N,2.5,5,0
+35136,GRE,NET,2003,,2,,2015,N/A,MW-08,GR,Air search radar,L,2,,2010-2015,Greece,Netherlands,N,6,12,12
+50614,GRE,NET,2008,X,2,,0,N/A,MW-08,GR,Air search radar,L,,,,Greece,Netherlands,N,6,12,0
+35213,GRE,NET,2003,,6,,2015,N/A,Scout,GR,Sea search radar,L,6,X,2008-2015,Greece,Netherlands,N,1,6,6
+50613,GRE,NET,2008,X,2,,0,N/A,Scout,GR,Sea search radar,L,,,,Greece,Netherlands,N,1,2,0
+35214,GRE,NET,2003,,2,,2015,N/A,STING,GR,Fire control radar,L,2,,2010-2015,Greece,Netherlands,N,4.75,9.5,9.5
+50615,GRE,NET,2008,X,2,,0,N/A,STING,GR,Fire control radar,L,,,,Greece,Netherlands,N,4.75,9.5,0
+53078,GRE,NET,2008,X,2,,0,N/A,Variant,GR,Air/sea search radar,L,,,,Greece,Netherlands,N,4.75,9.5,0
+35244,IND,NET,2006,X,7,,0,LIC,LW-08,GR,Air search radar,L,2,,2014-2015,India,Netherlands,N,9.5,66.5,19
+51716,INS,NET,2012,,1,,0,LIC,SIGMA-105,SH,Frigate,L,,,,Indonesia,Netherlands,N,163.5,163.5,0
+56752,INS,NET,2013,,1,,0,LIC,SIGMA-105,SH,Frigate,L,,,,Indonesia,Netherlands,N,163.5,163.5,0
+56416,JOR,NET,2013,,52,,2015,N/A,AGM-65 Maverick,MI,ASM,L,52,,2015,Jordan,Netherlands,S,0.06,3.12,3.12
+55262,JOR,NET,2010,,180,X,2015,N/A,AIFV-APC,AV,APC,L,180,X,2011-2015,Jordan,Netherlands,S,0.12,21.6,21.6
+39890,JOR,NET,2013,X,15,,0,N/A,F-16C,AC,FGA aircraft,L,,,,Jordan,Netherlands,S,11.4,171,0
+35084,JOR,NET,2013,,60,,0,N/A,Gepard,AD,SPAAG,L,35,X,2014-2015,Jordan,Netherlands,S,3.6,216,126
+56441,JOR,NET,2013,,5,X,2015,N/A,PiPz-1,AV,AEV,L,5,X,2014-2015,Jordan,Netherlands,S,0.7,3.5,3.5
+57362,MAL,NET,2014,,6,,0,LIC,SMART,GR,Air search radar,L,,,,Malaysia,Netherlands,N,12.5,75,0
+55346,MAL,NET,2011,X,24,,0,N/A,SQUIRE,GR,Ground surv radar,L,,,,Malaysia,Netherlands,N,0.5,12,0
+57904,MEX,NET,2014,,1,,0,LIC,FCS-5009,SH,Transport ship,,,,,Mexico,Netherlands,N,10,10,0
+56205,MEX,NET,2013,,3,,2015,LIC,Stan Patrol-4207,SH,Patrol craft,L,3,X,2014-2015,Mexico,Netherlands,N,9.8,29.4,29.4
+56365,MEX,NET,2014,,15,X,0,LIC,Stan Patrol-4207,SH,Patrol craft,L,1,,2015,Mexico,Netherlands,N,9.8,147,9.8
+56257,NOR,NET,2013,,44,,0,N/A,SQUIRE,GR,Ground surv radar,L,30,X,2013-2015,Norway,Netherlands,N,0.5,22,15
+57895,NZ,NET,2014,,2,,0,N/A,SMART,GR,Air search radar,L,,,,New Zealand,Netherlands,N,12.5,25,0
+54939,OMA,NET,2012,,4,,0,N/A,STIR,GR,Fire control radar,L,2,X,2015,Oman,Netherlands,N,4.5,18,9
+54938,OMA,NET,2012,,4,,0,N/A,Variant,GR,Air/sea search radar,L,2,X,2015,Oman,Netherlands,N,4.75,19,9.5
+58011,PER,NET,2014,,3,,2015,N/A,Bell-412,AC,Helicopter,L,3,,2015,Peru,Netherlands,S,2,6,6
+32805,POL,NET,2001,X,1,,0,N/A,STIR,GR,Fire control radar,L,,,,Poland,Netherlands,N,4.5,4.5,0
+57236,QAT,NET,2015,X,6,,0,LIC,Stan Patrol-5009,SH,Patrol craft,L,,,,Qatar,Netherlands,N,10,60,0
+35100,SAU,NET,2009,,225,X,2015,N/A,SQUIRE,GR,Ground surv radar,L,225,X,2011-2015,Saudi Arabia,Netherlands,N,0.5,112.5,112.5
+57873,SIN,NET,2013,,8,,0,N/A,NS-100,GR,Air/sea search radar,,,,,Singapore,Netherlands,N,8,64,0
+55610,SIN,NET,2011,X,6,X,2015,N/A,STIR,GR,Fire control radar,L,6,X,2013-2015,Singapore,Netherlands,N,4.5,27,27
+58730,SOM,NET,2013,,6,,0,AID,SP-5509,SH,Patrol craft,,,,,Somalia,Netherlands,N,0,0,0
+59438,THA,NET,2015,X,1,,0,N/A,LIROD,GR,Fire control radar,L,,,,Thailand,Netherlands,N,2.5,2.5,0
+59437,THA,NET,2015,X,1,,0,N/A,Variant,GR,Air/sea search radar,L,,,,Thailand,Netherlands,N,4.75,4.75,0
+58715,TRI,NET,2015,,2,,2015,POLI,FCS-5009,SH,Transport ship,,2,,2015,Trinidad and Tobago,Netherlands,N,10,20,20
+58714,TRI,NET,2015,,4,,0,POLI,Stan Patrol-5009,SH,Patrol craft,L,1,X,2015,Trinidad and Tobago,Netherlands,N,10,40,10
+59448,TRK,NET,2012,,8,,2015,N/A,Scout,GR,Sea search radar,L,8,X,2012-2015,Turkmenistan,Netherlands,N,1,8,8
+56316,TRK,NET,2012,,8,,2015,N/A,Variant,GR,Air/sea search radar,L,8,X,2013-2015,Turkmenistan,Netherlands,N,4.75,38,38
+53513,TUR,NET,2011,X,2,,0,N/A,SMART,GR,Air search radar,L,,,,Turkey,Netherlands,N,12.5,25,0
+57146,UAE,NET,2013,,2,,0,LIC,FOPV-850,SH,Corvette,,,,,UAE,Netherlands,N,0,0,0
+50954,UK,NET,2009,,2,,0,N/A,SMART-L,GR,Air/sea search radar,L,,,,United Kingdom,Netherlands,N,15,30,0
+51525,USA,NET,2009,,33,X,0,LIC,Stan Patrol-4708,SH,Patrol craft,L,13,X,2012-2015,United States,Netherlands,N,15.4,508.2,200.2
+39228,VEN,NET,2006,,8,,0,N/A,MIRADOR,GR,EO search/fire control,L,7,,2009-2012,Venezuela,Netherlands,N,2.5,20,17.5
+39227,VEN,NET,2006,,8,,0,N/A,Scout,GR,Sea search radar,L,7,,2009-2012,Venezuela,Netherlands,N,1,8,7
+54391,VEN,NET,2012,,5,,0,LIC,Stan Patrol-2606,SH,Patrol craft,L,1,X,2015,Venezuela,Netherlands,N,4.25,21.25,4.25
+54643,VEN,NET,2012,,2,,0,N/A,Stan Patrol-4207,SH,Patrol craft,L,1,X,2014,Venezuela,Netherlands,N,9.8,19.6,9.8
+57458,VEN,NET,2014,,6,,0,N/A,Stan Patrol-4207,SH,Patrol craft,L,,,,Venezuela,Netherlands,N,9.8,58.8,0
+57459,VEN,NET,2014,,6,,0,N/A,Stan Patrol-5009,SH,Patrol craft,L,,,,Venezuela,Netherlands,N,10,60,0
+39226,VEN,NET,2006,,8,,0,N/A,STING,GR,Fire control radar,L,7,,2009-2012,Venezuela,Netherlands,N,4.75,38,33.25
+39224,VEN,NET,2006,,4,,0,N/A,Variant,GR,Air/sea search radar,L,3,,2009-2011,Venezuela,Netherlands,N,4.75,19,14.25
+54053,VN,NET,2013,X,2,X,0,LIC,SIGMA-90,SH,Frigate,L,,,,Viet Nam,Netherlands,N,148.5,297,0
+55495,BRA,NOR,2012,,30,X,2015,N/A,Penguin-2,MI,Anti-ship missile,L,30,X,2015,Brazil,Norway,N,0.75,22.5,22.5
+55227,CAN,NOR,2012,,500,X,0,LIC,Protector,OT,APC turret,L,,,,Canada,Norway,N,0.05,25,0
+34975,CHE,NOR,2011,,3,,2015,N/A,NASAMS,AD,SAM system,L,3,X,2014-2015,Chile,Norway,N,10,30,30
+50930,FIN,NOR,2009,,12,,2015,LIC,NASAMS,AD,SAM system,L,12,X,2013-2015,Finland,Norway,N,10,120,120
+56973,IRE,NOR,2014,,65,X,0,N/A,Protector,OT,APC turret,L,20,X,2014-2015,Ireland,Norway,N,0.05,3.25,1
+57876,KUW,NOR,2014,,10,X,2015,N/A,Protector,OT,APC turret,L,10,X,2015,Kuwait,Norway,N,0.05,0.5,0.5
+58543,MAL,NOR,2015,X,100,X,0,N/A,NSM,MI,Anti-ship missile,L,,,,Malaysia,Norway,N,1.1,110,0
+56570,NET,NOR,2006,X,140,X,0,N/A,Protector,OT,APC turret,L,25,X,2015,Netherlands,Norway,N,0.05,7,1.25
+56852,OMA,NOR,2013,X,10,X,0,N/A,NASAMS,AD,SAM system,L,,,,Oman,Norway,N,10,100,0
+53134,POL,NOR,2010,,38,,2015,N/A,NSM,MI,Anti-ship missile,L,38,X,2013-2015,Poland,Norway,N,1.1,41.8,41.8
+57216,POL,NOR,2014,,50,X,0,N/A,NSM,MI,Anti-ship missile,L,,,,Poland,Norway,N,1.1,55,0
+57215,POL,NOR,2014,,2,,0,N/A,NSM CDS,GR,Coast defence system,L,,,,Poland,Norway,N,5,10,0
+54278,SWE,NOR,2010,X,24,X,0,N/A,Protector,OT,APC turret,L,4,X,2013,Sweden,Norway,N,0.05,1.2,0.2
+57224,SWE,NOR,2013,X,75,X,2015,N/A,Protector,OT,APC turret,L,75,X,2014-2015,Sweden,Norway,N,0.05,3.75,3.75
+59486,SWE,NOR,2015,,5,,0,N/A,ST-2400,GR,ASW sonar,,,,,Sweden,Norway,N,1.5,7.5,0
+56983,SWI,NOR,2013,,130,X,0,N/A,Protector,OT,APC turret,L,30,X,2015,Switzerland,Norway,N,0.05,6.5,1.5
+57938,UK,NOR,2014,,,,0,N/A,Protector,OT,APC turret,L,,,,United Kingdom,Norway,N,0.05,0,0
+55683,USA,NOR,2012,,3000,X,2015,LIC,Protector,OT,APC turret,L,3000,X,2013-2015,United States,Norway,N,0.05,150,150
+55349,INS,NZ,2014,,4,,0,LIC,Klewang,SH,FAC,L,,,,Indonesia,New Zealand,N,0,0,0
+58026,PER,NZ,2014,,5,,0,N/A,SH-2G Super Seasprite,AC,ASW helicopter,L,1,X,2015,Peru,New Zealand,S,6,30,6
+59569,UAE,NZ,2014,,1,,2015,N/A,P-750,AC,Light transport ac,,1,,2015,UAE,New Zealand,N,0.9,0.9,0.9
+57126,IRQ,PAK,2014,,20,,0,N/A,MFI-17 Supporter,AC,Trainer aircraft,L,,,,Iraq,Pakistan,N,0.22,4.4,0
+58552,MYA,PAK,2015,X,16,X,0,N/A,JF-17 Thunder/FC-1,AC,FGA aircraft,L,,,,Myanmar,Pakistan,N,17.5,280,0
+50694,IND,POL,2012,X,204,X,0,LIC,WZT-3M,AV,ARV,L,8,X,2013,India,Poland,N,1.4,285.6,11.2
+58411,JOR,POL,2013,X,2,X,2015,N/A,M28 Skytruck,AC,Light transport ac,L,2,,2014-2015,Jordan,Poland,N,2.75,5.5,5.5
+57248,LIT,POL,2014,,150,X,2015,N/A,Grom-2,MI,Portable SAM,L,150,X,2014-2015,Lithuania,Poland,N,0.08,12,12
+58940,SLK,POL,2015,,31,,0,N/A,AMV,AV,APC,L,,,,Slovakia,Poland,N,0.29,8.99,0
+34235,ROM,POR,2013,,9,,0,N/A,F-16C,AC,FGA aircraft,L,,,,Romania,Portugal,R,18.81,169.29,0
+57842,URU,POR,2014,,2,,2015,N/A,C-212MP,AC,MP aircraft,L,2,,2015,Uruguay,Portugal,S,3.4,6.8,6.8
+58753,ALG,RUS,2014,X,4000,X,0,N/A,9M133 Kornet/AT-14,MI,Anti-tank missile,L,1300,X,2015,Algeria,Russia,N,0.04,160,52
+58754,ALG,RUS,2014,X,360,,0,N/A,Berezhok,OT,IFV turret,,120,X,2015,Algeria,Russia,N,0.6,216,72
+54930,ALG,RUS,2013,,6,,0,N/A,Mi-26,AC,Transport helicopter,L,4,X,2015,Algeria,Russia,N,30,180,120
+59012,ALG,RUS,2015,,8,,0,N/A,Mi-26,AC,Transport helicopter,L,,,,Algeria,Russia,N,30,240,0
+39840,ALG,RUS,2013,,42,,0,N/A,Mi-28N,AC,Combat helicopter,L,,,,Algeria,Russia,N,15.5,651,0
+57167,ALG,RUS,2014,,2,,0,N/A,Project-636E/Kilo,SH,Submarine,L,,,,Algeria,Russia,N,260,520,0
+59071,ALG,RUS,2015,,14,,0,N/A,Su-30MK,AC,FGA aircraft,L,,,,Algeria,Russia,N,55,770,0
+58745,ALG,RUS,2014,X,200,X,0,ASS,T-90S,AV,Tank,L,10,X,2015,Algeria,Russia,N,4,800,40
+59246,ALG,RUS,2011,X,2,X,0,N/A,Tigr,SH,Corvette,L,,,,Algeria,Russia,N,0,0,0
+56584,ANG,RUS,2013,,2,X,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,2,X,2015,Angola,Russia,N,6.75,13.5,13.5
+56582,ANG,RUS,2013,,12,,0,N/A,Su-30K,AC,FGA aircraft,L,2,X,2015,Angola,Russia,S,19,228,38
+56616,AZB,RUS,2011,X,1000,X,2015,N/A,9M117 Bastion/AT-10,MI,Anti-tank missile,L,1000,X,2013-2015,Azerbaijan,Russia,N,0.02,20,20
+56307,AZB,RUS,2011,,100,X,2015,N/A,BMP-3,AV,IFV,L,100,X,2013-2015,Azerbaijan,Russia,N,1.45,145,145
+54456,AZB,RUS,2010,X,66,X,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,66,X,2010-2015,Azerbaijan,Russia,N,6.75,445.5,445.5
+56306,AZB,RUS,2011,,100,X,2015,N/A,T-90S,AV,Tank,L,100,X,2013-2015,Azerbaijan,Russia,N,4,400,400
+56308,AZB,RUS,2011,X,18,,2015,N/A,TOS-1,AR,Self-propelled MRL,L,18,X,2013-2015,Azerbaijan,Russia,N,1.2,21.6,21.6
+57810,BAH,RUS,2014,,100,X,0,N/A,9M133 Kornet/AT-14,MI,Anti-tank missile,L,,,,Bahrain,Russia,N,0.04,4,0
+55825,BAN,RUS,2015,,6,,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,5,,2015,Bangladesh,Russia,N,6.75,40.5,33.75
+55024,BAN,RUS,2013,,16,,0,N/A,Yak-130,AC,Trainer/combat ac,L,6,X,2015,Bangladesh,Russia,N,7.6,121.6,45.6
+59287,BLR,RUS,2015,,32,,0,N/A,BTR-82A,AV,IFV,L,,,,Belarus,Russia,N,0.95,30.4,0
+58514,BLR,RUS,2015,,12,,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,,,,Belarus,Russia,N,6.75,81,0
+53278,BLR,RUS,2014,X,4,,2015,N/A,S-300PMU-1/SA-20A,AD,SAM system,L,4,X,2015,Belarus,Russia,R,31.02,124.08,124.08
+53718,BLR,RUS,2012,,4,,2015,N/A,Yak-130,AC,Trainer/combat ac,L,4,X,2015,Belarus,Russia,N,7.6,30.4,30.4
+58553,BLR,RUS,2015,,4,,0,N/A,Yak-130,AC,Trainer/combat ac,L,,,,Belarus,Russia,N,7.6,30.4,0
+59299,BLR,RUS,2015,X,1,,2015,AID,Yak-52,AC,Trainer aircraft,L,1,,2015,Belarus,Russia,S,0.08,0.08,0.08
+52648,BRA,RUS,2015,X,12,X,0,N/A,96K9 Pantsyr-S1,AD,Mobile AD system,L,,,,Brazil,Russia,N,11,132,0
+56262,BRA,RUS,2015,X,250,X,0,N/A,9M311/SA-19,MI,SAM,L,,,,Brazil,Russia,N,0.12,30,0
+55966,BRA,RUS,2014,X,60,X,0,N/A,Igla-S/SA-24,MI,Portable SAM,L,,,,Brazil,Russia,N,0.08,4.8,0
+29951,CHI,RUS,1998,X,0,,0,LIC,9M119 Svir/AT-11,MI,Anti-tank missile,L,1500,X,2001-2015,China,Russia,N,0.02,0,30
+39402,CHI,RUS,2004,X,24,X,0,N/A,AK-176 76mm,NW,Naval gun,L,20,X,2008-2015,China,Russia,N,2.5,60,50
+55713,CHI,RUS,2005,X,6,X,0,N/A,AK-176 76mm,NW,Naval gun,L,3,,2007-2012,China,Russia,N,2.5,15,7.5
+56523,CHI,RUS,2010,X,30,X,0,LIC,AK-176 76mm,NW,Naval gun,L,23,X,2013-2015,China,Russia,N,2.5,75,57.5
+36363,CHI,RUS,2002,X,105,X,0,LIC,AK-630 30mm,AD,Naval gun,L,103,X,2004-2015,China,Russia,N,1,105,103
+55122,CHI,RUS,2011,,150,X,0,N/A,AL-31,EN,Turbofan,L,60,X,2012-2015,China,Russia,N,3.25,487.5,195
+59604,CHI,RUS,2015,,,,0,N/A,AL-41F,EN,Turbofan,L,,,,China,Russia,N,0,0,0
+50774,CHI,RUS,2011,,184,X,0,N/A,D-30,EN,Turbofan,L,144,X,2012-2015,China,Russia,N,3,552,432
+55715,CHI,RUS,2004,X,25,X,0,N/A,Fregat/Top Plate,GR,Air search radar,L,21,X,2008-2015,China,Russia,N,9,225,189
+59489,CHI,RUS,2015,X,7,X,2015,N/A,Il-76M,AC,Transport aircraft,L,7,X,2015,China,Russia,R,56.1,392.7,392.7
+27666,CHI,RUS,1997,X,0,,0,LIC,Kh-31A1/AS-17,MI,Anti-ship missile/ARM,L,985,X,2001-2015,China,Russia,N,1.1,0,1083.5
+36265,CHI,RUS,2004,X,0,,0,N/A,Kh-59MK/AS-18MK,MI,Anti-ship missile,L,200,X,2008-2015,China,Russia,N,1.4,0,280
+39401,CHI,RUS,2004,X,24,X,0,LIC,Mineral/Band Stand,GR,Sea search radar,L,20,X,2008-2015,China,Russia,N,5,120,100
+57641,CHI,RUS,2008,X,10,X,0,LIC,Mineral/Band Stand,GR,Sea search radar,L,5,X,2013-2015,China,Russia,N,5,50,25
+52862,CHI,RUS,2009,X,4,,0,N/A,MR-123/Bass Tilt,GR,Fire control radar,L,2,,2013-2014,China,Russia,N,2.5,10,5
+40314,CHI,RUS,2004,X,96,X,0,N/A,MR-90/Front Dome,GR,Fire control radar,L,80,X,2008-2015,China,Russia,N,4.5,432,360
+35232,CHI,RUS,2015,,6,X,0,N/A,S-400/SA-21,AD,SAM system,L,,,,China,Russia,N,0,0,0
+51120,CHI,RUS,2015,,24,,0,N/A,Su-35,AC,FGA aircraft,L,,,,China,Russia,N,0,0,0
+59488,EGY,RUS,2015,X,1000,X,0,N/A,9A1472 Vikhr/AT-16,MI,Anti-tank missile,L,,,,Egypt,Russia,N,0.05,50,0
+59487,EGY,RUS,2015,X,1000,X,0,N/A,9M120 Ataka/AT-9,MI,Anti-tank missile,L,,,,Egypt,Russia,N,0.04,40,0
+58950,EGY,RUS,2015,,46,,0,N/A,Ka-52/Hokum-B,AC,Combat helicopter,L,,,,Egypt,Russia,N,0,0,0
+58006,EGY,RUS,2015,X,50,X,0,N/A,MiG-29M,AC,FGA aircraft,,,,,Egypt,Russia,N,0,0,0
+59038,EGY,RUS,2015,,10,X,0,AID,Moskit/SS-N-22,MI,Anti-ship missile,L,4,X,2015,Egypt,Russia,S,0.6,6,2.4
+58965,EGY,RUS,2015,,1,,2015,AID,Project-1241/Tarantul,SH,FAC,L,1,,2015,Egypt,Russia,S,28,28,28
+58120,GHA,RUS,2015,X,2,X,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,,,,Ghana,Russia,N,6.75,13.5,0
+54657,IND,RUS,2012,,10000,,0,N/A,9M113 Konkurs/AT-5,MI,Anti-tank missile,L,7000,X,2013-2015,India,Russia,N,0.02,200,140
+54658,IND,RUS,2013,,25000,,0,LIC,9M119 Svir/AT-11,MI,Anti-tank missile,L,,,,India,Russia,N,0.02,500,0
+59475,IND,RUS,2015,X,400,X,0,N/A,9M96/SA-21,MI,SAM,L,,,,India,Russia,N,0,0,0
+54525,IND,RUS,2014,X,2,X,0,N/A,A-50EhI,AC,AEW&C aircraft,L,,,,India,Russia,N,209,418,0
+38822,IND,RUS,2003,X,20,X,0,N/A,AK-630 30mm,AD,Naval gun,L,8,,2014-2015,India,Russia,N,1,20,8
+59154,IND,RUS,2013,X,16,,0,N/A,AK-630 30mm,AD,Naval gun,L,,,,India,Russia,N,1,16,0
+55750,IND,RUS,2012,,800,X,0,N/A,AL-31,EN,Turbofan,L,150,X,2013-2015,India,Russia,N,3.25,2600,487.5
+35109,IND,RUS,2005,,250,X,0,LIC,AL-55,EN,Turbofan,L,,,,India,Russia,N,1.25,312.5,0
+58054,IND,RUS,2015,X,149,,0,LIC,BMP-2,AV,IFV,L,,,,India,Russia,N,0.9,134.1,0
+35249,IND,RUS,1998,X,9,,0,LIC,Garpun/Plank Shave,GR,Air search radar,L,7,,2000-2014,India,Russia,N,6,54,42
+32697,IND,RUS,2015,,200,X,0,LIC,Ka-226T Sergei,AC,Light helicopter,L,,,,India,Russia,N,0,0,0
+58053,IND,RUS,2014,X,100,X,0,N/A,Kh-35 Uran/SS-N-25,MI,Anti-ship missile,L,,,,India,Russia,N,1,100,0
+52550,IND,RUS,2013,X,68,,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,68,X,2014-2015,India,Russia,N,6.75,459,459
+58984,IND,RUS,2015,X,48,,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,,,,India,Russia,N,6.75,324,0
+34794,IND,RUS,2010,,29,,0,N/A,MiG-29SMT/Fulcrum-F,AC,FGA aircraft,L,23,X,2012-2015,India,Russia,N,35,1015,805
+37117,IND,RUS,2008,,63,X,0,LIC,MiG-29SMT/Fulcrum-F,AC,FGA aircraft,L,10,X,2012-2015,India,Russia,N,35,2205,350
+28425,IND,RUS,1998,X,150,X,0,LIC,PJ-10 BrahMos,MI,Anti-ship MI/SSM,L,90,X,2006-2015,India,Russia,N,1.4,210,126
+54751,IND,RUS,1998,,400,X,0,LIC,PJ-10 BrahMos,MI,SSM,L,350,X,2006-2015,India,Russia,N,1.4,560,490
+54752,IND,RUS,2012,X,216,X,0,LIC,PJ-10 BrahMos,MI,ASM,L,10,X,2015,India,Russia,N,1.4,302.4,14
+55828,IND,RUS,2012,X,8,X,0,N/A,PS-90A,EN,Turbofan,L,,,,India,Russia,N,4,32,0
+59508,IND,RUS,2015,,92,X,0,N/A,PS-90A,EN,Turbofan,L,,,,India,Russia,N,4,368,0
+25340,IND,RUS,1996,X,4000,X,2015,N/A,R-73/AA-11,MI,SRAAM,L,4000,X,1997-2015,India,Russia,N,0.15,600,600
+36899,IND,RUS,2003,X,14,,0,LIC,RBU-6000,NW,ASW MRL,L,8,,2014-2015,India,Russia,N,3.5,49,28
+32127,IND,RUS,2015,X,5,,0,N/A,S-400/SA-21,AD,SAM system,L,,,,India,Russia,N,0,0,0
+26695,IND,RUS,2001,X,140,,0,LIC,Su-30MK,AC,FGA aircraft,L,124,X,2005-2015,India,Russia,N,55,7700,6820
+51356,IND,RUS,2012,,42,,0,LIC,Su-30MK,AC,FGA aircraft,L,,,,India,Russia,N,55,2310,0
+32705,IND,RUS,2012,X,65,X,0,LIC,T-50 PAKFA,AC,FGA aircraft,L,,,,India,Russia,N,0,0,0
+39107,IND,RUS,2006,X,1000,,0,LIC,T-90S,AV,Tank,L,290,X,2009-2015,India,Russia,N,4,4000,1160
+40312,INS,RUS,2015,X,10,X,0,N/A,Su-35,AC,FGA aircraft,L,,,,Indonesia,Russia,N,0,0,0
+40238,IRA,RUS,2015,,150,X,0,N/A,48N6/SA-10D Grumble,MI,SAM,L,,,,Iran,Russia,N,1,150,0
+28617,IRA,RUS,1991,X,,,0,LIC,9M111 Fagot/AT-4,MI,Anti-tank missile,L,5050,X,1993-2015,Iran,Russia,N,0.01,0,50.5
+30220,IRA,RUS,1998,X,,,0,LIC,9M113 Konkurs/AT-5,MI,Anti-tank missile,L,2900,X,1999-2015,Iran,Russia,N,0.02,0,58
+28257,IRA,RUS,1995,X,0,,0,LIC,9M14M/AT-3,MI,Anti-tank missile,L,4550,X,1996-2015,Iran,Russia,N,0.01,0,45.5
+59015,IRA,RUS,2015,,4,,0,N/A,S-300PMU-2/SA-20B,AD,SAM system,L,,,,Iran,Russia,N,55,220,0
+55441,IRQ,RUS,2012,X,48,X,0,N/A,96K9 Pantsyr-S1,AD,Mobile AD system,L,16,X,2014-2015,Iraq,Russia,N,11,528,176
+57935,IRQ,RUS,2013,,2000,X,0,N/A,9M114 Shturm/AT-6,MI,Anti-tank missile,L,1750,X,2013-2015,Iraq,Russia,N,0.02,40,35
+54809,IRQ,RUS,2013,,1200,X,0,N/A,9M311/SA-19,MI,SAM,L,400,X,2014-2015,Iraq,Russia,N,0.12,144,48
+57956,IRQ,RUS,2012,X,500,X,0,N/A,Igla-S/SA-24,MI,Portable SAM,L,300,X,2014-2015,Iraq,Russia,N,0.08,40,24
+55440,IRQ,RUS,2012,X,15,X,2015,N/A,Mi-28N,AC,Combat helicopter,L,15,X,2014-2015,Iraq,Russia,N,15.5,232.5,232.5
+56708,IRQ,RUS,2013,,28,X,0,N/A,Mi-35M,AC,Combat helicopter,L,20,X,2013-2015,Iraq,Russia,N,11.5,322,230
+50886,KAZ,RUS,2013,X,200,X,2015,AID,5V55U/SA-10C,MI,SAM,L,200,X,2015,Kazakhstan,Russia,S,0.4,80,80
+58344,KAZ,RUS,2013,X,400,X,0,N/A,9M120 Ataka/AT-9,MI,Anti-tank missile,L,,,,Kazakhstan,Russia,N,0.04,16,0
+55052,KAZ,RUS,2013,,30,X,0,N/A,BMPT,AV,AFSV,L,,,,Kazakhstan,Russia,N,2.6,78,0
+56655,KAZ,RUS,2012,X,10,X,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,10,X,2013-2015,Kazakhstan,Russia,N,6.75,67.5,67.5
+32980,KAZ,RUS,2013,,2,,0,N/A,Project-10750/Lida,SH,MCM ship,,,,,Kazakhstan,Russia,N,0,0,0
+58971,KAZ,RUS,2013,X,5,X,2015,AID,S-300PS/SA-10B,AD,SAM system,L,5,X,2015,Kazakhstan,Russia,S,17,85,85
+58557,KAZ,RUS,2014,X,4,X,2015,N/A,Su-30MK,AC,FGA aircraft,L,4,,2015,Kazakhstan,Russia,N,55,220,220
+59592,KYR,RUS,2015,,,,0,AID,BTR-70,AV,APC,L,,,,Kyrgyzstan,Russia,R,0.198,0,0
+59573,MON,RUS,2014,X,,,0,AID,BTR-70,AV,APC,L,10,X,2015,Mongolia,Russia,R,0.198,0,1.98
+57964,MON,RUS,2014,,,,0,AID,T-72,AV,Tank,L,8,X,2015,Mongolia,Russia,R,1.4124,0,11.2992
+52226,MYA,RUS,2009,,10,X,2015,N/A,Mi-24P/Mi-35P,AC,Combat helicopter,L,10,X,2010-2015,Myanmar,Russia,R,5.94,59.4,59.4
+59522,MYA,RUS,2015,X,16,,0,N/A,RD-33,EN,Turbofan,L,,,,Myanmar,Russia,N,2.2,35.2,0
+57809,NAM,RUS,2014,,,,0,N/A,9M133 Kornet/AT-14,MI,Anti-tank missile,L,,,,Namibia,Russia,N,0.04,0,0
+56405,NEP,RUS,2013,,2,,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,2,,2015,Nepal,Russia,N,6.75,13.5,13.5
+57219,NIG,RUS,2014,,6,X,2015,N/A,Mi-35M,AC,Combat helicopter,L,6,X,2014-2015,Nigeria,Russia,N,11.5,69,69
+55575,NIG,RUS,2012,X,6,,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,6,X,2015,Nigeria,Russia,N,6.75,40.5,40.5
+57934,NIG,RUS,2014,,12,,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,,,,Nigeria,Russia,N,6.75,81,0
+57408,PAK,RUS,2015,,4,,0,N/A,Mi-35M,AC,Combat helicopter,L,,,,Pakistan,Russia,N,11.5,46,0
+35034,PAK,RUS,2004,X,200,X,0,N/A,RD-33,EN,Turbofan,L,93,X,2007-2015,Pakistan,Russia,N,2.2,440,204.6
+57001,PER,RUS,2013,,24,,0,ASS,Mi-8MT/Mi-17,AC,Transport helicopter,L,18,X,2014-2015,Peru,Russia,N,6.75,162,121.5
+58121,RWA,RUS,2013,X,3,X,2015,PEAC,Mi-8MT/Mi-17,AC,Transport helicopter,L,3,X,2014-2015,Rwanda,Russia,N,6.75,20.25,20.25
+59013,SER,RUS,2015,,2,,0,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,,,,Serbia,Russia,N,6.75,13.5,0
+50906,SUD,RUS,2009,,32,,0,N/A,Mi-24P/Mi-35P,AC,Combat helicopter,L,16,,2011-2012,Sudan,Russia,R,5.94,190.08,95.04
+56274,SUD,RUS,2013,,12,,0,N/A,Mi-24P/Mi-35P,AC,Combat helicopter,L,,,,Sudan,Russia,R,5.94,71.28,0
+54494,SYR,RUS,2009,X,0,,0,N/A,Kh-35 Uran/SS-N-25,MI,Anti-ship missile,L,,,,Syria,Russia,N,1,0,0
+51077,SYR,RUS,2007,,12,X,0,N/A,MiG-29M,AC,FGA aircraft,,,,,Syria,Russia,N,0,0,0
+54496,SYR,RUS,2010,X,100,X,0,N/A,R-73/AA-11,MI,SRAAM,L,,,,Syria,Russia,N,0.15,15,0
+22321,SYR,RUS,2011,X,4,,0,N/A,S-300PMU-2/SA-20B,AD,SAM system,L,,,,Syria,Russia,N,55,220,0
+53023,SYR,RUS,2011,,36,,0,N/A,Yak-130,AC,Trainer/combat ac,L,,,,Syria,Russia,N,7.6,273.6,0
+54176,THA,RUS,2014,,2,,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,2,,2015,Thailand,Russia,N,6.75,13.5,13.5
+53704,VN,RUS,2009,X,50,X,0,N/A,3M-54 Klub/SS-N-27,MI,Anti-ship MI/SSM,L,43,X,2013-2015,Viet Nam,Russia,N,1.4,70,60.2
+56758,VN,RUS,2009,X,80,X,0,N/A,53-65 533mm,MI,AS torpedo,L,65,X,2013-2015,Viet Nam,Russia,N,1.1,88,71.5
+36148,VN,RUS,2012,,2,,0,N/A,Gepard-3,SH,Frigate,L,,,,Viet Nam,Russia,N,175,350,0
+57170,VN,RUS,2013,X,2,,0,N/A,Gepard-3,SH,Frigate,L,,,,Viet Nam,Russia,N,175,350,0
+53030,VN,RUS,2004,,400,X,0,N/A,Kh-35 Uran/SS-N-25,MI,Anti-ship missile,L,168,X,2008-2015,Viet Nam,Russia,N,1,400,168
+32257,VN,RUS,2004,X,10,X,0,LIC,Project-1241/Tarantul,SH,FAC,L,6,,2008-2015,Viet Nam,Russia,N,63,630,378
+28820,VN,RUS,2009,,6,,0,N/A,Project-636E/Kilo,SH,Submarine,L,4,,2013-2015,Viet Nam,Russia,N,260,1560,1040
+50900,VN,RUS,2008,X,3,X,2015,N/A,S-125T Pechora-2T,AD,SAM system,L,3,X,2015,Viet Nam,Russia,N,30,90,90
+56215,VN,RUS,2013,,12,,0,N/A,Su-30MK,AC,FGA aircraft,L,8,,2014-2015,Viet Nam,Russia,N,55,660,440
+56757,VN,RUS,2009,X,80,,0,N/A,TEST-71,MI,AS/ASW torpedo,L,65,X,2013-2015,Viet Nam,Russia,N,1.1,88,71.5
+58739,ZAM,RUS,2014,,2,,2015,N/A,Mi-8MT/Mi-17,AC,Transport helicopter,L,2,X,2015,Zambia,Russia,N,6.75,13.5,13.5
+31960,ALG,SA,2012,,100,,0,N/A,Mokopa,MI,ASM/anti-tank missile,L,8,,2013,Algeria,South Africa,N,0.05,5,0.4
+54936,ALG,SA,2012,X,100,X,0,N/A,Umkhonto-IR,MI,SAM,L,,,,Algeria,South Africa,N,0.14,14,0
+56770,ANG,SA,2013,,45,,2015,N/A,Casspir,AV,APC,L,45,X,2015,Angola,South Africa,N,0.19,8.55,8.55
+57209,JOR,SA,2015,,50,,0,LIC,Mbombe,AV,IFV,L,,,,Jordan,South Africa,N,0,0,0
+56952,KAZ,SA,2013,,0,X,0,LIC,Marauder,AV,APC,L,,,,Kazakhstan,South Africa,N,0.19,0,0
+59600,KAZ,SA,2013,,,,0,LIC,Mbombe,AV,IFV,L,,,,Kazakhstan,South Africa,N,0,0,0
+30257,MAL,SA,2012,,216,,0,N/A,Ingwe,MI,Anti-tank missile,L,,,,Malaysia,South Africa,N,0.03,6.48,0
+52243,MAL,SA,2012,,123,,0,N/A,LCT-30,OT,IFV turret,L,,,,Malaysia,South Africa,N,0.6,73.8,0
+55121,MAL,SA,2012,,54,,0,N/A,MCT,OT,APC turret,L,,,,Malaysia,South Africa,N,0.05,2.7,0
+55347,MAL,SA,2012,,54,,0,N/A,Rogue,OT,APC turret,L,,,,Malaysia,South Africa,N,0.05,2.7,0
+58678,NIG,SA,2014,,23,X,2015,N/A,Mamba,AV,APC,L,23,X,2015,Nigeria,South Africa,N,0.15,3.45,3.45
+59510,NIG,SA,2013,,2,,2015,N/A,Sentinel-37m,SH,Patrol craft,L,2,,2015,Nigeria,South Africa,N,9,18,18
+55296,NIG,SA,2009,X,,,0,ASS,Springbuck,AV,APV/APC,L,53,X,2010-2015,Nigeria,South Africa,N,0.15,0,7.95
+55307,UAE,SA,2013,,0,,0,LIC,Al-Tariq,MI,ASM,L,,,,UAE,South Africa,N,0,0,0
+59359,UAE,SA,2015,,50,X,0,LIC,N35,AV,APC,L,,,,UAE,South Africa,N,0,0,0
+53904,UAE,SA,2011,,72,,2015,N/A,RG-31 Nyala,AV,APC,L,72,X,2013-2015,UAE,South Africa,N,0.18,12.96,12.96
+57239,UNO,SA,2013,,115,,2015,PEAC,Puma M-26,AV,APC,L,115,X,2014-2015,United Nations**,South Africa,N,0.15,17.25,17.25
+59412,XXX,SA,2015,,24,,0,N/A,RG-31 Nyala,AV,APC,L,,,,Unknown country,South Africa,N,0.18,4.32,0
+57424,XXX,SA,2013,,5,,0,N/A,Sentinel-37m,SH,Patrol craft,L,,,,Unknown country,South Africa,N,9,45,0
+51406,KEN,SER,2012,X,18,X,2015,N/A,B-52 NORA 155mm,AR,Self-propelled gun,L,18,X,2014-2015,Kenya,Serbia,N,1.5,27,27
+56178,KEN,SER,2012,X,10,X,2015,N/A,BOV M11,AV,APC,,10,X,2014-2015,Kenya,Serbia,N,0.2,2,2
+51685,OMA,SIN,2012,,4,,0,N/A,Fearless-75,SH,OPV,L,2,,2015,Oman,Singapore,N,23,92,46
+53903,UAE,SIN,2011,,72,X,2015,N/A,SRAMS 120mm,AR,Mortar,L,72,X,2013-2015,UAE,Singapore,N,0.05,3.6,3.6
+31113,AUS,SPA,2007,,2,,2015,LIC,BPE,SH,AALS,L,2,,2014-2015,Australia,Spain,N,478.5,957,957
+30574,AUS,SPA,2007,,3,,0,LIC,Hobart,SH,Destroyer,L,,,,Australia,Spain,N,499,1497,0
+30704,BEL,SPA,2003,,7,,0,LIC,A400M Atlas,AC,Transport aircraft,,,,,Belgium,Spain,N,73,511,0
+51324,BRA,SPA,2014,,3,,0,N/A,C-295,AC,Transport aircraft,L,,,,Brazil,Spain,N,12,36,0
+56820,ECU,SPA,2014,X,4,,0,N/A,Lanza-LRR,GR,Air search radar,L,,,,Ecuador,Spain,N,13,52,0
+57621,EGY,SPA,2014,,8,,2015,N/A,C-295,AC,Transport aircraft,L,8,X,2015,Egypt,Spain,N,12,96,96
+58957,EGY,SPA,2015,,4,,0,N/A,C-295,AC,Transport aircraft,L,,,,Egypt,Spain,N,12,48,0
+59584,EQU,SPA,2015,X,2,,0,N/A,C-295,AC,Transport aircraft,L,,,,Equatorial Guinea,Spain,N,12,24,0
+58119,GHA,SPA,2015,,1,,0,N/A,C-295,AC,Transport aircraft,L,,,,Ghana,Spain,N,12,12,0
+54130,GUA,SPA,2013,,3,,2015,N/A,Lanza-ARSR,GR,Air search radar,,3,X,2015,Guatemala,Spain,N,11,33,33
+52564,IND,SPA,2013,X,6,,0,N/A,A-330 MRTT,AC,Tanker/transport ac,L,,,,India,Spain,N,98,588,0
+32115,IND,SPA,2015,X,56,,0,LIC,C-295,AC,Transport aircraft,L,,,,India,Spain,N,12,672,0
+39062,INS,SPA,2012,,9,,2015,LIC,C-295,AC,Transport aircraft,L,9,X,2012-2015,Indonesia,Spain,N,12,108,108
+32134,KOS,SPA,2015,X,4,,0,N/A,A-330 MRTT,AC,Tanker/transport ac,L,,,,South Korea,Spain,N,98,392,0
+31058,LUX,SPA,2003,,1,,0,N/A,A400M Atlas,AC,Transport aircraft,,,,,Luxembourg,Spain,N,73,73,0
+35482,MAL,SPA,2005,,4,,0,OFFS,A400M Atlas,AC,Transport aircraft,,2,,2015,Malaysia,Spain,N,73,292,146
+55388,MEX,SPA,2014,X,2,X,2015,N/A,C-295,AC,Transport aircraft,L,2,X,2015,Mexico,Spain,N,12,24,24
+57930,MEX,SPA,2014,,2,,2015,N/A,C-295,AC,Transport aircraft,L,2,X,2015,Mexico,Spain,N,12,24,24
+38242,MEX,SPA,2014,X,2,X,0,N/A,CN-235MP,AC,MP aircraft,L,,,,Mexico,Spain,N,17.2,34.4,0
+38249,MEX,SPA,2013,X,2,,2015,N/A,CN-235MP,AC,MP aircraft,L,2,,2015,Mexico,Spain,N,17.2,34.4,34.4
+59163,NAT,SPA,2015,,2,,0,N/A,Lanza-LTR,GR,Air search radar,,,,,NATO**,Spain,N,0,0,0
+37551,OMA,SPA,2012,,4,,0,N/A,C-295MPA,AC,MP aircraft,L,3,X,2015,Oman,Spain,N,21.5,86,64.5
+57953,OMA,SPA,2014,,2,X,0,N/A,Lanza-LRR,GR,Air search radar,L,,,,Oman,Spain,N,13,26,0
+58922,OMA,SPA,2014,,2,X,0,N/A,Lanza-LTR,GR,Air search radar,,,,,Oman,Spain,N,0,0,0
+35946,PHI,SPA,2014,,3,,2015,N/A,C-295,AC,Transport aircraft,L,3,X,2015,Philippines,Spain,N,12,36,36
+57204,QAT,SPA,2014,X,2,,0,N/A,A-330 MRTT,AC,Tanker/transport ac,L,,,,Qatar,Spain,N,98,196,0
+51049,SAU,SPA,2009,,3,,2015,N/A,A-330 MRTT,AC,Tanker/transport ac,L,3,,2014-2015,Saudi Arabia,Spain,N,98,294,294
+58768,SAU,SPA,2015,,4,,0,N/A,C-295,AC,Transport aircraft,L,,,,Saudi Arabia,Spain,N,12,48,0
+31425,SIN,SPA,2014,,6,,0,N/A,A-330 MRTT,AC,Tanker/transport ac,L,,,,Singapore,Spain,N,98,588,0
+30573,TUR,SPA,2003,,10,,0,LIC,A400M Atlas,AC,Transport aircraft,,3,,2014-2015,Turkey,Spain,N,73,730,219
+31722,TUR,SPA,2015,,1,,0,LIC,BPE,SH,AALS,L,,,,Turkey,Spain,N,478.5,478.5,0
+51241,UK,SPA,2014,,245,,0,LIC,Scout-SV,AV,Reconnaissance AV,,,,,United Kingdom,Spain,N,0,0,0
+57936,UK,SPA,2014,,344,,0,LIC,Scout-SV,AV,APC,,,,,United Kingdom,Spain,N,0,0,0
+56626,URU,SPA,2012,X,60,,2015,N/A,ECIA 120mm,AR,Mortar,L,60,,2015,Uruguay,Spain,S,0.02,1.2,1.2
+58810,UZB,SPA,2014,X,4,X,0,N/A,C-295,AC,Transport aircraft,L,2,,2015,Uzbekistan,Spain,N,12,48,24
+35897,VEN,SPA,2005,,4,,0,LIC,BVL,SH,OPV,L,3,,2009-2011,Venezuela,Spain,N,23.5,94,70.5
+57442,VN,SPA,2014,,3,,2015,N/A,C-295,AC,Transport aircraft,L,3,,2014-2015,Viet Nam,Spain,N,12,36,36
+57430,XXX,SPA,2014,,1,X,0,N/A,C-295,AC,Transport aircraft,L,,,,Unknown country,Spain,N,12,12,0
+58256,ALG,SWE,2012,X,4,,0,N/A,CEROS-200,GR,Fire control radar,L,,,,Algeria,Sweden,N,2.5,10,0
+58255,ALG,SWE,2012,X,2,,0,N/A,Giraffe AMB,GR,Air search radar,L,,,,Algeria,Sweden,N,7.5,15,0
+54935,ALG,SWE,2012,X,65,X,0,N/A,RBS-15 Mk-3,MI,Anti-ship MI/SSM,L,,,,Algeria,Sweden,N,1.2,78,0
+52401,AUS,SWE,2009,X,2,,2015,N/A,Giraffe AMB,GR,Air search radar,L,2,,2014-2015,Australia,Sweden,N,7.5,15,15
+30712,BRA,SWE,2015,,36,,0,LIC,Gripen-E,AC,FGA aircraft,L,,,,Brazil,Sweden,N,31.5,1134,0
+56965,BRA,SWE,2014,,80,X,2015,N/A,RBS-70 Mk-3 Bolide,MI,Portable SAM,L,80,X,2014-2015,Brazil,Sweden,N,0.1,8,8
+51955,CAN,SWE,2009,,24,,0,N/A,CEROS-200,GR,Fire control radar,L,14,X,2014-2015,Canada,Sweden,N,2.5,60,35
+58872,FIN,SWE,2015,,1000,X,0,N/A,NLAW,MI,Anti-tank missile,L,500,X,2015,Finland,Sweden,N,0.01,10,5
+30288,FRG,SWE,2005,,30,X,2015,LIC,RBS-15 Mk-3,MI,Anti-ship MI/SSM,L,30,X,2011-2015,Germany (FRG),Sweden,N,1.2,36,36
+55325,FRG,SWE,2012,,15,X,0,LIC,RBS-15 Mk-3,MI,Anti-ship MI/SSM,L,10,X,2014-2015,Germany (FRG),Sweden,N,1.2,18,12
+59249,HUN,SWE,2015,,2,,0,N/A,JAS-39C Gripen,AC,FGA aircraft,L,,,,Hungary,Sweden,S,11.4,22.8,0
+54693,IND,SWE,2012,X,114,,0,LIC,FH-77 155mm,AR,Towed gun,L,,,,India,Sweden,N,1,114,0
+35787,JAP,SWE,2005,,36,,0,LIC,Stirling AIP,EN,AIP engine,L,24,,2009-2015,Japan,Sweden,N,2.5,90,60
+53156,KOS,SWE,2011,,10,X,2015,LIC,ARTHUR,GR,Arty locating radar,L,10,X,2013-2015,South Korea,Sweden,N,4,40,40
+34771,KOS,SWE,2005,,18,,2015,LIC,CEROS-200,GR,Fire control radar,L,18,X,2008-2015,South Korea,Sweden,N,2.5,45,45
+59304,LAT,SWE,2015,,50,X,0,N/A,RBS-70,MI,Portable SAM,L,10,X,2015,Latvia,Sweden,N,0.08,4,0.8
+58767,LIT,SWE,2015,,,,0,N/A,RBS-70 Mk-3 Bolide,MI,Portable SAM,L,,,,Lithuania,Sweden,N,0.1,0,0
+54916,MAL,SWE,2013,,6,,0,LIC,SAK-70 Mk-2 57mm,NW,Naval gun,L,,,,Malaysia,Sweden,N,2.5,15,0
+55808,NOR,SWE,2012,,103,,0,LIC,CV-90,AV,APC,L,13,X,2014-2015,Norway,Sweden,N,0.45,46.35,5.85
+33546,NOR,SWE,2012,,7,,2015,LIC,CV-9030,AV,IFV,L,7,X,2015,Norway,Sweden,N,1.6,11.2,11.2
+4933,PAK,SWE,2001,X,150,X,0,LIC,MFI-17 Supporter,AC,Trainer aircraft,L,146,X,2001-2015,Pakistan,Sweden,N,0.22,33,32.12
+15921,PAK,SWE,1985,X,0,,0,LIC,RBS-70,MI,Portable SAM,L,1350,X,1988-2015,Pakistan,Sweden,N,0.08,0,108
+55244,POL,SWE,2013,,307,X,0,N/A,DI-12,EN,Diesel engine (AV),L,45,X,2014-2015,Poland,Sweden,N,0.06,18.42,2.7
+52598,SA,SWE,2008,,264,X,0,N/A,DI-12,EN,Diesel engine (AV),L,,,,South Africa,Sweden,N,0.06,15.84,0
+58990,SLK,SWE,2015,,31,X,0,N/A,DI-12,EN,Diesel engine (AV),L,,,,Slovakia,Sweden,N,0.06,1.86,0
+57642,THA,SWE,2014,,,,0,N/A,ARTHUR,GR,Arty locating radar,L,,,,Thailand,Sweden,N,4,0,0
+53413,THA,SWE,2011,,4,,0,N/A,CEROS-200,GR,Fire control radar,L,2,X,2015,Thailand,Sweden,N,2.5,10,5
+59462,THA,SWE,2013,,2,X,0,N/A,CEROS-200,GR,Fire control radar,L,,,,Thailand,Sweden,N,2.5,5,0
+59464,THA,SWE,2015,X,2,X,0,N/A,CEROS-200,GR,Fire control radar,L,,,,Thailand,Sweden,N,2.5,5,0
+53414,THA,SWE,2011,,2,,0,N/A,Giraffe AMB,GR,Air search radar,L,1,X,2015,Thailand,Sweden,N,7.5,15,7.5
+59463,THA,SWE,2013,,1,,0,N/A,Giraffe AMB,GR,Air search radar,L,,,,Thailand,Sweden,N,7.5,7.5,0
+59465,THA,SWE,2015,X,1,,0,N/A,Giraffe AMB,GR,Air search radar,L,,,,Thailand,Sweden,N,7.5,7.5,0
+59598,UAE,SWE,2015,X,40,X,0,N/A,DI-12,EN,Diesel engine (AV),L,,,,UAE,Sweden,N,0.06,2.4,0
+40214,UAE,SWE,2015,,2,,0,N/A,Erieye SRSS,GR,AEW&C/AGS system,,,,,UAE,Sweden,N,0,0,0
+59409,UAE,SWE,2015,,2,,0,MOD,Erieye SRSS,GR,AEW&C/AGS system,,,,,UAE,Sweden,N,0,0,0
+50980,UAE,SWE,2009,,12,,2015,LIC,Ghannatha,SH,FAC,L,12,X,2013-2015,UAE,Sweden,N,14.3,171.6,171.6
+32380,UAE,SWE,2004,,6,,0,N/A,Giraffe AMB,GR,Air search radar,L,4,,2011-2015,UAE,Sweden,N,7.5,45,30
+58980,UK,SWE,2015,,4,,0,N/A,Giraffe AMB,GR,Air search radar,L,,,,United Kingdom,Sweden,N,7.5,30,0
+38896,USA,SWE,2004,X,12,X,0,N/A,Giraffe AMB,GR,Air search radar,L,3,,2010-2015,United States,Sweden,N,7.5,90,22.5
+38895,USA,SWE,2004,X,32,X,0,LIC,SAK-70 Mk-2 57mm,NW,Naval gun,L,12,,2008-2015,United States,Sweden,N,2.5,80,30
+59144,XXX,SWE,2014,X,,,0,N/A,Giraffe AMB,GR,Air search radar,L,,,,Unknown country,Sweden,N,7.5,0,0
+58870,XXX,SWE,2015,,50,X,0,N/A,RBS-70,MI,Portable SAM,L,25,X,2015,Unknown country,Sweden,N,0.08,4,2
+55482,AFG,SWI,2012,,18,,2015,N/A,PC-12,AC,Light transport ac,L,18,X,2013-2015,Afghanistan,Switzerland,N,1.85,33.3,33.3
+36338,AUS,SWI,2015,X,49,,0,PRIV,PC-21,AC,Trainer aircraft,L,,,,Australia,Switzerland,N,4.9,240.1,0
+30700,BEL,SWI,2006,,242,,2015,LIC,Piranha-3,AV,APC,L,242,X,2008-2015,Belgium,Switzerland,N,0.29,70.18,70.18
+59411,BRA,SWI,2015,,2,,0,N/A,Fieldguard,GR,Fire control radar,L,,,,Brazil,Switzerland,N,4.76,9.52,0
+53083,CAN,SWI,2011,,12,,0,N/A,Leopard-2 chassis,AV,Tank chassis,L,11,X,2014-2015,Canada,Switzerland,S,0.4,4.8,4.4
+38599,CHI,SWI,1995,X,0,,0,LIC,GDF 35mm,AD,AA gun,L,350,X,1997-2015,China,Switzerland,N,0.75,0,262.5
+33142,CHI,SWI,1995,X,0,,0,LIC,Skyguard,GR,Fire control radar,L,175,X,1997-2015,China,Switzerland,N,5,0,875
+54144,DEN,SWI,2015,,309,,0,N/A,Piranha-5,AV,APC,L,,,,Denmark,Switzerland,N,0,0,0
+58312,FRG,SWI,2014,,76,,2015,N/A,Eagle,AV,APV,L,76,X,2015,Germany (FRG),Switzerland,N,0.14,10.64,10.64
+51229,IND,SWI,2012,,75,,2015,ASS,PC-7 Turbo Trainer,AC,Trainer aircraft,L,75,X,2013-2015,India,Switzerland,N,1,75,75
+55094,IND,SWI,2015,X,38,,0,LIC,PC-7 Turbo Trainer,AC,Trainer aircraft,L,,,,India,Switzerland,N,1,38,0
+56753,INS,SWI,2013,X,2,,0,N/A,GDM-008 35mm,NW,CIWS,L,,,,Indonesia,Switzerland,N,4,8,0
+55785,INS,SWI,2012,,6,,2015,N/A,Skyshield-35,AD,AA gun system,,6,X,2014-2015,Indonesia,Switzerland,N,15,90,90
+58348,INS,SWI,2014,,2,,2015,N/A,Skyshield-35,AD,AA gun system,,2,,2015,Indonesia,Switzerland,N,15,30,30
+58953,JOR,SWI,2015,,9,,0,N/A,PC-9,AC,Trainer aircraft,L,,,,Jordan,Switzerland,N,1.4,12.6,0
+58351,KUW,SWI,2014,,2,X,0,N/A,Skyguard,AD,AD system,L,,,,Kuwait,Switzerland,N,10,20,0
+50207,MAL,SWI,2014,X,5,,0,N/A,PC-7 Turbo Trainer,AC,Trainer aircraft,L,,,,Malaysia,Switzerland,N,1,5,0
+53331,QAT,SWI,2012,,24,,0,N/A,PC-21,AC,Trainer aircraft,L,18,X,2014-2015,Qatar,Switzerland,N,4.9,117.6,88.2
+40119,ROM,SWI,2006,,31,,2015,N/A,Piranha-3,AV,APC,L,31,X,2007-2015,Romania,Switzerland,N,0.29,8.99,8.99
+54805,SAU,SWI,2012,,55,,0,N/A,PC-21,AC,Trainer aircraft,L,34,X,2014-2015,Saudi Arabia,Switzerland,N,4.9,269.5,166.6
+55391,SIN,SWI,2012,X,13,X,2015,N/A,PiPz-3 Kodiak,AV,AEV,L,13,X,2014-2015,Singapore,Switzerland,N,2.5,32.5,32.5
+59513,THA,SWI,2015,X,8,,0,N/A,GDF 35mm,AD,AA gun,L,,,,Thailand,Switzerland,N,0.75,6,0
+59512,THA,SWI,2015,X,4,,0,N/A,Skyguard,GR,Fire control radar,L,,,,Thailand,Switzerland,N,5,20,0
+22851,USA,SWI,1996,,748,,0,LIC,PC-9,AC,Trainer aircraft,L,739,X,1999-2015,United States,Switzerland,N,1.4,1047.2,1034.6
+59258,USA,SWI,2013,,4,,2015,N/A,PC-9,AC,Trainer aircraft,L,4,,2015,United States,Switzerland,N,1.4,5.6,5.6
+50832,VEN,SWI,2006,X,8,,0,N/A,GDM-008 35mm,NW,CIWS,L,7,,2009-2012,Venezuela,Switzerland,N,4,32,28
+58044,HON,TAI,2013,,4,,2015,AID,Bell-205/UH-1H,AC,Helicopter,L,4,,2015,Honduras,Taiwan (ROC),S,1.048,4.192,4.192
+59483,MAL,THA,2015,,20,X,0,N/A,First Win,AV,APC/APV,,,,,Malaysia,Thailand,N,0,0,0
+53090,AZB,TUR,2011,,36,,0,N/A,K-9 Thunder 155mm,AR,Self-propelled gun,L,,,,Azerbaijan,Turkey,N,4.32,155.52,0
+30254,MAL,TUR,2011,,89,,0,LIC,Pars,AV,APC,L,,,,Malaysia,Turkey,N,0.35,31.15,0
+53497,MAL,TUR,2011,,122,,0,N/A,Pars,AV,IFV,L,,,,Malaysia,Turkey,N,0.7,85.4,0
+52245,MAL,TUR,2011,,46,,0,LIC,Pars IFV-25,AV,IFV,L,32,X,2014-2015,Malaysia,Turkey,N,1.3,59.8,41.6
+56011,PAK,TUR,2013,,1,,0,LIC,STW-15600t,SH,Oiler,L,,,,Pakistan,Turkey,N,0,0,0
+58973,PAK,TUR,2015,,34,,2015,AID,T-37B,AC,Trainer aircraft,L,34,X,2015,Pakistan,Turkey,S,0.72,24.48,24.48
+57237,QAT,TUR,2014,,10,,0,N/A,Ares-110,SH,Patrol craft,,,,,Qatar,Turkey,N,10,100,0
+58486,QAT,TUR,2014,,2,,0,N/A,Ares-150,SH,Patrol craft,,,,,Qatar,Turkey,N,0,0,0
+58485,QAT,TUR,2014,,5,,0,N/A,Ares-75,SH,Patrol craft,,,,,Qatar,Turkey,N,5.6,28,0
+57242,QAT,TUR,2014,,4,,0,N/A,MRTP-20,SH,Patrol craft,L,,,,Qatar,Turkey,N,4.2,16.8,0
+59368,RUS,TUR,2015,,1,,2015,N/A,Alican Deval,SH,Cargo ship,,1,,2015,Russia,Turkey,S,8,8,8
+59369,RUS,TUR,2015,,1,,2015,N/A,Dadali,SH,Cargo Ship,,1,,2015,Russia,Turkey,S,8,8,8
+34963,SAU,TUR,2013,X,350,X,0,N/A,M-113A300,AV,APC,,150,X,2015,Saudi Arabia,Turkey,N,0.26,91,39
+53375,SAU,TUR,2011,,320,X,2015,ASS,M-113A300,AV,APC,,320,X,2013-2015,Saudi Arabia,Turkey,N,0.26,83.2,83.2
+58766,TRK,TUR,2014,X,6,,0,N/A,Dearsan 33m FAC,SH,FAC,L,1,X,2015,Turkmenistan,Turkey,N,31,186,31
+56314,TRK,TUR,2012,,8,X,2015,ASS,YTBK,SH,Patrol craft,L,8,X,2013-2015,Turkmenistan,Turkey,N,20,160,160
+55972,UAE,TUR,2013,X,10000,,0,N/A,CIRIT,MI,ASM,L,3000,X,2013-2015,UAE,Turkey,N,0.04,400,120
+59571,UNO,TUR,2015,X,12,X,2015,N/A,Cobra,AV,APV,L,12,X,2015,United Nations**,Turkey,N,0.15,1.8,1.8
+35303,ALG,UAE,2012,,200,X,0,ASS,Nimr Armored,AV,APV,L,100,X,2014-2015,Algeria,UAE,N,0.03,6,3
+58789,EGY,UAE,2013,X,,X,0,LIC,Panthera T6,AV,APV,,50,X,2014-2015,Egypt,UAE,N,0.14,0,7
+59568,JOR,UAE,2015,X,13,,2015,AID,Hawk-60,AC,Trainer/combat ac,L,13,X,2015,Jordan,UAE,S,3.6,46.8,46.8
+58378,JOR,UAE,2014,X,166,X,2015,N/A,Paveway,MI,Guided bomb,L,166,X,2015,Jordan,UAE,N,0.02,3.32,3.32
+58788,LYA,UAE,2014,X,50,,2015,N/A,Panthera T6,AV,APV,,50,X,2015,Libya,UAE,N,0.14,7,7
+58724,SOM,UAE,2015,,6,X,2015,AID,RG-31 Nyala,AV,APC,L,6,X,2015,Somalia,UAE,S,0.072,0.432,0.432
+55003,ALG,UK,2012,,6,,0,N/A,Super Lynx-100,AC,ASW helicopter,,3,X,2015,Algeria,United Kingdom,N,11.9,71.4,35.7
+58884,AUS,UK,2015,,2,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Australia,United Kingdom,N,10,20,0
+55185,AUS,UK,2012,,19,,2015,N/A,UFH/M-777 155mm,AR,Towed gun,L,19,X,2014-2015,Australia,United Kingdom,N,1,19,19
+53909,BRA,UK,2012,,0,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Brazil,United Kingdom,N,10,0,0
+58113,BRA,UK,2014,X,,,0,N/A,CAMM,MI,SAM,L,,,,Brazil,United Kingdom,N,0,0,0
+58112,BRA,UK,2014,X,,,0,N/A,CAMM(M) VLS,NW,Naval SAM system,,,,,Brazil,United Kingdom,N,0,0,0
+56935,BRA,UK,2014,X,36,X,0,N/A,Raven ES-05,GR,Combat ac radar,L,,,,Brazil,United Kingdom,N,2.5,90,0
+59275,BRA,UK,2013,X,8,,0,N/A,Seaspray,GR,MP aircraft radar,L,1,X,2015,Brazil,United Kingdom,N,2,16,2
+57525,BRA,UK,2014,,8,,0,MOD,Super Lynx-100,AC,ASW Helicopter,L,,,,Brazil,United Kingdom,N,13.5,108,0
+32416,CHI,UK,1975,X,0,,0,LIC,Spey,EN,Turbofan,L,290,X,1998-2015,China,United Kingdom,N,2,0,580
+59455,FRA,UK,2015,,8,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,France,United Kingdom,N,10,80,0
+58076,FRA,UK,2015,,16,X,0,N/A,Trent,EN,Turbofan,L,,,,France,United Kingdom,N,6,96,0
+23684,GRE,UK,2003,,2,,2015,LIC,Super Vita,SH,FAC,L,2,,2010-2015,Greece,United Kingdom,N,50,100,100
+50608,GRE,UK,2008,,2,,0,LIC,Super Vita,SH,FAC,L,,,,Greece,United Kingdom,N,50,100,0
+55676,IND,UK,2012,X,6,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,India,United Kingdom,N,10,60,0
+36741,IND,UK,2014,,350,X,0,LIC,ASRAAM,MI,SRAAM,L,,,,India,United Kingdom,N,0.18,63,0
+34492,IND,UK,2010,,57,,0,LIC,Hawk-100,AC,Trainer/combat ac,L,42,X,2013-2015,India,United Kingdom,N,10,570,420
+54298,IND,UK,2015,X,20,,0,LIC,Hawk-100,AC,Trainer/combat ac,L,,,,India,United Kingdom,N,10,200,0
+36485,IND,UK,2014,X,145,,0,OFFS,UFH/M-777 155mm,AR,Towed gun,L,,,,India,United Kingdom,N,1,145,0
+58135,INS,UK,2014,,5,,0,OFFS,Forceshield,AD,SAM system,,,,,Indonesia,United Kingdom,N,0,0,0
+56970,INS,UK,2012,X,500,X,0,N/A,Starstreak,MI,Portable SAM,L,300,X,2014-2015,Indonesia,United Kingdom,N,0.12,60,36
+31750,IRE,UK,2010,,2,,2015,N/A,PV-90,SH,OPV,L,2,,2014-2015,Ireland,United Kingdom,N,33.25,66.5,66.5
+58339,IRE,UK,2014,,1,,0,N/A,PV-90,SH,OPV,L,,,,Ireland,United Kingdom,N,33.25,33.25,0
+51131,ITA,UK,2009,,4,,0,N/A,Seaspray,GR,MP aircraft radar,L,,,,Italy,United Kingdom,N,2,8,0
+51818,ITA,UK,2009,,8,,0,LIC,Type-2093,GR,MCM sonar,L,4,X,2012-2015,Italy,United Kingdom,N,12,96,48
+59380,JAP,UK,2015,,3,,0,N/A,Air refuel system,OT,Air refuel system,L,,,,Japan,United Kingdom,N,10,30,0
+31464,JAP,UK,2003,,14,X,0,LIC,EH-101-400,AC,Transport helicopter,L,8,X,2006-2015,Japan,United Kingdom,N,12.5,175,100
+52216,KOS,UK,2013,,8,,0,N/A,AW-159 Wildcat,AC,ASW helicopter,L,,,,South Korea,United Kingdom,N,13.9,111.2,0
+55108,KOS,UK,2012,,1,,0,N/A,MT-30,EN,Gas turbine,L,,,,South Korea,United Kingdom,N,12,12,0
+55892,KOS,UK,2009,X,5,,0,N/A,MT-30,EN,Gas turbine,L,4,X,2013-2015,South Korea,United Kingdom,N,12,60,48
+58873,KOS,UK,2015,X,8,,0,N/A,Trent,EN,Turbofan,L,,,,South Korea,United Kingdom,N,6,48,0
+57878,LAT,UK,2015,,20,X,0,N/A,Scimitar,AV,Light tank,L,1,,2015,Latvia,United Kingdom,S,0.332,6.64,0.332
+57173,LAT,UK,2015,,103,X,0,N/A,Spartan,AV,APC,L,3,,2015,Latvia,United Kingdom,S,0.072,7.416,0.216
+59094,MAL,UK,2015,,1,X,0,N/A,Forceshield,AD,SAM system,,,,,Malaysia,United Kingdom,N,0,0,0
+59096,MAL,UK,2015,,,,0,N/A,Starstreak,MI,Portable SAM,L,,,,Malaysia,United Kingdom,N,0.12,0,0
+56511,NZ,UK,2014,,0,,0,N/A,CAMM,MI,SAM,L,,,,New Zealand,United Kingdom,N,0,0,0
+52945,OMA,UK,2012,,8,,0,N/A,Hawk-100,AC,Trainer/combat ac,L,,,,Oman,United Kingdom,N,10,80,0
+50654,OMA,UK,2012,,12,,0,N/A,Typhoon Block-20,AC,FGA aircraft,L,,,,Oman,United Kingdom,N,57.5,690,0
+29577,POL,UK,2008,,126,,0,LIC,AS-90M turret,AR,SPG turret,L,6,X,2013,Poland,United Kingdom,N,1.25,157.5,7.5
+53612,SAU,UK,2009,,3,,2015,N/A,Air refuel system,OT,Air refuel system,L,3,X,2014-2015,Saudi Arabia,United Kingdom,N,10,30,30
+33909,SAU,UK,2012,X,22,,0,N/A,Hawk-100,AC,Trainer/combat ac,L,,,,Saudi Arabia,United Kingdom,N,10,220,0
+59596,SAU,UK,2015,,22,,0,N/A,Hawk-100,AC,Trainer/combat ac,L,,,,Saudi Arabia,United Kingdom,N,10,220,0
+39353,SAU,UK,2014,X,0,,0,N/A,Meteor,MI,BVRAAM,L,,,,Saudi Arabia,United Kingdom,N,0,0,0
+40082,SAU,UK,2013,,2400,X,2015,N/A,Paveway,MI,Guided bomb,L,2400,X,2015,Saudi Arabia,United Kingdom,N,0.02,48,48
+56387,SAU,UK,2013,,100,X,0,N/A,Storm Shadow/SCALP,MI,ASM,L,,,,Saudi Arabia,United Kingdom,N,1.4,140,0
+58807,SAU,UK,2007,,24,,0,N/A,Typhoon Block-20,AC,FGA aircraft,L,10,,2015,Saudi Arabia,United Kingdom,N,57.5,1380,575
+31041,SAU,UK,2007,,48,,2015,N/A,Typhoon Block-8,AC,FGA aircraft,L,48,X,2009-2015,Saudi Arabia,United Kingdom,N,55,2640,2640
+51788,SWE,UK,2014,,60,X,0,LIC,Raven ES-05,GR,Combat ac radar,L,,,,Sweden,United Kingdom,N,2.5,150,0
+59407,THA,UK,2015,,1,,0,LIC,BVT-90,SH,OPV,L,,,,Thailand,United Kingdom,N,40,40,0
+59131,THA,UK,2015,,,,0,N/A,Starstreak,MI,Portable SAM,L,,,,Thailand,United Kingdom,N,0.12,0,0
+58511,UKR,UK,2014,,75,,2015,N/A,AT-105 Saxon,AV,APC,L,75,,2015,Ukraine,United Kingdom,S,0.08,6,6
+53725,USA,UK,2011,,179,X,0,LIC,Air refuel system,OT,Air refuel system,L,,,,United States,United Kingdom,N,10,1790,0
+35134,USA,UK,2004,,48,X,0,N/A,MT-30,EN,Gas turbine,L,10,,2008-2015,United States,United Kingdom,N,12,576,120
+36449,USA,UK,2007,,6,,0,N/A,MT-30,EN,Gas turbine,L,,,,United States,United Kingdom,N,12,72,0
+57049,BAN,UKR,2013,,32,X,0,N/A,AI-222,EN,Turbofan,L,12,X,2015,Bangladesh,Ukraine,N,1.2,38.4,14.4
+57941,BAN,UKR,2013,,9,X,2015,N/A,AI-25,EN,Turbofan,L,9,X,2014-2015,Bangladesh,Ukraine,N,0.6,5.4,5.4
+55623,BLR,UKR,2012,,8,X,2015,N/A,AI-222,EN,Turbofan,L,8,X,2015,Belarus,Ukraine,N,1.2,9.6,9.6
+58967,BLR,UKR,2015,,8,X,0,N/A,AI-222,EN,Turbofan,L,,,,Belarus,Ukraine,N,1.2,9.6,0
+50929,CHA,UKR,2013,X,3,,0,N/A,MiG-29S,AC,FGA aircraft,L,1,X,2014,Chad,Ukraine,R,18.81,56.43,18.81
+57394,CHA,UKR,2012,X,25,X,0,N/A,R-27/AA-10,MI,BVRAAM,L,5,X,2014,Chad,Ukraine,S,0.076,1.9,0.38
+35702,CHI,UKR,2011,,250,X,0,N/A,AI-222,EN,Turbofan,L,22,X,2013-2015,China,Ukraine,N,1.2,300,26.4
+57646,CHI,UKR,2008,X,28,X,0,LIC,DT-59,EN,Gas turbine,L,14,X,2013-2015,China,Ukraine,N,5,140,70
+58088,CHI,UKR,2011,X,3,,0,N/A,Il-78M,AC,Tanker/transport ac,L,2,X,2014-2015,China,Ukraine,R,56.1,168.3,112.2
+51174,CHI,UKR,2009,,4,,0,LIC,Zubr/Pomornik,SH,ACV/landing craft,L,2,,2013-2014,China,Ukraine,N,58.8,235.2,117.6
+53496,IND,UKR,2009,,100,,0,N/A,AI-20,EN,Turboprop,L,60,X,2011-2015,India,Ukraine,N,1.4,140,84
+35243,IND,UKR,2003,X,12,,0,N/A,DT-59,EN,Gas turbine,L,8,,2014-2015,India,Ukraine,N,5,60,40
+59153,IND,UKR,2013,,16,,0,N/A,DT-59,EN,Gas turbine,L,,,,India,Ukraine,N,5,80,0
+57153,INS,UKR,2014,,5,,0,N/A,BTR-4,AV,IFV,L,,,,Indonesia,Ukraine,N,1,5,0
+40058,IRQ,UKR,2009,,270,X,0,N/A,BTR-4,AV,IFV,L,89,X,2011-2013,Iraq,Ukraine,N,1,270,89
+53351,IRQ,UKR,2009,,150,X,0,N/A,BTR-4K,AV,APC,L,33,X,2011-2013,Iraq,Ukraine,N,0.4,60,13.2
+53352,IRQ,UKR,2009,X,2700,X,0,N/A,R-2,MI,Anti-tank missile,L,900,X,2011-2013,Iraq,Ukraine,N,0.04,108,36
+54884,KAZ,UKR,2012,,100,,0,LIC,BTR-4K,AV,APC,L,,,,Kazakhstan,Ukraine,N,0.4,40,0
+52409,MYA,UKR,2009,,50,X,0,N/A,AI-25,EN,Turbofan,L,18,X,2011-2015,Myanmar,Ukraine,N,0.6,30,10.8
+56384,PAK,UKR,2013,,110,,0,N/A,6TD,EN,Diesel engine,L,110,X,2013-2015,Pakistan,Ukraine,N,0.19,20.9,20.9
+39788,RUS,UKR,2006,,264,X,0,LIC,AI-222,EN,Turbofan,L,124,X,2009-2014,Russia,Ukraine,N,1.2,316.8,148.8
+53770,RUS,UKR,2011,,19,,0,LIC,An-140,AC,Transport aircraft,L,16,X,2012-2014,Russia,Ukraine,N,9.5,180.5,152
+56837,RUS,UKR,2013,,15,,0,LIC,An-148,AC,Transport aircraft,L,6,,2013-2015,Russia,Ukraine,N,26,390,156
+58576,RUS,UKR,2010,X,6,X,0,N/A,DS-71,EN,Gas turbine,L,2,X,2015,Russia,Ukraine,N,2.75,16.5,5.5
+58575,RUS,UKR,2005,X,4,X,0,N/A,DT-59,EN,Gas turbine,L,,,,Russia,Ukraine,N,5,20,0
+58577,RUS,UKR,2010,X,6,X,0,N/A,DT-59,EN,Gas turbine,L,2,X,2015,Russia,Ukraine,N,5,30,10
+59370,RUS,UKR,2015,,1,X,2015,N/A,Georgiy Agafonov,SH,Cargo ship,,1,X,2015,Russia,Ukraine,S,4,4,4
+37300,THA,UKR,2011,,121,,2015,N/A,BTR-3U Guardian,AV,IFV,L,121,X,2012-2015,Thailand,Ukraine,N,0.82,99.22,99.22
+56664,THA,UKR,2013,,21,,0,N/A,BTR-3U Guardian,AV,IFV,L,6,X,2013,Thailand,Ukraine,N,0.82,17.22,4.92
+53683,THA,UKR,2011,X,1500,X,0,N/A,R-2,MI,Anti-tank missile,L,1150,X,2012-2014,Thailand,Ukraine,N,0.04,60,46
+36074,THA,UKR,2011,,49,,0,N/A,T-84,AV,Tank,L,10,,2014-2015,Thailand,Ukraine,N,4,196,40
+57460,VEN,UKR,2014,,8,,0,N/A,Stan Lander-5612,SH,Landing craft,L,,,,Venezuela,Ukraine,N,14,112,0
+37963,VN,UKR,2004,X,20,X,0,N/A,DR-76,EN,Gas turbine,L,12,,2008-2015,Viet Nam,Ukraine,N,0.75,15,9
+34883,VN,UKR,2004,X,20,X,0,N/A,DR-77,EN,Gas turbine,L,12,X,2008-2015,Viet Nam,Ukraine,N,2.5,50,30
+54348,VN,UKR,2012,X,4,,0,N/A,DT-59,EN,Gas turbine,L,,,,Viet Nam,Ukraine,N,5,20,0
+58338,ZAM,UKR,2012,,12,X,0,N/A,AI-222,EN,Turbofan,L,2,,2015,Zambia,Ukraine,N,1.2,14.4,2.4
+53711,AFG,USA,2013,,135,,2015,N/A,ASV-150/M-1117,AV,APC,L,135,X,2014-2015,Afghanistan,United States,N,0.3,40.5,40.5
+59157,AFG,USA,2015,,55,,0,N/A,ASV-150/M-1117,AV,APC,L,,,,Afghanistan,United States,N,0.3,16.5,0
+55815,AFG,USA,2012,X,4,,2015,AID,C-130H Hercules,AC,Transport aircraft,L,4,,2013-2015,Afghanistan,United States,S,11.2,44.8,44.8
+58016,AFG,USA,2014,,12,,2015,N/A,MD-500E,AC,Light helicopter,L,12,,2015,Afghanistan,United States,N,0.7,8.4,8.4
+59482,AFG,USA,2015,X,12,,0,N/A,MD-500E,AC,Light helicopter,L,,,,Afghanistan,United States,N,0.7,8.4,0
+59403,AFG,USA,2015,,65,,0,N/A,ScanEagle,AC,UAV,L,,,,Afghanistan,United States,N,0.04,2.6,0
+55002,ALG,USA,2012,,12,X,0,N/A,T-800,EN,Turboshaft,L,6,X,2015,Algeria,United States,N,0.8,9.6,4.8
+58541,ARG,USA,2014,,1,,2015,N/A,Bell-412,AC,Helicopter,L,1,,2015,Argentina,United States,N,5,5,5
+58877,ARG,USA,2014,,1,,2015,N/A,Bell-412,AC,Helicopter,L,1,,2015,Argentina,United States,S,2,2,2
+59242,ARG,USA,2015,,2,,2015,N/A,C-212,AC,Transport aircraft,L,2,X,2015,Argentina,United States,S,1.52,3.04,3.04
+56949,ARG,USA,2015,,2,,2015,N/A,Cessna-208 Caravan,AC,Light transport ac,L,2,,2015,Argentina,United States,N,0.9,1.8,1.8
+58794,ARG,USA,2014,X,1,,2015,N/A,PA-28 Cherokee,AC,Light aircraft,L,1,,2015,Argentina,United States,S,0.056,0.056,0.056
+36009,ARG,USA,2005,X,40,X,0,N/A,TFE-731,EN,Turbofan,L,8,X,2012-2013,Argentina,United States,N,0.6,24,4.8
+58733,AU,USA,2015,X,20,,2015,N/A,M-ATV,AV,APV,L,20,,2015,African Union**,United States,S,0.1,2,2
+54764,AUS,USA,2012,,20,X,0,N/A,AE-2100,EN,Turboprop,L,10,X,2015,Australia,United States,N,1.5,30,15
+53474,AUS,USA,2013,X,600,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,450,X,2014-2015,Australia,United States,N,0.05,30,22.5
+40080,AUS,USA,2007,X,50,X,0,N/A,AGM-154 JSOW,MI,Guided bomb,L,40,X,2009-2015,Australia,United States,N,0.2,10,8
+58082,AUS,USA,2015,,16,X,0,N/A,AGM-88E AARGM,MI,ARM,L,,,,Australia,United States,N,0.6,9.6,0
+53565,AUS,USA,2013,X,110,,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,110,X,2015,Australia,United States,N,0.6,66,66
+57688,AUS,USA,2015,,2,,2015,N/A,C-17A Globemaster-3,AC,Heavy transport ac,L,2,,2015,Australia,United States,N,140,280,280
+51738,AUS,USA,2012,,7,,2015,N/A,CH-47F Chinook,AC,Transport helicopter,L,7,,2015,Australia,United States,N,20,140,140
+59524,AUS,USA,2015,X,3,,0,N/A,CH-47F Chinook,AC,Transport helicopter,L,,,,Australia,United States,N,20,60,0
+54817,AUS,USA,2013,,12,,0,N/A,EA-18G Growler,AC,FGA/EW aircraft,L,2,X,2015,Australia,United States,N,60,720,120
+30881,AUS,USA,2009,X,72,X,0,LIC,F-35A JSF,AC,FGA aircraft,L,2,,2014,Australia,United States,N,55,3960,110
+57822,AUS,USA,2014,,3,,0,N/A,F414,EN,Turbofan,L,,,,Australia,United States,N,2.5,7.5,0
+59454,AUS,USA,2015,,2,,0,N/A,G-550 SIGINT,AC,SIGINT aircraft,L,,,,Australia,United States,N,0,0,0
+51739,AUS,USA,2011,,250,X,0,LIC,JDAM,MI,Guided bomb,L,125,X,2015,Australia,United States,N,0.02,5,2.5
+50713,AUS,USA,2008,,2,,2015,N/A,LM-2500,EN,Gas turbine,L,2,,2014-2015,Australia,United States,N,7,14,14
+59149,AUS,USA,2013,X,1000,X,0,N/A,M-1156 PGK,MI,Guided shell,L,,,,Australia,United States,N,0.03,30,0
+38218,AUS,USA,2011,,24,,0,OFFS,MH-60R Seahawk,AC,ASW helicopter,L,17,,2013-2015,Australia,United States,N,18,432,306
+52596,AUS,USA,2007,X,3,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,,,,Australia,United States,N,7,21,0
+58192,AUS,USA,2014,X,9,,0,MOD,Mk-15 Phalanx,AD,CIWS,L,,,,Australia,United States,N,7,63,0
+57376,AUS,USA,2006,,3,,0,N/A,Mk-41,NW,Naval SAM system,L,,,,Australia,United States,N,20,60,0
+53616,AUS,USA,2010,X,3,,0,N/A,Mk-45-4 127mm,NW,Naval gun,L,,,,Australia,United States,N,7.5,22.5,0
+52448,AUS,USA,2012,,200,X,0,N/A,Mk-54 MAKO,MI,ASW torpedo,L,123,X,2013-2015,Australia,United States,N,0.5,100,61.5
+31340,AUS,USA,2013,X,7,X,0,N/A,MQ-4C Triton,AC,UAV,,,,,Australia,United States,N,0,0,0
+31007,AUS,USA,2014,,8,,0,LIC,P-8A Poseidon,AC,ASW aircraft,L,,,,Australia,United States,N,125,1000,0
+28902,AUS,USA,2002,,600,X,0,LIC,RIM-162 ESSM,MI,SAM,L,430,X,2003-2015,Australia,United States,N,0.4,240,172
+51390,AUS,USA,2009,,3,,0,N/A,SPQ-9,GR,Fire control radar,L,,,,Australia,United States,N,3.5,10.5,0
+50230,AUS,USA,2008,,3,,0,N/A,SPY-1F,GR,Air search radar,L,,,,Australia,United States,N,20,60,0
+50277,AUS,USA,2007,X,3,,0,N/A,Type-2150,GR,ASW sonar,L,,,,Australia,United States,N,30,90,0
+59130,BAH,USA,2015,,,,0,N/A,GMLRS,MI,Guided rocket,L,,,,Bahrain,United States,N,0.08,0,0
+57944,BAN,USA,2014,,1,,2015,AID,Hamilton,SH,OPV,L,1,,2015,Bangladesh,United States,S,54,54,54
+58171,BDI,USA,2014,,10,,2015,AID,RG-33,AV,APC,L,10,,2015,Burundi,United States,S,0.08,0.8,0.8
+56675,BEL,USA,2013,,5,,2015,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,5,X,2015,Belgium,United States,N,1,5,5
+56498,BEL,USA,2014,X,40,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Belgium,United States,N,0.18,7.2,0
+37877,BEL,USA,2006,,242,X,2015,N/A,C-9,EN,Diesel engine,L,242,X,2008-2015,Belgium,United States,N,0.08,19.36,19.36
+55385,BRA,USA,2010,X,150,X,2015,N/A,6V-53,EN,Diesel engine,L,150,X,2013-2015,Brazil,United States,N,0.04,6,6
+53893,BRA,USA,2015,,23,,0,MOD,AAV-7RAM/RS,AV,APC,L,,,,Brazil,United States,N,1.2,27.6,0
+50852,BRA,USA,2011,,4,,0,N/A,C-1 Trader,AC,Light transport ac,L,,,,Brazil,United States,R,1.65,6.6,0
+56934,BRA,USA,2014,X,36,X,0,N/A,F414,EN,Turbofan,L,,,,Brazil,United States,N,2.5,90,0
+55061,BRA,USA,2013,,36,,0,N/A,M-109A5 155mm,AR,Self-propelled gun,L,,,,Brazil,United States,R,0.825,29.7,0
+53498,BRA,USA,2013,,2,,2015,N/A,S-70B/SH-60B Seahawk,AC,ASW helicopter,L,2,,2015,Brazil,United States,N,17,34,34
+57526,BRA,USA,2014,,16,X,0,N/A,T-800,EN,Turboshaft,L,,,,Brazil,United States,N,0.8,12.8,0
+53825,BRU,USA,2011,,12,,2015,N/A,S-70/UH-60L,AC,Helicopter,L,12,X,2013-2015,Brunei,United States,N,7.25,87,87
+58743,BUL,USA,2014,,10,,2015,N/A,ASV-150/M-1117,AV,APC,L,10,,2015,Bulgaria,United States,N,0.3,3,3
+59194,CAM,USA,2015,,2,X,0,N/A,ScanEagle,AC,UAV,L,,,,Cameroon,United States,N,0.04,0.08,0
+31200,CAN,USA,2002,X,10,X,2015,N/A,APS-143(V),GR,MP aircraft radar,L,10,X,2011-2015,Canada,United States,N,2.5,25,25
+58177,CAN,USA,2014,X,1,,2015,N/A,C-17A Globemaster-3,AC,Heavy transport ac,L,1,,2015,Canada,United States,N,140,140,140
+30472,CAN,USA,2004,,28,,0,LIC,H-92 Superhawk,AC,ASW helicopter,L,8,X,2015,Canada,United States,N,18,504,144
+59150,CAN,USA,2013,X,1000,X,0,N/A,M-1156 PGK,MI,Guided shell,L,,,,Canada,United States,N,0.03,30,0
+53219,CAN,USA,2011,,36,X,0,N/A,Mk-48 Mod-5 ADCAP,MI,AS/ASW torpedo,L,24,X,2014-2015,Canada,United States,N,1.6,57.6,38.4
+59327,CAN,USA,2015,,225,,0,N/A,Paveway,MI,Guided bomb,L,,,,Canada,United States,N,0.02,4.5,0
+51040,CAN,USA,2012,,500,,0,LIC,TAPV,AV,APC,L,,,,Canada,United States,N,0.35,175,0
+51543,CHE,USA,2010,X,100,X,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,100,X,2013-2015,Chile,United States,N,0.6,60,60
+52317,CHE,USA,2011,X,75,X,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,75,X,2014-2015,Chile,United States,N,0.6,45,45
+58793,CHE,USA,2014,,2,,2015,N/A,Cessna-172/T-41,AC,Trainer/light ac,L,2,,2015,Chile,United States,N,0.14,0.28,0.28
+58720,CHE,USA,2014,X,5,,0,N/A,HELRAS,GR,ASW sonar,L,,,,Chile,United States,N,1.9,9.5,0
+58170,CHE,USA,2013,,2,,0,N/A,KC-130H Hercules,AC,Tanker/transport ac,L,1,X,2015,Chile,United States,S,15.2,30.4,15.2
+59213,CHE,USA,2013,X,12,,2015,N/A,M-109A5 155mm,AR,Self-propelled gun,L,12,,2015,Chile,United States,R,0.825,9.9,9.9
+51540,CHE,USA,2011,,6,,2015,N/A,MPQ-64 Sentinel,GR,Air search radar,L,6,X,2013-2015,Chile,United States,N,5,30,30
+56505,CHE,USA,2012,X,4,,2015,N/A,SR-22,AC,Light aircraft,L,4,,2013-2015,Chile,United States,N,0.2,0.8,0.8
+54931,COL,USA,2012,,2,X,2015,N/A,APS-143(V),GR,MP aircraft radar,L,2,X,2014-2015,Colombia,United States,N,2.5,5,5
+59283,COL,USA,2015,X,100,,2015,N/A,BGM-71 TOW,MI,Anti-tank missile,L,100,,2015,Colombia,United States,N,0.01,1,1
+59282,COL,USA,2015,X,60,,2015,N/A,FIM-92 Stinger,MI,Portable SAM,L,60,,2015,Colombia,United States,N,0.08,4.8,4.8
+55754,COL,USA,2013,,4,X,2015,N/A,TPS-70,GR,Air search radar,L,4,,2015,Colombia,United States,N,13,52,52
+56651,COL,USA,2010,X,24,X,0,N/A,V2500,EN,Turbofan,L,,,,Colombia,United States,N,0,0,0
+59481,CZR,USA,2015,X,,,0,N/A,FGM-148 Javelin,MI,Anti-tank missile,L,,,,Czech Republic,United States,N,0.02,0,0
+58009,CZR,USA,2014,,10,,2015,AID,ScanEagle,AC,UAV,L,10,,2015,Czech Republic,United States,N,0.04,0.4,0.4
+52730,DEN,USA,2012,,9,,0,N/A,MH-60R Seahawk,AC,ASW helicopter,L,,,,Denmark,United States,N,16.1,144.9,0
+32390,DEN,USA,2002,,250,X,0,LIC,RIM-162 ESSM,MI,SAM,L,197,X,2004-2014,Denmark,United States,N,0.4,100,78.8
+58225,DJI,USA,2014,,2,,0,AID,Shorts-360,AC,Transport aircraft,L,,,,Djibouti,United States,S,1.8,3.6,0
+59566,DOM,USA,2014,X,5,X,2015,N/A,Cessna-172/T-41,AC,Trainer/light ac,L,5,,2015,Dominican Republic,United States,N,0.14,0.7,0.7
+59494,DOM,USA,2015,,1,,0,N/A,P2006T,AC,Light aircraft,,,,,Dominican Republic,United States,N,0,0,0
+52450,EGY,USA,2011,,12,X,2015,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,12,X,2013-2015,Egypt,United States,N,1,12,12
+31827,EGY,USA,2006,,3,,2015,N/A,Ambassador-4,SH,Corvette,L,3,,2013-2015,Egypt,United States,N,73.5,220.5,220.5
+51483,EGY,USA,2010,,1,,2015,N/A,Ambassador-4,SH,Corvette,L,1,,2015,Egypt,United States,N,73.5,73.5,73.5
+33170,EGY,USA,2010,,20,,2015,N/A,F-16C Block-50/52,AC,FGA aircraft,L,20,,2013-2015,Egypt,United States,N,31,620,620
+58801,EGY,USA,2015,,1,,2015,N/A,LM-2500,EN,Gas turbine,L,1,,2015,Egypt,United States,N,7,7,7
+53561,EGY,USA,2011,,125,,0,LIC,M-1A1 Abrams,AV,Tank,L,10,X,2015,Egypt,United States,N,4,500,40
+32642,EGY,USA,2003,,25,,2015,N/A,RGM-84L Harpoon-2,MI,Anti-ship MI/SSM,L,25,X,2013-2015,Egypt,United States,N,1.1,27.5,27.5
+31372,EGY,USA,2005,,139,,2015,N/A,RIM-116A RAM,MI,SAM,L,139,X,2013-2015,Egypt,United States,N,0.14,19.46,19.46
+58025,EGY,USA,2014,,6,,0,LIC,Swiftships-35,SH,Patrol craft,L,,,,Egypt,United States,N,5.5,33,0
+58156,EST,USA,2014,,2,,0,N/A,Shorts-360,AC,Transport aircraft,L,,,,Estonia,United States,S,1.8,3.6,0
+34956,FIN,USA,2013,X,70,X,0,N/A,AGM-158A JASSM,MI,ASM,L,,,,Finland,United States,N,1.25,87.5,0
+34649,FIN,USA,2008,,300,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,186,X,2013-2015,Finland,United States,N,0.6,180,111.6
+57073,FIN,USA,2014,X,200,X,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,75,X,2014-2015,Finland,United States,N,0.08,16,6
+50976,FIN,USA,2009,,12,,2015,N/A,MPQ-64 Sentinel,GR,Air search radar,L,12,X,2013-2015,Finland,United States,N,5,60,60
+59507,FRA,USA,2015,,200,,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,France,United States,N,0.05,10,0
+58744,FRA,USA,2015,X,2,,0,N/A,C-130J Hercules,AC,Transport aircraft,L,,,,France,United States,N,35,70,0
+59586,FRA,USA,2015,X,2,,0,N/A,KC-130J Hercules,AC,Tanker/transport ac,L,,,,France,United States,N,45,90,0
+55569,FRA,USA,2005,X,10,X,0,N/A,LM-2500,EN,Gas turbine,L,2,,2012-2015,France,United States,N,7,70,14
+55974,FRA,USA,2013,,12,X,0,N/A,MQ-9 Reaper,AC,UAV/UCAV,L,2,,2013,France,United States,N,7.5,90,15
+50000,FRA,USA,2008,,1000,X,2015,N/A,Paveway,MI,Guided bomb,L,1000,X,2010-2015,France,United States,N,0.02,20,20
+37709,FRG,USA,2003,,18,X,0,LIC,HELRAS,GR,ASW sonar,L,,,,Germany (FRG),United States,N,1.9,34.2,0
+50516,FRG,USA,2008,,1000,X,0,N/A,JDAM,MI,Guided bomb,L,600,X,2012-2015,Germany (FRG),United States,N,0.02,20,12
+57382,FRG,USA,2007,X,4,,0,N/A,LM-2500,EN,Gas turbine,L,,,,Germany (FRG),United States,N,7,28,0
+51521,FRG,USA,2009,X,0,,0,N/A,Paveway,MI,Guided bomb,L,,,,Germany (FRG),United States,N,0.02,0,0
+55259,GRE,USA,2010,X,130,X,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,130,X,2014-2015,Greece,United States,N,0.6,78,78
+56893,GRE,USA,2015,,10,,0,N/A,CH-47D Chinook,AC,Transport helicopter,L,,,,Greece,United States,S,7.2,72,0
+55897,GRE,USA,2013,X,370,X,2015,AID,M-113,AV,APC,L,370,X,2014-2015,Greece,United States,S,0.1,37,37
+55642,GRE,USA,2014,,40,X,0,AID,M-270 MLRS 227mm,AR,Self-propelled MRL,L,,,,Greece,United States,S,0.48,19.2,0
+51908,GRE,USA,2013,,106,,2015,AID,M-901 ITV,AV,Tank destroyer,L,106,X,2014-2015,Greece,United States,S,0.36,38.16,38.16
+58189,GRE,USA,2015,,3,,0,N/A,T55-L,EN,Turboshaft,L,,,,Greece,United States,N,1.2,3.6,0
+53753,HON,USA,2011,X,3,,0,AID,Cessna-208 Caravan,AC,Light transport ac,L,2,,2015,Honduras,United States,N,0.9,2.7,1.8
+55491,IND,USA,2014,X,542,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,India,United States,N,0.05,27.1,0
+55490,IND,USA,2013,X,812,X,0,N/A,AGM-114L HELLFIRE,MI,Anti-tank missile,L,,,,India,United States,N,0.07,56.84,0
+34143,IND,USA,2015,,22,,0,N/A,AH-64D Apache,AC,Combat helicopter,L,,,,India,United States,N,14,308,0
+55493,IND,USA,2015,,12,X,0,N/A,APG-78 Longbow,GR,Combat heli radar,L,,,,India,United States,N,3,36,0
+50844,IND,USA,2013,,6,,0,LIC,C-130J-30 Hercules,AC,Transport aircraft,L,,,,India,United States,N,37.5,225,0
+57695,IND,USA,2015,X,1,,0,N/A,C-130J-30 Hercules,AC,Transport aircraft,L,,,,India,United States,N,37.5,37.5,0
+50572,IND,USA,2010,,512,,0,N/A,CBU-97 SFW,MI,Guided bomb,L,450,X,2013-2015,India,United States,N,0.15,76.8,67.5
+39804,IND,USA,2015,,15,,0,N/A,CH-47F Chinook,AC,Transport helicopter,L,,,,India,United States,N,20,300,0
+36733,IND,USA,2014,X,270,X,0,LIC,F-125,EN,Turbofan,L,,,,India,United States,N,1,270,0
+34900,IND,USA,2004,,17,,0,N/A,F404,EN,Turbofan,L,5,X,2015,India,United States,N,2.2,37.4,11
+36095,IND,USA,2007,,24,X,0,N/A,F404,EN,Turbofan,L,,,,India,United States,N,2.2,52.8,0
+37205,IND,USA,2012,X,99,,0,ASS,F414,EN,Turbofan,L,,,,India,United States,N,2.5,247.5,0
+55492,IND,USA,2013,X,245,X,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,India,United States,N,0.08,19.6,0
+35253,IND,USA,2003,X,4,,0,N/A,LM-2500,EN,Gas turbine,L,,,,India,United States,N,7,28,0
+53562,IND,USA,2011,X,32,X,2015,N/A,Mk-54 MAKO,MI,ASW torpedo,L,32,X,2013-2015,India,United States,N,0.5,16,16
+31164,IND,USA,2009,,8,,2015,LIC,P-8A Poseidon,AC,ASW aircraft,L,8,,2012-2015,India,United States,N,125,1000,1000
+52398,IND,USA,2015,X,4,,0,LIC,P-8A Poseidon,AC,ASW aircraft,L,,,,India,United States,N,125,500,0
+50379,IND,USA,2012,X,0,,0,N/A,Paveway,MI,Guided bomb,L,,,,India,United States,N,0.02,0,0
+55007,IND,USA,2015,X,12,X,0,N/A,RGM-84L Harpoon-2,MI,Anti-ship MI/SSM,L,,,,India,United States,N,1.1,13.2,0
+53180,IND,USA,2014,X,16,,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,India,United States,N,7.25,116,0
+55494,IND,USA,2013,X,6,X,0,N/A,T-700,EN,Turboshaft,L,,,,India,United States,N,0.9,5.4,0
+55038,IND,USA,2012,X,28,X,0,N/A,TPE-331,EN,Turboprop,L,24,X,2013-2015,India,United States,N,0.6,16.8,14.4
+58128,INS,USA,2014,,140,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,Indonesia,United States,N,0.05,7,0
+54209,INS,USA,2014,X,8,,0,N/A,AH-64D Apache,AC,Combat helicopter,L,,,,Indonesia,United States,N,14,112,0
+58130,INS,USA,2012,X,4,X,0,N/A,APG-78 Longbow,GR,Combat heli radar,L,,,,Indonesia,United States,N,3,12,0
+59544,INS,USA,2014,X,2,X,2015,N/A,Baron,AC,Light transport ac.,L,2,,2015,Indonesia,United States,N,0.7,1.4,1.4
+58797,INS,USA,2014,,4,,2015,N/A,Bonanza,AC,Light aircraft,L,4,,2015,Indonesia,United States,N,0.24,0.96,0.96
+58798,INS,USA,2015,X,4,,0,N/A,Bonanza,AC,Light aircraft,L,,,,Indonesia,United States,N,0.24,0.96,0
+37756,INS,USA,1990,X,76,X,0,N/A,CT7,EN,Turboprop,L,52,X,1993-2014,Indonesia,United States,N,0.9,68.4,46.8
+55898,INS,USA,2011,X,4,,2015,N/A,F100,EN,Turbofan,L,4,X,2014-2015,Indonesia,United States,S,1.3,5.2,5.2
+52046,INS,USA,2012,,24,,2015,AID,F-16C,AC,FGA aircraft,L,24,X,2014-2015,Indonesia,United States,R,18.81,451.44,451.44
+56743,INS,USA,2013,,180,X,2015,N/A,FGM-148 Javelin,MI,Anti-tank missile,L,180,X,2014-2015,Indonesia,United States,N,0.02,3.6,3.6
+58030,INS,USA,2014,,11,,0,N/A,HELRAS,GR,ASW sonar,L,,,,Indonesia,United States,N,1.9,20.9,0
+58129,INS,USA,2012,X,3,X,0,N/A,T-700,EN,Turboshaft,L,,,,Indonesia,United States,N,0.9,2.7,0
+59219,INS,USA,2015,,2,,0,N/A,TPE-331,EN,Turboprop,L,,,,Indonesia,United States,N,0.6,1.2,0
+55880,IRQ,USA,2012,,20,X,2015,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,20,X,2015,Iraq,United States,N,1,20,20
+57706,IRQ,USA,2014,,5000,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,1000,X,2015,Iraq,United States,N,0.05,250,50
+59047,IRQ,USA,2011,,50,X,2015,N/A,AGM-65 Maverick,MI,ASM,L,50,X,2015,Iraq,United States,N,0.15,7.5,7.5
+59056,IRQ,USA,2013,X,50,X,0,N/A,AGM-65 Maverick,MI,ASM,L,,,,Iraq,United States,N,0.15,7.5,0
+59049,IRQ,USA,2011,X,150,X,2015,N/A,AIM-7M Sparrow,MI,BVRAAM,L,150,X,2015,Iraq,United States,N,0.18,27,27
+59054,IRQ,USA,2013,X,150,X,0,N/A,AIM-7M Sparrow,MI,BVRAAM,L,,,,Iraq,United States,N,0.18,27,0
+59048,IRQ,USA,2011,,100,,2015,N/A,AIM-9L/M Sidewinder,MI,SRAAM,L,100,X,2015,Iraq,United States,N,0.11,11,11
+59053,IRQ,USA,2013,X,100,,0,N/A,AIM-9L/M Sidewinder,MI,SRAAM,L,,,,Iraq,United States,N,0.11,11,0
+54584,IRQ,USA,2012,,4,,2015,N/A,APG-68,GR,Combat ac radar,L,4,X,2015,Iraq,United States,N,2,8,8
+51498,IRQ,USA,2014,X,16,,2015,N/A,Bell-407,AC,Light helicopter,L,16,,2015,Iraq,United States,N,1.1,17.6,17.6
+58154,IRQ,USA,2014,,17,,2015,N/A,Caiman,AV,APC,,17,X,2014-2015,Iraq,United States,S,0.1,1.7,1.7
+58218,IRQ,USA,2014,,250,,2015,AID,Caiman,AV,APC,,250,X,2014-2015,Iraq,United States,S,0.1,25,25
+59576,IRQ,USA,2015,,29,X,2015,N/A,Cougar,AV,APC,L,29,X,2015,Iraq,United States,S,0.1,2.9,2.9
+55112,IRQ,USA,2012,,4,,0,N/A,DB-110,GR,Aircraft recce system,L,2,X,2015,Iraq,United States,N,4,16,8
+50515,IRQ,USA,2011,,18,,2015,N/A,F-16C Block-50/52,AC,FGA aircraft,L,18,X,2014-2015,Iraq,United States,N,31,558,558
+55459,IRQ,USA,2013,,18,,0,N/A,F-16C Block-50/52,AC,FGA aircraft,L,,,,Iraq,United States,N,31,558,0
+55445,IRQ,USA,2013,X,24,X,0,N/A,F404,EN,Turbofan,L,,,,Iraq,United States,N,2.2,52.8,0
+56905,IRQ,USA,2013,,24,X,0,N/A,F404,EN,Turbofan,L,,,,Iraq,United States,N,2.2,52.8,0
+58222,IRQ,USA,2014,,1000,X,0,N/A,HMMWV Up-Armoured,AV,APV,L,310,X,2015,Iraq,United States,N,0.14,140,43.4
+58862,IRQ,USA,2014,,1572,X,0,N/A,HMMWV Up-Armoured,AV,APV,L,50,X,2015,Iraq,United States,S,0.056,88.032,2.8
+55178,IRQ,USA,2014,,1,,0,N/A,King Air-350 ISR,AC,AGS aircraft,L,,,,Iraq,United States,N,11,11,0
+58220,IRQ,USA,2014,,6,,2015,N/A,M-1A1 Abrams,AV,Tank,L,6,,2015,Iraq,United States,S,1.6,9.6,9.6
+58221,IRQ,USA,2014,,8,,2015,N/A,M-88A2 HERCULES,AV,ARV,L,8,,2015,Iraq,United States,S,0.8,6.4,6.4
+59575,IRQ,USA,2015,,50,,2015,N/A,MaxxPro,AV,APC,L,50,X,2015,Iraq,United States,S,0.128,6.4,6.4
+54898,IRQ,USA,2011,X,300,X,2015,N/A,Paveway,MI,Guided bomb,L,300,X,2015,Iraq,United States,N,0.02,6,6
+59055,IRQ,USA,2013,X,300,X,0,N/A,Paveway,MI,Guided bomb,L,,,,Iraq,United States,N,0.02,6,0
+58729,ISR,USA,2015,,100,,0,N/A,8V-92TA,EN,Diesel engine,L,,,,Israel,United States,N,0.16,16,0
+58163,ISR,USA,2014,,70,,0,SOUR,AAQ-14 LANTIRN,GR,Aircraft EO system,L,,,,Israel,United States,S,0.8,56,0
+57709,ISR,USA,2015,,600,X,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Israel,United States,N,0.18,108,0
+30324,ISR,USA,2010,,3,,2015,N/A,C-130J Hercules,AC,Transport aircraft,L,3,,2013-2015,Israel,United States,N,35,105,105
+55486,ISR,USA,2013,,3,,0,N/A,C-130J Hercules,AC,Transport aircraft,L,,,,Israel,United States,N,35,105,0
+54617,ISR,USA,2012,,60,,0,N/A,F-124,EN,Turbofan,L,44,X,2014-2015,Israel,United States,N,1.25,75,55
+31749,ISR,USA,2010,,19,,0,LIC,F-35A JSF,AC,FGA aircraft,L,,,,Israel,United States,N,55,1045,0
+52732,ISR,USA,2015,X,14,,0,LIC,F-35A JSF,AC,FGA aircraft,L,,,,Israel,United States,N,55,770,0
+58111,ISR,USA,2014,X,17,,0,LIC,F-35A JSF,AC,FGA aircraft,L,,,,Israel,United States,N,55,935,0
+58816,ISR,USA,2012,,3450,X,0,N/A,GBU-39 SDB,MI,Guided bomb,L,1000,X,2015,Israel,United States,N,0.02,69,20
+51970,ISR,USA,2013,,2701,X,2015,N/A,JDAM,MI,Guided bomb,L,2701,X,2014-2015,Israel,United States,N,0.02,54.02,54.02
+58814,ISR,USA,2014,,3000,,0,N/A,JDAM,MI,Guided bomb,L,1500,X,2015,Israel,United States,N,0.02,60,30
+58097,ISR,USA,2012,,300,X,2015,AID,M-113,AV,APC,L,300,X,2013-2015,Israel,United States,S,0.1,30,30
+57888,ISR,USA,2014,,150,,0,N/A,M-270 chassis,AV,Gun chassis,,,,,Israel,United States,S,0,0,0
+52586,ISR,USA,2011,,386,X,0,LIC,Namer,AV,APC/IFV,L,37,X,2014-2015,Israel,United States,N,1.5,579,55.5
+55126,ITA,USA,2015,X,50,X,0,N/A,AGM-114L HELLFIRE,MI,Anti-tank missile,L,,,,Italy,United States,N,0.07,3.5,0
+37077,ITA,USA,2009,,232,X,0,LIC,AGM-88E AARGM,MI,ARM,L,,,,Italy,United States,N,0.6,139.2,0
+50204,ITA,USA,2009,,16,,0,LIC,CH-47F Chinook,AC,Transport helicopter,L,8,X,2014-2015,Italy,United States,N,20,320,160
+51002,ITA,USA,2009,,30,X,0,N/A,F-124,EN,Turbofan,L,12,X,2011-2015,Italy,United States,N,1.25,37.5,15
+31755,ITA,USA,2006,X,60,X,0,LIC,F-35A JSF,AC,FGA aircraft,L,1,,2015,Italy,United States,N,55,3300,55
+54492,ITA,USA,2006,X,30,X,0,LIC,F-35B JSF,AC,FGA aircraft,L,,,,Italy,United States,N,60,1800,0
+54651,ITA,USA,2012,,2,,0,LIC,G-550 AEW,AC,AEW&C aircraft,L,,,,Italy,United States,N,55,110,0
+51707,ITA,USA,2010,,500,,0,N/A,GBU-39 SDB,MI,Guided bomb,L,250,X,2015,Italy,United States,N,0.02,10,5
+36203,ITA,USA,2012,,864,X,0,LIC,GMLRS,MI,Guided rocket,L,450,X,2013-2015,Italy,United States,N,0.08,69.12,36
+36378,ITA,USA,2003,,46,,0,N/A,HELRAS,GR,ASW sonar,L,19,X,2011-2015,Italy,United States,N,1.9,87.4,36.1
+59506,ITA,USA,2015,X,50,X,0,N/A,JDAM,MI,Guided bomb,L,,,,Italy,United States,N,0.02,1,0
+35045,ITA,USA,2000,X,18,X,0,LIC,LM-2500,EN,Gas turbine,L,13,X,2007-2015,Italy,United States,N,7,126,91
+55127,ITA,USA,2015,X,50,X,0,N/A,Paveway,MI,Guided bomb,L,,,,Italy,United States,N,0.02,1,0
+57278,ITA,USA,2012,X,250,X,2015,N/A,Paveway,MI,Guided bomb,L,250,X,2014-2015,Italy,United States,N,0.02,5,5
+59442,ITA,USA,2014,X,2,X,2015,N/A,RQ-1 Predator,AC,UAV,L,2,X,2015,Italy,United States,N,2,4,4
+33323,ITA,USA,2010,,16,,2015,N/A,RQ-7 Shadow-200,AC,UAV,L,16,X,2015,Italy,United States,N,0.1,1.6,1.6
+36046,ITA,USA,2003,X,92,X,0,LIC,T-700,EN,Turboshaft,L,38,X,2011-2015,Italy,United States,N,0.9,82.8,34.2
+57252,JAM,USA,2013,,12,,0,N/A,Caterpillar-3126,EN,Diesel engine,L,6,X,2015,Jamaica,United States,N,0.05,0.6,0.3
+58955,JAP,USA,2014,,1,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,Japan,United States,N,1,1,0
+55448,JAP,USA,2013,X,52,X,0,N/A,AAV-7RAM/RS,AV,APC,L,6,X,2014-2015,Japan,United States,S,0.48,24.96,2.88
+34950,JAP,USA,1996,X,56,X,0,N/A,AE-2100,EN,Turboprop,L,20,X,2007-2011,Japan,United States,N,1.5,84,30
+58187,JAP,USA,2014,X,17,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Japan,United States,N,0.6,10.2,0
+59170,JAP,USA,2015,,,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Japan,United States,N,0.18,0,0
+56851,JAP,USA,2004,X,80,X,2015,LIC,APG-63,GR,Combat ac radar,L,80,X,2007-2015,Japan,United States,N,2.5,200,200
+55054,JAP,USA,2011,,11,X,0,N/A,AQS-24,GR,MCM sonar,L,2,X,2014,Japan,United States,N,5,55,10
+57485,JAP,USA,2015,,150,X,0,LIC,Bell-412,AC,Helicopter,L,,,,Japan,United States,N,5,750,0
+4963,JAP,USA,1984,,,,0,LIC,CH-47D Chinook,AC,Transport helicopter,L,97,X,1986-2015,Japan,United States,N,18,0,1746
+56438,JAP,USA,2015,,4,,0,N/A,E-2D Hawkeye,AC,AEW&C aircraft,L,,,,Japan,United States,N,0,0,0
+54718,JAP,USA,2012,X,5,X,0,N/A,F135,EN,Turbofan,L,,,,Japan,United States,N,0,0,0
+35259,JAP,USA,2012,X,42,,0,LIC,F-35A JSF,AC,FGA aircraft,L,,,,Japan,United States,N,55,2310,0
+53995,JAP,USA,2012,X,6,,2015,N/A,KC-130H Hercules,AC,Tanker/transport ac,L,6,X,2014-2015,Japan,United States,R,25.08,150.48,150.48
+35629,JAP,USA,2015,,3,,0,LIC,KC-46A,AC,Tanker/transport aircraft,,,,,Japan,United States,N,0,0,0
+35038,JAP,USA,1988,X,70,X,0,LIC,LM-2500,EN,Gas turbine,L,66,,1993-2015,Japan,United States,N,7,490,462
+57388,JAP,USA,2013,X,1,X,0,N/A,Mk-41,NW,Naval SAM system,L,,,,Japan,United States,N,20,20,0
+53877,JAP,USA,2014,X,100,X,0,N/A,RIM-116A RAM,MI,SAM,L,50,X,2015,Japan,United States,N,0.14,14,7
+35167,JAP,USA,2004,,700,X,0,LIC,RIM-162 ESSM,MI,SAM,L,575,X,2008-2015,Japan,United States,N,0.4,280,230
+33837,JAP,USA,2014,X,3,,0,N/A,RQ-4A Global Hawk,AC,UAV,L,,,,Japan,United States,N,35,105,0
+52905,JAP,USA,1997,,64,X,0,LIC,S-70B/SH-60B Seahawk,AC,ASW helicopter,L,57,X,2002-2015,Japan,United States,N,17,1088,969
+29757,JAP,USA,1995,,80,X,0,LIC,S-70/UH-60L,AC,Helicopter,L,39,X,1998-2015,Japan,United States,N,7.25,580,282.75
+52740,JAP,USA,2010,X,40,X,0,LIC,S-70/UH-60L,AC,Helicopter,L,5,X,2013-2015,Japan,United States,N,7.25,290,36.25
+53876,JAP,USA,2011,,4,,0,N/A,SeaRAM,AD,SAM system,L,2,,2015,Japan,United States,N,7,28,14
+58893,JAP,USA,2015,,2,,0,N/A,SPY-1F,GR,Air search radar,L,,,,Japan,United States,N,20,40,0
+59336,JAP,USA,1984,,,,0,LIC,T55-L,EN,Turboshaft,L,29,X,1987-2015,Japan,United States,N,1.2,0,34.8
+53138,JAP,USA,2010,,30,,2015,N/A,TH-28/480,AC,Light helicopter,L,30,X,2011-2015,Japan,United States,N,0.4,12,12
+56947,JAP,USA,2015,,17,,0,N/A,V-22 Osprey,AC,Transport ac/helicopter,L,,,,Japan,United States,N,0,0,0
+39146,JOR,USA,2005,X,1000,X,2015,N/A,6V-53,EN,Diesel engine,L,1000,X,2005-2015,Jordan,United States,N,0.04,40,40
+58592,JOR,USA,2015,,10,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,5,X,2015,Jordan,United States,S,0.4,4,2
+58377,JOR,USA,2014,,100,X,2015,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,100,X,2015,Jordan,United States,N,0.05,5,5
+58105,JOR,USA,2014,,3,,0,N/A,AH-1F Cobra,AC,Combat helicopter,L,,,,Jordan,United States,S,3,9,0
+59285,JOR,USA,2015,,4,,0,N/A,AT-802U,AC,Ground attack ac,L,,,,Jordan,United States,N,4.9,19.6,0
+58852,JOR,USA,2014,,200,,0,N/A,Caiman,AV,APC,,,,,Jordan,United States,S,0.1,20,0
+59480,JOR,USA,2015,,200,,2015,N/A,Paveway,MI,Guided bomb,L,200,,2015,Jordan,United States,N,0.02,4,4
+58039,JOR,USA,2014,,8,,2015,N/A,R-44,AC,Light helicopter,L,8,X,2014-2015,Jordan,United States,N,0.25,2,2
+58103,JOR,USA,2012,X,39,,0,N/A,RG-33,AV,APC,L,,,,Jordan,United States,S,0.08,3.12,0
+58851,JOR,USA,2014,X,200,,0,N/A,RG-33,AV,APC,L,,,,Jordan,United States,S,0.08,16,0
+59025,JOR,USA,2015,X,8,,0,N/A,S-70/UH-60L,AC,Helicopter,L,3,X,2015,Jordan,United States,N,7.25,58,21.75
+57892,JOR,USA,2014,,100,X,0,N/A,WGU-59 APKWS,MI,ASM,L,25,X,2015,Jordan,United States,N,0.04,4,1
+36972,KAZ,USA,2011,,4,X,0,N/A,Bell-205/UH-1 Huey-2,AC,Helicopter,L,2,,2012-2014,Kazakhstan,United States,N,3.1,12.4,6.2
+57894,KEN,USA,2014,,1,,2015,N/A,Cessna-208 Caravan,AC,Light transport ac,L,1,,2015,Kenya,United States,N,0.9,0.9,0.9
+59193,KEN,USA,2015,,2,X,0,N/A,ScanEagle,AC,UAV,L,,,,Kenya,United States,N,0.04,0.08,0
+57623,KOS,USA,2013,,,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,South Korea,United States,N,1,0,0
+56043,KOS,USA,2013,,288,,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,South Korea,United States,N,0.05,14.4,0
+57140,KOS,USA,2014,,100,X,0,N/A,AGM-65 Maverick,MI,ASM,L,50,X,2015,South Korea,United States,N,0.15,15,7.5
+54356,KOS,USA,2013,,36,,0,N/A,AH-64D Apache,AC,Combat helicopter,L,,,,South Korea,United States,N,13.3,478.8,0
+50281,KOS,USA,2008,X,125,,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,125,X,2011-2015,South Korea,United States,N,0.6,75,75
+56247,KOS,USA,2014,X,274,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,South Korea,United States,N,0.6,164.4,0
+57712,KOS,USA,2015,,76,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,South Korea,United States,N,0.18,13.68,0
+56045,KOS,USA,2013,,6,,0,N/A,APG-78 Longbow,GR,Combat heli radar,L,,,,South Korea,United States,N,3,18,0
+54448,KOS,USA,2014,,361,,0,N/A,CBU-97 SFW,MI,Guided bomb,L,,,,South Korea,United States,N,0.15,54.15,0
+52544,KOS,USA,2014,,40,,0,OFFS,F-35A JSF,AC,FGA aircraft,L,,,,South Korea,United States,N,55,2200,0
+54362,KOS,USA,2013,,60,X,0,LIC,F404,EN,Turbofan,L,35,X,2013-2015,South Korea,United States,N,2.2,132,77
+56044,KOS,USA,2015,,63,,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,South Korea,United States,N,0.08,5.04,0
+36393,KOS,USA,2005,X,36,X,2015,N/A,LM-500,EN,Gas turbine,L,36,X,2008-2015,South Korea,United States,N,2,72,72
+56155,KOS,USA,2014,,112,X,0,N/A,MIM-104C PAC-2,MI,SAM,L,,,,South Korea,United States,N,1,112,0
+56156,KOS,USA,2015,,136,X,0,N/A,MIM-104F PAC-3,MI,ABM,L,,,,South Korea,United States,N,1,136,0
+53900,KOS,USA,2011,,5,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,4,X,2013-2015,South Korea,United States,N,7,35,28
+53901,KOS,USA,2014,,9,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,,,,South Korea,United States,N,7,63,0
+52568,KOS,USA,2009,X,10,X,0,N/A,Mk-45 127mm,AR,Naval gun,L,4,X,2013-2015,South Korea,United States,N,5.25,52.5,21
+58236,KOS,USA,2015,X,8,,0,MOD,Patriot PAC-3,AD,SAM/ABM system,L,,,,South Korea,United States,N,55,440,0
+36325,KOS,USA,2014,,4,,0,LIC,RQ-4A Global Hawk,AC,UAV,L,,,,South Korea,United States,N,35,140,0
+35237,KOS,USA,2015,X,134,,0,N/A,SABR,GR,Combat ac radar,L,,,,South Korea,United States,N,2.5,335,0
+52565,KOS,USA,2013,X,3,,0,N/A,SPY-1D,GR,Air search radar,L,,,,South Korea,United States,N,22,66,0
+39625,KOS,USA,2008,,210,X,2015,N/A,Standard Missile-2MR,MI,SAM,L,210,X,2009-2015,South Korea,United States,N,0.3,63,63
+55430,KOS,USA,2011,,19,,2015,N/A,Standard Missile-2MR,MI,SAM,L,19,X,2015,South Korea,United States,N,0.3,5.7,5.7
+56042,KOS,USA,2013,,2,,0,N/A,T-700,EN,Turboshaft,L,,,,South Korea,United States,N,0.9,1.8,0
+55721,KOS,USA,2012,X,16,X,0,N/A,T-800,EN,Turboshaft,L,,,,South Korea,United States,N,0.8,12.8,0
+54990,KUW,USA,2013,X,300,X,2015,N/A,AGM-114L HELLFIRE,MI,Anti-tank missile,L,300,X,2015,Kuwait,United States,N,0.07,21,21
+54605,KUW,USA,2013,,80,,2015,N/A,AIM-9X Sidewinder,MI,SRAAM,L,80,X,2014-2015,Kuwait,United States,N,0.18,14.4,14.4
+58181,KUW,USA,2014,,1,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Kuwait,United States,N,0.18,0.18,0
+52198,KUW,USA,2011,,209,,2015,N/A,MIM-104C PAC-2,MI,SAM,L,209,X,2014-2015,Kuwait,United States,N,1,209,209
+40212,KUW,USA,2013,,60,X,2015,N/A,MIM-104F PAC-3,MI,ABM,L,60,X,2015,Kuwait,United States,N,1,60,60
+51505,KUW,USA,2009,,5,X,0,MOD,Patriot PAC-3,AD,SAM/ABM system,L,4,X,2014-2015,Kuwait,United States,N,55,275,220
+54998,KUW,USA,2013,X,1,,2015,N/A,Patriot PAC-3,AD,SAM/ABM system,L,1,X,2015,Kuwait,United States,N,55,55,55
+56171,KUW,USA,2014,,2,,0,N/A,Patriot PAC-3,AD,SAM/ABM system,L,,,,Kuwait,United States,N,55,110,0
+58976,LAT,USA,2015,X,,,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,Latvia,United States,N,0.08,0,0
+59164,LAT,USA,2015,,2,X,0,N/A,MPQ-64 Sentinel,GR,Air search radar,L,,,,Latvia,United States,N,5,10,0
+35256,LAT,USA,2015,,3,,0,N/A,TPS-77,GR,Air search radar,L,,,,Latvia,United States,N,11,33,0
+58435,LEB,USA,2014,,50,X,2015,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,50,X,2015,Lebanon,United States,N,0.05,2.5,2.5
+58012,LEB,USA,2014,,18,X,0,AID,Bell-205/UH-1 Huey-2,AC,Helicopter,L,,,,Lebanon,United States,N,3.1,55.8,0
+58601,LEB,USA,2014,X,239,,2015,AID,BGM-71 TOW,MI,Anti-tank missile,L,239,,2015,Lebanon,United States,N,0.01,2.39,2.39
+57921,LEB,USA,2015,,1,,0,AID,Cessna-208 Caravan,AC,Light transport ac,L,,,,Lebanon,United States,N,0.9,0.9,0
+58430,LEB,USA,2014,X,24,X,2015,AID,HMMWV,AV,APV,L,24,X,2015,Lebanon,United States,N,0.11,2.64,2.64
+58425,LEB,USA,2014,,72,,2015,AID,M-198 155mm,AR,Towed gun,L,72,,2015,Lebanon,United States,S,0.34,24.48,24.48
+33748,LIT,USA,2015,X,230,,0,N/A,FGM-148 Javelin,MI,Anti-tank missile,L,,,,Lithuania,United States,N,0.02,4.6,0
+54124,MAL,USA,2013,,20,,2015,N/A,AIM-9X Sidewinder,MI,SRAAM,L,20,X,2015,Malaysia,United States,N,0.18,3.6,3.6
+53321,MAL,USA,2012,,6,,0,N/A,ASQ-228 ATFLIR,GR,Aircraft EO system,L,,,,Malaysia,United States,N,1.1,6.6,0
+30255,MAL,USA,2015,X,6,,0,N/A,MD-500E,AC,Light helicopter,L,,,,Malaysia,United States,N,0.7,4.2,0
+38344,MEX,USA,2010,,6,,2015,N/A,APS-143(V),GR,MP aircraft radar,L,6,,2011-2015,Mexico,United States,N,2.5,15,15
+56687,MEX,USA,2013,X,2,X,0,N/A,APS-143(V),GR,MP aircraft radar,L,,,,Mexico,United States,N,2.5,5,0
+58047,MEX,USA,2015,,15,,0,N/A,Bell-407,AC,Light helicopter,L,8,X,2015,Mexico,United States,N,1.1,16.5,8.8
+58836,MEX,USA,2015,,2,,0,N/A,Boeing-737NG,AC,Transport aircraft,L,1,,2015,Mexico,United States,N,33,66,33
+59247,MEX,USA,2015,,12,,0,N/A,Cessna-U206,AC,Light aircraft,L,,,,Mexico,United States,N,0.25,3,0
+38244,MEX,USA,2013,X,4,,2015,N/A,CT7,EN,Turboprop,L,4,,2015,Mexico,United States,N,0.9,3.6,3.6
+56686,MEX,USA,2013,X,4,X,0,N/A,CT7,EN,Turboprop,L,,,,Mexico,United States,N,0.9,3.6,0
+57231,MEX,USA,2014,,3335,X,0,N/A,HMMWV Up-Armoured,AV,APV,L,1000,X,2015,Mexico,United States,N,0.14,466.9,140
+57730,MEX,USA,2013,,4,,2015,N/A,King Air,AC,Light transport ac,L,4,X,2014-2015,Mexico,United States,N,2.75,11,11
+59255,MEX,USA,2014,,2,,2015,N/A,King Air,AC,Light transport ac,L,2,,2015,Mexico,United States,N,2.75,5.5,5.5
+58364,MEX,USA,2014,X,4,X,0,N/A,King Air-350 ISR,AC,AGS aircraft,L,2,,2015,Mexico,United States,N,11,44,22
+58365,MEX,USA,2014,X,1,,0,N/A,King Air-350 ISR,AC,AGS aircraft,L,,,,Mexico,United States,N,11,11,0
+58272,MEX,USA,2014,,4,,0,N/A,King Air Maritime,AC,MP aircraft,L,,,,Mexico,United States,N,7.5,30,0
+54181,MEX,USA,2014,X,12,,0,N/A,PC-9,AC,Trainer aircraft,L,9,X,2015,Mexico,United States,N,1.4,16.8,12.6
+58289,MEX,USA,2014,,6,,0,N/A,PC-9,AC,Trainer aircraft,L,,,,Mexico,United States,N,1.4,8.4,0
+58894,MEX,USA,2014,,24,,0,N/A,PC-9,AC,Trainer aircraft,L,,,,Mexico,United States,N,1.4,33.6,0
+32872,MEX,USA,2014,X,2,,0,AID,Perry,SH,Frigate,L,,,,Mexico,United States,S,120,240,0
+57870,MEX,USA,2014,,18,,0,N/A,S-70/UH-60L,AC,Helicopter,L,9,X,2015,Mexico,United States,N,7.25,130.5,65.25
+58079,MEX,USA,2014,,8,,2015,N/A,S-70/UH-60L,AC,Helicopter,L,8,X,2015,Mexico,United States,N,7.25,58,58
+58437,MEX,USA,2014,,5,,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Mexico,United States,N,7.25,36.25,0
+55716,MEX,USA,2012,X,1000,X,0,LIC,SandCat,AV,APV,L,316,X,2012-2015,Mexico,United States,N,0.14,140,44.24
+53324,MOR,USA,2012,,20,X,2015,N/A,AIM-9X Sidewinder,MI,SRAAM,L,20,X,2014-2015,Morocco,United States,N,0.18,3.6,3.6
+51435,MOR,USA,2012,,3,X,2015,N/A,CH-47D Chinook,AC,Transport helicopter,L,3,,2015,Morocco,United States,R,11.88,35.64,35.64
+54059,MOR,USA,2010,,3,X,0,N/A,I-HAWK,AD,SAM system,L,,,,Morocco,United States,S,15.008,45.024,0
+58431,MOR,USA,2014,,450,X,0,N/A,JDAM,MI,Guided bomb,L,225,X,2015,Morocco,United States,N,0.02,9,4.5
+51847,MOR,USA,2015,X,150,X,0,N/A,M-1A1 Abrams,AV,Tank,L,,,,Morocco,United States,R,2.64,396,0
+54061,MOR,USA,2010,X,162,X,0,N/A,MIM-23B HAWK,MI,SAM,L,,,,Morocco,United States,S,0.068,11.016,0
+59328,MTA,USA,2015,,1,,0,N/A,King Air Maritime,AC,MP aircraft,L,,,,Malta,United States,N,7.5,7.5,0
+4031,NAT,USA,2012,,5,,0,N/A,RQ-4A Global Hawk,AC,UAV,L,,,,NATO**,United States,N,35,175,0
+59202,NET,USA,2015,,29,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,Netherlands,United States,N,1,29,0
+57114,NET,USA,2013,,100,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,Netherlands,United States,N,0.05,5,0
+55548,NET,USA,2014,,28,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Netherlands,United States,N,0.18,5.04,0
+37076,NET,USA,2015,X,14,,0,N/A,CH-47F Chinook,AC,Transport helicopter,L,,,,Netherlands,United States,N,20,280,0
+31072,NET,USA,2008,,37,X,0,LIC,F-35A JSF,AC,FGA aircraft,L,2,,2012-2013,Netherlands,United States,N,55,2035,110
+37698,NET,USA,2003,,13,X,0,N/A,HELRAS,GR,ASW sonar,L,13,X,2010-2015,Netherlands,United States,N,1.9,24.7,24.7
+59064,NET,USA,2015,,,,0,N/A,M-982 Excalibur,MI,Guided shell,L,,,,Netherlands,United States,N,0.04,0,0
+56887,NET,USA,2014,X,4,,0,N/A,MQ-9 Reaper,AC,UAV/UCAV,L,,,,Netherlands,United States,N,7.5,30,0
+58622,NIG,USA,2014,,4,,0,N/A,Alpha Jet,AC,Trainer/combat ac,L,2,X,2015,Nigeria,United States,S,3.6,14.4,7.2
+58854,NIG,USA,2014,,16,,0,AID,Caiman,AV,APC,,,,,Nigeria,United States,S,0.1,1.6,0
+58855,NIG,USA,2014,,8,,0,AID,MaxxPro,AV,APC,L,,,,Nigeria,United States,S,0.128,1.024,0
+59348,NIR,USA,2014,,2,,2015,AID,Cessna-208 Caravan,AC,Light transport ac,L,2,,2015,Niger,United States,N,0.9,1.8,1.8
+59321,NIR,USA,2013,X,1,,2015,N/A,King Air-350 ISR,AC,AGS aircraft,L,1,,2015,Niger,United States,R,7.26,7.26,7.26
+25526,NOR,USA,2008,X,52,X,0,LIC,F-35A JSF,AC,FGA aircraft,L,2,,2015,Norway,United States,N,55,2860,110
+55514,NOR,USA,2014,,150,X,0,N/A,JDAM,MI,Guided bomb,L,75,X,2015,Norway,United States,N,0.02,3,1.5
+57128,NZ,USA,2014,,11,,2015,N/A,PC-9,AC,Trainer aircraft,L,11,,2014-2015,New Zealand,United States,N,1.4,15.4,15.4
+55080,NZ,USA,2013,,8,,0,N/A,SH-2G Super Seasprite,AC,ASW helicopter,L,6,X,2014-2015,New Zealand,United States,N,15,120,90
+56853,OMA,USA,2013,X,290,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Oman,United States,N,0.6,174,0
+56102,OMA,USA,2013,X,18,X,0,N/A,Avenger,AD,Mobile AD system,L,,,,Oman,United States,N,0.63,11.34,0
+57488,OMA,USA,2014,,,,0,N/A,BGM-71F TOW-2B,MI,Anti-tank missile,L,,,,Oman,United States,N,0.02,0,0
+56854,OMA,USA,2013,,266,X,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,Oman,United States,N,0.08,21.28,0
+57060,OMA,USA,2013,X,1,X,0,N/A,MPQ-64 Sentinel,GR,Air search radar,L,,,,Oman,United States,N,5,5,0
+58920,PAK,USA,2015,,15,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,5,X,2015,Pakistan,United States,N,1,15,5
+52007,PAK,USA,2015,,15,X,0,N/A,AH-1Z,AC,Combat helicopter,L,,,,Pakistan,United States,N,0,0,0
+52002,PAK,USA,2010,X,550,X,2015,AID,M-113,AV,APC,L,550,X,2011-2015,Pakistan,United States,S,0.1,55,55
+58106,PAK,USA,2014,,500,,2015,AID,M-113,AV,APC,L,500,X,2015,Pakistan,United States,S,0.1,50,50
+58630,PAK,USA,2013,X,15,,2015,N/A,ScanEagle,AC,UAV,L,15,X,2015,Pakistan,United States,N,0.04,0.6,0.6
+56794,PER,USA,2013,X,8,X,0,N/A,AE-2100,EN,Turboprop,L,6,X,2015,Peru,United States,N,1.5,12,9
+59496,PER,USA,2015,X,7,,2015,N/A,Cessna-172/T-41,AC,Trainer/light ac,L,7,,2015,Peru,United States,N,0.14,0.98,0.98
+59567,PER,USA,2015,X,2,,2015,N/A,F-28,AC,Light helicopter,L,2,,2015,Peru,United States,N,0.25,0.5,0.5
+59497,PER,USA,2015,X,1,X,0,N/A,PA-44 Seminole,AC,Light aircraft,L,,,,Peru,United States,N,0,0,0
+55408,PHI,USA,2014,,6,X,2015,N/A,Bell-412,AC,Helicopter,L,6,X,2015,Philippines,United States,N,5,30,30
+54621,PHI,USA,2014,X,2,,0,N/A,C-130H Hercules,AC,Transport aircraft,L,,,,Philippines,United States,S,11.2,22.4,0
+55924,PHI,USA,2014,X,12,X,0,N/A,F404,EN,Turbofan,L,2,X,2015,Philippines,United States,N,2.2,26.4,4.4
+58149,PHI,USA,2012,,114,,2015,AID,M-113,AV,APC,L,114,,2015,Philippines,United States,S,0.1,11.4,11.4
+57707,PHI,USA,2014,X,2,,0,N/A,T56,EN,Turboprop,L,,,,Philippines,United States,S,0.56,1.12,0
+33721,POL,USA,2015,,40,X,0,N/A,AGM-158A JASSM,MI,ASM,L,,,,Poland,United States,N,1.25,50,0
+57000,POL,USA,2014,,16,X,0,N/A,F-124,EN,Turbofan,L,,,,Poland,United States,N,1.25,20,0
+38912,POL,USA,2001,X,1,,0,N/A,LM-2500,EN,Gas turbine,L,,,,Poland,United States,N,7,7,0
+58150,POL,USA,2014,,45,,2015,AID,M-ATV,AV,APV,L,45,X,2014-2015,Poland,United States,S,0.1,4.5,4.5
+51186,POL,USA,2015,X,8,,0,LIC,Patriot PAC-3,AD,SAM/ABM system,L,,,,Poland,United States,N,55,440,0
+37177,POR,USA,2005,,188,X,2015,N/A,ISC-350,EN,Diesel engine,L,188,X,2007-2015,Portugal,United States,N,0.08,15.04,15.04
+58433,QAT,USA,2014,,576,X,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,Qatar,United States,N,0.05,28.8,0
+57202,QAT,USA,2014,,24,,0,N/A,AH-64D Apache,AC,Combat helicopter,L,,,,Qatar,United States,N,15.5,372,0
+57203,QAT,USA,2014,,3,,0,N/A,Boeing-737 AEW&C,AC,AEW&C aircraft,L,,,,Qatar,United States,N,250,750,0
+57056,QAT,USA,2015,,4,,0,N/A,C-17A Globemaster-3,AC,Heavy transport ac,L,3,X,2015,Qatar,United States,N,140,560,420
+57232,QAT,USA,2014,,500,X,0,N/A,FGM-148 Javelin,MI,Anti-tank missile,L,,,,Qatar,United States,N,0.02,10,0
+59451,QAT,USA,2015,X,295,X,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,Qatar,United States,N,0.08,23.6,0
+55557,QAT,USA,2014,,248,X,0,N/A,MIM-104C PAC-2,MI,SAM,L,50,X,2015,Qatar,United States,N,1,248,50
+55558,QAT,USA,2014,,778,X,0,N/A,MIM-104F PAC-3,MI,ABM,L,,,,Qatar,United States,N,1,778,0
+5846,QAT,USA,2014,,10,,0,N/A,Patriot PAC-3,AD,SAM/ABM system,L,1,X,2015,Qatar,United States,N,55,550,55
+36516,ROM,USA,2006,,31,X,2015,N/A,6V-53,EN,Diesel engine,L,31,X,2007-2015,Romania,United States,N,0.04,1.24,1.24
+58763,ROM,USA,2014,X,5,X,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,Romania,United States,N,1,5,0
+39453,ROM,USA,2006,X,14,X,2015,N/A,AE-2100,EN,Turboprop,L,14,X,2010-2015,Romania,United States,N,1.5,21,21
+57030,ROM,USA,2013,X,18,X,0,N/A,AGM-65 Maverick,MI,ASM,L,,,,Romania,United States,N,0.15,2.7,0
+57029,ROM,USA,2013,X,30,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Romania,United States,N,0.6,18,0
+57028,ROM,USA,2015,,60,X,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Romania,United States,N,0.18,10.8,0
+56549,ROM,USA,2013,,3,,0,N/A,F-16C,AC,FGA aircraft,L,,,,Romania,United States,R,18.81,56.43,0
+57031,ROM,USA,2013,X,10,X,0,N/A,Paveway,MI,Guided bomb,L,,,,Romania,United States,N,0.02,0.2,0
+18701,SAU,USA,2009,,724,X,2015,N/A,6V-53,EN,Diesel engine,L,724,X,2011-2015,Saudi Arabia,United States,N,0.04,28.96,28.96
+53377,SAU,USA,2011,,670,X,0,N/A,6V-53,EN,Diesel engine,L,470,X,2013-2015,Saudi Arabia,United States,N,0.04,26.8,18.8
+54388,SAU,USA,2011,,155,X,2015,N/A,6V-53,EN,Diesel engine,L,155,X,2014-2015,Saudi Arabia,United States,N,0.04,6.2,6.2
+52497,SAU,USA,2011,X,193,X,0,N/A,AAQ-13 LANTIRN,GR,Combat ac radar,L,,,,Saudi Arabia,United States,N,1,193,0
+52498,SAU,USA,2012,,158,X,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,Saudi Arabia,United States,N,1,158,0
+58434,SAU,USA,2014,,,,0,N/A,AGM-114K HELLFIRE,MI,Anti-tank missile,L,,,,Saudi Arabia,United States,N,0.05,0,0
+56578,SAU,USA,2014,,355,X,0,N/A,AGM-154 JSOW,MI,Guided bomb,L,,,,Saudi Arabia,United States,N,0.2,71,0
+56577,SAU,USA,2013,,650,X,0,N/A,AGM-84H SLAM-ER,MI,ASM,L,,,,Saudi Arabia,United States,N,1.25,812.5,0
+52505,SAU,USA,2011,X,600,X,0,N/A,AGM-88 HARM,MI,ARM,L,,,,Saudi Arabia,United States,N,0.25,150,0
+35833,SAU,USA,2009,X,12,,2015,N/A,AH-64D Apache,AC,Combat helicopter,L,12,X,2014-2015,Saudi Arabia,United States,N,14,168,168
+52509,SAU,USA,2012,X,12,,2015,N/A,AH-64D Apache,AC,Combat helicopter,L,12,X,2015,Saudi Arabia,United States,N,15.5,186,186
+54344,SAU,USA,2011,X,24,X,0,N/A,AH-64D Apache,AC,Combat helicopter,L,19,X,2015,Saudi Arabia,United States,N,15.5,372,294.5
+52513,SAU,USA,2014,,24,,0,N/A,AH-6S,AC,Combat helicopter,L,,,,Saudi Arabia,United States,N,4,96,0
+52501,SAU,USA,2013,,500,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Saudi Arabia,United States,N,0.6,300,0
+52500,SAU,USA,2011,X,300,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,200,X,2012-2015,Saudi Arabia,United States,N,0.18,54,36
+57033,SAU,USA,2014,X,4941,X,0,N/A,BGM-71F TOW-2B,MI,Anti-tank missile,L,1640,X,2015,Saudi Arabia,United States,N,0.02,98.82,32.8
+57034,SAU,USA,2014,,10747,X,0,N/A,BGM-71 TOW,MI,Anti-tank missile,L,3500,X,2015,Saudi Arabia,United States,N,0.01,107.47,35
+52504,SAU,USA,2013,,1300,X,2015,N/A,CBU-97 SFW,MI,Guided bomb,L,1300,X,2014-2015,Saudi Arabia,United States,N,0.15,195,195
+53610,SAU,USA,2009,,6,X,2015,N/A,CF-6/F-103,EN,Turbofan,L,6,X,2014-2015,Saudi Arabia,United States,N,6,36,36
+52499,SAU,USA,2012,,10,X,0,N/A,DB-110,GR,Aircraft recce system,L,8,X,2014-2015,Saudi Arabia,United States,N,4,40,32
+52507,SAU,USA,2012,X,25,X,0,N/A,F110,EN,Turbofan,L,,,,Saudi Arabia,United States,N,3,75,0
+50311,SAU,USA,2011,,84,,0,N/A,F-15SG,AC,FGA aircraft,L,4,X,2015,Saudi Arabia,United States,N,75,6300,300
+54361,SAU,USA,2011,,70,,0,MOD,F-15SG,AC,FGA aircraft,L,,,,Saudi Arabia,United States,N,69,4830,0
+52503,SAU,USA,2011,X,1000,X,0,N/A,JDAM,MI,Guided bomb,L,,,,Saudi Arabia,United States,N,0.02,20,0
+55555,SAU,USA,2013,,2,,0,N/A,KC-130J Hercules,AC,Tanker/transport ac,L,,,,Saudi Arabia,United States,N,45,90,0
+55387,SAU,USA,2012,X,4,,0,N/A,King Air-350 ISR,AC,AGS aircraft,L,2,X,2015,Saudi Arabia,United States,N,11,44,22
+51519,SAU,USA,2009,X,264,,2015,N/A,LAV-25 turret,OT,IFV turret,L,264,X,2011-2015,Saudi Arabia,United States,N,0.6,158.4,158.4
+59277,SAU,USA,2009,,314,X,0,N/A,M-1A2S,AV,Tank,L,210,X,2012-2015,Saudi Arabia,United States,N,5,1570,1050
+59028,SAU,USA,2015,,10,,0,N/A,MH-60R Seahawk,AC,ASW helicopter,L,,,,Saudi Arabia,United States,N,16.1,161,0
+37548,SAU,USA,2015,,320,,0,N/A,MIM-104F PAC-3,MI,ABM,L,,,,Saudi Arabia,United States,N,1,320,0
+54225,SAU,USA,2011,,21,,0,MOD,Patriot PAC-3,AD,SAM/ABM system,L,8,X,2014-2015,Saudi Arabia,United States,N,55,1155,440
+58706,SAU,USA,2015,,,,0,N/A,Patriot PAC-3,AD,SAM/ABM system,L,,,,Saudi Arabia,United States,N,55,0,0
+52502,SAU,USA,2011,X,3100,X,0,N/A,Paveway,MI,Guided bomb,L,2500,X,2013-2015,Saudi Arabia,United States,N,0.02,62,50
+52506,SAU,USA,2012,X,400,X,0,N/A,RGM-84L Harpoon-2,MI,Anti-ship MI/SSM,L,20,X,2015,Saudi Arabia,United States,N,1.1,440,22
+50809,SAU,USA,2015,X,10,X,0,N/A,S-70B/SH-60B Seahawk,AC,ASW helicopter,L,,,,Saudi Arabia,United States,N,17,170,0
+52514,SAU,USA,2012,,24,,2015,N/A,S-70/UH-60L,AC,Helicopter,L,24,X,2014-2015,Saudi Arabia,United States,N,7.25,174,174
+59589,SEN,USA,2013,X,4,X,0,N/A,CT7,EN,Turboprop,L,,,,Senegal,United States,N,0.9,3.6,0
+50343,SIN,USA,2008,X,200,,2015,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,200,X,2013-2015,Singapore,United States,N,0.6,120,120
+55996,SIN,USA,2014,,100,,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Singapore,United States,N,0.6,60,0
+55995,SIN,USA,2014,,20,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,10,X,2015,Singapore,United States,N,0.18,3.6,1.8
+57036,SIN,USA,2013,X,88,,0,N/A,GMLRS,MI,Guided rocket,L,,,,Singapore,United States,N,0.08,7.04,0
+55975,SIN,USA,2013,,2,,0,N/A,S-70B/SH-60B Seahawk,AC,ASW helicopter,L,,,,Singapore,United States,N,17,34,0
+50830,SLK,USA,2014,,4,,0,N/A,AE-2100,EN,Turboprop,L,,,,Slovakia,United States,N,1.5,6,0
+58374,SLK,USA,2015,,4,,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Slovakia,United States,N,7.25,29,0
+58951,SPA,USA,2015,X,4,,0,N/A,MQ-9 Reaper,AC,UAV/UCAV,L,,,,Spain,United States,N,7.5,30,0
+24919,SPA,USA,2008,X,500,X,2015,LIC,RIM-162 ESSM,MI,SAM,L,500,X,2009-2015,Spain,United States,N,0.4,200,200
+59502,SPA,USA,2015,,19,,0,LIC,RIM-162 ESSM,MI,SAM,L,,,,Spain,United States,N,0.4,7.6,0
+52395,SPA,USA,2010,X,2,,2015,N/A,S-70B/SH-60B Seahawk,AC,ASW helicopter,L,2,X,2015,Spain,United States,R,11.22,22.44,22.44
+33482,SWE,USA,2002,,5,,0,N/A,APS-143(V),GR,MP aircraft radar,L,1,X,2015,Sweden,United States,N,2.5,12.5,2.5
+59519,SWE,USA,2015,X,4,,0,N/A,APS-143(V),GR,MP aircraft radar,L,,,,Sweden,United States,N,2.5,10,0
+56678,SWE,USA,2013,X,102,X,2015,N/A,Cummins-6V,EN,Diesel engine,L,102,X,2014-2015,Sweden,United States,N,0.03,3.06,3.06
+55166,SWE,USA,2013,X,60,X,0,LIC,F414,EN,Turbofan,L,,,,Sweden,United States,N,2.5,150,0
+56985,SWI,USA,2009,,420,X,0,N/A,B5.9,EN,Diesel engine,L,340,X,2010-2015,Switzerland,United States,N,0.01,4.2,3.4
+53957,TAI,USA,2015,,2,,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,,,,Taiwan (ROC),United States,N,1,2,0
+34142,TAI,USA,2015,X,36,,0,N/A,AAV-7A1,AV,APC,L,,,,Taiwan (ROC),United States,S,0.4,14.4,0
+59470,TAI,USA,2015,X,769,,0,N/A,BGM-71F TOW-2B,MI,Anti-tank missile,L,,,,Taiwan (ROC),United States,N,0.02,15.38,0
+28509,TAI,USA,2005,X,650,X,0,N/A,C-9,EN,Diesel engine,L,405,X,2014-2015,Taiwan (ROC),United States,N,0.08,52,32.4
+59469,TAI,USA,2015,X,208,,0,N/A,FGM-148 Javelin,MI,Anti-tank missile,L,,,,Taiwan (ROC),United States,N,0.02,4.16,0
+59471,TAI,USA,2015,,250,,0,N/A,FIM-92 Stinger,MI,Portable SAM,L,,,,Taiwan (ROC),United States,N,0.08,20,0
+27563,TAI,USA,2010,X,122,X,2015,N/A,MIM-104F PAC-3,MI,ABM,L,122,X,2015,Taiwan (ROC),United States,N,1,122,122
+58184,TAI,USA,2011,X,12,X,0,N/A,Mk-15 Phalanx,AD,CIWS,L,1,,2014,Taiwan (ROC),United States,N,7,84,7
+59468,TAI,USA,2015,X,13,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,,,,Taiwan (ROC),United States,N,7,91,0
+30589,TAI,USA,2008,X,12,,2015,OFFS,P-3CUP Orion,AC,ASW aircraft,L,12,X,2012-2015,Taiwan (ROC),United States,N,75,900,900
+30593,TAI,USA,2009,,4,,2015,N/A,Patriot PAC-3,AD,SAM/ABM system,L,4,X,2014-2015,Taiwan (ROC),United States,N,55,220,220
+55812,TAI,USA,2010,X,2,X,0,N/A,Patriot PAC-3,AD,SAM/ABM system,L,,,,Taiwan (ROC),United States,N,55,110,0
+55590,TAI,USA,2015,X,2,,0,N/A,Perry,SH,Frigate,L,,,,Taiwan (ROC),United States,R,198,396,0
+36201,TAI,USA,2008,X,32,X,0,N/A,RGM-84L Harpoon-2,MI,Anti-ship MI/SSM,L,30,X,2013-2015,Taiwan (ROC),United States,N,1.1,35.2,33
+34823,TAI,USA,2012,X,56,,0,N/A,S-70/UH-60L,AC,Helicopter,L,14,X,2014-2015,Taiwan (ROC),United States,N,7.25,406,101.5
+53347,TAI,USA,2014,X,144,,0,N/A,SABR,GR,Combat ac radar,L,,,,Taiwan (ROC),United States,N,2.5,360,0
+58762,THA,USA,2014,,5,X,0,N/A,AAQ-33 Sniper,GR,Aircraft EO system,L,2,X,2015,Thailand,United States,N,1,5,2
+58438,THA,USA,2014,,50,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Thailand,United States,N,0.6,30,0
+52390,THA,USA,2012,,18,X,0,N/A,APG-68,GR,Combat ac radar,L,10,X,2014-2015,Thailand,United States,N,2,36,20
+57882,THA,USA,2012,,71,X,0,N/A,Cummins-6V,EN,Diesel engine,L,50,X,2012-2015,Thailand,United States,N,0.03,2.13,1.5
+59102,THA,USA,2015,,4,,0,N/A,F404,EN,Turbofan,L,,,,Thailand,United States,N,2.2,8.8,0
+55303,THA,USA,2013,X,9,X,2015,N/A,RIM-162 ESSM,MI,SAM,L,9,X,2015,Thailand,United States,N,0.4,3.6,3.6
+54997,THA,USA,2012,,3,X,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Thailand,United States,N,7.25,21.75,0
+55324,THA,USA,2013,,1,X,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Thailand,United States,N,7.25,7.25,0
+56805,THA,USA,2013,,2,X,0,N/A,TPS-70,GR,Air search radar,L,1,X,2015,Thailand,United States,N,13,26,13
+58924,TUN,USA,2015,X,80,,0,AID,HMMWV,AV,APV,L,52,,2015,Tunisia,United States,N,0.11,8.8,5.72
+57708,TUN,USA,2015,,12,,0,N/A,S-70/UH-60L,AC,Helicopter,L,,,,Tunisia,United States,N,7.25,87,0
+57677,TUR,USA,2014,X,145,X,0,N/A,AIM-120C AMRAAM,MI,BVRAAM,L,,,,Turkey,United States,N,0.6,87,0
+58180,TUR,USA,2014,,117,,0,N/A,AIM-9X Sidewinder,MI,SRAAM,L,,,,Turkey,United States,N,0.18,21.06,0
+35493,TUR,USA,2005,X,163,X,2015,N/A,APG-68,GR,Combat ac radar,L,163,X,2009-2015,Turkey,United States,N,2,326,326
+30229,TUR,USA,2002,,4,,2015,LIC,Boeing-737 AEW&C,AC,AEW&C aircraft,L,4,,2014-2015,Turkey,United States,N,250,1000,1000
+33238,TUR,USA,2011,X,6,,0,N/A,CH-47F Chinook,AC,Transport helicopter,L,,,,Turkey,United States,N,20,120,0
+58224,TUR,USA,2015,,5,,0,N/A,CH-47F Chinook,AC,Transport helicopter,L,,,,Turkey,United States,N,20,100,0
+30294,TUR,USA,2014,X,100,X,0,LIC,F-35A JSF,AC,FGA aircraft,L,,,,Turkey,United States,N,55,5500,0
+53508,TUR,USA,2009,,468,X,2015,N/A,ISC-350,EN,Diesel engine,L,468,X,2010-2015,Turkey,United States,N,0.08,37.44,37.44
+55717,TUR,USA,2015,,1,,0,N/A,LM-2500,EN,Gas turbine,L,,,,Turkey,United States,N,7,7,0
+58765,TUR,USA,2015,,2,,0,N/A,LM-2500,EN,Gas turbine,L,,,,Turkey,United States,N,7,14,0
+53514,TUR,USA,2011,X,4,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,,,,Turkey,United States,N,7,28,0
+58676,TUR,USA,2015,,2,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,,,,Turkey,United States,N,7,14,0
+50024,TUR,USA,2009,X,400,X,0,LIC,RIM-162 ESSM,MI,SAM,L,270,X,2011-2015,Turkey,United States,N,0.4,160,108
+35552,TUR,USA,2014,,69,,0,LIC,S-70/UH-60L,AC,Helicopter,L,,,,Turkey,United States,N,7.25,500.25,0
+50766,TUR,USA,2008,,100,X,0,LIC,T-800,EN,Turboshaft,L,,,,Turkey,United States,N,0.8,80,0
+56576,UAE,USA,2013,X,300,X,0,N/A,AGM-84H SLAM-ER,MI,ASM,L,,,,UAE,United States,N,1.25,375,0
+56865,UAE,USA,2014,,24,,0,ASS,Archangel-BPA,AC,Ground attack ac,L,6,X,2015,UAE,United States,N,4.9,117.6,29.4
+57509,UAE,USA,2013,X,30,,0,N/A,Bell-407,AC,Light helicopter,L,24,X,2014-2015,UAE,United States,N,1.1,33,26.4
+58736,UAE,USA,2015,,26,,0,N/A,Bell-407,AC,Light helicopter,L,,,,UAE,United States,N,1.1,28.6,0
+57061,UAE,USA,2015,,2,,2015,N/A,C-17A Globemaster-3,AC,Heavy transport ac,L,2,,2015,UAE,United States,N,140,280,280
+51539,UAE,USA,2011,,12,X,2015,N/A,CH-47F Chinook,AC,Transport helicopter,L,12,X,2012-2015,UAE,United States,N,20,240,240
+56059,UAE,USA,2015,X,30,X,0,N/A,F-16E,AC,FGA aircraft,L,,,,UAE,United States,N,37.5,1125,0
+56574,UAE,USA,2014,X,5000,X,0,N/A,GBU-39 SDB,MI,Guided bomb,L,500,X,2015,UAE,United States,N,0.02,100,10
+53478,UAE,USA,2015,,0,,0,N/A,GMLRS,MI,Guided rocket,L,,,,UAE,United States,N,0.08,0,0
+58432,UAE,USA,2014,,3000,X,0,N/A,JDAM,MI,Guided bomb,L,1500,X,2015,UAE,United States,N,0.02,60,30
+57979,UAE,USA,2015,,12,,0,N/A,M-142 HIMARS,AR,Self-propelled MRL,L,,,,UAE,United States,N,1.1,13.2,0
+57980,UAE,USA,2015,,124,,0,N/A,MGM-140B ATACMS,MI,SSM,L,,,,UAE,United States,N,2,248,0
+56435,UAE,USA,2012,,2,,0,N/A,RDR-1700,GR,MP aircraft radar,L,,,,UAE,United States,N,2.5,5,0
+39382,UAE,USA,2007,,200,X,0,N/A,RIM-116A RAM,MI,SAM,L,150,X,2011-2015,UAE,United States,N,0.14,28,21
+33452,UAE,USA,2006,,237,X,0,N/A,RIM-162 ESSM,MI,SAM,L,125,X,2011-2015,UAE,United States,N,0.4,94.8,50
+52105,UAE,USA,2014,X,10,X,0,N/A,RQ-1 Predator,AC,UAV,L,,,,UAE,United States,N,2,20,0
+36865,UAE,USA,2013,,2000,X,0,N/A,Talon,MI,ASM,L,500,X,2015,UAE,United States,N,0.04,80,20
+50550,UAE,USA,2011,,2,,0,N/A,THAAD,AD,ABM system,L,1,X,2015,UAE,United States,N,250,500,250
+50551,UAE,USA,2012,,96,,0,N/A,THAAD missile,MI,ABM missile,L,48,X,2015,UAE,United States,N,4,384,192
+58795,UGA,USA,2014,,2,,2015,AID,Cessna-208 Caravan,AC,Light transport ac,L,2,,2015,Uganda,United States,N,0.9,1.8,1.8
+58860,UGA,USA,2014,,15,,0,N/A,Cougar,AV,APC,L,,,,Uganda,United States,S,0.1,1.5,0
+58158,UGA,USA,2013,,10,,2015,AID,RG-33,AV,APC,L,10,,2015,Uganda,United States,S,0.08,0.8,0.8
+57531,UK,USA,2014,,20,,2015,N/A,BGM-109 Tomahawk,MI,SSM,L,20,X,2015,United Kingdom,United States,N,0.7,14,14
+33050,UK,USA,2011,,14,,2015,LIC,CH-47F Chinook,AC,Transport helicopter,L,14,,2014-2015,United Kingdom,United States,N,20,280,280
+30942,UK,USA,2006,X,138,X,0,LIC,F-35B JSF,AC,FGA aircraft,L,3,,2012-2013,United Kingdom,United States,N,60,8280,180
+55510,UK,USA,2012,,5,,0,N/A,Mk-15 Phalanx,AD,CIWS,L,2,X,2015,United Kingdom,United States,N,7,35,14
+54913,UK,USA,2015,X,9,,0,N/A,P-8A Poseidon,AC,ASW aircraft,L,,,,United Kingdom,United States,,0,0,0
+59151,UK,USA,2015,,750,X,0,N/A,Paveway,MI,Guided bomb,L,,,,United Kingdom,United States,N,0.02,15,0
+33009,UK,USA,2015,X,10,,0,N/A,PC-9,AC,Trainer aircraft,L,,,,United Kingdom,United States,N,1.4,14,0
+50570,UK,USA,2010,,3,,0,N/A,RC-135 Rivet joint,AC,SIGINT aircraft,L,2,,2013-2015,United Kingdom,United States,N,150,450,300
+51118,UK,USA,2009,,92,X,0,N/A,T55-L,EN,Turboshaft,L,80,X,2012-2015,United Kingdom,United States,N,1.2,110.4,96
+39073,UK,USA,2006,X,56,X,0,N/A,T-800,EN,Turboshaft,L,,,,United Kingdom,United States,N,0.8,44.8,0
+58537,UKR,USA,2015,,30,X,2015,AID,HMMWV Up-Armoured,AV,APV,L,30,,2015,Ukraine,United States,S,0.056,1.68,1.68
+59302,UKR,USA,2015,,2,,2015,N/A,TPQ-36 Firefinder,GR,Arty locating radar,L,2,,2015,Ukraine,United States,S,1.2,2.4,2.4
+57266,UNO,USA,2013,,115,X,2015,N/A,B5.9,EN,Diesel engine,L,115,X,2014-2015,United Nations**,United States,N,0.01,1.15,1.15
+58530,UZB,USA,2014,,50,X,2015,AID,Cougar,AV,APC,L,50,X,2015,Uzbekistan,United States,S,0.1,5,5
+58531,UZB,USA,2014,,159,,2015,AID,M-ATV,AV,APV,L,159,X,2015,Uzbekistan,United States,S,0.1,15.9,15.9
+58461,UZB,USA,2014,,70,X,2015,AID,MaxxPro,AV,APC,L,70,X,2015,Uzbekistan,United States,S,0.128,8.96,8.96
+58861,UZB,USA,2014,,50,X,2015,AID,RG-33,AV,APC,L,50,X,2015,Uzbekistan,United States,S,0.08,4,4
+56662,VEN,USA,2014,,16,,2015,N/A,TH-28/480,AC,Light helicopter,L,16,X,2015,Venezuela,United States,N,0.4,6.4,6.4
+59146,XXX,USA,2015,,4,X,0,N/A,AE-2100,EN,Turboprop,L,,,,Unknown country,United States,N,1.5,6,0
+56016,XXX,USA,2013,,6,X,2015,N/A,RQ-21A Blackjack,AC,UAV,L,6,X,2014-2015,Unknown country,United States,N,0.07,0.42,0.42
+57577,YEM,USA,2014,,1,X,2015,N/A,King Air-350 ISR,AC,AGS aircraft,L,1,X,2015,Yemen,United States,N,11,11,11
+59537,CHI,UZB,2014,,3,,0,N/A,Il-76M,AC,Transport aircraft,L,1,,2015,China,Uzbekistan,S,34,102,34
+31147,BRA,XXX,2014,X,3,,0,N/A,Boeing-767,AC,Transport aircraft,L,,,,Brazil,Unknown country,S,24,72,0
+59261,DEN,XXX,2015,X,1,,2015,N/A,BN-2 Islander,AC,Light transport ac,L,1,,2015,Denmark,Unknown country,S,0.24,0.24,0.24
+57077,GHA,XXX,2015,X,1,,0,N/A,Mi-24V/Mi-35,AC,Combat helicopter,L,,,,Ghana,Unknown country,N,8.5,8.5,0
+57452,MRA,XXX,2014,X,2,,0,N/A,OPV-60m,SH,OPV,,,,,Mauritania,Unknown country,N,0,0,0
+58991,SSD,XXX,2014,,6,X,2015,N/A,Mi-24P/Mi-35P,AC,Combat helicopter,L,6,X,2015,South Sudan,Unknown country,S,3.6,21.6,21.6
+59018,YEM,XXX,2015,,12,X,2015,N/A,M-ATV,AV,APV,L,12,X,2015,Yemen,Unknown country,S,0.1,1.2,1.2
+,,,,,291313,,,,,,,,190035,,,,,,,,
