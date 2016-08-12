@@ -11,6 +11,8 @@ default class AObject extends THREE.Object3D {
         this.conf = conf
         this.fontLoader = new THREE.FontLoader()
         this.isStopped = true
+
+        this.isInitialized = false
     }
 
     sceneFog(fog) {
@@ -52,6 +54,11 @@ default class AObject extends THREE.Object3D {
     start() {
         this.isStopped = false
         this.visible = true
+
+        if (!this.isInitialized) {
+            this.init()
+            this.isInitialized = true
+        }
         /*
 	    this.traverse(n => {
 	      if (n.material) {

@@ -20,6 +20,8 @@ const RADIUS = 1
 
 const ALTITUDE = RADIUS * 2
 
+const LAT = 65.93635,
+    LNG = 29.42217
 
 export
 default class Globe extends AObject {
@@ -31,58 +33,84 @@ default class Globe extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.cameraRotation = {
-            x: 0,
-            y: 0
-        };
         this.cameraTarget = {
             x: 0,
             y: 0
-        };
+        }
 
         this.ready = false
         this.tick = 0
-
-
-        this.init()
-        this.initSun()
-        this.initDrones()
     }
 
     _parseData() {
-        const DATA = require('./test_data/drone-strikes-pakistan-data.json')
-        console.log(DATA)
+        const API_KEY = 'search-dtMUk4R'
+        const RAW = require('./test_data/drone-strikes-pakistan-data.json')
 
+        const cache = {}
+        const data = []
+        RAW.forEach(d => {
+            const area = d.Area,
+                loc = d.Location,
+                str = `'${loc}, ${area}, Pakistan'`
+
+            const url = `https://search.mapzen.com/v1/search?text=${str}&api_key=${API_KEY}`
+            /*fetch()  
+              .then(  
+                function(response) {  
+                  if (response.status !== 200) {  
+                    console.log('Looks like there was a problem. Status Code: ' +  
+                      response.status);  
+                    return;  
+                  }
+
+                  // Examine the text in the response  
+                  response.json().then(function(data) {  
+                    console.log(data);  
+                  });  
+                }  
+              )  
+              .catch(function(err) {  
+                console.log('Fetch Error :-S', err);  
+              });
+              */
+            //console.log(url)
+            const civilians = d['Maximum civilians reported killed'],
+                children = d['Maximum children reported killed'],
+                total = d['Maximum total people killed']
+
+            data.push({lat: LAT, lng: LNG, 
+                date: d.Date, 
+                children: children, civilians: civilians, total: total, 
+                id: d['Strike ID']})
+        })
+
+        console.log(data)
+        this.data = data
     }
 
-    _posOnSphere(obj, coords) {
-        var x = coords.x;
-        var y = coords.y;
-        var altitude = coords.altitude;
-
-        obj.position.set(
-            altitude * Math.sin(x) * Math.cos(y),
-            altitude * Math.sin(y),
-            altitude * Math.cos(x) * Math.cos(y)
-        )
-    }
-
-
-    moveEarth() {
-        cameraRotation.x += (cameraTarget.x - cameraRotation.x) * 0.1;
-        cameraRotation.y += (cameraTarget.y - cameraRotation.y) * 0.1;
-
+    _moveEarth() {
+/*
         // determine camera position
-        posOnSphere(this.camera, {
-            x: cameraRotation.x,
-            y: cameraRotation.y,
+        this._posOnSphere(this.camera, {
+            x: this.cameraRotation.x,
+            y: this.cameraRotation.y,
             altitude: ALTITUDE
         })
-        this.camera.lookAt(mesh.position)
+*/
+        const x = this.cameraTarget.x,
+             y = this.cameraTarget.y
+
+        this.camera.position.set(
+            ALTITUDE * Math.sin(x) * Math.cos(y),
+            ALTITUDE * Math.sin(y),
+            ALTITUDE * Math.cos(x) * Math.cos(y))
+
+
+        this.camera.lookAt(this.position)
     }
 
 
-    latLngOnSphere(lat, lng) {
+    _latLngOnSphere(lat, lng) {
         const phi = (90 + lng) * Math.PI / 180,
             theta = (180 - lat) * Math.PI / 180
 
@@ -92,53 +120,64 @@ default class Globe extends AObject {
         }
     }
 
-    doLatLng(lat = 32, lng = 69) {
+    showLatLngLoc(lat = 32, lng = 69, dur = 1) {
 
-        let p = latLngOnSphere(lat, lng)
+        const dest = latLngOnSphere(lat, lng)
 
         tweenr.to(cameraTarget, {
-            x: p.x,
-            y: p.y,
-            duration: 0.5
-        }).on('update', _ => moveEarth())
+            x: dest.x,
+            y: dest.y,
+            duration: dur
+        }).on('update', _ => this._moveEarth())
     }
 
-    doRnd() {
+    showRndLoc(dur = 1) {
 
-        let moveX = random(-Math.PI * 2, Math.PI * 2),
-            moveY = random(-Math.PI, Math.PI)
+        const dest = this._latLngOnSphere(random(0, 90), random(0,180))
 
-        moveX *= Math.random() * 0.8;
-        moveY *= Math.random() * 0.8;
-
-        tweenr.to(cameraTarget, {
-            x: moveX,
-            y: moveY,
-            duration: 0.5
+        tweenr.to(this.cameraTarget, {
+            x: dest.x,
+            y: dest.y,
+            duration: dur
         })
-            .on('update', _ => moveEarth())
-
+        .on('update', _ => this._moveEarth())
     }
 
-    doRndFire() {
+    explodeRndLoc(dur = 2) {
 
-        let lat = random(-90, 90),
-            lng = random(-180, 180)
+        this.drone.setAutoMode(false)
 
-        let p = _getPosFromLatLng(lat, lng)
+        const dest = this._latLngOnSphere(random(0, 90), random(0,180)),
+            x = dest.x,
+            y = dest.y
 
-        particleGroup.triggerPoolEmitter(1, p);
+        const target = new THREE.Vector3(
+            RADIUS * Math.sin(x) * Math.cos(y),
+            RADIUS * Math.sin(y),
+            RADIUS * Math.cos(x) * Math.cos(y))
 
+        console.log(target)
+
+        tweenr.to(this.drone.position, {
+            x: target.x,
+            y: target.y,
+            z: target.z,
+            duration: dur
+        })
+        .on('complete', _ => this.drone.explode())
+        
     }
 
     initDrones() {
 
         //const drone = new Drone(this.loader, RADIUS * 1.3)
-        const drone = new FireDrone(this.loader, RADIUS * 1.3)
+        const drone = new FireDrone(this.loader, this.aaa, RADIUS * 1.3)
 
         this.add(drone)
 
         super.tick(dt => drone.update(dt))
+
+        this.drone = drone
     }
 
     init() {
@@ -172,6 +211,8 @@ default class Globe extends AObject {
         meshPlanet.rotation.z = tilt;
         this.add(meshPlanet);
 
+        super.tick(dt => meshPlanet.rotation.y += 0.03 * dt)
+
         // clouds
         const materialClouds = new THREE.MeshPhongMaterial({
 
@@ -184,7 +225,7 @@ default class Globe extends AObject {
         meshClouds.rotation.z = tilt;
         this.add(meshClouds);
 
-        super.tick(dt => meshClouds.rotation.y += 0.015 * dt)
+        super.tick(dt => meshClouds.rotation.y += 0.04 * dt)
 
         // atmosphere
         const atmoMaterial = new THREE.ShaderMaterial({
@@ -236,6 +277,13 @@ default class Globe extends AObject {
 
         super.tick(dt => pivotMoon.rotation.y += 0.05 * dt)
 
+
+        this.initSun()
+        this.initDrones()
+        this._parseData()
+
+        super.on('showRndLoc', _ => this.showRndLoc())
+        super.on('explodeRndLoc', _ => this.explodeRndLoc())
     }
 
     _FS() {
@@ -406,22 +454,27 @@ const NUM_PARTICLES = 400
 
 class FireDrone extends THREE.Object3D {
 
-    constructor(loader, radius) {
+    constructor(loader, aaa, radius) {
         super()
 
         this.loader = loader
+        this.aaa = aaa
 
         this.radius = radius
-        this.xRadius = radius * 1.4
-        this.yRadius = radius * 2
-        this.zRadius = radius * 1.9
 
         this.last_time_activate = Date.now()
         this.gravity = new THREE.Vector3(0, 0.01, 0)
 
         this.tick = 0
 
+        this.autoMode = true
+
         this.init()
+        this.reset()
+    }
+
+    setAutoMode(v) {
+        this.autoMode = v
     }
 
     init() {
@@ -472,6 +525,23 @@ class FireDrone extends THREE.Object3D {
         this.points = points
         this.light = light
         this.movers = movers
+    }
+
+    explode() { 
+
+        // TODO
+
+        this.reset()
+    }
+
+    reset() {
+        this.autoMode = true
+
+        this.radius = RADIUS * 5
+        tweenr.to(this, {
+            radius: RADIUS * 1.5,
+            duration: 10
+        })
     }
 
     activateMover() {
@@ -552,11 +622,29 @@ class FireDrone extends THREE.Object3D {
     movePoints(dt) {
 
         const t = 1 * this.tick
-        const s = 0.07 * 1 //freq;
+        //const soundFactor = 0.07 * 1 //freq;
+        const low = this.aaa.getLowFreq(),
+            mid = this.aaa.getMidFreq(),
+            high = this.aaa.getHighFreq()
 
-        const x = Math.cos(t) * this.xRadius,
-            y = Math.sin(t * 0.8) * (this.yRadius + s),
-            z = Math.sin(t) * this.zRadius;
+        const speed = 0.8   // TODO
+
+        const radius = this.radius
+
+        const x = Math.cos(t) * (radius + mid),
+            y = Math.sin(t * speed) * (radius + high),
+            z = Math.sin(t) * (radius + low)
+
+        //this.setPosition(new THREE.Vector3(x,y,z))
+        this.position.set(x,y,z)
+
+    }
+
+    setPosition(position) {
+
+        const x = position.x,
+            y = position.y,
+            z = position.z
 
         this.points.anchor.x = x;
         this.points.anchor.y = y;
@@ -585,212 +673,9 @@ class FireDrone extends THREE.Object3D {
 
         this.activateMover();
         this.updateMover();
-        this.movePoints(dt, 2)
 
 
+        if (this.autoMode) this.movePoints(dt, 2)
     }
 
-}
-
-
-const MAX_PARTICLES = 10000
-
-class Drone extends THREE.Object3D {
-    constructor(loader, radius) {
-        super()
-
-        this.pos = new THREE.Object3D(radius, 0, 0)
-
-        this.nbParticles = 0;
-
-        this.tick = 0
-
-        // Particle settings
-        this.life = 2.0;
-        this.size = 1.0;
-        this.spawnRate = 400;
-        this.horizontalSpeed = 0.8;
-        this.verticalSpeed = 0.8;
-        this.maxVelocityX = 0.3;
-        this.maxVelocityY = 0.6;
-
-        this.xRadius = radius * 1
-        this.yRadius = radius * 1
-        this.zRadius = radius * 1
-        this.startTime = 0.0;
-
-        this.velocity = new THREE.Vector3(0, 0, 0);
-
-        this.particleSpriteTex = loader.load('/dist/assets/Drones/satelliteparticle.png')
-
-        this.geom = new THREE.BufferGeometry();
-        this.mat = new THREE.ShaderMaterial({
-            uniforms: {
-                time: {
-                    type: 'f',
-                    value: 0.0
-                },
-                tSprite: {
-                    type: 't',
-                    value: this.particleSprite
-                },
-            },
-            vertexShader: this._VS(),
-            fragmentShader: this._FS(),
-            depthTest: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-        });
-
-        this.init()
-
-    }
-
-    _FS() {
-        return glslify(`
-        varying float lifeLeft;
-
-uniform sampler2D sprite;
-
-void main() {
-  vec3 color = vec3(0., 0.650, 0.4);
-  vec4 tex = texture2D( sprite, gl_PointCoord );
-  float alpha = lifeLeft * .25;
-
-  gl_FragColor = vec4( color.rgb * tex.a, alpha * tex.a );
-
-}
-`, {
-            inline: true
-        })
-    }
-
-    _VS() {
-        return glslify(`
-        #pragma glslify: pnoise = require(glsl-noise/periodic/3d.glsl)
-
-uniform float time;
-
-attribute vec3 velocity;
-attribute float startTime;
-attribute float size;
-attribute float life;
-
-varying float lifeLeft;
-
-// Thanks to Spite for this function
-float turbulence( vec3 p ) {
-  float t = -.5;
-  for (float f = 1.0 ; f <= 10.0 ; f++ ){
-      float power = pow( 2.0, f );
-      t += abs( pnoise( vec3( power * p ), vec3( 10.0, 10.0, 10.0 ) ) / power );
-  }
-  return t;
-}
-
-void main() {
-  vec3 newPosition;
-  vec3 vel;
-
-  float elapsedTime = time - startTime;
-  float timeOnLife = elapsedTime / life;
-
-  lifeLeft = 1.0 - timeOnLife;
-
-  float scale = 3.0;
-  gl_PointSize = ( scale * size ) * lifeLeft;
-
-  float turb = turbulence( vec3( velocity.x * elapsedTime, velocity.y * elapsedTime, velocity.z * elapsedTime ) );
-  float noise = pnoise( velocity * timeOnLife, vec3( 1000.0 ) );
-  float displacement = 10. * noise + (30. * timeOnLife * turb);
-
-  newPosition = position + velocity * displacement;
-
-  if( gl_PointSize < .05 ) {
-    lifeLeft = 0.;
-  }
-
-  gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
-}
-`, {
-            inline: true
-        })
-    }
-
-    init() {
-        this.positions = new Float32Array(MAX_PARTICLES * 3);
-        this.velocities = new Float32Array(MAX_PARTICLES * 3);
-        this.startTimes = new Float32Array(MAX_PARTICLES)
-        this.lifes = new Float32Array(MAX_PARTICLES);
-        this.sizes = new Float32Array(MAX_PARTICLES);
-
-        this.geom.addAttribute('position', new THREE.BufferAttribute(this.positions, 3).setDynamic(true));
-        this.geom.addAttribute('velocity', new THREE.BufferAttribute(this.velocities, 3).setDynamic(true));
-        this.geom.addAttribute('startTime', new THREE.BufferAttribute(this.startTimes, 1).setDynamic(true));
-        this.geom.addAttribute('size', new THREE.BufferAttribute(this.sizes, 1).setDynamic(true));
-        this.geom.addAttribute('life', new THREE.BufferAttribute(this.lifes, 1).setDynamic(true));
-
-
-        const mesh = new THREE.Points(this.geom, this.mat)
-        mesh.position.set(0, 0, 0)
-        mesh.visible = true
-        this.add(mesh)
-
-        this.mesh = mesh
-    }
-
-    spawnParticle() {
-        let i = this.nbParticles;
-
-        this.positions[i * 3 + 0] = this.pos.x + (Math.random() - 0.5) * 0.07;
-        this.positions[i * 3 + 1] = this.pos.y + (Math.random() - 0.5) * 0.07;
-        this.positions[i * 3 + 2] = this.pos.z + (Math.random() - 0.5) * 0.07;
-
-        this.velocities[i * 3 + 0] = this.velocity.x + (Math.random() - 0.5) * 0.55;
-        this.velocities[i * 3 + 1] = this.velocity.y + (Math.random() - 0.5) * 0.55;
-        this.velocities[i * 3 + 2] = this.velocity.z + (Math.random() - 0.5) * 0.55;
-
-        this.startTimes[i] = this.startTime;
-        this.sizes[i] = this.size;
-        this.lifes[i] = this.life;
-
-        this.nbParticles++;
-
-        if (this.nbParticles >= MAX_PARTICLES) {
-            this.nbParticles = 0;
-        }
-    }
-
-    update(dt) {
-
-        if (!this.mesh || !this.mesh.visible) {
-            return
-        }
-
-        this.tick += dt * 0.1
-
-        const t = this.tick,
-            s = 1
-
-        this.pos.x = Math.cos(t) * this.xRadius;
-        this.pos.y = Math.sin(t * this.verticalSpeed) * (this.yRadius + s);
-        this.pos.z = Math.sin(t) * this.zRadius;
-
-        this.velocity.x = Math.sin((t + s) * this.maxVelocityX);
-        this.velocity.y = Math.cos((t + s) * this.maxVelocityY);
-        this.velocity.z = (Math.sin((t + s) * this.maxVelocityX) + Math.cos((t + s) * this.maxVelocityY));
-
-        for (let x = 0; x < this.spawnRate * s; x++) {
-            this.spawnParticle();
-        }
-
-        this.startTime = t;
-        this.mat.uniforms.time.value += dt * 0.1
-
-        this.geom.attributes.position.needsUpdate = true;
-        this.geom.attributes.velocity.needsUpdate = true;
-        this.geom.attributes.startTime.needsUpdate = true;
-        this.geom.attributes.size.needsUpdate = true;
-        this.geom.attributes.life.needsUpdate = true;
-    }
 }

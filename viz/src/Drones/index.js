@@ -20,13 +20,17 @@ default class DronesScene extends AScene {
                     ring: false
                 }, renderer, loader, aaa, camera),
 */
-                g: new Globe('GLOBE', {}, renderer, loader, aaa),
+                g: new Globe('GLOBE', {
+                    showRndLoc: false,
+                    explodeRndLoc: false,
+                    explodeNextLoc: false
+                }, renderer, loader, aaa, camera),
                 w: new Weapons('WEAPONS', {
                     audio: false,
                     color: true,
                     showSold: false,
                     showBought: false
-                }, renderer, loader, aaa),
+                }, renderer, loader, aaa, camera),
             })
 
         this.loader = loader
@@ -34,7 +38,7 @@ default class DronesScene extends AScene {
         this.camera.position.z = 2
         this.camera.lookAt(new THREE.Vector3())
         
-        this.setVis(this.vis.w)
+        this.setVis(this.vis.g)
 
         super.setBackground('/dist/assets/Drones/milkyway_bg.jpg')
 

@@ -36,8 +36,4 @@ default class OutroScene extends AScene {
 
     }
 
-    background() {
-
-    }
-
 }

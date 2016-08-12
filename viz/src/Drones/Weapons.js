@@ -38,8 +38,6 @@ default class Weapons extends AObject {
 
         this.ready = false
         this.tick = 0
-
-        this.init()
     }
 
 
@@ -87,8 +85,6 @@ default class Weapons extends AObject {
         }
 
         this.ready = true
-
-        console.log(Geodata)
 
         super.on('audio', v => {
             if (!v) {

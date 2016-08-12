@@ -16,163 +16,182 @@ const WIDTH = 128
 const NUM_PARTICLES = WIDTH * WIDTH
 
 
-export default class Particles extends AObject {
-  constructor(name, conf, renderer, loader, aaa) {
-    super(name, conf)
+export
+default class Particles extends AObject {
+    constructor(name, conf, renderer, loader, aaa) {
+        super(name, conf)
 
-    this.ready = false
-    this.tick = 0
+        this.ready = false
+        this.tick = 0
 
-    this.renderer = renderer
-    this.loader = loader
-    this.aaa = aaa
+        this.renderer = renderer
+        this.loader = loader
+        this.aaa = aaa
+    }
 
-    this.initParticles()
-    this.initShader()
-  }
+    init() {
 
-  initParticles() {
 
-    this.loader.load(
-      '/dist/assets/Intro/lensFlare.png', (texture) => {
-
-      const geometry = new THREE.BufferGeometry();
-      const positions = new Float32Array( NUM_PARTICLES * 3 );
-          var p = 0;
-          /*
+        const geometry = new THREE.BufferGeometry();
+        const positions = new Float32Array(NUM_PARTICLES * 3);
+        var p = 0;
+        /*
           for ( let i = 0; i < NUM_PARTICLES; i++ ) {
             positions[ p++ ] = 0
             positions[ p++ ] = 0
             positions[ p++ ] = 0
           }
           */
-      const uvs = new Float32Array( NUM_PARTICLES * 2 );
-          p = 0;
-          for ( let j = 0; j < WIDTH; j++ ) {
-            for ( let i = 0; i < WIDTH; i++ ) {
-              uvs[ p++ ] = i / ( WIDTH - 1 );
-              uvs[ p++ ] = j / ( WIDTH - 1 );
+        const uvs = new Float32Array(NUM_PARTICLES * 2);
+        p = 0;
+        for (let j = 0; j < WIDTH; j++) {
+            for (let i = 0; i < WIDTH; i++) {
+                uvs[p++] = i / (WIDTH - 1);
+                uvs[p++] = j / (WIDTH - 1);
             }
-          }
-          geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
-          geometry.addAttribute( 'uv', new THREE.BufferAttribute( uvs, 2 ) );
+        }
+        geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.addAttribute('uv', new THREE.BufferAttribute(uvs, 2));
 
-      this.particleUniforms = {
-            texturePosition: { value: null },
-            textureVelocity: { value: null },
-            tAudio: { value: null },
-            tParticle: {value: texture},
-            density: { value: 0.0 },
-            time: { value: 0.0 },
-            delta: { value: 1 }
-          };
+        this.particleUniforms = {
+            texturePosition: {
+                value: null
+            },
+            textureVelocity: {
+                value: null
+            },
+            tAudio: {
+                value: null
+            },
+            tParticle: {
+                value: this.loader.load('/dist/assets/Intro/lensFlare.png')
+            },
+            density: {
+                value: 0.0
+            },
+            time: {
+                value: 0.0
+            },
+            delta: {
+                value: 1
+            }
+        };
 
-      const material = new THREE.ShaderMaterial( {
-            uniforms:       this.particleUniforms,
-            vertexShader:   particleVertexShader,
+        const material = new THREE.ShaderMaterial({
+            uniforms: this.particleUniforms,
+            vertexShader: particleVertexShader,
             fragmentShader: particleFragmentShader,
             blending: THREE.AdditiveBlending,
             transparent: true,
             depthWrite: true,
             depthTest: false,
-          } );
-          material.extensions.drawBuffers = true;
-      const particles = new THREE.Points( geometry, material );
-          particles.matrixAutoUpdate = false;
-          particles.updateMatrix();
+        });
+        material.extensions.drawBuffers = true;
+        const particles = new THREE.Points(geometry, material);
+        particles.matrixAutoUpdate = false;
+        particles.updateMatrix();
 
-      particles.frustumCulled = false
+        particles.frustumCulled = false
 
-      this.add( particles )
-
-      this.ready = true
-    })
-
-  }
-
-  initShader() {
-    this.gpuCompute = new GPUComputationRenderer(WIDTH, WIDTH, this.renderer)
-    const dtPosition = this.gpuCompute.createTexture();
-    const dtVelocity = this.gpuCompute.createTexture();
-
-    this.fillTextures(dtPosition, dtVelocity)
-
-    this.velocityVariable = this.gpuCompute.addVariable( "textureVelocity", computeShaderVelocity, dtVelocity )
-    this.positionVariable = this.gpuCompute.addVariable( "texturePosition", computeShaderPosition, dtPosition )
-    this.gpuCompute.setVariableDependencies( this.velocityVariable, [ this.positionVariable, this.velocityVariable ] )
-    this.gpuCompute.setVariableDependencies( this.positionVariable, [ this.positionVariable, this.velocityVariable ] )
-
-    this.positionUniforms = this.positionVariable.material.uniforms
-    this.velocityUniforms = this.velocityVariable.material.uniforms
+        this.add(particles)
 
 
-    this.positionUniforms.delta = { value: 1 }
-    this.velocityUniforms.delta = { value: 1 }
-    this.velocityUniforms.time = { value: 0.0 }
-    this.velocityUniforms.tAudio = { value: null }
+        this.initShader()
+        this.ready = true
 
-        var error = this.gpuCompute.init();
-        if ( error !== null ) {
-            console.error( error );
+    }
+
+    initShader() {
+        this.gpuCompute = new GPUComputationRenderer(WIDTH, WIDTH, this.renderer)
+        const dtPosition = this.gpuCompute.createTexture();
+        const dtVelocity = this.gpuCompute.createTexture();
+
+        this.fillTextures(dtPosition, dtVelocity)
+
+        this.velocityVariable = this.gpuCompute.addVariable("textureVelocity", computeShaderVelocity, dtVelocity)
+        this.positionVariable = this.gpuCompute.addVariable("texturePosition", computeShaderPosition, dtPosition)
+        this.gpuCompute.setVariableDependencies(this.velocityVariable, [this.positionVariable, this.velocityVariable])
+        this.gpuCompute.setVariableDependencies(this.positionVariable, [this.positionVariable, this.velocityVariable])
+
+        this.positionUniforms = this.positionVariable.material.uniforms
+        this.velocityUniforms = this.velocityVariable.material.uniforms
+
+
+        this.positionUniforms.delta = {
+            value: 1
+        }
+        this.velocityUniforms.delta = {
+            value: 1
+        }
+        this.velocityUniforms.time = {
+            value: 0.0
+        }
+        this.velocityUniforms.tAudio = {
+            value: null
         }
 
-  }
+        var error = this.gpuCompute.init();
+        if (error !== null) {
+            console.error(error);
+        }
 
-  fillTextures(texturePosition, textureVelocity) {
-
-    const posArray = texturePosition.image.data
-    const velArray = textureVelocity.image.data
-
-    for ( let k = 0, kl = posArray.length; k < kl; k += 4 ) {
-
-      let x, y, z
-      x = random(-0.1, 0.1)
-      y = random(-0.1, 0.1)
-      z = random(-0.1, 0.1)
-      //x = k / 4 / NUM_PARTICLES
-      let vx, vy, vz
-      vx = vy = vz = 0 //random(1, 3)
-
-      // Fill in texture values
-          posArray[ k + 0 ] = x;
-          posArray[ k + 1 ] = y;
-          posArray[ k + 2 ] = z;
-          posArray[ k + 3 ] = 1;
-
-          velArray[ k + 0 ] = vx;
-          velArray[ k + 1 ] = vy;
-          velArray[ k + 2 ] = vz;
-          velArray[ k + 3 ] = 1;
     }
-  }
 
-  update(dt) {
-    if (!super.update(dt)) return
+    fillTextures(texturePosition, textureVelocity) {
 
-    const delta = dt * this.conf.timeScale
+        const posArray = texturePosition.image.data
+        const velArray = textureVelocity.image.data
 
-    this.tick += dt
-    if (this.tick < 0) this.tick = 0
+        for (let k = 0, kl = posArray.length; k < kl; k += 4) {
+
+            let x, y, z
+            x = random(-0.1, 0.1)
+            y = random(-0.1, 0.1)
+            z = random(-0.1, 0.1)
+            //x = k / 4 / NUM_PARTICLES
+            let vx, vy, vz
+            vx = vy = vz = 0 //random(1, 3)
+
+            // Fill in texture values
+            posArray[k + 0] = x;
+            posArray[k + 1] = y;
+            posArray[k + 2] = z;
+            posArray[k + 3] = 1;
+
+            velArray[k + 0] = vx;
+            velArray[k + 1] = vy;
+            velArray[k + 2] = vz;
+            velArray[k + 3] = 1;
+        }
+    }
+
+    update(dt) {
+        if (!super.update(dt)) return
+
+        const delta = dt * this.conf.timeScale
+
+        this.tick += dt
+        if (this.tick < 0) this.tick = 0
 
 
-    if (!this.ready) return
+        if (!this.ready) return
 
-    this.gpuCompute.compute()
+        this.gpuCompute.compute()
 
 
-    this.particleUniforms.texturePosition.value = this.gpuCompute.getCurrentRenderTarget( this.positionVariable ).texture
-    this.particleUniforms.textureVelocity.value = this.gpuCompute.getCurrentRenderTarget( this.velocityVariable ).texture
+        this.particleUniforms.texturePosition.value = this.gpuCompute.getCurrentRenderTarget(this.positionVariable).texture
+        this.particleUniforms.textureVelocity.value = this.gpuCompute.getCurrentRenderTarget(this.velocityVariable).texture
 
-    const audioTexture =  this.aaa.getAudioTexture()
-    this.particleUniforms.tAudio.value = audioTexture
-    this.velocityUniforms.tAudio.value = audioTexture
-    this.particleUniforms.time.value = this.tick
+        const audioTexture = this.aaa.getAudioTexture()
+        this.particleUniforms.tAudio.value = audioTexture
+        this.velocityUniforms.tAudio.value = audioTexture
+        this.particleUniforms.time.value = this.tick
 
-    this.positionUniforms.delta.value = dt
-    this.velocityUniforms.delta.value = dt
-    this.velocityUniforms.time.value = this.tick
+        this.positionUniforms.delta.value = dt
+        this.velocityUniforms.delta.value = dt
+        this.velocityUniforms.time.value = this.tick
 
-  }
+    }
 }
 
 const computeShaderPosition = glslify(`
@@ -189,7 +208,9 @@ const computeShaderPosition = glslify(`
         pos += vel * delta * 0.1;
         gl_FragColor = vec4( pos, 1.0 );
       }
-`, { inline: true })
+`, {
+    inline: true
+})
 
 const computeShaderVelocity = glslify(`
 
@@ -216,7 +237,9 @@ const computeShaderVelocity = glslify(`
         vel += delta * acceleration * 0.1 * (audio.r * 2.);
         gl_FragColor = vec4( vel, 1.0 );
       }
-`, { inline: true })
+`, {
+    inline: true
+})
 
 
 const particleVertexShader = glslify(`
@@ -241,7 +264,9 @@ const particleVertexShader = glslify(`
         gl_PointSize = size * ( 300.0 / -mvPosition.z );
         gl_Position = projectionMatrix * mvPosition;
       }
-`, { inline: true })
+`, {
+    inline: true
+})
 
 
 const particleFragmentShader = glslify(`
@@ -264,4 +289,6 @@ const particleFragmentShader = glslify(`
         gl_FragColor = vec4(color, texColor.w);
       }
 
-`, { inline: true })
+`, {
+    inline: true
+})

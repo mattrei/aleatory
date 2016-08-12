@@ -157,6 +157,7 @@ default class AScene extends THREE.Scene {
         }
         if (v) {
             this.currentVis = v
+            
         }
     }
 

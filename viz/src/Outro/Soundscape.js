@@ -34,21 +34,21 @@ default class Soundscape extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.tick = 0
-
         this.GRID_SIZE = SIZE.WIDTH * SIZE.DEPTH
 
         this.LINES_HEIGHT = 10
         this.MAX_HEIGHT = 20
 
         this.seed = randomInt(0, 100)
+    }
 
-
-
+    init() {
         this.initPlane()
         this.initParticles()
         this.initLines()
     }
+
+
     initPlane() {
 
         this.geometry = new THREE.PlaneBufferGeometry(500, 500, SIZE.WIDTH - 1, SIZE.DEPTH - 1);
@@ -205,8 +205,6 @@ default class Soundscape extends AObject {
 
     update(dt) {
 
-        this.tick += dt
-
         const lowFreq = this.aaa.getLowFreq(),
             highFreq = this.aaa.getHighFreq()
 
@@ -219,7 +217,7 @@ default class Soundscape extends AObject {
         }
 
 
-        this.pointsMaterial.uniforms.time.value = this.tick
+        this.pointsMaterial.uniforms.time.value += dt
 
         this.geometry.attributes.size.needsUpdate = true
         this.geometry.attributes.position.needsUpdate = true
