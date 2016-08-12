@@ -13,11 +13,13 @@ default class DronesScene extends AScene {
             aaa,
             camera,
             args, {
+                /*
                 m: new Map('MAP', {
                     sphere: 0,
                     flat: 1,
                     ring: false
                 }, renderer, loader, aaa, camera),
+*/
                 g: new Globe('GLOBE', {}, renderer, loader, aaa),
                 c: new Countries('COUNTRIES', {}, renderer, loader, aaa),
             })

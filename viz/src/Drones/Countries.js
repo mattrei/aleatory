@@ -15,6 +15,10 @@ const IMG_SCALE = 1
 
 import Map3DGeometry from './Map3DGeometry'
 
+const Geodata = require('./countries.json')
+
+//http://makc.github.io/three.js/map2globe/
+
 export
 default class Countries extends AObject {
     constructor(name, conf, renderer, loader, aaa, camera) {
@@ -35,16 +39,41 @@ default class Countries extends AObject {
     init() {
 
         //https://github.com/makc/makc.github.io/blob/master/three.js/map2globe/demo.html
+        const radius = 0.98
+        var light = new THREE.DirectionalLight(0xffffff);
+        light.position.set(0, 0, 1);
+        this.add(light); // materials are solid black without the light
 
-        var globe = new THREE.Object3D();
-        globe.scale.set(250, 250, 250);
-        scene.add(globe);
+        const globe = new THREE.Object3D();
+        //globe.scale.set(250, 250, 250);
+        this.add(globe)
         var geometry = new THREE.SphereGeometry(radius, 30, 15);
+        const blue = new THREE.MeshLambertMaterial({
+            color: 0x50aaff,
+            shading: THREE.FlatShading
+        });
+
         globe.add(new THREE.Mesh(geometry, blue));
-        for (var name in data) {
-            geometry = new Map3DGeometry(data[name], 0);
-            globe.add(data[name].mesh = new THREE.Mesh(geometry, gold));
+
+        console.log(Geodata)
+
+
+        const gold = new THREE.MeshLambertMaterial({
+            color: 0xffaa50,
+            shading: THREE.FlatShading
+        });
+        for (var name in Geodata) {
+            const map3dgeometry = new Map3DGeometry(Geodata[name], 0);
+            globe.add(Geodata[name].mesh = new THREE.Mesh(map3dgeometry, gold));
         }
+
+        /*
+            showDebt = function () {
+        for (var name in data) {
+            var scale = (1 + 7e-6 * ( data[name].data.gdp || 0 ) * ( data[name].data.debt || 0 ) / 100);
+            TweenLite.to(data[name].mesh.scale, 0.5, { x : scale, y : scale, z : scale });
+        }
+    }*/
     }
 
     createRingGeomtry(radius) {
