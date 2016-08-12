@@ -20,7 +20,7 @@ default class AScene extends THREE.Scene {
         this.isStopped = false
         this.vis = vis
         Object.keys(vis).forEach(v => {
-          vis[v].getEvents().on('fog', (f) => this.setFog(f))
+            vis[v].getEvents().on('fog', (f) => this.setFog(f))
         })
 
         this.renderer = renderer
@@ -58,7 +58,7 @@ default class AScene extends THREE.Scene {
     }
 
     setFog(fog) {
-      this.fog = fog
+        this.fog = fog
     }
 
     _addHelpers() {
@@ -108,7 +108,7 @@ default class AScene extends THREE.Scene {
 
     update(delta) {
 
-        if (this.isStopped) return 
+        if (this.isStopped) return
 
         if (this.currentVis) {
             this.currentVis.update(delta)
@@ -196,7 +196,7 @@ default class AScene extends THREE.Scene {
             this.setVis(v)
             this.start()
         } else if (this.currentVis) {
-          this.currentVis.keyPressed(key, isShift)
+            this.currentVis.keyPressed(key, isShift)
         }
     }
 
@@ -224,16 +224,16 @@ default class AScene extends THREE.Scene {
       `
 
 
-        var geometry = new THREE.SphereGeometry(3000, 60, 40);
-        var material = new THREE.ShaderMaterial({
-            uniforms: {
-                texture: {
-                    value: this.loader.load(imgPath)
-                }
-            },
-            vertexShader: skyVertex,
-            fragmentShader: skyFragment
-        });
+        const geometry = new THREE.SphereGeometry(3000, 60, 40),
+            material = new THREE.ShaderMaterial({
+                uniforms: {
+                    texture: {
+                        value: this.loader.load(imgPath)
+                    }
+                },
+                vertexShader: skyVertex,
+                fragmentShader: skyFragment
+            });
 
         const skyBox = new THREE.Mesh(geometry, material);
         skyBox.scale.set(-1, 1, 1);

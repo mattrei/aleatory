@@ -4,7 +4,7 @@ export
 default class AudioAnalyser {
 
     constructor(analyser) {
-    	this.analyser = analyser
+        this.analyser = analyser
 
         this._createAudioTexture()
 
@@ -13,7 +13,6 @@ default class AudioAnalyser {
     _createAudioTexture() {
         let size = 12;
         this.audioData = new Float32Array(size * size * 3);
-        this.volume = 1;
 
         for (let i = 0, l = this.audioData.length; i < l; i += 3) {
             this.audioData[i] = 0.0;
@@ -53,19 +52,23 @@ default class AudioAnalyser {
         let _volume = 0;
         for (let i = 0; i < freq.length; i++) {
             this.audioData[i] = freq[i] / 256.;
-            _volume += freq[i] / 256.
-            if(i > 174 - 5) {
+            if (i > 174 - 5) {
                 _acuteAverage += freq[i] / 256.;
             }
         }
-        this.volume = _volume / freq.length;
 
         this.textureAudio.needsUpdate = true
         return this.textureAudio
     }
 
     getVolume() {
-        return this.volume
+        const freq = this.analyser.frequencies()
+        let _volume = 0
+        for (let i = 0; i < freq.length; i++) {
+            _volume += freq[i] / 256.
+        }
+
+        return _volume / freq.length
     }
 
 

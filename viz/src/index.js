@@ -1,4 +1,5 @@
 require('babel-polyfill')
+
 global.THREE = require('three')
 
 const domready = require('domready')

@@ -15,9 +15,16 @@ const IMG_SCALE = 1
 
 import Map3DGeometry from './Map3DGeometry'
 
+const Colors = require('nice-color-palettes');
+
+
 const Geodata = require('./countries.json')
 
 //http://makc.github.io/three.js/map2globe/
+
+
+const MAX_VIS_HEIGHT = 10
+
 
 export
 default class Countries extends AObject {
@@ -55,17 +62,59 @@ default class Countries extends AObject {
 
         globe.add(new THREE.Mesh(geometry, blue));
 
+        const color = Colors[randomInt(0, Colors.length - 1)]
+
+        for (const name in Geodata) {
+            const map3dgeometry = new Map3DGeometry(Geodata[name], 0);
+
+            const material = new THREE.MeshLambertMaterial({
+                color: color[randomInt(0, color.length - 1)],
+                shading: THREE.FlatShading
+            })
+
+            const mesh = new THREE.Mesh(map3dgeometry, material)
+            globe.add(mesh)
+
+
+            Geodata[name].mesh = mesh
+            Geodata[name].freq = randomInt(0, 2)
+
+
+            Geodata[name].data = {
+                sold: 0,
+                bought: 0
+            }
+        }
+
+        this.ready = true
+
         console.log(Geodata)
 
+        super.on('audio', v => {
+            if (!v) {
+                const _scale = 1
+                for (const name in Geodata) {
+                    tweenr.to(Geodata[name].mesh.scale, {
+                        x: _scale,
+                        y: _scale,
+                        z: _scale,
+                        duration: 1
+                    })
+                }
+            }
+        })
+        super.on('color', _ => {
+            const _randColor = Colors[randomInt(0, Colors.length - 1)]
+            const _scale = 1
+            for (const name in Geodata) {
+                Geodata[name].mesh.material.color.set(_randColor[randomInt(0, _randColor.length - 1)])
+            }
+        })
 
-        const gold = new THREE.MeshLambertMaterial({
-            color: 0xffaa50,
-            shading: THREE.FlatShading
-        });
-        for (var name in Geodata) {
-            const map3dgeometry = new Map3DGeometry(Geodata[name], 0);
-            globe.add(Geodata[name].mesh = new THREE.Mesh(map3dgeometry, gold));
-        }
+        this._parseData()
+
+        super.on('showBought', p => this.showBought())
+        super.on('showSold', p => this.showSold())
 
         /*
             showDebt = function () {
@@ -74,6 +123,103 @@ default class Countries extends AObject {
             TweenLite.to(data[name].mesh.scale, 0.5, { x : scale, y : scale, z : scale });
         }
     }*/
+    }
+
+    _parseData() {
+
+        const DATA_SELLER_2015 = require('./test_data/sipri-arms-by-seller-2015.json')
+        const DATA_BUYER_2015 = require('./test_data/sipri-arms-by-buyer-2015.json')
+
+
+        DATA_SELLER_2015.forEach(d => {
+            const seller = this._cleanName(d.seller)
+            if (Geodata[seller]) {
+                Geodata[seller].data.sold += 1
+            }
+
+            const buyer = this._cleanName(d.buyer)
+            if (Geodata[buyer]) {
+                Geodata[buyer].data.bought += 1
+            }
+        })
+
+        console.log(Geodata['Austria'].data)
+
+    }
+
+    showSold() {
+
+        let max = 0
+        for (const name in Geodata) {
+            if (Geodata[name].data.sold > max) {
+                max = Geodata[name].data.sold
+            }
+        }
+        console.log(max)
+
+        for (const name in Geodata) {
+            let _scale = Geodata[name].data.sold / max * MAX_VIS_HEIGHT
+            //_scale = Math.min(_scale, 1)
+            tweenr.to(Geodata[name].mesh.scale, {
+                x: _scale,
+                y: _scale,
+                z: _scale,
+                duration: 2
+            })
+        }
+    }
+
+    showBought() {
+        let max = 0
+        for (const name in Geodata) {
+            if (Geodata[name].data.bought > max) {
+                max = Geodata[name].data.bought
+            }
+        }
+        for (const name in Geodata) {
+            const _scale = Geodata[name].data.bought / max * MAX_VIS_HEIGHT
+            tweenr.to(Geodata[name].mesh.scale, {
+                x: _scale,
+                y: _scale,
+                z: _scale,
+                duration: 2
+            })
+        }
+    }
+
+    _cleanName(name) {
+        if (name.startsWith('Germany')) {
+            return 'Germany'
+        } else if (name.startsWith('Taiwan')) {
+            return 'Taiwan'
+        } else if (name.startsWith('UAE')) {
+            return 'Saudi Arabia'
+        } else {
+            return name
+        }
+    }
+
+    update(dt) {
+        super.update(dt)
+        if (!this.ready) return
+
+        if (this.conf.audio) {
+            const low = this.aaa.getLowFreq(),
+                mid = this.aaa.getMidFreq(),
+                high = this.aaa.getHighFreq()
+
+            for (const name in Geodata) {
+                let _scale = 1
+                if (Geodata[name].freq === 0) {
+                    _scale += low * 0.5
+                } else if (Geodata[name].freq === 1) {
+                    _scale += mid * 0.5
+                } else if (Geodata[name].freq === 2) {
+                    _scale += high * 0.5
+                }
+                Geodata[name].mesh.scale.set(_scale, _scale, _scale)
+            }
+        }
     }
 
     createRingGeomtry(radius) {
@@ -179,128 +325,3 @@ default class Countries extends AObject {
         return ringMesh
     }
 }
-
-
-const mapVS = glslify(`
-    #pragma glslify: snoise4 = require(glsl-noise/simplex/4d)
-#pragma glslify: PI = require(glsl-pi)
-#pragma glslify: ease = require(glsl-easings/quadratic-in)
-
-attribute vec3 color;
-attribute vec3 extra;
-attribute vec2 puv;
-
-
-uniform float uTime;
-uniform float uTimeInit;
-uniform float uAnimationSphere;
-uniform float uAnimationFlat;
-
-uniform vec2 uMatrightBottom;
-uniform vec2 uMatleftTop;
-uniform float uSphereRadius;
-
-
-varying vec2 vUv;
-varying vec3 vColor;
-
-
-        // convert the positions from a lat, lon to a position on a sphere.
-    vec3 latLongToVector3(float lat, float lon, float radius) {
-        float phi = (lat)*PI/180.0;
-        float theta = (lon-180.0)*PI/180.0;
-
-        float x = radius * cos(phi) * cos(theta);
-        float y = radius * cos(phi) * sin(theta);
-        float z = radius * sin(phi);
-
-        // return vec3(x,y,z);
-                // the above math calls Z up - 3D calls Y up
-                // i don't know why it has to be negative :P
-        return vec3(x,z,-y);
-    }
-
-        vec2 uvToLatLong(vec2 uvs, vec2 leftTop, vec2 rightBottom ) {
-                // uv coordinates go from bottom-left to top-right
-                // 0.0,0.0 is bottom left, 1.0,1.0 is top right, 0.5,0.5 is center
-                // latLong coords go depending on which demisphere you're in
-                float right = rightBottom.x;
-                float bottom = rightBottom.y;
-                float left = leftTop.x;
-                float top = leftTop.y;
-                float xDiff = right - left;
-                float yDiff = bottom - top;
-
-                // treat uv as a completion ratio from left to right and bottom to top
-                float xPercent = left + ( xDiff * uvs.x );
-                float yPercent = bottom - ( yDiff * uvs.y );
-
-                vec2 latlong = vec2( xPercent, yPercent );
-                return latlong;
-        }
-
-vec3 chaosPosition(vec3 pos) {
-  float vel = uTime * 0.05;
-  return vec3(pos.x + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1)) * 1000.,
-              pos.y + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1 + 1.25)) * 1000.,
-              pos.z + snoise4(vec4(pos.x, pos.y, pos.z, uTime * 0.1 + 12.25)) * 1000.);
-}
-
-
-   void main() {
-        vUv = uv;
-       vColor = color;
-     vec3 pos = position;
-
-
-      vec2 newLatLong = uvToLatLong(puv, uMatleftTop, uMatrightBottom);
-
-            vec3 spherePosition = latLongToVector3(newLatLong.y, newLatLong.x, uSphereRadius);
-      vec3 chaosPosition = chaosPosition(pos);
-      vec3 flatPosition = position;
-
-       vec3 newPosition = chaosPosition;
-
-     newPosition = mix( newPosition, spherePosition, ease(uAnimationSphere));
-     newPosition = mix( newPosition, flatPosition, ease(uAnimationFlat));
-
-
-      //newPosition.z += sin(newPosition.x * 0.01 + newPosition.y * 0.01 + uTime * 10.) * 200.;
-
-          vec4 mvPosition = modelViewMatrix * vec4( newPosition, 1.0 );
-
-        gl_Position = projectionMatrix * mvPosition;
-       
-       float size = 20.0;
-        //gl_PointSize = size * ( 300.0 / length( mvPosition.xyz ) );
-        gl_PointSize = size;
-      }
-
-
-`, {
-    inline: true
-})
-
-
-const mapFS = glslify(`
-
-varying vec2 vUv;
-varying vec3 vColor;
-
-uniform float uTime;
-
-        void main()
-        {
-          vec2 center = vec2(0.5, 0.5);
-          float t = 0.05 / length(gl_PointCoord - center);
-          t = pow(t, 2.5);
-          vec3 final = vec3(t);
-          final *= vColor;
-
-          gl_FragColor = vec4(final, 1.0);
-
-        }
-
-`, {
-    inline: true
-})

@@ -21,20 +21,14 @@ default class ExecutedScene extends AScene {
                     executed: false,
                     currentOn: false,
                     cageOpen: false,
+                    doNext: false,
+                    doSmash: false,
                 }, renderer, loader, aaa, camera),
                 s: new Scheduled('SCHEDULED', {
-                    data: scheduledData
+                    data: scheduledData,
+                    doNext: false
                 }, renderer, loader, aaa, camera)
             })
-
-        this.vis.c.addPar({
-            doNext: this.vis.c.doNext,
-            doSmash: this.vis.c.doSmash
-        })
-
-        this.vis.s.addPar({
-            doNext: this.vis.s.doNext
-        })
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
