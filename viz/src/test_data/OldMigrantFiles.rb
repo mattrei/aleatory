@@ -1,5 +1,5 @@
-require "google/apis/drive_v2"
-require "googleauth"
+require "google/api_client"
+require "google_drive"
 
 MIGRANTS_FILE_KEY = '1YNqIzyQfEn4i_be2GGWESnG2Q80E_fLASffsXdCOftI'
 
@@ -8,8 +8,7 @@ KEY_FILE = './Aleatory.p12'
 
 SA_ID = '262990023426-kl89afbq7bd53p3p7d7j076oorvoqr10@developer.gserviceaccount.com'
 
-drive = Google::Apis::DriveV2::DriveService.new
-
+client = Google::APIClient.new(application_name: 'Google Drive Ruby test', application_version: '0.0.1')
 key = Google::APIClient::KeyUtils.load_from_pkcs12(KEY_FILE, 'notasecret')
 asserter = Google::APIClient::JWTAsserter.new(
     SA_ID,

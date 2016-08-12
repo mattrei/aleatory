@@ -27,7 +27,7 @@ const MAX_VIS_HEIGHT = 10
 
 
 export
-default class Countries extends AObject {
+default class Weapons extends AObject {
     constructor(name, conf, renderer, loader, aaa, camera) {
         super(name, conf)
 

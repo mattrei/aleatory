@@ -49,6 +49,12 @@ default class Globe extends AObject {
         this.initDrones()
     }
 
+    _parseData() {
+        const DATA = require('./test_data/drone-strikes-pakistan-data.json')
+        console.log(DATA)
+
+    }
+
     _posOnSphere(obj, coords) {
         var x = coords.x;
         var y = coords.y;

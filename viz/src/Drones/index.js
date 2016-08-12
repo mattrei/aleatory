@@ -2,7 +2,7 @@ import AScene from '../AScene'
 
 import Map from './Map'
 import Globe from './Globe'
-import Weapons from './Countries'
+import Weapons from './Weapons'
 
 export
 default class DronesScene extends AScene {

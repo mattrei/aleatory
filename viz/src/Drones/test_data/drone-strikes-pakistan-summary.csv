@@ -1,0 +1,44 @@
+Year,CIA Drone Strikes,Minimum people killed,Maximum people killed,Minimum civilians killed,Maximum civilians killed,Minimum children killed,Maximum children killed,Minimum people injured,Maximum people injured
+  2004,1,6,8,2,2,2,2,1,1
+  2005,3,16,16,5,11,4,5,1,1
+  2006,2,94,105,90,100,73,76,3,3
+  2007,5,36,56,11,46,1,1,20,37
+  2008,38,252,401,59,173,26,45,146,228
+  2009,54,471,753,100,210,36,39,266,404
+  2010,128,755,"1,108",89,197,23,23,351,428
+  2011,75,362,666,52,152,6,11,158,236
+  2012,50,212,410,13,63,1,2,100,212
+  2013,27,109,195,0,4,0,1,43,89
+  2014,25,115,186,0,2,0,2,44,67
+  2015,13,60,85,2,5,0,0,25,32
+  2016,3,11,12,1,1,0,0,3,6
+TOTAL,424,"2,499","4,001",424,966,172,207,"1,161","1,744"
+,,,,,,,,,
+US President,Strikes,Minimum people killed,Maximum people killed,Minimum civilians killed,Maximum civilians killed,Minimum children killed,Maximum children killed,Minimum people injured,Maximum people injured
+"George Bush
+January 20 2001 to January 20 2009",51,410,595,167,332,106,129,175,277
+"Barack Obama
+January 20 2009 to present",373,"2,089","3,406",257,634,66,78,986,"1,467"
+"Percentage increase/decrease from Pres Bush to Pres Obama
+",631%,410%,472%,54%,91%,-38%,-40%,463%,430%
+,,,,,,,,,
+Year,Total casualty rate,Civilian casual rate,,,,,,,
+  2004,6.0,2.0,,,,,,,
+  2005,5.3,1.7,,,,,,,
+  2006,47.0,45.0,,,,,,,
+  2007,7.2,2.2,,,,,,,
+  2008,6.6,1.6,,,,,,,
+  2009,8.7,1.9,,,,,,,
+  2010,5.9,0.7,,,,,,,
+  2011,4.8,0.7,,,,,,,
+  2012,4.2,0.3,,,,,,,
+  2013,4.0,0.0,,,,,,,
+  2014,4.6,0.0,,,,,,,
+  2015,4.6,0.2,,,,,,,
+  2016,3.7,0.3,,,,,,,
+,,,,,,,,,
+US President,Total casualty rate,Civilian casual rate,,,,,,,
+"George Bush
+January 20 2001 to January 20 2009",8.0,3.3,,,,,,,
+"Barack Obama
+January 20 2009 to present",5.6,0.7,,,,,,,
