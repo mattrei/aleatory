@@ -19,6 +19,10 @@ import AObject from '../AObject'
 
 import Color from 'color'
 
+const NUM_POINTS = 10,
+    LENGTH = 10 * NUM_POINTS,
+    WIDTH = 6
+
 export
 default class Terrain extends AObject {
 
@@ -46,7 +50,71 @@ default class Terrain extends AObject {
         this.orbCamera = camera
 
 
+        this.meshes = []
+        this.ready = false
+
+
+    }
+
+    _genPoints() {
+        const points = []
+        for (let i = 0; i < NUM_POINTS+1; i++) {
+            points.push(new THREE.Vector2(random(-2, 2), random(0, 1)))
+        }
+        return points
+    }
+
+    init() {
+
+        const points = this._genPoints()
+        this.spline = new THREE.CatmullRomCurve3(points)
+
+        const geometry = new THREE.PlaneBufferGeometry(
+            5, NUM_POINTS,
+            WIDTH, LENGTH)
+        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
+
+        const positions = geometry.attributes.position.array
+
+        console.log(positions.length)
+        console.log(positions.length / (WIDTH + 1))
+
+        for (let i=0; i < LENGTH + 1; i++) {
+
+            const position = this.spline.getPoint(i / (LENGTH + 1))
+            for (let j=0, j3=0; j < WIDTH + 1; j++, j3+=3) {
+                const _idx = (i*(WIDTH + 1) * 3) + j3
+
+                positions[_idx + 0] += position.x
+                positions[_idx + 1] += position.y
+            }
+        }
+
+
+        geometry.attributes.position.needsUpdate = true
+        const colors = new Float32Array(positions.length)
+        geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+
+/*
+        const material = new THREE.MeshPhongMaterial({
+            color: new THREE.Color(0xffebff),
+            shading: THREE.FlatShading,
+            side: THREE.DoubleSide,
+            wireframe: true,
+            vertexColors: THREE.VertexColors,
+            transparent: true
+        })
+*/
+        const material = new THREE.MeshNormalMaterial({wireframe: true})
+
+        const plane = new THREE.Mesh(geometry, material)
+        this.add(plane)
+
+
+        //this.initOrb()
+
         //this.initPlane()
+        /*
         this.initLights()
         this.plane1 = this.initPlane()
         this.plane2 = this.initPlane()
@@ -54,23 +122,22 @@ default class Terrain extends AObject {
         this.plane2.position.set(0, 0, -this.PLANE_DEPTH * 1.5)
 
 
-        this.meshes = []
-        this.ready = false
-
-
-    }
-
-    init() {
-
-        this.initOrb()
-
         this.initTerrain(this.plane1, 1)
         this.initTerrain(this.plane2, 1)
 
         this.initMountainTerrain(this.plane1, 1)
         this.initMountainTerrain(this.plane2, 1)
+        */
 
     }
+
+    initPlane() {
+
+
+        
+        return plane
+    }
+
 
     initOrb() {
         this.loader.load(
@@ -113,36 +180,9 @@ default class Terrain extends AObject {
         dirLight.position.set(-1, 1.75, 1);
         dirLight.position.multiplyScalar(50);
         dirLight.castShadow = true;
-        dirLight.shadowMapWidth = 2048;
-        dirLight.shadowMapHeight = 2048;
         //this.group.add(dirLight)
     }
 
-    initPlane() {
-
-
-        const geometry = new THREE.PlaneBufferGeometry(this.PLANE_WIDTH, this.PLANE_DEPTH,
-            this.PLANE_WIDTH, this.PLANE_DEPTH)
-        geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
-
-        const positions = geometry.attributes.position.array
-
-        const colors = new Float32Array(positions.length)
-        geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-
-        const material = new THREE.MeshPhongMaterial({
-            color: new THREE.Color(0xffebff),
-            shading: THREE.FlatShading,
-            side: THREE.DoubleSide,
-            wireframe: true,
-            vertexColors: THREE.VertexColors,
-            transparent: true
-        })
-
-        const plane = new THREE.Mesh(geometry, material)
-        this.add(plane)
-        return plane
-    }
 
     generateHeight(width, height, zpos, time) {
         let size = width * height,
@@ -342,7 +382,7 @@ default class Terrain extends AObject {
 
     update(dt) {
 
-        if (!super.update(dt)) return
+        super.update(dt)
 
         if (!this.ready) return
 

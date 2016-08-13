@@ -16,6 +16,9 @@ import AObject from '../AObject'
 // satellite
 // https://github.com/ykob/sketch-threejs
 
+
+// http://stackoverflow.com/questions/11165607/creating-a-spline-curve-between-2-points-in-three-js
+
 const RADIUS = 1
 
 const ALTITUDE = RADIUS * 2
