@@ -29,11 +29,7 @@ default class IntroScene extends AScene {
                     wireframe: true
                 }),
                 t: new Terrain('TERRAIN', {
-                    speed: 0.5,
-                    mountainHeight: 0.5,
-                    terrainHeight: 0.5,
-                    yDistortion: 0.5,
-                    xDistortion: 0.5
+                    speed: 0.5
                 }, renderer, loader, aaa, camera)
             })
 
