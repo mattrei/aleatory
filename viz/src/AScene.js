@@ -110,7 +110,7 @@ default class AScene extends THREE.Scene {
 
         if (this.isStopped) return
 
-        if (this.currentVis) {
+        if (this.currentVis && this.currentVis.isInitialized2()) {
             this.currentVis.update(delta)
         }
 

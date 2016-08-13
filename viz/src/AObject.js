@@ -34,6 +34,10 @@ default class AObject extends THREE.Object3D {
         })
     }
 
+    isInitialized2() {
+        return this.isInitialized
+    }
+
     getConf() {
         return this.conf
     }
@@ -55,7 +59,7 @@ default class AObject extends THREE.Object3D {
         this.isStopped = false
         this.visible = true
 
-        if (!this.isInitialized) {
+        if (!this.isInitialized2()) {
             this.init()
             this.isInitialized = true
         }

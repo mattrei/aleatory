@@ -20,7 +20,7 @@ default class IntroScene extends AScene {
             args, {
                 p: new Particles('PARTICLES', {
                     timeScale: 1
-                }, renderer, loader, aaa),
+                }, renderer, loader, aaa, camera),
                 s: new Street('STREET', {
                     speed: 0.5,
                     cars: true

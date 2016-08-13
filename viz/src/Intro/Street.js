@@ -149,7 +149,7 @@ default class Street extends AObject {
 
 
 
-    updateCars(delta) {
+    updateCars(dt) {
 
         const SPEED = 0.4
 
@@ -160,7 +160,7 @@ default class Street extends AObject {
             pair[0].position.set(pos.x + STREET_WIDTH / 8, pos.y, pos.z)
             pair[1].position.set(pos.x + STREET_WIDTH / 8 * 2, pos.y, pos.z)
 
-            pair._offset -= pair._speed * delta
+            pair._offset -= pair._speed * dt
             if (pair._offset < 0) pair._offset = this.spline.getLength()
         })
 
@@ -172,18 +172,14 @@ default class Street extends AObject {
             pair[0].position.set(pos.x - STREET_WIDTH / 8, pos.y, pos.z)
             pair[1].position.set(pos.x - STREET_WIDTH / 8 * 2, pos.y, pos.z)
 
-            pair._offset += pair._speed * delta
+            pair._offset += pair._speed * dt
             if (pair._offset > this.spline.getLength()) pair._offset = 0
         })
 
 
     }
 
-    update(dt) {
-
-        if (!super.update(dt)) return
-
-        if (!this.ready) return
+    updateCamera(dt) {
 
         this.tick += dt
         const time = this.tick
@@ -198,6 +194,15 @@ default class Street extends AObject {
         camera.position.y += 0.1
         camera.lookAt(this.spline.getPointAt(tn))
 
+    }
+
+    update(dt) {
+
+        if (!super.update(dt)) return
+
+        if (!this.ready) return
+
+        this.updateCamera(dt)
         if (this.conf.cars) this.updateCars(dt)
     }
 

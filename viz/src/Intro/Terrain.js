@@ -8,6 +8,7 @@ const noise = new(require('noisejs').Noise)(Math.random())
 
 const simplex = new(require('simplex-noise'))()
 const smoothstep = require('smoothstep')
+const clamp = require('clamp')
 
 const random = require('random-float')
 const randomInt = require('random-int')
@@ -20,7 +21,7 @@ import AObject from '../AObject'
 import Color from 'color'
 
 const NUM_POINTS = 100,
-    LENGTH = 60 * NUM_POINTS,
+    LENGTH = 10 * NUM_POINTS,
     WIDTH = 30
 
 const MOUNTAIN_HEIGHT = 3,
@@ -38,14 +39,7 @@ default class Terrain extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.ORB_COLOR = new THREE.Color(0xff00ff)
-
-        this.orb = null
-        this.orbLight = null
-        this.orbCamera = camera
-
-        this.ready = false
-
+        this.tick = 0
     }
 
 
@@ -53,17 +47,18 @@ default class Terrain extends AObject {
     _genPoints() {
 
         const _y = (z) => {
-            return simplex.noise2D(z * 0.1, 0.1) * 1.5
+            return simplex.noise2D(z * 0.1, 0.1) * 3
         }
 
         const _x = (z) => {
-            return simplex.noise2D(z * 0.1, 0.1) * 2
+            return simplex.noise2D(z * 0.01, 0.2) * 10
         }
 
         const points = []
             // TODO maybe generate points with distortition that gets high when reaching end
         for (let i = 0; i < NUM_POINTS + 1; i++) {
-            points.push(new THREE.Vector2(_x(i), _y(i)))
+            points.push(new THREE.Vector3(_x(i), _y(i), i))
+            //points.push(new THREE.Vector3(random(-2, 2), random(0, 2), i))
         }
         return points
     }
@@ -94,11 +89,12 @@ default class Terrain extends AObject {
 
                 positions[_idx + 0] += position.x
                 positions[_idx + 1] += position.y
+                positions[_idx + 2] = position.z
 
 
-                const height = simplex.noise2D(i * 0.01, j * 0.1)
-                let valleyFactor = Math.pow(Math.abs(j / (WIDTH + 1) - 0.5), 0.4)
-                if (valleyFactor < 0.2) {
+                const height = simplex.noise2D(i * 0.007, j * 0.08)
+                let valleyFactor = Math.pow(Math.abs(j / (WIDTH + 1) - 0.5), 0.2)
+                if (valleyFactor < 0.3) {
                     valleyFactor = 0
                 }
 
@@ -138,7 +134,6 @@ default class Terrain extends AObject {
         const plane = new THREE.Mesh(geometry, material)
         this.add(plane)
         this.plane = plane
-
     }
 
     initOrb() {
@@ -161,7 +156,8 @@ default class Terrain extends AObject {
         this.add(light)
         this.orbLight = light
 
-        this.orbCamera.position.set(sprite.position.x,
+        this.orbCamera.position.set(
+            sprite.position.x,
             sprite.position.y,
             sprite.position.z + 10)
     }
@@ -172,8 +168,6 @@ default class Terrain extends AObject {
             new THREE.Color(0xffffff),
             new THREE.Color(0xffffff), 0.8)
         this.add(hlight)
-
-
 
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
         dirLight.color.setHSL(0.1, 1, 0.95);
@@ -198,22 +192,6 @@ default class Terrain extends AObject {
         pos.copy(v)
         this.orbCamera.position.copy(vc)
         this.orbCamera.lookAt(v)
-    }
-
-    updateTerrain(plane, time) {
-        const speed = this.conf.speed * 0.6
-
-        const height = this.MOUNTAIN_HEIGHT * this.conf.mountHeight,
-            terrainHeight = this.conf.terrainHeight * this.TERRAIN_HEIGHT
-
-        const positions = plane.geometry.attributes.position.array,
-            colors = plane.geometry.attributes.color.array
-
-        for (var i = 0, j = 0; i < positions.length; i++, j += 3) {
-            const depthIdx = Math.floor(i / this.PLANE_WIDTH)
-            positions[j + 1] += simplex.noise3D(i, plane.position.z - depthIdx, time) * 0.01
-        }
-        plane.geometry.attributes.position.needsUpdate = true
     }
 
     addRndMesh() {
@@ -273,39 +251,35 @@ default class Terrain extends AObject {
             }
         })
     }
-    _firstPlane() {
-        return this.plane1.position.z > this.plane2.position.z ? this.plane1 : this.plane2
-    }
-    _secondPlane() {
-        return this.plane1.position.z < this.plane2.position.z ? this.plane1 : this.plane2
+
+    updateCamera(dt) {
+
+        this.tick += dt
+        const time = this.tick
+
+        const t = (time * this.conf.speed % this.spline.getLength()) / this.spline.getLength(),
+            tn = ((time + 5) * this.conf.speed % this.spline.getLength()) / this.spline.getLength()
+
+        const p = this.spline.getPointAt(t)
+
+        this.camera.position.copy(p)
+        this.camera.position.y += 2
+        this.camera.lookAt(this.spline.getPointAt(tn))
     }
 
     update(dt) {
 
         super.update(dt)
 
-        if (!this.ready) return
-
+        //this.updateCamera(dt)
         if (this.orb) {
             this.updateOrb(dt)
 
-            const firstPlane = this._firstPlane(),
-                secondPlane = this._secondPlane()
-
-            if (this.orb.position.z + this.CAMERA_ORB_DIST < firstPlane.position.z - this.PLANE_DEPTH * 0.5) {
-                firstPlane.position.setZ(secondPlane.position.z - this.PLANE_DEPTH)
-
-                this.initTerrain(firstPlane, time)
-                this.initMountainTerrain(firstPlane, time)
-            }
-
-            if (Math.random() > 0.99) {
-                this.addRndMesh()
-            }
+            //if (Math.random() > 0.99) {
+            //    this.addRndMesh()
+            //}
 
             this.updateMeshes(dt)
-            //this.updateTerrain(firstPlane, time)
-            //this.updateTerrain(secondPlane, time)
         }
     }
 
