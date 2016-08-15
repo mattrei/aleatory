@@ -94,7 +94,7 @@ default class AObject extends THREE.Object3D {
     }
 
     propChanged(prop, value) {
-        this.conf[prop] = value
+        //this.conf[prop] = value
         this.events.emit(prop, value)
     }
 

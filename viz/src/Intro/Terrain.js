@@ -4,8 +4,6 @@ const createComplex = require('../utils/createComplex')
 const geoPieceRing = require('geo-piecering')
 const geoArc = require('geo-arc')
 
-const noise = new(require('noisejs').Noise)(Math.random())
-
 const simplex = new(require('simplex-noise'))()
 const smoothstep = require('smoothstep')
 const clamp = require('clamp')
@@ -16,17 +14,23 @@ const randomInt = require('random-int')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
+import shaderParse from '../utils/shader-parse'
+
 import AObject from '../AObject'
 
 import Color from 'color'
+const Colors = require('nice-color-palettes')
 
 const NUM_POINTS = 100,
     LENGTH = 10 * NUM_POINTS,
-    WIDTH = 30
+    WIDTH = 30,
+    WIDTH_POINTS = 30
 
-const MOUNTAIN_HEIGHT = 3,
-    SNOW_HEIGHT = MOUNTAIN_HEIGHT - 1,
-    WATER_HEIGHT = 0
+const ORB_HEIGHT = 2
+
+const MOUNTAIN_HEIGHT = 6,
+    SNOW_HEIGHT = MOUNTAIN_HEIGHT - 2,
+    WATER_HEIGHT = 2
 
 export
 default class Terrain extends AObject {
@@ -40,6 +44,8 @@ default class Terrain extends AObject {
         this.camera = camera
 
         this.tick = 0
+
+        this.meshes = []
     }
 
 
@@ -51,7 +57,7 @@ default class Terrain extends AObject {
         }
 
         const _x = (z) => {
-            return simplex.noise2D(z * 0.01, 0.2) * 10
+            return simplex.noise2D(z * 0.06, 0.2) * 5
         }
 
         const points = []
@@ -65,14 +71,16 @@ default class Terrain extends AObject {
 
     init() {
 
+        //this.initLights()
+
         const speed = this.conf.speed * 0.5
 
         const points = this._genPoints()
         this.spline = new THREE.CatmullRomCurve3(points)
 
         const geometry = new THREE.PlaneBufferGeometry(
-            20, NUM_POINTS,
-            WIDTH, LENGTH)
+            WIDTH, NUM_POINTS,
+            WIDTH_POINTS, LENGTH)
         geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
 
         const positions = geometry.attributes.position.array
@@ -84,17 +92,17 @@ default class Terrain extends AObject {
             const heightFactor = MOUNTAIN_HEIGHT + (i / (LENGTH + 1) * MOUNTAIN_HEIGHT)
 
 
-            for (let j = 0, j3 = 0; j < WIDTH + 1; j++, j3 += 3) {
-                const _idx = (i * (WIDTH + 1) * 3) + j3
+            for (let j = 0, j3 = 0; j < WIDTH_POINTS + 1; j++, j3 += 3) {
+                const _idx = (i * (WIDTH_POINTS + 1) * 3) + j3
 
                 positions[_idx + 0] += position.x
                 positions[_idx + 1] += position.y
                 positions[_idx + 2] = position.z
 
 
-                const height = simplex.noise2D(i * 0.007, j * 0.08)
-                let valleyFactor = Math.pow(Math.abs(j / (WIDTH + 1) - 0.5), 0.2)
-                if (valleyFactor < 0.3) {
+                const height = Math.abs(simplex.noise2D(i * 0.007, j * 0.08))
+                let valleyFactor = Math.pow(Math.abs(j / (WIDTH_POINTS + 1) - 0.5), 0.7)
+                if (valleyFactor < 0.2) {
                     valleyFactor = 0
                 }
 
@@ -117,27 +125,67 @@ default class Terrain extends AObject {
         geometry.attributes.position.needsUpdate = true
         geometry.attributes.color.needsUpdate = true
 
-        /*
+
+
+        const defines = {}
+        const baseShader = THREE.ShaderLib.phong;
+        const baseUniforms = THREE.UniformsUtils.clone(baseShader.uniforms)
+
+        const myUniforms = {}
+
+        const uniforms = THREE.UniformsUtils.merge([
+            baseUniforms,
+            myUniforms
+        ])
+
         const material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(0xffebff),
             shading: THREE.FlatShading,
             side: THREE.DoubleSide,
-            wireframe: true,
+            wireframe: false,
+            fog: true,
             vertexColors: THREE.VertexColors,
             transparent: true
         })
-*/
-        const material = new THREE.MeshNormalMaterial({
+
+
+        /*
+        const material = new THREE.ShaderMaterial({
+            fragmentShader: shaderParse( FS ),
+            vertexShader: shaderParse( VS ),
+            defines: defines,
+            uniforms: uniforms,
+            transparent: true
+        })
+        material.needsUpdate = true
+        */
+
+        const material2 = new THREE.MeshNormalMaterial({
             wireframe: true
         })
 
         const plane = new THREE.Mesh(geometry, material)
         this.add(plane)
         this.plane = plane
+
+        super.on('speed', v => {
+            console.log(v)
+            console.log(this.conf.speed)
+            tweenr.to(this.conf, {
+                speed: v,
+                duration: 2
+            })
+        })
+
+        this.initOrb()
     }
 
     initOrb() {
 
+        const orb = new THREE.Object3D()
+        this.add(orb)
+
+        this.orb = orb
 
         const material = new THREE.SpriteMaterial({
             map: this.loader.load('/dist/assets/Intro/fireflie.png'),
@@ -147,19 +195,10 @@ default class Terrain extends AObject {
         })
 
         const sprite = new THREE.Sprite(material)
-        this.add(sprite)
-        this.orb = sprite
-        sprite.position.set(0, 3, 0)
+        orb.add(sprite)
 
         const light = new THREE.PointLight(this.ORB_COLOR, 1, 100);
-        light.position.copy(sprite.position)
-        this.add(light)
-        this.orbLight = light
-
-        this.orbCamera.position.set(
-            sprite.position.x,
-            sprite.position.y,
-            sprite.position.z + 10)
+        orb.add(light)
     }
 
     initLights() {
@@ -177,28 +216,11 @@ default class Terrain extends AObject {
         //this.group.add(dirLight)
     }
 
-
-    updateOrb(delta) {
-
-        const speed = this.conf.speed * delta * 7
-        const pos = this.orb.position
-
-        const z = pos.z - speed,
-            x = 0, //this._xDistortion(z),
-            y = this._yDistortion(z),
-            v = new THREE.Vector3(x * 2, y * 2 + 2, z),
-            vc = new THREE.Vector3(0, 3, z + this.CAMERA_ORB_DIST)
-
-        pos.copy(v)
-        this.orbCamera.position.copy(vc)
-        this.orbCamera.lookAt(v)
-    }
-
     addRndMesh() {
 
-        const radius = random(0, 2);
-        const numPieces = Math.floor(random(5, 40));
-        const pieceSize = random(0.25, 0.75);
+        const radius = random(0.1, 1.5)
+        const numPieces = Math.floor(random(8, 40))
+        const pieceSize = random(0.25, 0.75)
 
         const types = [
             geoArc({
@@ -213,74 +235,235 @@ default class Terrain extends AObject {
             geoPieceRing({
                 y: 0,
                 height: random(0.01, 1.0),
-                radius: random(0.1, 1.5),
+                radius: radius,
                 numPieces: numPieces,
                 quadsPerPiece: 1,
                 pieceSize: (Math.PI * 2) * 1 / numPieces * pieceSize
             })
         ]
 
-        const geometry = createComplex(types[1])
+        const geometry = createComplex(types[randomInt(0,1)])
         geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
-        const material = new THREE.MeshBasicMaterial({
+        
+        const material = new THREE.MeshPhongMaterial({
+            color: new THREE.Color(0xffffff),
             opacity: 1,
+            fog: true,
             side: THREE.DoubleSide
         });
 
-        let mesh = new THREE.Mesh(geometry, material)
-        mesh.position.z = this._secondPlane().position.z
+        const mesh = new THREE.Mesh(geometry, material)
+        mesh.scale.set(0.5, 0.5, 0.5)
+        mesh.time = random(1, 5)
         mesh.active = true
-        mesh.rotationFactor = random(-0.5, 0.5);
+        mesh.rotationFactor = randomInt(-50, 50)
         this.add(mesh)
         this.meshes.push(mesh)
+
+
+        const time = this.tick
+        const pos = this._getPosOnSpline(mesh.time)
+
+        pos.y += ORB_HEIGHT
+        mesh.position.copy(pos)
     }
 
     updateMeshes(dt) {
+
+        const time = this.tick
+
         this.meshes.forEach((m) => {
 
             if (m.active) {
-                m.rotation.z += dt * m.rotationFactor
-                m.position.z += dt * conf.speed * 10
-                m.position.y = this._yDistortion(m.position.z)
-                m.position.x = this._xDistortion(m.position.z)
 
-                if (m.position.z > (this.orb.position.z + this.CAMERA_ORB_DIST)) {
-                    m.active = false;
-                    m.visible = false;
+                m.rotation.z += 5//dt * m.rotationFactor
+                m.lookAt(this.camera.position)
+
+                if (m.position.z < this.camera.position.z) {
+                    m.active = false
+                    m.visible = false
+                    super.remove(m)
                 }
             }
         })
     }
 
+    _getPosOnSpline(time) {
+
+        const t = ((this.tick + time) * this.conf.speed * 5 % this.spline.getLength()) / this.spline.getLength()
+        return this.spline.getPointAt(t)
+    }
+
     updateCamera(dt) {
 
-        this.tick += dt
         const time = this.tick
 
-        const t = (time * this.conf.speed % this.spline.getLength()) / this.spline.getLength(),
-            tn = ((time + 5) * this.conf.speed % this.spline.getLength()) / this.spline.getLength()
+        const pos = this._getPosOnSpline(0),
+            posOrb = this._getPosOnSpline(0.5)
 
-        const p = this.spline.getPointAt(t)
+        pos.y += ORB_HEIGHT
+        posOrb.y += ORB_HEIGHT
 
-        this.camera.position.copy(p)
-        this.camera.position.y += 2
-        this.camera.lookAt(this.spline.getPointAt(tn))
+        this.camera.position.copy(pos)
+        this.camera.lookAt(posOrb)
+
+        this.orb.position.copy(posOrb)
     }
 
     update(dt) {
 
         super.update(dt)
 
-        //this.updateCamera(dt)
-        if (this.orb) {
-            this.updateOrb(dt)
+        this.tick += dt
 
-            //if (Math.random() > 0.99) {
-            //    this.addRndMesh()
-            //}
-
-            this.updateMeshes(dt)
+        this.updateCamera(dt)
+        this.updateMeshes(dt)
+        // TODO add when beat
+        if (Math.random() > 0.97) {
+            this.addRndMesh()
         }
     }
 
 }
+
+const VS = glslify(`
+//#pragma glslify: cnoise2 = require(glsl-noise/classic/2d);
+// #pragma glslify: snoise2 = require(glsl-noise/simplex/2d);
+// #pragma glslify: pnoise2 = require(glsl-noise/periodic/2d);
+
+//uniform float u_time;
+//uniform float u_speed;
+//uniform float u_amp;
+
+varying vec3 vViewPosition;
+
+
+#ifndef FLAT_SHADED
+
+    varying vec3 vNormal;
+
+#endif
+
+#include <common>
+#include <uv_pars_vertex>
+#include <uv2_pars_vertex>
+#include <displacementmap_pars_vertex>
+#include <envmap_pars_vertex>
+#include <color_pars_vertex>
+#include <morphtarget_pars_vertex>
+#include <skinning_pars_vertex>
+#include <shadowmap_pars_vertex>
+#include <logdepthbuf_pars_vertex>
+#include <clipping_planes_pars_vertex>
+
+void main() {
+
+    #include <uv_vertex>
+    #include <uv2_vertex>
+    #include <color_vertex>
+
+    #include <beginnormal_vertex>
+    #include <morphnormal_vertex>
+    #include <skinbase_vertex>
+    #include <skinnormal_vertex>
+    #include <defaultnormal_vertex>
+
+    #include <begin_vertex>
+    #include <displacementmap_vertex>
+    #include <morphtarget_vertex>
+    #include <skinning_vertex>
+    #include <project_vertex>
+    #include <logdepthbuf_vertex>
+    #include <clipping_planes_vertex>
+
+    #include <worldpos_vertex>
+    #include <envmap_vertex>
+    #include <shadowmap_vertex>
+
+    vNormal = normal;
+
+  //float displacement = u_amp * cnoise2( vec2( position * 0.05 ) + u_time * u_speed );
+  //vec3 newPosition = position + normal * displacement;
+
+  //mvPosition = modelViewMatrix * vec4( position, 1.0 );
+  //vViewPosition = - mvPosition.xyz;
+
+  gl_Position = projectionMatrix * modelViewMatrix * vec4( position, 1.0 );
+
+}
+`, {
+    inline: true
+})
+
+const FS = glslify(`
+#define PHONG
+
+uniform vec3 diffuse;
+uniform vec3 emissive;
+uniform vec3 specular;
+uniform float shininess;
+uniform float opacity;
+
+#include <common>
+#include <packing>
+#include <color_pars_fragment>
+#include <uv_pars_fragment>
+#include <uv2_pars_fragment>
+#include <map_pars_fragment>
+#include <alphamap_pars_fragment>
+#include <aomap_pars_fragment>
+#include <lightmap_pars_fragment>
+#include <emissivemap_pars_fragment>
+#include <envmap_pars_fragment>
+#include <fog_pars_fragment>
+#include <bsdfs>
+#include <lights_pars>
+#include <lights_phong_pars_fragment>
+#include <shadowmap_pars_fragment>
+#include <bumpmap_pars_fragment>
+#include <normalmap_pars_fragment>
+#include <specularmap_pars_fragment>
+#include <logdepthbuf_pars_fragment>
+#include <clipping_planes_pars_fragment>
+
+void main() {
+
+    #include <clipping_planes_fragment>
+
+    vec4 diffuseColor = vec4( diffuse, opacity );
+    ReflectedLight reflectedLight = ReflectedLight( vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ), vec3( 0.0 ) );
+    vec3 totalEmissiveRadiance = emissive;
+
+    #include <logdepthbuf_fragment>
+    #include <map_fragment>
+    #include <color_fragment>
+    #include <alphamap_fragment>
+    #include <alphatest_fragment>
+    #include <specularmap_fragment>
+    #include <normal_flip>
+    #include <normal_fragment>
+    #include <emissivemap_fragment>
+
+    // accumulation
+    #include <lights_phong_fragment>
+    #include <lights_template>
+
+    // modulation
+    #include <aomap_fragment>
+
+    vec3 outgoingLight = reflectedLight.directDiffuse + reflectedLight.indirectDiffuse + reflectedLight.directSpecular + reflectedLight.indirectSpecular + totalEmissiveRadiance;
+
+    #include <envmap_fragment>
+
+
+    gl_FragColor = vec4( outgoingLight, diffuseColor.a );
+
+    #include <premultiplied_alpha_fragment>
+    #include <tonemapping_fragment>
+    #include <encodings_fragment>
+    #include <fog_fragment>
+
+}
+`, {
+    inline: true
+})
