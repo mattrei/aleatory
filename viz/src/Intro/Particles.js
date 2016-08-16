@@ -166,15 +166,12 @@ default class Particles extends AObject {
     }
 
     update(dt) {
-        if (!super.update(dt)) return
+        super.update(dt)
 
         const delta = dt * this.conf.timeScale
 
         this.tick += dt
         if (this.tick < 0) this.tick = 0
-
-
-        if (!this.ready) return
 
         this.gpuCompute.compute()
 

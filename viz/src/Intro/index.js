@@ -37,7 +37,7 @@ default class IntroScene extends AScene {
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.t)
+        this.setVis(this.vis.p)
 
         //this.fog = new THREE.FogExp2(0x000000, 0.15);
 

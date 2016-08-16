@@ -87,6 +87,7 @@
     "random-float": "^1.0.0",
     "random-int": "^1.0.0",
     "random-spherical": "^1.1.1",
+    "randomcolor": "^0.4.4",
     "right-now": "^1.0.0",
     "run-parallel": "^1.1.6",
     "shader-particle-engine": "^1.0.1",

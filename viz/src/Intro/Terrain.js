@@ -53,7 +53,7 @@ default class Terrain extends AObject {
     _genPoints() {
 
         const _y = (z) => {
-            return simplex.noise2D(z * 0.1, 0.1) * 3
+            return simplex.noise2D(z * 0.05, 0.1)
         }
 
         const _x = (z) => {
@@ -140,7 +140,7 @@ default class Terrain extends AObject {
 
         const material = new THREE.MeshPhongMaterial({
             color: new THREE.Color(0xffebff),
-            shading: THREE.FlatShading,
+            //shading: THREE.FlatShading,
             side: THREE.DoubleSide,
             wireframe: false,
             fog: true,
@@ -197,28 +197,14 @@ default class Terrain extends AObject {
         const sprite = new THREE.Sprite(material)
         orb.add(sprite)
 
-        const light = new THREE.PointLight(this.ORB_COLOR, 1, 100);
+        const light = new THREE.PointLight(this.ORB_COLOR, 1, 20);
         orb.add(light)
     }
 
-    initLights() {
-
-        const hlight = new THREE.HemisphereLight(
-            new THREE.Color(0xffffff),
-            new THREE.Color(0xffffff), 0.8)
-        this.add(hlight)
-
-        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
-        dirLight.color.setHSL(0.1, 1, 0.95);
-        dirLight.position.set(-1, 1.75, 1);
-        dirLight.position.multiplyScalar(50);
-        dirLight.castShadow = true;
-        //this.group.add(dirLight)
-    }
 
     addRndMesh() {
 
-        const radius = random(0.1, 1.5)
+        const radius = random(0.1, 1.0)
         const numPieces = Math.floor(random(8, 40))
         const pieceSize = random(0.25, 0.75)
 
@@ -228,7 +214,7 @@ default class Terrain extends AObject {
                 startRadian: random(-Math.PI, Math.PI),
                 endRadian: random(-Math.PI, Math.PI),
                 innerRadius: radius,
-                outerRadius: radius + random(0.005, 0.15),
+                outerRadius: radius + random(0.05, 0.15),
                 numBands: 2,
                 numSlices: 90,
             }),
@@ -242,21 +228,28 @@ default class Terrain extends AObject {
             })
         ]
 
-        const geometry = createComplex(types[randomInt(0,1)])
+        const geometry = createComplex(types[randomInt(0, 1)])
         geometry.applyMatrix(new THREE.Matrix4().makeRotationX(Math.PI / 2))
-        
-        const material = new THREE.MeshPhongMaterial({
-            color: new THREE.Color(0xffffff),
-            opacity: 1,
+
+        const material = new THREE.MeshBasicMaterial({
+            //color: new THREE.Color(0xffffff),
             fog: true,
-            side: THREE.DoubleSide
-        });
+            side: THREE.DoubleSide,
+            opacity: 0,
+            transparent: true
+        })
+
+        tweenr.to(material, {
+          opacity: 1,
+          duration: random(0.2, 1)
+        })
 
         const mesh = new THREE.Mesh(geometry, material)
         mesh.scale.set(0.5, 0.5, 0.5)
         mesh.time = random(1, 5)
+        mesh.speed = random(1, 3)
         mesh.active = true
-        mesh.rotationFactor = randomInt(-50, 50)
+        mesh.rotationFactor = random(-0.5, 0.5)
         this.add(mesh)
         this.meshes.push(mesh)
 
@@ -264,7 +257,6 @@ default class Terrain extends AObject {
         const time = this.tick
         const pos = this._getPosOnSpline(mesh.time)
 
-        pos.y += ORB_HEIGHT
         mesh.position.copy(pos)
     }
 
@@ -272,26 +264,40 @@ default class Terrain extends AObject {
 
         const time = this.tick
 
-        this.meshes.forEach((m) => {
+        this.meshes.forEach((m, i) => {
 
             if (m.active) {
 
-                m.rotation.z += 5//dt * m.rotationFactor
+                m.time -= dt * this.conf.speed * m.speed
+                const pos = this._getPosOnSpline(m.time)
+                m.position.copy(pos)
+
                 m.lookAt(this.camera.position)
+                m.rotation.z += (dt / 1000) * m.rotationFactor
+                if (m.isGroup) {
+                    m.children.forEach(child => {
+                        child.rotation.x += (dt / 1000)
+                    })
+                }
+
 
                 if (m.position.z < this.camera.position.z) {
                     m.active = false
                     m.visible = false
                     super.remove(m)
+                    this.meshes.splice(i, 1)
                 }
             }
         })
     }
 
-    _getPosOnSpline(time) {
+    _getPosOnSpline(time, height = ORB_HEIGHT) {
 
-        const t = ((this.tick + time) * this.conf.speed * 5 % this.spline.getLength()) / this.spline.getLength()
-        return this.spline.getPointAt(t)
+        const t = ((this.tick + time) * this.conf.speed * 5 % this.spline.getLength()) / this.spline.getLength(),
+            pos = this.spline.getPointAt(t)
+        pos.y += height
+
+        return pos
     }
 
     updateCamera(dt) {
@@ -300,9 +306,6 @@ default class Terrain extends AObject {
 
         const pos = this._getPosOnSpline(0),
             posOrb = this._getPosOnSpline(0.5)
-
-        pos.y += ORB_HEIGHT
-        posOrb.y += ORB_HEIGHT
 
         this.camera.position.copy(pos)
         this.camera.lookAt(posOrb)
