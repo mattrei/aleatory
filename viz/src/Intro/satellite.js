@@ -1,10 +1,18 @@
+const glslify = require('glslify')
+const random = require('random-float')
+const randomInt = require('random-int')
+
 const MAX_PARTICLES = 10000
 
-export class Satellite extends THREE.Object3D {
-    constructor(loader, radius) {
+export default class Satellite extends THREE.Object3D {
+    constructor(loader, aaa, color, xradius, yradius, zradius) {
         super()
 
-        this.pos = new THREE.Object3D(radius, 0, 0)
+        this.loader = loader
+        this.aaa = aaa
+        this.color = color
+
+        this.pos = new THREE.Object3D(xradius, yradius, zradius)
 
         this.nbParticles = 0;
 
@@ -14,41 +22,25 @@ export class Satellite extends THREE.Object3D {
         this.life = 2.0;
         this.size = 1.0;
         this.spawnRate = 400;
-        this.horizontalSpeed = 0.8;
-        this.verticalSpeed = 0.8;
-        this.maxVelocityX = 0.3;
-        this.maxVelocityY = 0.6;
+        this.horizontalSpeed = random(1, 2)
+        this.verticalSpeed = random(3, 4)
+        this.maxVelocityX = random(0.2, 1)
+        this.maxVelocityY = random(0.7, 1.5)
 
-        this.xRadius = radius * 1
-        this.yRadius = radius * 1
-        this.zRadius = radius * 1
+        this.freqType = randomInt(0, 2)
+
+        this.xRadius = xradius * 1
+        this.yRadius = yradius * 1
+        this.zRadius = zradius * 1
         this.startTime = 0.0;
 
         this.velocity = new THREE.Vector3(0, 0, 0);
 
-        this.particleSpriteTex = loader.load('/dist/assets/Drones/satelliteparticle.png')
-
-        this.geom = new THREE.BufferGeometry();
-        this.mat = new THREE.ShaderMaterial({
-            uniforms: {
-                time: {
-                    type: 'f',
-                    value: 0.0
-                },
-                tSprite: {
-                    type: 't',
-                    value: this.particleSprite
-                },
-            },
-            vertexShader: this._VS(),
-            fragmentShader: this._FS(),
-            depthTest: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-        });
-
         this.init()
+    }
 
+    setYRadius(r) {
+        this.yRadius = r
     }
 
     _FS() {
@@ -56,9 +48,10 @@ export class Satellite extends THREE.Object3D {
         varying float lifeLeft;
 
 uniform sampler2D sprite;
+uniform vec3 uColor;
 
 void main() {
-  vec3 color = vec3(0., 0.650, 0.4);
+  vec3 color = uColor;
   vec4 tex = texture2D( sprite, gl_PointCoord );
   float alpha = lifeLeft * .25;
 
@@ -74,7 +67,7 @@ void main() {
         return glslify(`
         #pragma glslify: pnoise = require(glsl-noise/periodic/3d.glsl)
 
-uniform float time;
+uniform float uTime;
 
 attribute vec3 velocity;
 attribute float startTime;
@@ -97,7 +90,7 @@ void main() {
   vec3 newPosition;
   vec3 vel;
 
-  float elapsedTime = time - startTime;
+  float elapsedTime = uTime - startTime;
   float timeOnLife = elapsedTime / life;
 
   lifeLeft = 1.0 - timeOnLife;
@@ -123,6 +116,29 @@ void main() {
     }
 
     init() {
+
+        this.geom = new THREE.BufferGeometry();
+        this.mat = new THREE.ShaderMaterial({
+            uniforms: {
+                uTime: {
+                    value: 0.0
+                },
+                uColor: {
+                    value: new THREE.Color(this.color)
+                },
+                tSprite: {
+                    value: this.loader.load('/dist/assets/Drones/satelliteparticle.png')
+                },
+            },
+            vertexShader: this._VS(),
+            fragmentShader: this._FS(),
+            depthTest: true,
+            transparent: false,
+            blending: THREE.AdditiveBlending,
+        });
+
+
+
         this.positions = new Float32Array(MAX_PARTICLES * 3);
         this.velocities = new Float32Array(MAX_PARTICLES * 3);
         this.startTimes = new Float32Array(MAX_PARTICLES)
@@ -142,14 +158,17 @@ void main() {
         this.add(mesh)
 
         this.mesh = mesh
+
+        const light = new THREE.PointLight(this.color, 1, random(20, 30))
+        this.add(light)
     }
 
     spawnParticle() {
         let i = this.nbParticles;
 
-        this.positions[i * 3 + 0] = this.pos.x + (Math.random() - 0.5) * 0.07;
-        this.positions[i * 3 + 1] = this.pos.y + (Math.random() - 0.5) * 0.07;
-        this.positions[i * 3 + 2] = this.pos.z + (Math.random() - 0.5) * 0.07;
+        this.positions[i * 3 + 0] = this.position.x + (Math.random() - 0.5) * 0.07;
+        this.positions[i * 3 + 1] = this.position.y + (Math.random() - 0.5) * 0.07;
+        this.positions[i * 3 + 2] = this.position.z + (Math.random() - 0.5) * 0.07;
 
         this.velocities[i * 3 + 0] = this.velocity.x + (Math.random() - 0.5) * 0.55;
         this.velocities[i * 3 + 1] = this.velocity.y + (Math.random() - 0.5) * 0.55;
@@ -166,6 +185,33 @@ void main() {
         }
     }
 
+    _getLowFreq() {
+        if (this.freqType == 0)
+            return this.aaa.getLowFreq()
+        else if (this.freqType == 1)
+            return this.aaa.getMidFreq()
+        else
+            return this.aaa.getHighFreq()
+    }
+
+    _getMidFreq() {
+        if (this.freqType == 0)
+            return this.aaa.getMidFreq()
+        else if (this.freqType == 1)
+            return this.aaa.getLowFreq()
+        else
+            return this.aaa.getMidFreq()
+    }
+
+    _getHighFreq() {
+        if (this.freqType == 0)
+            return this.aaa.getHighFreq()
+        else if (this.freqType == 1)
+            return this.aaa.getHighFreq()
+        else
+            return this.aaa.getLowFreq()
+    }
+
     update(dt) {
 
         if (!this.mesh || !this.mesh.visible) {
@@ -174,23 +220,26 @@ void main() {
 
         this.tick += dt * 0.1
 
-        const t = this.tick,
-            s = 1
+        const t = this.tick
 
-        this.pos.x = Math.cos(t) * this.xRadius;
-        this.pos.y = Math.sin(t * this.verticalSpeed) * (this.yRadius + s);
-        this.pos.z = Math.sin(t) * this.zRadius;
+        const low = this._getLowFreq(),
+            mid = this._getMidFreq(),
+            high = this._getHighFreq()
 
-        this.velocity.x = Math.sin((t + s) * this.maxVelocityX);
-        this.velocity.y = Math.cos((t + s) * this.maxVelocityY);
-        this.velocity.z = (Math.sin((t + s) * this.maxVelocityX) + Math.cos((t + s) * this.maxVelocityY));
+        this.position.x = Math.cos(t) * this.xRadius
+        this.position.y = Math.sin(t * this.verticalSpeed) * (this.yRadius);
+        this.position.z = Math.sin(t) * this.zRadius
 
-        for (let x = 0; x < this.spawnRate * s; x++) {
+        this.velocity.x = Math.sin((t + mid) * this.maxVelocityX);
+        this.velocity.y = Math.cos((t + low) * this.maxVelocityY);
+        this.velocity.z = (Math.sin((t + high) * this.maxVelocityX) + Math.cos((t + low) * this.maxVelocityY));
+
+        for (let x = 0; x < this.spawnRate * 1; x++) {
             this.spawnParticle();
         }
 
         this.startTime = t;
-        this.mat.uniforms.time.value += dt * 0.1
+        this.mat.uniforms.uTime.value += dt * 0.1
 
         this.geom.attributes.position.needsUpdate = true;
         this.geom.attributes.velocity.needsUpdate = true;
