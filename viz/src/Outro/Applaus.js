@@ -10,6 +10,10 @@ const glslify = require('glslify')
 
 const randomColor = require('randomcolor')
 
+const createTextGeometry = require('three-bmfont-text')
+const loadFont = require('load-bmfont')
+const createSDF = require('three-bmfont-text/shaders/sdf')
+
 import GPUComputationRenderer from '../utils/GPUComputationRenderer'
 
 import AObject from '../AObject'
@@ -30,14 +34,68 @@ default class Applaus extends AObject {
         this.aaa = aaa
     }
 
-    _getPixel(imgData, x, y) {
-        let r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
-        r = imgData.data[offset];
-        g = imgData.data[offset + 1];
-        b = imgData.data[offset + 2];
-        a = imgData.data[offset + 3];
+    initText() {
+        loadFont('/dist/fnt/Fascinate.fnt', (err, font) => {
+            const geometry = createTextGeometry({
+                //width: 300,
+                align: 'center',
+                font: font,
+                text: "Applaus, Applaus!"
+            })
 
-        return Math.floor((r + g + b) / 256)
+
+
+            const material = new THREE.RawShaderMaterial({
+                vertexShader: fontVS,
+                fragmentShader: fontFS,
+                uniforms: {
+                    animate: {
+                        value: 1
+                    },
+                    uTime: {
+                        value: 0
+                    },
+                    map: {
+                        value: this.loader.load('/dist/fnt/Fascinate.png')
+                    },
+                    color: {
+                        value: new THREE.Color('#fff')
+                    },
+                    tAudio: {
+                        value: null
+                    },
+                },
+                transparent: true,
+                side: THREE.DoubleSide,
+                depthTest: false
+            })
+
+
+            const material2 = new THREE.RawShaderMaterial(createSDF({
+                map: this.loader.load('/dist/fnt/Fascinate.png'),
+                side: THREE.DoubleSide,
+                transparent: true,
+                color: 'rgb(230, 230, 230)'
+            }))
+
+            var layout = geometry.layout
+            const text = new THREE.Mesh(geometry, material)
+            text.position.x = -layout.width / 2
+            text.position.y = layout.height * 1.035
+
+            var textAnchor = new THREE.Object3D()
+            textAnchor.scale.multiplyScalar(-0.003)
+
+            textAnchor.position.y -= 0.7
+            textAnchor.add(text)
+
+            this.add(textAnchor)
+
+            this.text = text
+
+                        this.ready = true
+        })
+
     }
 
     _getImgData(pic) {
@@ -77,7 +135,7 @@ default class Applaus extends AObject {
                     }
                 }
             }
-            
+
 
             const positions = new Float32Array(imageVertices),
                 colors = new Float32Array(imageVertices.length),
@@ -157,8 +215,7 @@ default class Applaus extends AObject {
 
             this.initShader(imgData, positions)
 
-
-            this.ready = true
+            this.initText()
         }))
 
     }
@@ -241,6 +298,10 @@ default class Applaus extends AObject {
         this.positionUniforms.delta.value = dt
         this.positionUniforms.time.value = this.tick
         this.positionUniforms.tAudio.value = audioTexture
+
+
+        this.text.material.uniforms.uTime.value = this.tick
+        this.text.material.uniforms.tAudio.value = audioTexture
     }
 }
 
@@ -263,7 +324,7 @@ const computeShaderPosition = glslify(`
         vec3 audio = texture2D(tAudio, uv ).rbg;
 
             if (audio.r > .5) {
-                pos.xyz += curlNoise(pos.xyz) * audio.r * delta * 0.8;
+                pos.xyz += curlNoise(pos.xyz) * audio.r * delta * 0.3;
             } else {
                 float dist = distance(normalize(origPos.xyz), normalize(pos.xyz));
                 float factor = smoothstep(0.,1., abs(sin(time*0.01)));
@@ -291,7 +352,11 @@ const VS = glslify(`
         vec4 posTemp = texture2D( tPosition, uv );
         vec3 pos = posTemp.xyz;
 
-        pos.z += 0.3 * sin(pos.x*2.4 + time*0.1);
+
+        vec3 audio = texture2D(tAudio,vUv ).rgb;
+        float factor = smoothstep(0.5, 0.8, audio.r);
+
+        pos.z += 0.3 * sin(pos.x*2.4 + time*0.1 * factor);
 
         vec4 mvPosition = modelViewMatrix * vec4( pos, 1.0 );
 
@@ -328,6 +393,80 @@ const FS = glslify(`
 
         gl_FragColor = texColor;
       }
+
+`, {
+    inline: true
+})
+
+
+const fontVS = glslify(`
+attribute vec4 position;
+attribute vec2 uv;
+uniform mat4 projectionMatrix;
+uniform mat4 modelViewMatrix;
+varying vec2 vUv;
+
+uniform sampler2D tAudio;
+
+
+uniform float uTime;
+
+void main() {
+  vUv = uv;
+
+  vec4 pos = position;
+
+  vec3 audio = texture2D(tAudio,vUv ).rgb;
+
+  pos.z += 0.3 * sin(pos.x*2.4 + uTime*0.1 * audio.r);
+  gl_Position = projectionMatrix * modelViewMatrix * pos;
+}
+
+`, {
+    inline: true
+})
+
+const fontFS = glslify(`
+#extension GL_OES_standard_derivatives : enable
+precision highp float;
+
+
+uniform float opacity;
+uniform vec3 color;
+uniform sampler2D map;
+
+uniform float uTime;
+uniform sampler2D tAudio;
+
+uniform float animate;
+varying vec2 vUv;
+
+#pragma glslify: noise = require('glsl-noise/simplex/3d')
+#pragma glslify: aastep = require('glsl-aastep')
+
+#pragma glslify: hsl2rgb = require('glsl-hsl2rgb')
+
+ vec3 render (float sdf) {
+   float hue = noise(vec3(vUv.x * 0.0, sdf * 5.0, 0));
+   return hsl2rgb(vec3(hue, 0.5, 0.5));
+}
+
+void main() {
+  vec4 texColor = texture2D(map, vUv);
+  float sdf = texColor.a;
+
+  float audioFactor = 1.0;
+  vec3 audio = texture2D(tAudio,vUv ).rgb;
+  if (audio.r > .3) {
+    audioFactor = audio.r;
+  } else {
+    audioFactor = 0.0;
+  }
+
+  vec3 c = render(sdf);
+
+  gl_FragColor = vec4(c, sdf * audioFactor);
+}
 
 `, {
     inline: true

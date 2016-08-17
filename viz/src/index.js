@@ -33,7 +33,7 @@ import Outro from './Outro'
 const OSC_URL = "ws://localhost:8081"
 
 global.DEMO_MODE = true
-const DEF_SCENE = "intro"
+const DEF_SCENE = "outro"
 
 export
 default class Main extends THREE.WebGLRenderer {
