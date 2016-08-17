@@ -171,7 +171,7 @@ default class AScene extends THREE.Scene {
 
         this.addGUI(this.currentVis)
         this.add(this.currentVis)
-        this.currentVis.start()
+        this.currentVis.start(this)
         this.isStopped = false
 
         let ft = this.gui.addFolder('**=text=**')

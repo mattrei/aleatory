@@ -6,7 +6,6 @@
  * @author Stemkoski / http://www.adelphi.edu/~stemkoski : An implementation of water shader based on the flat mirror
  * @author Jonas Wagner / http://29a.ch/ && http://29a.ch/slides/2012/webglwater/ : Water shader explanations in WebGL
  */
-import THREE from 'three.js'
 
 THREE.ShaderLib['water'] = {
 

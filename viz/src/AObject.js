@@ -55,12 +55,12 @@ default class AObject extends THREE.Object3D {
         return this.name
     }
 
-    start() {
+    start(scene) {
         this.isStopped = false
         this.visible = true
 
         if (!this.isInitialized2()) {
-            this.init()
+            this.init(scene)
             this.isInitialized = true
         }
         /*
