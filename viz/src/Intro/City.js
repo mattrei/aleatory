@@ -239,6 +239,9 @@ default class City extends AObject {
 
 
             const windows = THREE.GeometryUtils.randomPointsInGeometry(geometry, random(5, 10))
+            console.log(windows)
+            // TODO add particle points to windows
+
 
             const dist = building.position.distanceTo(center) / center.length()
 
@@ -256,7 +259,7 @@ default class City extends AObject {
         const create = (segments) => {
             var planeMaterial = new THREE.ShaderMaterial({
                 uniforms: {
-                    textureAudio: {
+                    tAudio: {
                         value: null
                     },
                     time: {
@@ -266,17 +269,16 @@ default class City extends AObject {
                         value: 1
                     },
                     height: {
-                        value: 2
+                        value: 0.5
                     },
                     noise_elevation: {
                         value: 1.0
                     },
                 },
                 transparent: true,
-                fragmentShader: floorFragmentShader,
-                vertexShader: floorVertexShader,
-                wireframe: this.conf.wireframe,
-                wireframeLinewidth: 1,
+                fragmentShader: floorFS,
+                vertexShader: floorVS,
+                wireframe: false,
             });
 
             const s = NUM_BUILDINGS * BUILDING_SIZE
@@ -319,10 +321,10 @@ default class City extends AObject {
         if (this.floor) {
 
             const audioTexture = this.scene.getAudioTexture()
-            this.floor.material.uniforms.textureAudio.value = audioTexture
+            this.floor.material.uniforms.tAudio.value = audioTexture
 
-            this.floor.material.uniforms.time.value = t.time * 0.2
-            this.floor.material.uniforms.speed.value = 4
+            this.floor.material.uniforms.time.value += dt
+            this.floor.material.uniforms.speed.value = 40
             this.floor.material.uniforms.height.value = 1
         }
 
@@ -343,7 +345,7 @@ default class City extends AObject {
 }
 
 
-const floorVertexShader = glslify(`
+const floorVS = glslify(`
   #pragma glslify: pnoise3 = require(glsl-noise/periodic/3d)
   #pragma glslify: PI = require('glsl-pi')
 
@@ -359,14 +361,12 @@ const floorVertexShader = glslify(`
             //uniform float valley_elevation;
             uniform float noise_elevation;
 
-            uniform sampler2D textureAudio;
+            uniform sampler2D tAudio;
 
             void main()
             {
                 vUv = uv;
-                // First perlin passes
                 float displacement  =  pnoise3(.4 * position + vec3( 0, speed * time, 0 ), vec3( 100.0 ) ) * 1. * height;
-
                 displacement       += pnoise3( 2. * position + vec3( 0, speed * time * 5., 0 ), vec3( 100. ) ) * .3 * height;
                 //displacement       += pnoise3( 8. * position + vec3( 0, speed * time * 20., 0 ), vec3( 100. ) ) * .1 * height;
 
@@ -375,18 +375,16 @@ const floorVertexShader = glslify(`
                 float z = (height * sin(((time * 0.5 * speed) - (distance * freq)) * PI));
 
 
-                vec3 audio = texture2D(textureAudio, uv ).rbg;
+                vec3 audio = texture2D(tAudio, uv ).rbg;
 
               // Sinus
                 displacement = displacement + (sin(position.x / 2. - PI / 2.));
                 displacement += audio.r;
 
-                vec3 newPosition = vec3(position.x,position.y, displacement+z);
+                vec3 newPosition = vec3(position.x,position.y+z, displacement+z);
 
                 vNoise = displacement;
                 vY = newPosition.z;
-                //vNoise = sin(position.x / 2. - PI / 2.);
-                //vec3 newPosition = position + normal * vec3(sin(time * 0.2) * 3.0);
                 gl_Position = projectionMatrix * modelViewMatrix * vec4( newPosition, 1.0 );
             }
 
@@ -394,12 +392,13 @@ const floorVertexShader = glslify(`
     inline: true
 })
 
-const floorFragmentShader = glslify(`
+const floorFS = glslify(`
 #pragma glslify: PI = require('glsl-pi')
 
 varying vec2 vUv;
 varying float vNoise;
 varying float vY;
+
 //varying float vNoise;
 uniform float time;
 uniform float speed;
@@ -411,15 +410,7 @@ uniform float speed;
 
             float time2 = time / (1. / speed) * 0.3;
 
-            float r = .5 + sin(time2);
-            float g = .5 + cos(time2);
-            float b = 1. - sin(time2);
-
-            vec3 color = vec3(r,g,b);
-            //color *= vNoise;
-            gl_FragColor = vec4(cos(vY * 2.0), vY * 3.0, 1.0, 1.0);
-
-            //gl_FragColor = vec4(color, alpha);
+            gl_FragColor = vec4(cos(vY * 2.0), vY * 3.0, 1.0, alpha);
         }
 
 `, {

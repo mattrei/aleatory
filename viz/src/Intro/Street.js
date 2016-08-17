@@ -179,31 +179,36 @@ default class Street extends AObject {
 
     }
 
+    _getPosOnSpline(time=0) {
+
+        const t = ((this.tick + time) * this.conf.speed % this.spline.getLength()) / this.spline.getLength(),
+            pos = this.spline.getPointAt(t)
+        
+        pos.y += this.conf.cameraHeight
+        return pos
+    }
+
     updateCamera(dt) {
 
         this.tick += dt
         const time = this.tick
 
-        const t = (time * this.conf.speed % this.spline.getLength()) / this.spline.getLength(),
-            tn = ((time + 0.4) * this.conf.speed % this.spline.getLength()) / this.spline.getLength()
+        
+        const position = this._getPosOnSpline()
 
-        const p = this.spline.getPointAt(t)
+        this.camera.position.copy(position)
 
-        const camera = this.camera
-        camera.position.copy(p)
-        camera.position.y += 0.1
-        camera.lookAt(this.spline.getPointAt(tn))
-
+        this.camera.lookAt(this._getPosOnSpline(0.01))
     }
 
     update(dt) {
 
-        if (!super.update(dt)) return
+        super.update(dt)
 
         if (!this.ready) return
 
         this.updateCamera(dt)
-        if (this.conf.cars) this.updateCars(dt)
+        this.updateCars(dt)
     }
 
 }
