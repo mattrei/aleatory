@@ -1,6 +1,3 @@
-global.THREE = require('three')
-import Scene from './Scene'
-
 const glslify = require('glslify')
 
 const random = require('random-float')
@@ -9,12 +6,13 @@ const randomInt = require('random-int')
 const tweenr = require('tweenr')()
 const Tween = require('tween-chain')
 
-const sineInOut = require('eases/sine-in-out')
-
-const Boid = require('boid')
-
 import AObject from '../AObject'
 
+const MAX_PARTICLES = 100000
+const MAX_PARTICLE_DIST = 50
+const IMG_SCALE = 0.2
+
+const DUR_ANIM = 2
 
 export
 default class Refugees extends AObject {
@@ -26,222 +24,203 @@ default class Refugees extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        //this.background()
-        this.pictures()
+        this.currIdx = 0
+        this.meshes = []
     }
 
-    pictures() {
-        const VIS = 'pictures'
-        const conf = {
-            on: true,
-            animation: 1
-        }
+    _getImgData(pic) {
+
+        return new Promise(function(fulfill, reject) {
+
+            var canvas = document.createElement("canvas");
+            var context = canvas.getContext("2d");
+            var image = new Image();
+            image.src = pic;
+            image.onload = function() {
+                canvas.width = image.width;
+                canvas.height = image.height;
+                //context.globalAlpha = 0;
+                context.drawImage(image, 0, 0);
+                var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
+                fulfill(imgData)
+            }
+
+        })
+    }
+
+    _getPixel(imgData, x, y) {
+        var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
+        r = imgData.data[offset];
+        g = imgData.data[offset + 1];
+        b = imgData.data[offset + 2];
+        a = imgData.data[offset + 3];
+
+        return new THREE.Color(r, g, b)
+    }
+
+    load(data) {
+
+        this.meshes = []
 
         const group = new THREE.Group()
-        this.scene.add(group)
-        group.visible = conf.on
+        this.add(group)
+
+        data.forEach(d => {
+
+            //this.loader.load('/assets/for_particles.jpg', (testImg) => {
+            //const bgImg = testImg.image.src
+            const bgImg = d.img
+
+            this._getImgData(bgImg).then(imgData => {
+
+                const geometry = new THREE.BufferGeometry()
+
+                const imgSize = imgData.width * imgData.height
+                console.log("Image pixels: " + imgData.width * imgData.height)
+
+                let PARTICLES_AMOUNT = MAX_PARTICLES
+                if (MAX_PARTICLES > imgSize) {
+                    PARTICLES_AMOUNT = imgSize
+                }
+
+                var positions = new Float32Array(PARTICLES_AMOUNT * 3);
+                var colors = new Float32Array(PARTICLES_AMOUNT * 3);
+                // displacement values
+                var extras = new Float32Array(PARTICLES_AMOUNT * 3);
+
+
+                let total = imgData.width * imgData.height,
+                    step = Math.floor(total / PARTICLES_AMOUNT)
+
+                for (var i = 0, i3 = 0, ipx = 0; i < PARTICLES_AMOUNT; i++, i3 += 3, ipx += step) {
+
+                    let x = ipx % imgData.width,
+                        y = ipx / imgData.width | 0,
+                        pixel = this._getPixel(imgData, x, y)
+
+                    const position = new THREE.Vector2(
+                        x / imgData.width * (imgData.width / imgData.height),
+                        y / imgData.height)
+
+                    // Position
+                    positions[i3 + 0] = position.x
+                    positions[i3 + 1] = position.y
+                    positions[i3 + 2] = 0
+
+                    // Extras
+                    extras[i3 + 0] = Math.random()
+                    extras[i3 + 1] = Math.random()
+                    extras[i3 + 2] = Math.random()
+
+                    // Color
+                    let color = pixel
+                    colors[i3 + 0] = color.r / 255;
+                    colors[i3 + 1] = color.g / 255;
+                    colors[i3 + 2] = color.b / 255;
+
+                }
+
+                geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
+                geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
+                geometry.addAttribute('extra', new THREE.BufferAttribute(extras, 3));
+
+                const material = new THREE.ShaderMaterial({
+
+                    uniforms: {
+                        uTime: {
+                            value: 0
+                        },
+                        uTimeInit: {
+                            value: randomInt(0, 100)
+                        },
+                        uAnimation: {
+                            value: 0
+                        },
+                        bgImg: {
+                            value: bgImg
+                        }
+                    },
+                    vertexShader: pictureVS,
+                    fragmentShader: pictureFS,
+                    blending: THREE.AdditiveBlending,
+                    transparent: false,
+                    depthWrite: true,
+                    depthTest: false
+                });
+
+                const particles = new THREE.Points(geometry, material)
+                particles.visible = true
+                group.add(particles)
+
+                this.meshes.push(particles)
+
+                this.ready = true
+            })
+        })
+
+    }
+
+    doNext() {
+
+
+        const mesh = this.meshes[this.currIdx++ % this.meshes.length]
+
+        tweenr.to(mesh.material.uniforms.uAnimation, {
+            value: 0,
+            duration: DUR_ANIM
+        })
+
+        tweenr.to(mesh.position, {
+            z: 1,
+            duration: DUR_ANIM
+        })
+
+    }
+
+    doReset() {
+        this.meshes.forEach(mesh => {
+
+            if (mesh.visible) {
+                tweenr.to(mesh.material.uniforms.uAnimation, {
+                    value: 1,
+                    duration: DUR_ANIM
+                })
+                //.on('complete', () => m.visible = false)
+            }
+            tweenr.to(mesh.position, {
+                z: 0,
+                duration: DUR_ANIM
+            })
+        })
+    }
+
+    init() {
+
+        const group = new THREE.Group()
+        this.add(group)
 
         const meshes = []
         let mIdx = 0
 
-        const _getImgData = (pic) => {
+        if (this.conf.data) this.load(this.conf.data)
+        super.on('data', data => this.load(data))
 
-            return new Promise(function(fulfill, reject) {
-
-                var canvas = document.createElement("canvas");
-                var context = canvas.getContext("2d");
-                var image = new Image();
-                image.src = pic;
-                image.onload = function() {
-                    canvas.width = image.width;
-                    canvas.height = image.height;
-                    //context.globalAlpha = 0;
-                    context.drawImage(image, 0, 0);
-                    var imgData = context.getImageData(0, 0, canvas.width, canvas.height);
-                    fulfill(imgData)
-                }
-
-            })
-        }
-
-        const _getPixel = (imgData, x, y) => {
-            var r, g, b, a, offset = x * 4 + y * 4 * imgData.width;
-            r = imgData.data[offset];
-            g = imgData.data[offset + 1];
-            b = imgData.data[offset + 2];
-            a = imgData.data[offset + 3];
-
-            return new THREE.Color(r, g, b)
-        }
-
-        const MAX_PARTICLES = 100000
-        const MAX_PARTICLE_DIST = 50
-        const IMG_SCALE = 1
-
-        this.events.on(VIS + '::data', data => {
-
-            data.forEach(d => {
-
-                //this.loader.load('/assets/for_particles.jpg', (testImg) => {
-                //const bgImg = testImg.image.src
-                const bgImg = d.img
-
-                _getImgData(bgImg).then(imgData => {
-
-                    let geometry = new THREE.BufferGeometry()
-
-                    const imgSize = imgData.width * imgData.height
-                    console.log("Image pixels: " + imgData.width * imgData.height)
-
-                    let PARTICLES_AMOUNT = MAX_PARTICLES
-                    if (MAX_PARTICLES > imgSize) {
-                        PARTICLES_AMOUNT = imgSize
-                    }
-
-                    var positions = new Float32Array(PARTICLES_AMOUNT * 3);
-                    var colors = new Float32Array(PARTICLES_AMOUNT * 3);
-                    // displacement values
-                    var extras = new Float32Array(PARTICLES_AMOUNT * 3);
-
-
-                    let total = imgData.width * imgData.height,
-                        step = Math.floor(total / PARTICLES_AMOUNT)
-
-                    for (var i = 0, i3 = 0, ipx = 0; i < PARTICLES_AMOUNT; i++, i3 += 3, ipx += step) {
-
-                        let x = ipx % imgData.width,
-                            y = ipx / imgData.width | 0,
-                            pixel = _getPixel(imgData, x, y)
-
-                        let position = new THREE.Vector3(
-                            (imgData.width / 2 - x) * IMG_SCALE, (imgData.height / 2 - y) * IMG_SCALE,
-                            0)
-
-
-
-                        // Position
-                        positions[i3 + 0] = position.x;
-                        positions[i3 + 1] = position.y;
-                        positions[i3 + 2] = position.z;
-
-                        // Extras
-                        extras[i3 + 0] = Math.random()
-                        extras[i3 + 1] = Math.random()
-                        extras[i3 + 2] = Math.random()
-
-                        // Color
-                        let color = pixel
-                        colors[i3 + 0] = color.r / 255;
-                        colors[i3 + 1] = color.g / 255;
-                        colors[i3 + 2] = color.b / 255;
-
-                    }
-
-                    geometry.addAttribute('position', new THREE.BufferAttribute(positions, 3));
-                    geometry.addAttribute('color', new THREE.BufferAttribute(colors, 3));
-                    geometry.addAttribute('extra', new THREE.BufferAttribute(extras, 3));
-
-                    let material = new THREE.ShaderMaterial({
-
-                        uniforms: {
-                            uTime: {
-                                type: 'f',
-                                value: 0
-                            },
-                            uTimeInit: {
-                                type: 'f',
-                                value: randomInt(0, 100)
-                            },
-                            uAnimation: {
-                                type: 'f',
-                                value: conf.animation
-                            },
-                            bgImg: {
-                                type: 't',
-                                value: bgImg
-                            }
-                        },
-                        vertexShader: pictureVS,
-                        fragmentShader: pictureFS,
-                        blending: THREE.AdditiveBlending,
-                        transparent: false,
-                        depthWrite: true,
-                        depthTest: false
-                    });
-
-                    let particles = new THREE.Points(geometry, material)
-                    particles.visible = true
-                    group.add(particles)
-
-                    meshes.push(particles)
-
-                    this.events.on('tick', t => {
-                        material.uniforms.uTime.value = t.time * 0.2
-                    })
-                })
-
-                //})//test
-
-            })
-
-        })
-
-
-        const doNext = () => {
-            mIdx += 1
-            let m = meshes[mIdx % meshes.length]
-
-            m.material.uniforms.uAnimation.value = 1
-
-            tweenr.to(m.material.uniforms.uAnimation, {
-                value: 0,
-                duration: 2
-            })
-
-            tweenr.to(m.position, {
-                z: 200,
-                duration: 2
-            })
-
-        }
-        this.events.on(VIS + '::doNext', p => {
-            doNext() /*p.duration?*/
-        })
-        conf.doNext = doNext
-
-        const doReset = () => {
-            meshes.forEach(m => {
-
-                if (m.visible) {
-                    tweenr.to(m.material.uniforms.uAnimation, {
-                        value: 1,
-                        duration: 2
-                    })
-                    //.on('complete', () => m.visible = false)
-                }
-                tweenr.to(m.position, {
-                    z: 0,
-                    duration: 2
-                })
-            })
-        }
-        this.events.on(VIS + '::doReset', p => {
-            doReset() /*p.duration?*/
-        })
-        conf.doReset = doReset
-
-        this.events.on(VIS + '::animation', p => {
-            let m = meshes[mIdx % meshes.length]
-            m.material.uniforms.uAnimation.value = p
-        })
-        this.events.on(VIS + '::visOn', _ => group.visible = true)
-        this.events.on(VIS + '::visOff', _ => group.visible = false)
-
-        super.addVis(VIS, conf)
+        super.on('doNext', _ => this.doNext())
+        super.on('doReset', _ => this.doReset())
     }
 
 
-    tick(time, delta) {}
+    update(dt) {
+        super.update(dt)
+
+        if (!this.ready) return
+
+
+        this.meshes.forEach(mesh => {
+            mesh.material.uniforms.uTime.value += dt
+        })
+
+    }
 }
 
 
@@ -271,7 +250,7 @@ varying vec3 vColor;
 
        float displacement  =  pnoise3(.4 * position + vec3( 0, time, 0 ), vec3( 100.0 ) ) * 1. * .7;
 
-       float animation = uAnimation;
+       float animation = sin(uTime*0.001); //uAnimation;
        vec3 pos = position;
 
        pos.x += snoise3(position.xyz * 0.02 + 50.0 + time) * (200.0 + extras.y * 800.0) * animation;
@@ -302,7 +281,9 @@ varying vec3 vColor;
        //gl_PointSize = abs(sin(position.x + time));
       }
 
-`, { inline: true })
+`, {
+    inline: true
+})
 
 
 const pictureFS = glslify(`
@@ -317,4 +298,6 @@ uniform float uTime;
 
         }
 
-`, { inline: true })
+`, {
+    inline: true
+})

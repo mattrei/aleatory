@@ -6,7 +6,7 @@ const Tween = require('tween-chain')
 
 import Headlines from './Headlines'
 import Refugees from './Refugees'
-import Mare from './Mare'
+//import Mare from './Mare'
 
 
 import headlines_data from './test_data/headlines.json'
@@ -23,24 +23,27 @@ default class RefugeesScene extends AScene {
             camera,
             args, {
                 h: new Headlines('HEADLINES', {
-                    data: headlines_data
-                }, renderer, loader, aaa),
-                r: new Refugees('REFUGEES', {
-                    data: refugees_data
+                    data: headlines_data,
+                    doNext: false,
+                    doReset: false
                 }, renderer, loader, aaa, camera),
+                r: new Refugees('REFUGEES', {
+                    data: refugees_data,
+                    doNext: false,
+                    doReset: false
+                }, renderer, loader, aaa, camera),
+                /*
                 m: new City('MARE', {
                     wireframe: true
-                })
+                }, renderer, loader, aaa, camera)
+                */
             })
 
 
         this.camera.position.z = -1
         this.camera.lookAt(new THREE.Vector3())
 
-        this.setVis(this.vis.t)
-
-        //this.fog = new THREE.FogExp2(0x000000, 0.15);
-
+        this.setVis(this.vis.r)
     }
 
     background() {

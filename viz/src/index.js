@@ -25,7 +25,7 @@ const keycode = require('keycode')
 import Intro from './Intro'
 import Executed from './Executed'
 import WienerLinien from './WienerLinien'
-//import RefugeesScene from './RefugeesScene'
+import Refugees from './Refugees'
 import DronesScene from './Drones'
 import Outro from './Outro'
 
@@ -33,7 +33,7 @@ import Outro from './Outro'
 const OSC_URL = "ws://localhost:8081"
 
 global.DEMO_MODE = true
-const DEF_SCENE = "outro"
+const DEF_SCENE = "refugees"
 
 export
 default class Main extends THREE.WebGLRenderer {
@@ -316,7 +316,7 @@ default class Main extends THREE.WebGLRenderer {
             this.scenes.intro = new Intro(this, loader, aaa, camera.clone(), args)
             this.scenes.executed = new Executed(this, loader, aaa, camera.clone(), args)
             this.scenes.wl = new WienerLinien(this, loader, aaa, camera.clone(), args)
-            //this.scenes.s1 = new RefugeesScene(args)
+            this.scenes.refugees = new Refugees(this, loader, aaa, camera.clone(), args)
             this.scenes.drones = new DronesScene(this, loader, aaa, camera.clone(), args)
             this.scenes.outro = new Outro(this, loader, aaa, camera.clone(), args)
 

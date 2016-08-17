@@ -1,7 +1,23 @@
-import Boid from 'boid'
+//https://github.com/fluuuid/labs/tree/master/box-physics
+
+const CANNON = require('cannon')
+
+const random = require('random-float')
+const randomInt = require('random-int')
+const tweenr = require('tweenr')()
+const Tween = require('tween-chain')
+
+const createTextGeometry = require('three-bmfont-text')
+const loadFont = require('load-bmfont')
+const createSDF = require('three-bmfont-text/shaders/sdf')
+
+
 import AObject from '../AObject'
 
-const DURATION = 2000
+
+const FONT_NAME = 'optimer'
+const RADIUS = 1
+const DURATION = 2
 
 export
 default class Headlines extends AObject {
@@ -13,368 +29,328 @@ default class Headlines extends AObject {
         this.aaa = aaa
         this.camera = camera
 
+        this.fontLoader = new THREE.FontLoader();
+
         this.currIdx = 0
         this.curr = "hello world"
-        this.lights = {
-            l1: null,
-            l2: null,
-            l3: null,
-            l4: null
-        }
+
+        this.meshes = []
+        this.descriptions = []
 
 
-        this.flockingSpeed = 3
-
-        this.startStats();
-        this.startGUI();
-
-        this.system = null
-        this.renderer = null;
-        this.camera = null;
-        this.scene = null;
-        this.counter = 0;
-        this.clock = new THREE.Clock();
-
-        this.createRender();
-        this.createScene();
-        this.addObjects();
-        this.addLights()
-
-        //this.initParticulate()
-
-        this.onResize();
-        this.update();
-
-        this.init()
     }
 
-    headlines() {
+    _textMeshes(text) {
 
-        const VIS = 'headlines'
-        const conf = {
-            on: false,
-            speed: 1
+        const material = new THREE.MeshNormalMaterial();
+
+        /*
+        material = new THREE.MeshPhongMaterial({
+            color: 0xffffff,
+            specular: 0xffffff,
+            metal: true
+        })
+*/
+
+        let pos = 0
+
+        const meshes = []
+
+
+        for (let i = 0; i < text.length; i++) {
+            const c = text[i]
+
+            const geometry = new THREE.TextGeometry(c, {
+                font: this.fontMesh,
+                size: 1
+            });
+            geometry.computeBoundingBox();
+            let w = geometry.boundingBox.max.x - geometry.boundingBox.min.x;
+
+            const mesh = new THREE.Mesh(geometry, material)
+
+            const relPos = new THREE.Vector3(pos, -0.2, 1)
+
+            mesh.relPosition = relPos
+
+            mesh.position.x = THREE.Math.randFloatSpread(RADIUS)
+            mesh.position.y = THREE.Math.randFloatSpread(RADIUS)
+            mesh.position.z = THREE.Math.randFloatSpread(RADIUS)
+
+            mesh.rotation.x = random(0, Math.PI * 2)
+            mesh.rotation.y = random(0, Math.PI * 2)
+            mesh.rotation.z = random(0, Math.PI * 2)
+
+            mesh.scale.set(0.1, 0.1, 0.0005)
+
+
+            const bbox = new THREE.Box3().setFromObject(mesh)
+
+            const body = new CANNON.Body({
+                mass: randomInt(1, 4), // kg
+                position: new CANNON.Vec3(mesh.position.x, mesh.position.y, mesh.position.z),
+                //shape: new CANNON.Box(new CANNON.Vec3(bbox.max.x, bbox.max.y, bbox.max.z))
+                shape: new CANNON.Box(new CANNON.Vec3(0.1, 0.1, 0.1))
+            });
+            //this.world.addBody(body)
+
+            mesh.body = body
+
+            if (c === ' ') {
+                w = 0.1
+            }
+            pos += w
+            meshes.push(mesh)
         }
 
-        let group = new THREE.Group()
-        this.scene.add(group)
-        group.visible = conf.on
+        return meshes
+    }
 
-        this.events.on(VIS + '::visOn', _ => group.visible = true)
-        this.events.on(VIS + '::visOff', _ => group.visible = false)
+    _staticText(text) {
 
-        const meshes = [],
-            descriptions = []
-        let mIdx = 0
+        const geometry = createTextGeometry({
+            //width: 300,
+            align: 'center',
+            font: this.font,
+            text: "Hi all"
+        })
 
 
-        const SPREAD = 200
-        let boidText = (text) => {
-            let material = new THREE.MeshNormalMaterial();
+        const material = new THREE.RawShaderMaterial(createSDF({
+            map: this.fontTexture,
+            side: THREE.DoubleSide,
+            transparent: true,
+            color: 'rgb(230, 230, 230)'
+        }))
 
-            material = new THREE.MeshPhongMaterial({
-                color: 0xffffff,
-                specular: 0xffffff,
-                metal: true
+        var layout = geometry.layout
+        const mesh = new THREE.Mesh(geometry, material)
+        mesh.position.x = -layout.width / 2
+        mesh.position.y = layout.height * 1.035
+
+        var textAnchor = new THREE.Object3D()
+        textAnchor.scale.multiplyScalar(-0.004)
+        textAnchor.visible = false
+        textAnchor.add(mesh)
+
+        textAnchor.mesh = mesh
+
+        return textAnchor
+    }
+
+    load(data) {
+
+        data.forEach(headline => {
+
+            //const text = headline.date + ' ' + headline.title + ' ' + headline.source
+            const text = headline.title
+
+            const textMeshes = this._textMeshes(text)
+            this.meshes.push(textMeshes)
+
+            const description = this._staticText(headline.descr)
+            this.descriptions.push(description)
+        })
+
+
+        this.meshes.forEach(ms => {
+
+            const group = new THREE.Group()
+            this.add(group)
+            ms.forEach(m => {
+                group.add(m)
             })
+        })
 
-            let pos = 0
-            let textMeshes = []
-            for (var i = 0; i < text.length; i++) {
-                let c = text[i]
+        this.ready = true
+    }
 
-                let shapes = THREE.FontUtils.generateShapes(c, {
-                        font: "oswald",
-                        weight: "normal",
-                        size: 10
-                    }),
-                    textGeom = new THREE.ShapeGeometry(shapes)
+    doShuffle() {
+        const DURATION = 2
+        const SPREAD = 400
 
-                /*
-            var textGeom = new THREE.TextGeometry( c, {
-                    font: 'helvetiker',
-                    size: 10
-                });*/
-                textGeom.computeBoundingBox();
-                let w = textGeom.boundingBox.max.x - textGeom.boundingBox.min.x;
-
-                var textMesh = new THREE.Mesh(textGeom, material);
-                textMesh.relposition = new THREE.Vector3()
-                textMesh.relposition.x = pos
-
-                var p = new THREE.Object3D();
-                p.position.x = THREE.Math.randFloatSpread(SPREAD)
-                p.position.y = THREE.Math.randFloatSpread(SPREAD)
-                p.position.z = THREE.Math.randFloatSpread(SPREAD)
-
-                textMesh.randposition = p.position
-                textMesh.position.copy(p.position)
-
-                textMesh.rotation.x = Math.random() * Math.PI * 2;
-                textMesh.rotation.y = Math.random() * Math.PI * 2;
-                textMesh.rotation.z = Math.random() * Math.PI * 2;
-
-                if (c === ' ') {
-                    w = 2
-                }
-                pos += w + 2
-
-                material.side = THREE.DoubleSide;
-                group.add(textMesh)
-                textMeshes.push(textMesh)
+        let randPos = () => {
+                return new THREE.Vector3(
+                    THREE.Math.randFloatSpread(SPREAD),
+                    THREE.Math.randFloatSpread(SPREAD),
+                    THREE.Math.randFloatSpread(SPREAD))
+            },
+            randRot = () => {
+                return new THREE.Vector3(
+                    THREE.Math.randFloatSpread(Math.PI * 2),
+                    THREE.Math.randFloatSpread(Math.PI * 2),
+                    THREE.Math.randFloatSpread(Math.PI * 2))
             }
 
-            return textMeshes
-        }
 
-        let staticText = (text => {
-            let material = new THREE.MeshPhongMaterial({
-                color: 0xffffff,
-                specular: 0xffffff,
-                metal: true,
-                transparent: true
-            })
+        meshes.forEach(textMeshes => {
+            textMeshes.forEach(m => {
 
-            let shapes = THREE.FontUtils.generateShapes(text, {
-                    font: "oswald",
-                    weight: "normal",
-                    size: 10
-                }),
-                geometry = new THREE.ShapeGeometry(shapes)
+                let p = randPos()
+                let r = randRot()
+                m.isShuffled = true
 
-            geometry.center()
-            let mesh = new THREE.Mesh(geometry, material);
-            mesh.visible = false
-            group.add(mesh)
-            return mesh
-        })
+                tweenr.to(m.position, {
+                    x: p.x,
+                    y: p.y,
+                    z: p.z,
+                    duration: random(DURATION, DURATION * 2),
+                    ease: sineInOut
+                }).on('complete', () => m.isShuffled = false)
 
-        const BOUNDS = {
-            x: window.innerWidth,
-            y: window.innerHeight
-        }
-        this.events.on(VIS + '::data', data => {
-
-            data.forEach(headline => {
-
-                const text = headline.date + ' ' + headline.title + ' ' + headline.source
-
-                let textMeshes = boidText(text)
-                meshes.push(textMeshes)
-
-                let descriptionMesh = staticText(headline.descr)
-                descriptions.push(descriptionMesh)
-
-                textMeshes.forEach(m => {
-
-                    var boid = new Boid()
-                    boid.setBounds(BOUNDS.x, BOUNDS.y)
-                    boid.position.x = m.position.x
-                    boid.position.y = m.position.y
-                    boid.maxSpeed = this.flockingSpeed * 2
-                    boid.velocity.x = random(5, 10)
-                    boid.velocity.y = random(5, 10)
-
-                    this.events.on('tick', t => {
-                        if (!m.isShown) {
-                            boid.wander().update()
-                            boid.maxSpeed = conf.speed
-                            m.position.x = boid.position.x - window.innerWidth / 2
-                            m.position.y = boid.position.y - window.innerHeight / 2
-                        }
-                    })
-
+                tweenr.to(m.rotation, {
+                    x: r.x,
+                    y: r.y,
+                    z: r.z,
+                    duration: random(DURATION, DURATION * 2),
+                    ease: sineInOut
                 })
+
             })
 
         })
+    }
 
 
+    doNext() {
 
-        const DUR = 2
+        const DUR = 1
+        this.currIdx++
 
-        const doNext = () => {
+        const descr = this.descriptions[this.currIdx % this.descriptions.length]
+        descr.visible = true
+        descr.position.set(0, -0.5, 1)
+        descr.mesh.material.opacity = 0
 
+        tweenr.to(descr.mesh.material, {
+            opacity: 1,
+            duration: 1
+        })
 
+        const textMeshes = this.meshes[this.currIdx % this.meshes.length]
+        textMeshes.forEach(m => {
 
-            let descr = descriptions[mIdx % descriptions.length]
-            descr.visible = true
-            descr.position.set(0, 0, 100)
-            descr.material.opacity = 0
-
-            tweenr.to(descr.material, {
-                opacity: 1,
-                duration: random(DUR * 2, DUR * 4)
+            tweenr.to(m.position, {
+                x: m.relPosition.x,
+                y: m.relPosition.y,
+                z: m.relPosition.z,
+                duration: random(DUR, DUR * 2)
             })
 
-            let textMeshes = meshes[mIdx % meshes.length]
-            textMeshes.forEach(m => {
-                m.isShown = true
+            tweenr.to(m.rotation, {
+                x: 0,
+                y: 0,
+                z: 0,
+                duration: random(DUR, DUR * 2)
+            })
+        })
+    }
+    doReset() {
 
-                tweenr.to(m.position, {
-                    x: m.relposition.x,
-                    y: m.relposition.y,
-                    z: m.relposition.z,
-                    duration: random(DUR, DUR * 2)
-                })
+        const DUR = 1
 
-                tweenr.to(m.rotation, {
-                    x: 0,
-                    y: 0,
-                    z: 0,
-                    duration: random(DUR, DUR * 2)
+        const descr = this.descriptions[this.currIdx % this.descriptions.length]
+
+        tweenr.to(descr.mesh.material, {
+            opacity: 0,
+            duration: random(DUR * 2, DUR * 4)
+        })
+            .on('complete', () => descr.visible = false)
+
+        const textMeshes = this.meshes[this.currIdx % this.meshes.length]
+        textMeshes.forEach(m => {
+
+            tweenr.to(m.position, {
+                x: THREE.Math.randFloatSpread(RADIUS),
+                y: THREE.Math.randFloatSpread(RADIUS),
+                z: THREE.Math.randFloatSpread(RADIUS),
+                duration: random(DUR, DUR * 2)
+            })
+                .on('complete', () => m.isShown = false)
+
+            tweenr.to(m.rotation, {
+                x: random(0, Math.PI * 2),
+                y: random(0, Math.PI * 2),
+                z: random(0, Math.PI * 2),
+                duration: random(DUR, DUR * 2)
+            })
+        })
+    }
+
+    _loadFonts() {
+
+        loadFont('/dist/fnt/Lato-Regular-64.fnt', (err, font) => {
+            this.font = font
+            this.fontTexture = this.loader.load('/dist/fnt/lato.png')
+
+            this.fontLoader.load('dist/fonts/' + FONT_NAME + '_regular.typeface.json', resp => {
+                this.fontMesh = resp
+
+
+                if (this.conf.data) this.load(this.conf.data)
+                super.on('data', data => {
+                    this.load(data)
                 })
             })
 
-            mIdx += 1
-        }
 
-        this.events.on(VIS + '::doNext', _ => doNext())
-        conf.doNext = doNext
+        })
 
 
-        const doReset = () => {
+    }
 
-            let descr = descriptions[mIdx - 1 % descriptions.length]
+    init() {
 
-            tweenr.to(descr.material, {
-                opacity: 0,
-                duration: random(DUR * 2, DUR * 4)
-            })
-                .on('complete', () => descr.visible = false)
+        this.world = new CANNON.World()
+        this.world.gravity.set(0, 0, -0.1)
 
-            let textMeshes = meshes[mIdx - 1 % meshes.length]
-            textMeshes.forEach(m => {
+        this._loadFonts()
 
-                tweenr.to(m.position, {
-                    x: m.randposition.x,
-                    y: m.randposition.y,
-                    z: m.randposition.z,
-                    duration: random(DUR, DUR * 2)
-                })
-                    .on('complete', () => m.isShown = false)
+        super.on('doNext', _ => this.doNext())
+        super.on('doReset', _ => this.doReset())
+        super.on('doShuffle', _ => this.doShuffle())
+    }
 
-                tweenr.to(m.rotation, {
-                    x: random(0, Math.PI * 2),
-                    y: random(0, Math.PI * 2),
-                    z: random(0, Math.PI * 2),
-                    duration: random(DUR, DUR * 2)
-                })
+    update(dt) {
+        super.update(dt)
 
-            })
-        }
-
-        this.events.on(VIS + '::doReset', _ => doReset())
-        conf.doReset = doReset
+        if (!this.ready) return
 
 
-        const doShuffle = () => {
-            const DURATION = 2
-            const SPREAD = 400
+        //this.updatePhysics()
+        this.world.step(dt)
+    }
 
-            let randPos = () => {
-                    return new THREE.Vector3(
-                        THREE.Math.randFloatSpread(SPREAD),
-                        THREE.Math.randFloatSpread(SPREAD),
-                        THREE.Math.randFloatSpread(SPREAD))
-                },
-                randRot = () => {
-                    return new THREE.Vector3(
-                        THREE.Math.randFloatSpread(Math.PI * 2),
-                        THREE.Math.randFloatSpread(Math.PI * 2),
-                        THREE.Math.randFloatSpread(Math.PI * 2))
+    updatePhysics(force = -0.0025) {
+
+
+        this.meshes.forEach(ms => {
+            ms.forEach(mesh => {
+
+
+                const body = mesh.body
+                mesh.position.copy(body.position)
+                mesh.quaternion.copy(body.quaternion)
+
+/*
+                const newPosAttraction = new THREE.Vector3();
+                newPosAttraction.copy(mesh.position)
+
+
+                if (Math.abs(body.linearVelocity.x) < 20 ||
+                    Math.abs(body.linearVelocity.y) < 20 ||
+                    Math.abs(body.linearVelocity.z) < 20) {
+                    newPosAttraction.copy(mesh.position).multiplyScalar(force * Math.random());
+                } else {
+                    newPosAttraction.copy(mesh.position).multiplyScalar(0);
                 }
+                */
 
+                const worldPoint = new CANNON.Vec3(0,0,0)
 
-            meshes.forEach(textMeshes => {
-                textMeshes.forEach(m => {
-
-                    let p = randPos()
-                    let r = randRot()
-                    m.isShuffled = true
-
-                    tweenr.to(m.position, {
-                        x: p.x,
-                        y: p.y,
-                        z: p.z,
-                        duration: random(DURATION, DURATION * 2),
-                        ease: sineInOut
-                    }).on('complete', () => m.isShuffled = false)
-
-                    tweenr.to(m.rotation, {
-                        x: r.x,
-                        y: r.y,
-                        z: r.z,
-                        duration: random(DURATION, DURATION * 2),
-                        ease: sineInOut
-                    })
-
-                })
-
+                body.applyForce(force, worldPoint)
             })
-        }
-
-        // TODO needed?
-        this.events.on(VIS + '::doShuffle', _ => doShuffle())
-        conf.doShuffle = doShuffle
-
-        super.addVis(VIS, conf)
-
-    }
-
-    animate() {
-        let time = Date.now() * 0.00025;
-        let d = 150
-
-        this.lights.l1.position.x = Math.sin(time * 0.7) * d;
-        this.lights.l1.position.z = Math.cos(time * 0.3) * d;
-
-        this.lights.l2.position.x = Math.cos(time * 0.3) * d;
-        this.lights.l2.position.z = Math.sin(time * 0.7) * d;
-
-        this.lights.l3.position.x = Math.sin(time * 0.7) * d;
-        this.lights.l3.position.z = Math.sin(time * 0.5) * d;
-
-        this.lights.l4.position.x = Math.sin(time * 0.3) * d;
-        this.lights.l4.position.z = Math.sin(time * 0.5) * d;
-    }
-
-
-    background() {
-        let intensity = 200
-
-        var sphere = new THREE.SphereGeometry(0.5, 16, 8);
-
-        let light1 = new THREE.PointLight(0xffffff, intensity, 50);
-        light1.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
-            color: 0xffffff
-        })));
-        this.scene.add(light1);
-
-        let light2 = new THREE.PointLight(0xffffff, intensity, 50);
-        light2.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
-            color: 0xffffff
-        })));
-        this.scene.add(light2);
-
-        let light3 = new THREE.PointLight(0xffffff, intensity, 50);
-        light3.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
-            color: 0xffffff
-        })));
-        this.scene.add(light3);
-
-
-        let light4 = new THREE.PointLight(0xffffff, intensity, 50);
-        light4.add(new THREE.Mesh(sphere, new THREE.MeshBasicMaterial({
-            color: 0xffffff
-        })));
-        this.scene.add(light4);
-
-
-        this.scene.add(new THREE.AmbientLight(0x444444));
-        var dlight = new THREE.DirectionalLight(0xffffff, 2.0);
-        dlight.position.set(0, 0, 0).normalize();
-        this.scene.add(dlight);
+        })
 
     }
 
