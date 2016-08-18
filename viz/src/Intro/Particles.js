@@ -29,7 +29,7 @@ default class Particles extends AObject {
         this.aaa = aaa
     }
 
-    init() {
+    init(scene) {
 
 
         const geometry = new THREE.BufferGeometry();
@@ -97,6 +97,8 @@ default class Particles extends AObject {
 
 
         this.initShader()
+
+        scene.fog = null
         this.ready = true
 
     }

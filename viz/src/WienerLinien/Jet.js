@@ -48,9 +48,9 @@ export default class Jet extends AObject {
       top: []
     }
 
-    this.init()
   }
-  init() {
+
+  init(scene) {
 
     for (let j = 0; j < ROWS; j++) {
       this.cubes.bottom[j] = []

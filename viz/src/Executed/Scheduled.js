@@ -28,8 +28,6 @@ default class Scheduled extends AObject {
 
         this.meshes = []
         this.currentIdx = 0
-        this.createScheduled()
-
     }
 
     drawScheduledText() {
@@ -216,8 +214,7 @@ default class Scheduled extends AObject {
                             // If black, get position
 
                             position = new THREE.Vector3(
-                                (imgData.width / 2 - x) * imageScale, 
-                                (y - imgData.height / 2) * imageScale,
+                                (imgData.width / 2 - x) * imageScale, (y - imgData.height / 2) * imageScale,
                                 Math.random() * zSpread * 2 - Math.random() * zSpread
                             )
 
@@ -262,22 +259,19 @@ default class Scheduled extends AObject {
     }
 
 
-    createScheduled() {
+    init() {
 
 
         super.on('doNext', p => this.doNext())
 
-        this.loader.load('/dist/assets/Executed/particle.png', texture => {
+        const texture = this.loader.load('/dist/assets/Executed/particle.png')
 
-            super.on('data', data => this.loadData(data, texture))
+        super.on('data', data => this.loadData(data, texture))
+        if (this.conf.data) this.loadData(this.conf.data, texture)
+    }
 
-            if (this.conf.data) {
-                this.loadData(this.conf.data, texture)
-            }
-        })
-
-
-
+    update(dt) {
+        super.update(dt)
     }
 }
 

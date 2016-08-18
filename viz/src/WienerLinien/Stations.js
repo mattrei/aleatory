@@ -41,14 +41,18 @@ default class Tunnel extends AObject {
         this.aaa = aaa
         this.camera = camera
 
-        this.background()
-        this.ribbons()
-        this.names()
+
     }
 
     _getRandHaltestelle() {
         return HALTESTELLEN[HALTESTELLEN_KEYS[
             randomInt(0, HALTESTELLEN_LENGTH - 1)]]['NAME']
+    }
+
+    init(scene) {
+        this.background()
+        this.ribbons()
+        this.names()
     }
 
     names() {

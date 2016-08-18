@@ -41,7 +41,6 @@ class MetroLine extends THREE.Object3D {
         this.lineColor = lineColor
 
         this.init()
-
         this.update = this.update.bind(this)
         setInterval(this.update, 1000)
     }
@@ -312,12 +311,10 @@ default class Metro extends AObject {
         this.randomMetro = null
         this.idx = 0
 
-        this.metroLines()
-
     }
 
 
-    metroLines() {
+    init(scene) {
 
         const topo = JSON.parse(U_TOPO)
 

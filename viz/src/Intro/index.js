@@ -26,7 +26,6 @@ default class IntroScene extends AScene {
                     cameraHeight: 0.2
                 }, renderer, loader, aaa, camera),
                 c: new City('CITY', {
-                    wireframe: true
                 }, renderer, loader, aaa, camera),
                 t: new Terrain('TERRAIN', {
                     speed: 0.5

@@ -27,12 +27,10 @@ default class Tunnel extends AObject {
         this.time = 1
 
         this.particles = []
-
-        this.init()
-        this.initParticles()
+        
     }
 
-    init() {
+    init(scene) {
 
         var positions = new Float32Array(NUM * 3);
         var colors = new Float32Array(NUM * 3);
@@ -81,6 +79,8 @@ default class Tunnel extends AObject {
 
         this.add(this.mesh)
 
+
+        this.initParticles()
     }
 
     _genPoints() {

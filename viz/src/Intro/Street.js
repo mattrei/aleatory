@@ -15,6 +15,9 @@ const glslify = require('glslify')
 
 const STREET_WIDTH = 1
 const NUM_CARLIGHTS = 40
+const LINE_WIDTH = 10
+
+const ANIM_DUR = 1
 
 export
 default class Street extends AObject {
@@ -38,9 +41,7 @@ default class Street extends AObject {
         return points
     }
 
-    init() {
-
-        const LINE_WIDTH = 10
+    init(scene) {
 
         const points = this._genPoints()
         this.spline = new THREE.CatmullRomCurve3(points)
@@ -91,6 +92,25 @@ default class Street extends AObject {
         this.add(right)
 
         this.initCarLights()
+
+        super.on('speed', v => {
+            console.log(v)
+            tweenr.to(this.conf, {
+                speed: v,
+                duration: ANIM_DUR
+            })
+        })
+        super.on('cameraHeight', v => {
+            console.log(v)
+            tweenr.to(this.conf, {
+                cameraHeight: v,
+                duration: ANIM_DUR
+            })
+        })
+
+
+        scene.fog = new THREE.FogExp2(0x000000, 0.3)
+        this.ready = true
     }
 
     _addCarLights(material) {
@@ -143,10 +163,7 @@ default class Street extends AObject {
 
         this.backLights = this._addCarLights(matBack)
         this.frontLights = this._addCarLights(matFront)
-
-        this.ready = true
     }
-
 
 
     updateCars(dt) {

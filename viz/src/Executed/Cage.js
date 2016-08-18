@@ -41,14 +41,11 @@ default class Cage extends AObject {
 
         this.add(new THREE.AmbientLight(0xffffff))
 
-        //this.createAsteroids()
-        this.createCage()
 
         this.spherePositions = []
         this.meshes = []
         this.currentIdx = 0
         this.targetPosition = new THREE.Vector3()
-        this.createExecutedSphere()
     }
 
     createAsteroids() {
@@ -115,7 +112,7 @@ default class Cage extends AObject {
         }
     }
 
-    createCage() {
+    init() {
 
         let group = new THREE.Group()
         this.add(group)
@@ -305,6 +302,8 @@ default class Cage extends AObject {
 
         })
 
+        this.createExecutedSphere()
+
     }
 
     doLookAt(m) {
@@ -402,7 +401,7 @@ default class Cage extends AObject {
         this.doLookAt(m)
     }
 
-    loadData(data, group) {
+    load(data, group) {
 
         const vector = new THREE.Vector3();
 
@@ -547,8 +546,8 @@ default class Cage extends AObject {
         super.on('doSmash', p => this.doSmash())
 
 
-        if (this.conf.data) this.loadData(this.conf.data, group)
-        super.on('data', data => this.loadData(data, group))
+        if (this.conf.data) this.load(this.conf.data, group)
+        super.on('data', data => this.load(data, group))
 
         loadFont('/dist/fnt/Lato-Regular-64.fnt', (err, font) => {
             const geometry = createTextGeometry({
@@ -601,7 +600,7 @@ default class Cage extends AObject {
                 textAnchor.scale.multiplyScalar(-0.005)
                 textAnchor.add(text)
 
-                this.add(textAnchor)
+                //this.add(textAnchor)
                 let time = 1
                 /*
                 super.tick(dt => {

@@ -160,11 +160,10 @@ default class Topo extends AObject {
         //        this.createStars(120).forEach(m => this.scene.add(m))
         //this.createAsteroids(100).forEach(m => this.scene.add(m))
 
-        this.topo()
     }
 
 
-    topo() {
+    init() {
 
         const group = new THREE.Group()
         this.add(group)

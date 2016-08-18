@@ -78,7 +78,7 @@ default class City extends AObject {
 
     }
 
-    init() {
+    init(scene) {
 
         this.initBuildings()
         //this.initAurora()
@@ -86,6 +86,9 @@ default class City extends AObject {
         this.initFloor()
 
         this.initSatellites()
+
+
+        scene.fog = null
 
         this.ready = true
     }

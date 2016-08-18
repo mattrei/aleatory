@@ -57,10 +57,6 @@ default class AScene extends THREE.Scene {
         this._addHelpers()
     }
 
-    setFog(fog) {
-        this.fog = fog
-    }
-
     _addHelpers() {
         const cameraHelper = new THREE.CameraHelper(this.camera)
         this.add(cameraHelper)

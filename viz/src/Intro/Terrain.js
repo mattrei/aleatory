@@ -69,7 +69,7 @@ default class Terrain extends AObject {
         return points
     }
 
-    init() {
+    init(scene) {
 
         //this.initLights()
 
@@ -176,6 +176,8 @@ default class Terrain extends AObject {
                 duration: 2
             })
         })
+
+        scene.fog = new THREE.FogExp2(0x000000, 0.01)
 
         this.initOrb()
     }
